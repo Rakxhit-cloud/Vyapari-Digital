@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0f0f0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>व्यापारी Digital</title>
+<link rel="manifest" href="manifest.json">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0f0f0f;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Header */
+.header {
+  background: #1a2e1a;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #2d5a2d;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 10px; }
+.header-icon {
+  width: 32px; height: 32px;
+  background: #2d5a2d;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.header-title { font-size: 16px; font-weight: 700; color: #e8f5e8; }
+.header-sub { font-size: 11px; color: #4a8a4a; }
+.header-date { font-size: 11px; color: #3a7a3a; text-align: right; }
+
+/* KPI Cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px;
+}
+.kpi-card {
+  border-radius: 10px;
+  padding: 14px;
+  position: relative;
+}
+.kpi-green { background: #0d1f0d; border: 1px solid #1a3a1a; }
+.kpi-amber { background: #1f1200; border: 1px solid #3a2000; }
+.kpi-blue  { background: #0d1520; border: 1px solid #1a2a40; }
+.kpi-red   { background: #1f0d0d; border: 1px solid #3a1a1a; }
+.kpi-label {
+  font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .05em;
+  margin-bottom: 6px;
+}
+.kpi-green .kpi-label { color: #3a7a3a; }
+.kpi-amber .kpi-label { color: #7a5010; }
+.kpi-blue  .kpi-label { color: #305080; }
+.kpi-red   .kpi-label { color: #7a3030; }
+.kpi-value { font-size: 20px; font-weight: 800; }
+.kpi-green .kpi-value { color: #4dca4d; }
+.kpi-amber .kpi-value { color: #f0b040; }
+.kpi-blue  .kpi-value { color: #50a0f0; }
+.kpi-red   .kpi-value { color: #f06060; }
+.kpi-sub { font-size: 10px; margin-top: 3px; }
+.kpi-green .kpi-sub { color: #2a6a2a; }
+.kpi-amber .kpi-sub { color: #6a4010; }
+.kpi-blue  .kpi-sub { color: #205070; }
+.kpi-red   .kpi-sub { color: #6a2020; }
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  margin-top: 4px;
+}
+.section-title { font-size: 13px; font-weight: 700; color: #d0d0d0; }
+.add-btn {
+  background: #1a4a2a;
+  border: 1px solid #2d6a3a;
+  color: #4dca4d;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Entry List */
+.entry-list { padding: 0 14px; }
+.entry-card {
+  background: #161616;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.entry-left {}
+.entry-date { font-size: 13px; color: #6090d0; font-weight: 600; }
+.entry-note { font-size: 11px; color: #555; margin-top: 2px; }
+.entry-rating { font-size: 11px; margin-top: 4px; }
+.entry-right { text-align: right; }
+.entry-profit { font-size: 16px; font-weight: 800; color: #4dca4d; }
+.entry-margin { font-size: 11px; color: #f0b040; margin-top: 2px; }
+
+/* FAB Button */
+.fab {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 52px; height: 52px;
+  background: #3dba3d;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #141414;
+  border-top: 1px solid #1e1e1e;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 6px;
+  z-index: 100;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  padding: 4px 12px;
+}
+.nav-icon { font-size: 18px; }
+.nav-label { font-size: 9px; color: #555; }
+.nav-item.active .nav-label { color: #4dca4d; }
+.nav-item.active .nav-icon { filter: none; }
+.nav-dot {
+  width: 4px; height: 4px;
+  background: #4dca4d;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+/* Screens */
+.screen { display: none; padding-bottom: 80px; }
+.screen.active { display: block; }
+
+/* Form */
+.form-container {
+  padding: 14px;
+}
+.form-card {
+  background: #161616;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 14px;
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+.form-row:last-child { border-bottom: none; }
+.form-label { font-size: 12px; color: #888; }
+.form-input {
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #e0e0e0;
+  width: 130px;
+  text-align: right;
+}
+.form-input:focus {
+  outline: none;
+  border-color: #3dba3d;
+}
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+.result-label { font-size: 12px; font-weight: 600; color: #888; }
+.result-value-green { font-size: 18px; font-weight: 800; color: #4dca4d; }
+.result-value-amber { font-size: 13px; font-weight: 700; color: #f0b040; }
+.result-rating { font-size: 12px; font-weight: 700; }
+.save-btn {
+  width: 100%;
+  background: #1a4a2a;
+  border: 1px solid #2d6a3a;
+  color: #4dca4d;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 14px;
+}
+
+/* Page padding */
+.page-content { padding-bottom: 90px; }
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: HOME / रोज़ का हिसाब -->
+<div id="screen-home" class="screen active">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">📒</div>
+      <div>
+        <div class="header-title">व्यापारी Digital</div>
+        <div class="header-sub">रोज़ का हिसाब</div>
+      </div>
+    </div>
+    <div class="header-date" id="today-date"></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-green">
+      <div class="kpi-label">इस हफ़्ते बिक्री</div>
+      <div class="kpi-value" id="kpi-sales">₹0</div>
+      <div class="kpi-sub">7 दिन</div>
+    </div>
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-label">कुल मुनाफ़ा</div>
+      <div class="kpi-value" id="kpi-profit">₹0</div>
+      <div class="kpi-sub">इस हफ़्ते</div>
+    </div>
+    <div class="kpi-card kpi-amber">
+      <div class="kpi-label">कुल खर्चा</div>
+      <div class="kpi-value" id="kpi-expense">₹0</div>
+      <div class="kpi-sub">इस हफ़्ते</div>
+    </div>
+    <div class="kpi-card kpi-red">
+      <div class="kpi-label">उधार बाकी</div>
+      <div class="kpi-value" id="kpi-udhaar">₹0</div>
+      <div class="kpi-sub">कुल</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">📋 पिछली एंट्री</div>
+  </div>
+
+  <div class="entry-list" id="entry-list">
+    <div style="text-align:center;color:#444;padding:20px;font-size:13px;">
+      अभी कोई एंट्री नहीं है
+    </div>
+  </div>
+
+</div>
+
+<!-- SCREEN 2: नई एंट्री -->
+<div id="screen-entry" class="screen">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">📝</div>
+      <div>
+        <div class="header-title">नई एंट्री</div>
+        <div class="header-sub">आज का हिसाब भरें</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-container">
+    <div class="form-card">
+
+      <div class="form-row">
+        <div class="form-label">तारीख</div>
+        <input type="date" class="form-input" id="entry-date">
+      </div>
+      <div class="form-row">
+        <div class="form-label">कुल बिक्री ₹</div>
+        <input type="number" class="form-input" id="entry-sales" placeholder="0" oninput="calculateProfit()">
+      </div>
+      <div class="form-row">
+        <div class="form-label">हाथ का नकद</div>
+        <input type="number" class="form-input" id="entry-cash" placeholder="0">
+      </div>
+      <div class="form-row">
+        <div class="form-label">UPI / फ़ोन पे</div>
+        <input type="number" class="form-input" id="entry-upi" placeholder="0">
+      </div>
+      <div class="form-row">
+        <div class="form-label">आज का खर्चा ₹</div>
+        <input type="number" class="form-input" id="entry-expense" placeholder="0" oninput="calculateProfit()">
+      </div>
+      <div class="form-row">
+        <div class="form-label">आज का उधार</div>
+        <input type="number" class="form-input" id="entry-udhaar" placeholder="0" oninput="calculateProfit()">
+      </div>
+      <div class="form-row">
+        <div class="form-label">नोट्स</div>
+        <input type="text" class="form-input" id="entry-notes" placeholder="कोई बात...">
+      </div>
+
+      <div class="result-row" style="margin-top:10px;border-top:1px solid #2a2a2a;padding-top:10px;">
+        <div class="result-label">आज का मुनाफ़ा</div>
+        <div class="result-value-green" id="result-profit">₹0</div>
+      </div>
+      <div class="result-row">
+        <div class="result-label">हर सौ में मुनाफ़ा</div>
+        <div class="result-value-amber" id="result-margin">0%</div>
+      </div>
+      <div class="result-row">
+        <div class="result-label">दिन कैसा रहा</div>
+        <div class="result-rating" id="result-rating">—</div>
+      </div>
+
+      <button class="save-btn" onclick="saveEntry()">💾 एंट्री सेव करें</button>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- SCREEN 3: उधार बाकी -->
+<div id="screen-udhaar" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">🤝</div>
+      <div>
+        <div class="header-title">उधार बही</div>
+        <div class="header-sub">किसका बाकी है</div>
+      </div>
+    </div>
+  </div>
+  <div class="entry-list" style="padding-top:14px;" id="udhaar-list">
+    <div style="text-align:center;color:#444;padding:20px;font-size:13px;">
+      कोई उधार नहीं है
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: महीने का हिसाब -->
+<div id="screen-monthly" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">📅</div>
+      <div>
+        <div class="header-title">महीने का हिसाब</div>
+        <div class="header-sub">मासिक सारांश</div>
+      </div>
+    </div>
+  </div>
+  <div class="entry-list" style="padding-top:14px;" id="monthly-list">
+    <div style="text-align:center;color:#444;padding:20px;font-size:13px;">
+      डेटा लोड हो रहा है...
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: लक्ष्य -->
+<div id="screen-goal" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">🎯</div>
+      <div>
+        <div class="header-title">इस महीने का लक्ष्य</div>
+        <div class="header-sub">टारगेट ट्रैकर</div>
+      </div>
+    </div>
+  </div>
+  <div class="entry-list" style="padding-top:14px;" id="goal-list">
+    <div style="text-align:center;color:#444;padding:20px;font-size:13px;">
+      डेटा लोड हो रहा है...
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="showScreen('screen-entry')">+</button>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="showScreen('screen-home')">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">होम</div>
+    <div class="nav-dot"></div>
+  </div>
+  <div class="nav-item" id="nav-entry" onclick="showScreen('screen-entry')">
+    <div class="nav-icon">📝</div>
+    <div class="nav-label">एंट्री</div>
+  </div>
+  <div class="nav-item" id="nav-udhaar" onclick="showScreen('screen-udhaar')">
+    <div class="nav-icon">🤝</div>
+    <div class="nav-label">उधार</div>
+  </div>
+  <div class="nav-item" id="nav-monthly" onclick="showScreen('screen-monthly')">
+    <div class="nav-icon">📅</div>
+    <div class="nav-label">महीना</div>
+  </div>
+  <div class="nav-item" id="nav-goal" onclick="showScreen('screen-goal')">
+    <div class="nav-icon">🎯</div>
+    <div class="nav-label">लक्ष्य</div>
+  </div>
+</div>
+
+<script>
+// Set today's date
+const today = new Date();
+const dateStr = today.toLocaleDateString('hi-IN', {
+  day: 'numeric', month: 'long', year: 'numeric'
+});
+document.getElementById('today-date').textContent = dateStr;
+
+// Set default date in entry form
+const yyyy = today.getFullYear();
+const mm = String(today.getMonth()+1).padStart(2,'0');
+const dd = String(today.getDate()).padStart(2,'0');
+document.getElementById('entry-date').value = `${yyyy}-${mm}-${dd}`;
+
+// Screen navigation
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    const dot = n.querySelector('.nav-dot');
+    if(dot) dot.remove();
+  });
+
+  const navMap = {
+    'screen-home': 'nav-home',
+    'screen-entry': 'nav-entry',
+    'screen-udhaar': 'nav-udhaar',
+    'screen-monthly': 'nav-monthly',
+    'screen-goal': 'nav-goal'
+  };
+
+  const activeNav = document.getElementById(navMap[screenId]);
+  if(activeNav) {
+    activeNav.classList.add('active');
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
+    activeNav.appendChild(dot);
+  }
+}
+
+// Auto calculate profit
+function calculateProfit() {
+  const sales = parseFloat(document.getElementById('entry-sales').value) || 0;
+  const expense = parseFloat(document.getElementById('entry-expense').value) || 0;
+  const udhaar = parseFloat(document.getElementById('entry-udhaar').value) || 0;
+
+  const profit = sales - expense - udhaar;
+  const margin = sales > 0 ? Math.round((profit / sales) * 100) : 0;
+
+  document.getElementById('result-profit').textContent = '₹' + profit.toLocaleString('en-IN');
+  document.getElementById('result-margin').textContent = margin + '%';
+
+  let rating = '—';
+  if(sales >= 5000) rating = '🔥 बहुत अच्छा';
+  else if(sales >= 3000) rating = '👍 अच्छा';
+  else if(sales > 0) rating = '⚠️ धीमा';
+
+  document.getElementById('result-rating').textContent = rating;
+}
+
+// Save entry (local for now — Google Sheets in Phase 5)
+function saveEntry() {
+  const sales = document.getElementById('entry-sales').value;
+  if(!sales) {
+    alert('कुल बिक्री ज़रूर भरें');
+    return;
+  }
+  alert('✅ एंट्री सेव हो गई!\n\nGoogle Sheets connection Phase 5 में होगा।');
+  showScreen('screen-home');
+}
+</script>
+<script>
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(() => console.log('SW registered'))
+    .catch(err => console.log('SW error:', err));
+}
+</script>
+</body>
+</html>

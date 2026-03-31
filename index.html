@@ -12,7 +12,6 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; overflow-x: hidden; }
-/* SYNC STATUS BAR */
 .sync-status-bar { background: #0a1a0a; border-bottom: 1px solid #1a2a1a; padding: 3px 16px; display: flex; align-items: center; gap: 6px; }
 .sync-status-txt { font-size: 8px; color: #3a6a3a; font-weight: 700; }
 .sync-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
@@ -319,15 +318,11 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .hsg-udhaar { background: #1a0808; border: 1px solid #3a1a1a; border-radius: 6px; padding: 6px 4px; text-align: center; }
 .hsg-expense { background: #1a1000; border: 1px solid #3a2000; border-radius: 6px; padding: 6px 4px; text-align: center; }
 .hsg-lbl { font-size: 6px; font-weight: 700; margin-bottom: 2px; }
-.hsg-bikri .hsg-lbl { color: #4a8a10; }
-.hsg-galla .hsg-lbl { color: #4080c0; }
-.hsg-udhaar .hsg-lbl { color: #c04040; }
-.hsg-expense .hsg-lbl { color: #c08020; }
+.hsg-bikri .hsg-lbl { color: #4a8a10; } .hsg-galla .hsg-lbl { color: #4080c0; }
+.hsg-udhaar .hsg-lbl { color: #c04040; } .hsg-expense .hsg-lbl { color: #c08020; }
 .hsg-val { font-size: 12px; font-weight: 800; }
-.hsg-bikri .hsg-val { color: #7dea30; }
-.hsg-galla .hsg-val { color: #60b0f0; }
-.hsg-udhaar .hsg-val { color: #f06060; }
-.hsg-expense .hsg-val { color: #f0b040; }
+.hsg-bikri .hsg-val { color: #7dea30; } .hsg-galla .hsg-val { color: #60b0f0; }
+.hsg-udhaar .hsg-val { color: #f06060; } .hsg-expense .hsg-val { color: #f0b040; }
 .hafta-panel-past .hsg-bikri { background: #0d1f0d; border-color: #1a3a1a; }
 .hafta-panel-past .hsg-bikri .hsg-lbl { color: #2dba4d; }
 .hafta-panel-past .hsg-bikri .hsg-val { color: #4dca4d; }
@@ -423,7 +418,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </head>
 <body>
 
-<!-- AUTH SCREEN 1 — PHONE -->
 <div class="auth-screen" id="screen-phone">
   <div class="auth-logo">📒</div>
   <div class="auth-title">हिसाब-Kitaab</div>
@@ -441,7 +435,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<!-- AUTH SCREEN 2 — OTP -->
 <div class="auth-screen hidden" id="screen-otp">
   <div class="auth-logo">🔐</div>
   <div class="auth-title">OTP दर्ज करें</div>
@@ -468,7 +461,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<!-- AUTH SCREEN 3 — TERMS -->
 <div class="auth-screen hidden" id="screen-terms">
   <div style="width:100%;max-width:400px;display:flex;flex-direction:column;height:100%;max-height:90vh;">
     <div style="text-align:center;margin-bottom:16px;">
@@ -493,10 +485,7 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="main-app" style="display:none;">
-
-<!-- SYNC STATUS BAR (NEW) -->
 <div class="sync-status-bar">
   <span class="sync-dot synced" id="sync-dot"></span>
   <span class="sync-status-txt" id="sync-status-txt">☁️ Cloud Sync चालू है</span>
@@ -557,7 +546,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 
 <div class="toast" id="toast"></div>
 
-<!-- HOME -->
 <div id="s-home" class="screen active">
   <div class="header">
     <div class="header-left">
@@ -571,7 +559,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div><div class="trial-days" id="trial-days-text">⏳ Free Trial</div><div class="trial-sub" id="trial-sub-text">लोड हो रहा है...</div></div>
       <div class="trial-badge">मुफ़्त</div>
     </div>
-
     <div class="hafta-section-head">
       <div class="sec-bar" style="background:#f0b040;"></div>
       <span class="sec-label" style="color:#f0b040;font-size:9px;" id="hafta-month-heading">📅 मार्च 2026 — हफ्तेवार</span>
@@ -579,53 +566,10 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <span class="sec-badge" style="background:#1a1200;color:#6a5020;border:1px solid #3a2000;font-size:6px;">चालू माह</span>
     </div>
     <div class="hafta-grid" id="hafta-grid"></div>
-
-    <div id="hafta-panel-1" class="hafta-panel">
-      <div class="hafta-panel-past">
-        <div class="hafta-panel-meta"><div class="hafta-panel-dates" id="hpd-1"></div><div class="hafta-panel-badge">पूरा हुआ ✅</div></div>
-        <div class="hafta-stats-grid">
-          <div class="hsg-bikri"><div class="hsg-lbl">💰 कुल बिक्री</div><div class="hsg-val" id="hv-bikri-1">₹0</div></div>
-          <div class="hsg-galla"><div class="hsg-lbl">📈 कुल गल्ला</div><div class="hsg-val" id="hv-galla-1">₹0</div></div>
-          <div class="hsg-udhaar"><div class="hsg-lbl">🤝 उधार दिया</div><div class="hsg-val" id="hv-udhaar-1">₹0</div></div>
-          <div class="hsg-expense"><div class="hsg-lbl">🧾 कुल खर्चा</div><div class="hsg-val" id="hv-expense-1">₹0</div></div>
-        </div>
-      </div>
-    </div>
-    <div id="hafta-panel-2" class="hafta-panel">
-      <div class="hafta-panel-past">
-        <div class="hafta-panel-meta"><div class="hafta-panel-dates" id="hpd-2"></div><div class="hafta-panel-badge">पूरा हुआ ✅</div></div>
-        <div class="hafta-stats-grid">
-          <div class="hsg-bikri"><div class="hsg-lbl">💰 कुल बिक्री</div><div class="hsg-val" id="hv-bikri-2">₹0</div></div>
-          <div class="hsg-galla"><div class="hsg-lbl">📈 कुल गल्ला</div><div class="hsg-val" id="hv-galla-2">₹0</div></div>
-          <div class="hsg-udhaar"><div class="hsg-lbl">🤝 उधार दिया</div><div class="hsg-val" id="hv-udhaar-2">₹0</div></div>
-          <div class="hsg-expense"><div class="hsg-lbl">🧾 कुल खर्चा</div><div class="hsg-val" id="hv-expense-2">₹0</div></div>
-        </div>
-      </div>
-    </div>
-    <div id="hafta-panel-3" class="hafta-panel">
-      <div class="hafta-panel-past">
-        <div class="hafta-panel-meta"><div class="hafta-panel-dates" id="hpd-3"></div><div class="hafta-panel-badge">पूरा हुआ ✅</div></div>
-        <div class="hafta-stats-grid">
-          <div class="hsg-bikri"><div class="hsg-lbl">💰 कुल बिक्री</div><div class="hsg-val" id="hv-bikri-3">₹0</div></div>
-          <div class="hsg-galla"><div class="hsg-lbl">📈 कुल गल्ला</div><div class="hsg-val" id="hv-galla-3">₹0</div></div>
-          <div class="hsg-udhaar"><div class="hsg-lbl">🤝 उधार दिया</div><div class="hsg-val" id="hv-udhaar-3">₹0</div></div>
-          <div class="hsg-expense"><div class="hsg-lbl">🧾 कुल खर्चा</div><div class="hsg-val" id="hv-expense-3">₹0</div></div>
-        </div>
-      </div>
-    </div>
-    <div id="hafta-panel-4" class="hafta-panel">
-      <div class="hafta-panel-cur">
-        <div class="hafta-panel-meta"><div class="hafta-panel-dates" id="hpd-4"></div><div class="hafta-panel-badge" id="hpb-4">0/0 दिन</div></div>
-        <div class="hafta-pbar-bg"><div class="hafta-pbar-fill" id="hafta-pbar" style="width:0%"></div></div>
-        <div class="hafta-stats-grid">
-          <div class="hsg-bikri"><div class="hsg-lbl">💰 कुल बिक्री</div><div class="hsg-val" id="hv-bikri-4">₹0</div></div>
-          <div class="hsg-galla"><div class="hsg-lbl">📈 कुल गल्ला</div><div class="hsg-val" id="hv-galla-4">₹0</div></div>
-          <div class="hsg-udhaar"><div class="hsg-lbl">🤝 उधार दिया</div><div class="hsg-val" id="hv-udhaar-4">₹0</div></div>
-          <div class="hsg-expense"><div class="hsg-lbl">🧾 कुल खर्चा</div><div class="hsg-val" id="hv-expense-4">₹0</div></div>
-        </div>
-      </div>
-    </div>
-
+    <div id="hafta-panel-1" class="hafta-panel"><div class="hafta-panel-past"><div class="hafta-panel-meta"><div class="hafta-panel-dates" id="hpd-1"></div><div class="hafta-panel-badge">पूरा हुआ ✅</div></div><div class="hafta-stats-grid"><div class="hsg-bikri"><div class="hsg-lbl">💰 कुल बिक्री</div><div class="hsg-val" id="hv-bikri-1">₹0</div></div><div class="hsg-galla"><div class="hsg-lbl">📈 कुल गल्ला</div><div class="hsg-val" id="hv-galla-1">₹0</div></div><div class="hsg-udhaar"><div class="hsg-lbl">🤝 उधार दिया</div><div class="hsg-val" id="hv-udhaar-1">₹0</div></div><div class="hsg-expense"><div class="hsg-lbl">🧾 कुल खर्चा</div><div class="hsg-val" id="hv-expense-1">₹0</div></div></div></div></div>
+    <div id="hafta-panel-2" class="hafta-panel"><div class="hafta-panel-past"><div class="hafta-panel-meta"><div class="hafta-panel-dates" id="hpd-2"></div><div class="hafta-panel-badge">पूरा हुआ ✅</div></div><div class="hafta-stats-grid"><div class="hsg-bikri"><div class="hsg-lbl">💰 कुल बिक्री</div><div class="hsg-val" id="hv-bikri-2">₹0</div></div><div class="hsg-galla"><div class="hsg-lbl">📈 कुल गल्ला</div><div class="hsg-val" id="hv-galla-2">₹0</div></div><div class="hsg-udhaar"><div class="hsg-lbl">🤝 उधार दिया</div><div class="hsg-val" id="hv-udhaar-2">₹0</div></div><div class="hsg-expense"><div class="hsg-lbl">🧾 कुल खर्चा</div><div class="hsg-val" id="hv-expense-2">₹0</div></div></div></div></div>
+    <div id="hafta-panel-3" class="hafta-panel"><div class="hafta-panel-past"><div class="hafta-panel-meta"><div class="hafta-panel-dates" id="hpd-3"></div><div class="hafta-panel-badge">पूरा हुआ ✅</div></div><div class="hafta-stats-grid"><div class="hsg-bikri"><div class="hsg-lbl">💰 कुल बिक्री</div><div class="hsg-val" id="hv-bikri-3">₹0</div></div><div class="hsg-galla"><div class="hsg-lbl">📈 कुल गल्ला</div><div class="hsg-val" id="hv-galla-3">₹0</div></div><div class="hsg-udhaar"><div class="hsg-lbl">🤝 उधार दिया</div><div class="hsg-val" id="hv-udhaar-3">₹0</div></div><div class="hsg-expense"><div class="hsg-lbl">🧾 कुल खर्चा</div><div class="hsg-val" id="hv-expense-3">₹0</div></div></div></div></div>
+    <div id="hafta-panel-4" class="hafta-panel"><div class="hafta-panel-cur"><div class="hafta-panel-meta"><div class="hafta-panel-dates" id="hpd-4"></div><div class="hafta-panel-badge" id="hpb-4">0/0 दिन</div></div><div class="hafta-pbar-bg"><div class="hafta-pbar-fill" id="hafta-pbar" style="width:0%"></div></div><div class="hafta-stats-grid"><div class="hsg-bikri"><div class="hsg-lbl">💰 कुल बिक्री</div><div class="hsg-val" id="hv-bikri-4">₹0</div></div><div class="hsg-galla"><div class="hsg-lbl">📈 कुल गल्ला</div><div class="hsg-val" id="hv-galla-4">₹0</div></div><div class="hsg-udhaar"><div class="hsg-lbl">🤝 उधार दिया</div><div class="hsg-val" id="hv-udhaar-4">₹0</div></div><div class="hsg-expense"><div class="hsg-lbl">🧾 कुल खर्चा</div><div class="hsg-val" id="hv-expense-4">₹0</div></div></div></div></div>
     <div class="sec-head"><div class="sec-bar" style="background:#4dca4d;"></div><span class="sec-label" style="color:#4dca4d;">💰 बिक्री और गल्ला/कमाई</span><div class="sec-line" style="background:#1a3a1a;"></div></div>
     <div class="kpi-grid">
       <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl">💰 बिक्री</div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">इस हफ़्ते</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
@@ -637,16 +581,12 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#50a0f0;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#50a0f0;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#50a0f0;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#50a0f0;text-align:right;" id="galla-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#f0b040;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#f0b040;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#f0b040;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#f0b040;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-udhaar-kpi"><div class="kpi-panel-inner panel-red"><div style="font-size:8px;color:#f06060;font-weight:800;margin-bottom:8px;">🤝 उधार बही — देर तक दबाएं सुधारने के लिए</div><div id="udhaar-inline-list"></div><div id="udhaar-inline-summary"></div></div></div>
-
     <div class="sec-head"><div class="sec-bar" style="background:#3dca6a;"></div><span class="sec-label" style="color:#3dca6a;">📦 माल की खरीद</span><div class="sec-line" style="background:#1a3a2a;"></div><span class="sec-badge" style="background:#0a2a1a;color:#2dba4d;border:1px solid #1a4a2a;">हफ़्ते में</span></div>
     <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद दिया</span><span class="vg" id="h-maal-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार लिया</span><span class="va" id="h-maal-udhaar">₹0</span></div><div class="dealer-list" id="h-maal-list"><div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
-
     <div class="sec-head"><div class="sec-bar" style="background:#50a0f0;"></div><span class="sec-label" style="color:#50a0f0;">🥣 कच्चा माल</span><div class="sec-line" style="background:#1a2a3a;"></div><span class="sec-badge" style="background:#0a1a2a;color:#3080c0;border:1px solid #1a3a5a;">हफ़्ते में</span></div>
     <div class="sec-card sc-blue"><div class="mini-grid"><div class="mini-card mc-ba"><div class="mini-lbl">कुल सामान</div><div class="mini-val" id="h-kaccha-total">₹0</div></div><div class="mini-card mc-bb"><div class="mini-lbl">रोज़ औसत</div><div class="mini-val" id="h-kaccha-avg">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद चुकाया</span><span class="vb" id="h-kaccha-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार बाकी</span><span class="va" id="h-kaccha-udhaar">₹0</span></div><div class="tag-row" id="h-kaccha-tags"><span class="tag-b">⏳</span></div><div class="dealer-list" id="h-kaccha-list"><div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
-
     <div class="sec-head"><div class="sec-bar" style="background:#f0b040;"></div><span class="sec-label" style="color:#f0b040;">📊 हफ़्ते का हिसाब</span><div class="sec-line" style="background:#3a2a00;"></div></div>
     <div class="sec-card sc-amber"><div class="wr"><span class="wk">बिक्री हुई</span><span class="vg" id="w-sales">₹0</span></div><div class="wr"><span class="wk">माल आया</span><span class="vt" id="w-maal">₹0</span></div><div class="wr"><span class="wk">कच्चा माल</span><span class="vb" id="w-kaccha">₹0</span></div><div class="wr"><span class="wk">अन्य खर्चे</span><span class="vr" id="w-expense">₹0</span></div><hr class="wd"><div class="wr"><span class="wp-k">गल्ला/कमाई</span><span class="wp-v" id="w-profit">₹0</span></div></div>
-
     <div class="sec-head"><div class="sec-bar" style="background:#50a0f0;"></div><span class="sec-label" style="color:#50a0f0;">📅 महीने की एंट्री</span><div class="sec-line" style="background:#1a2a3a;"></div></div>
     <div class="mahiney-section">
       <div class="mahiney-header" onclick="toggleMahiney()">
@@ -673,7 +613,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<!-- नई एंट्री -->
 <div id="s-entry" class="screen">
   <div class="header"><div class="header-left"><div class="header-icon">📝</div><div><div class="header-title">नई एंट्री</div><div class="header-sub">आज की बिक्री दर्ज करें</div></div></div></div>
   <div class="fw">
@@ -700,7 +639,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<!-- माल की खरीद -->
 <div id="s-maal" class="screen">
   <div class="header" style="border-bottom-color:#3dca6a;"><div class="header-left"><div class="header-icon" style="background:#3dca6a;">📦</div><div><div class="header-title">माल की खरीद</div><div class="header-sub" style="color:#3dca6a;">नया माल दर्ज करें</div></div></div></div>
   <div class="fw">
@@ -722,7 +660,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<!-- कच्चा माल -->
 <div id="s-kaccha" class="screen">
   <div class="header" style="border-bottom-color:#50a0f0;"><div class="header-left"><div class="header-icon" style="background:#50a0f0;">🥣</div><div><div class="header-title">कच्चा माल</div><div class="header-sub" style="color:#50a0f0;">आज का सामान दर्ज करें</div></div></div></div>
   <div class="fw">
@@ -744,19 +681,16 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<!-- उधार बही -->
 <div id="s-udhaar" class="screen">
   <div class="header" style="border-bottom-color:#f06060;"><div class="header-left"><div class="header-icon" style="background:#f06060;">🤝</div><div><div class="header-title">उधार बही</div><div class="header-sub" style="color:#f06060;">किसका बाकी है</div></div></div></div>
   <div class="pad" style="padding-top:12px;" id="udhaar-list"><div class="loading">⏳</div></div>
 </div>
 
-<!-- महीने का हिसाब -->
 <div id="s-monthly" class="screen">
   <div class="header"><div class="header-left"><div class="header-icon">📅</div><div><div class="header-title">महीने का हिसाब</div><div class="header-sub">मासिक सारांश</div></div></div></div>
   <div class="pad" style="padding-top:12px;" id="monthly-list"><div class="loading">⏳</div></div>
 </div>
 
-<!-- लक्ष्य -->
 <div id="s-goal" class="screen">
   <div class="header"><div class="header-left"><div class="header-icon">🎯</div><div><div class="header-title">इस महीने का लक्ष्य</div><div class="header-sub">टारगेट ट्रैकर</div></div></div></div>
   <div class="fw">
@@ -781,13 +715,9 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     FIREBASE SDK — Auth + Firestore (NEW)
-     ═══════════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-// ── NEW: Firestore import ──
 import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -801,17 +731,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-// ── NEW: Firestore instance ──
 const db = getFirestore(app);
-
 auth.languageCode = 'hi';
 let confirmationResult = null, recaptchaVerifier = null, resendCountdown = null;
-
-// ════════════════════════════════════════════════════
-// FIRESTORE SYNC ENGINE (NEW)
-// Three functions exposed on window so the non-module
-// script below can call them.
-// ════════════════════════════════════════════════════
 
 function setSyncStatus(state, msg) {
   const dot = document.getElementById('sync-dot');
@@ -821,8 +743,6 @@ function setSyncStatus(state, msg) {
   txt.textContent = msg;
 }
 
-// Write one item to Firestore (fire-and-forget, non-blocking)
-// Path: users/{uid}/{collection}/{item.id}
 window._fsWrite = async function(uid, colName, item) {
   if (!uid || uid === 'default') return;
   try {
@@ -838,7 +758,6 @@ window._fsWrite = async function(uid, colName, item) {
   }
 };
 
-// Delete one record from Firestore (fire-and-forget)
 window._fsDelete = async function(uid, colName, docId) {
   if (!uid || uid === 'default') return;
   try {
@@ -852,8 +771,6 @@ window._fsDelete = async function(uid, colName, docId) {
   }
 };
 
-// On login: pull all 5 collections from Firestore and merge into localStorage
-// Cloud record wins on id-conflict; local-only records are kept (offline writes)
 window._fsLoadAll = async function(uid) {
   if (!uid || uid === 'default') return;
   setSyncStatus('syncing', '☁️ Cloud से data लोड हो रहा है...');
@@ -871,7 +788,6 @@ window._fsLoadAll = async function(uid) {
       const lsKey = 'hk_' + uid + '_' + colName;
       let local = [];
       try { local = JSON.parse(localStorage.getItem(lsKey) || '[]'); } catch(e) { local = []; }
-      // Merge: cloud overwrites matching local, appends new
       const merged = [...local];
       cloudItems.forEach(ci => {
         const idx = merged.findIndex(r => r.id === ci.id);
@@ -887,11 +803,17 @@ window._fsLoadAll = async function(uid) {
   }
 };
 
-// Save user profile to Firestore on first terms agreement
-// Powers the admin lead dashboard
+// ── UPDATED: Parent document भी बनाता है ──
 window._fsRegisterUser = async function(uid, phone, trialStart) {
   if (!uid || uid === 'default') return;
   try {
+    // Parent document बनाएं — admin query के लिए ज़रूरी
+    await setDoc(
+      doc(db, 'users', uid),
+      { exists: true, createdAt: serverTimestamp() },
+      { merge: true }
+    );
+    // Profile save करें
     await setDoc(
       doc(db, 'users', uid, 'profile', 'info'),
       {
@@ -903,17 +825,13 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
         appVersion: '1.0',
         platform: 'PWA'
       },
-      { merge: true } // merge so re-login doesn't overwrite
+      { merge: true }
     );
     console.log('✅ User registered in Firestore');
   } catch(e) {
     console.warn('FS register error:', e);
   }
 };
-
-// ════════════════════════════════════════
-// AUTH — unchanged except agreeTerms
-// ════════════════════════════════════════
 
 function setupRecaptcha() {
   if (recaptchaVerifier) { try { recaptchaVerifier.clear(); } catch(e) {} recaptchaVerifier = null; }
@@ -1001,7 +919,6 @@ window.toggleTermsCheck = function() {
   document.getElementById('terms-agree-btn').disabled = !termsChecked;
 };
 
-// ── UPDATED agreeTerms: also registers user profile in Firestore ──
 window.agreeTerms = async function() {
   if (!termsChecked) return;
   const uid = auth.currentUser ? auth.currentUser.uid : 'unknown';
@@ -1009,7 +926,6 @@ window.agreeTerms = async function() {
   const trialStart = Date.now();
   localStorage.setItem('hk_terms_agreed_' + uid, trialStart.toString());
   localStorage.setItem('hk_trial_start_' + uid, trialStart.toString());
-  // NEW: register in Firestore (non-blocking)
   window._fsRegisterUser(uid, phone, trialStart);
   launchApp(uid);
 };
@@ -1023,7 +939,6 @@ onAuthStateChanged(auth, async user => {
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
     } else {
-      // NEW: load cloud data first, then launch
       await window._fsLoadAll(uid);
       launchApp(uid);
     }
@@ -1050,7 +965,7 @@ function updateTrialBanner(uid) {
   const el = document.getElementById('trial-days-text'), sub = document.getElementById('trial-sub-text');
   if (daysLeft > 30) { el.textContent = '🎉 ' + daysLeft + ' दिन बाकी — Free Trial'; el.style.color = '#4dca4d'; sub.textContent = 'मुफ़्त trial चल रहा है — आराम से उपयोग करें'; }
   else if (daysLeft > 7) { el.textContent = '⏳ ' + daysLeft + ' दिन बाकी'; el.style.color = '#f0b040'; sub.textContent = 'Trial जल्द खत्म होगा — subscribe करें'; }
-  else if (daysLeft > 0) { el.textContent = '🚨 सिर्फ ' + daysLeft + ' दिन बाकी!'; el.style.color = '#f06060'; sub.textContent = 'आज ही subscribe करें — ₹5/दिन से कम'; }
+  else if (daysLeft > 0) { el.textContent = '🚨 सिर्फ ' + daysLeft + ' दिन बाकी!'; el.style.color = '#f06060'; sub.textContent = 'आज ही subscribe करें — ₹3/दिन से कम'; }
   else { el.textContent = '❌ Trial खत्म हो गया'; el.style.color = '#f06060'; sub.textContent = 'Subscribe करें और अपना data सुरक्षित रखें'; }
 }
 
@@ -1066,43 +981,25 @@ window.signOut = async function() { await fbSignOut(auth); location.reload(); };
 });
 </script>
 
-<!-- ═══════════════════════════════════════════════════════
-     APP LOGIC
-     DB object: localStorage PRIMARY + Firestore SHADOW
-     Only push/update/remove changed — read functions intact
-     ═══════════════════════════════════════════════════════ -->
 <script>
 let CURRENT_UID = 'default';
 
-// ════════════════════════════════════════════════════════
-// DB — localStorage-first, Firestore shadow on every write
-// ════════════════════════════════════════════════════════
 const DB = {
   _k(k) { return 'hk_' + CURRENT_UID + '_' + k; },
   get(k) { try { return JSON.parse(localStorage.getItem(this._k(k)) || '[]'); } catch(e) { return []; } },
   set(k,v) { localStorage.setItem(this._k(k), JSON.stringify(v)); },
-
   push(k, item) {
     item.id = Date.now() + '_' + Math.random().toString(36).substr(2,5);
     const a = this.get(k); a.push(item); this.set(k, a);
-    // Firestore shadow write (non-blocking)
     if (window._fsWrite) window._fsWrite(CURRENT_UID, k, item);
     return item;
   },
-
   update(k, id, u) {
     const a = this.get(k), i = a.findIndex(r => r.id === id);
-    if (i > -1) {
-      a[i] = { ...a[i], ...u };
-      this.set(k, a);
-      // Firestore shadow write updated record (non-blocking)
-      if (window._fsWrite) window._fsWrite(CURRENT_UID, k, a[i]);
-    }
+    if (i > -1) { a[i] = { ...a[i], ...u }; this.set(k, a); if (window._fsWrite) window._fsWrite(CURRENT_UID, k, a[i]); }
   },
-
   remove(k, id) {
     this.set(k, this.get(k).filter(r => r.id !== id));
-    // Firestore shadow delete (non-blocking)
     if (window._fsDelete) window._fsDelete(CURRENT_UID, k, id);
   }
 };
@@ -1197,7 +1094,6 @@ function syncUdhaarToBikri(udhaarId,oldGiven,newGiven,udhaarDate,isDelete){
   let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';
   bikri[idx]={...entry,udhaar:newUdhaar,profit:p,margin:m,rating:rt};
   DB.set(K.BIKRI,bikri);
-  // Also shadow-write updated bikri record to Firestore
   if(window._fsWrite) window._fsWrite(CURRENT_UID, K.BIKRI, bikri[idx]);
 }
 
@@ -1225,27 +1121,19 @@ function showActionPopup(type,data){
 }
 function closePopup(){document.getElementById('action-popup').classList.remove('show');}
 function openConfirm(){closePopup();document.getElementById('confirm-popup').classList.add('show');}
-
-function closeConfirm(){
-  document.getElementById('confirm-popup').classList.remove('show');
-}
+function closeConfirm(){document.getElementById('confirm-popup').classList.remove('show');}
 
 function confirmDelete(){
   const deleteId=dpDeleteId;
   const savedDate=dpCurrentDate;
   dpDeleteId=null;
   document.getElementById('confirm-popup').classList.remove('show');
-
   if(deleteId){
     const bikri=DB.get(K.BIKRI);
     const deletedEntry=bikri.find(r=>r.id===deleteId);
     if(deletedEntry&&(deletedEntry.udhaar||0)>0){
       const udhaarRows=DB.get(K.UDHAAR);
-      const toDelete=udhaarRows.filter(r=>{
-        const isAuto=r.name&&(r.name.startsWith('उधार (')||r.name.startsWith('बाकी उधार ('));
-        return isAuto&&r.date===deletedEntry.date;
-      });
-      // Shadow-delete auto-udhaar from Firestore
+      const toDelete=udhaarRows.filter(r=>{const isAuto=r.name&&(r.name.startsWith('उधार (')||r.name.startsWith('बाकी उधार ('));return isAuto&&r.date===deletedEntry.date;});
       toDelete.forEach(r=>{ if(window._fsDelete) window._fsDelete(CURRENT_UID,K.UDHAAR,r.id); });
       DB.set(K.UDHAAR,udhaarRows.filter(r=>!toDelete.find(d=>d.id===r.id)));
     }
@@ -1602,19 +1490,3 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 </script>
 </body>
 </html>
-```
-
----
-
-**अब आपको Firestore Console में एक काम करना है — Firestore Security Rules अपडेट करें:**
-
-Firebase Console → Firestore → Rules → इसे paste करें:
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}

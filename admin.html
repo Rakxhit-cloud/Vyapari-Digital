@@ -32,7 +32,6 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .otp-digit:focus { border-color: #2dba4d; background: #0d1f0d; }
 .resend-txt { font-size: 11px; color: #555; text-align: center; margin-top: 8px; }
 .resend-link { color: #4dca4d; cursor: pointer; font-weight: 700; }
-.wrong-number { font-size: 10px; color: #f06060; text-align: center; margin-top: 10px; }
 .header { background: #0d1f0d; border-bottom: 2px solid #2dba4d; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .header-left { display: flex; align-items: center; gap: 10px; }
 .header-icon { width: 34px; height: 34px; background: #2dba4d; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
@@ -41,15 +40,11 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .logout-btn { background: #1a0808; border: 1px solid #3a1a1a; color: #f06060; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
 .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 14px 16px; background: #0f0f0f; border-bottom: 1px solid #1a1a1a; }
 .stat-card { background: #161616; border-radius: 8px; padding: 10px 12px; border-top: 2px solid; }
-.stat-card.green { border-color: #4dca4d; }
-.stat-card.blue { border-color: #50a0f0; }
-.stat-card.amber { border-color: #f0b040; }
-.stat-card.red { border-color: #f06060; }
+.stat-card.green { border-color: #4dca4d; } .stat-card.blue { border-color: #50a0f0; }
+.stat-card.amber { border-color: #f0b040; } .stat-card.red { border-color: #f06060; }
 .stat-lbl { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
-.stat-card.green .stat-lbl { color: #2dba4d; }
-.stat-card.blue .stat-lbl { color: #50a0f0; }
-.stat-card.amber .stat-lbl { color: #f0b040; }
-.stat-card.red .stat-lbl { color: #f06060; }
+.stat-card.green .stat-lbl { color: #2dba4d; } .stat-card.blue .stat-lbl { color: #50a0f0; }
+.stat-card.amber .stat-lbl { color: #f0b040; } .stat-card.red .stat-lbl { color: #f06060; }
 .stat-val { font-size: 22px; font-weight: 800; color: #fff; }
 .stat-sub { font-size: 8px; color: #444; margin-top: 2px; }
 .toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; gap: 8px; border-bottom: 1px solid #1a1a1a; flex-wrap: wrap; }
@@ -79,9 +74,7 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .date-cell { font-size: 11px; color: #888; white-space: nowrap; }
 .date-sub { font-size: 9px; color: #333; margin-top: 2px; }
 .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; }
-.dot-active { background: #4dca4d; }
-.dot-idle { background: #f0b040; }
-.dot-inactive { background: #f06060; }
+.dot-active { background: #4dca4d; } .dot-idle { background: #f0b040; } .dot-inactive { background: #f06060; }
 .empty-state { text-align: center; padding: 48px 20px; color: #333; }
 .empty-icon { font-size: 36px; margin-bottom: 10px; }
 .loading-state { text-align: center; padding: 48px 20px; }
@@ -162,14 +155,12 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     </div>
     <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
   </div>
-
   <div class="stats-bar">
     <div class="stat-card green"><div class="stat-lbl">Total Users</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">registered</div></div>
     <div class="stat-card blue"><div class="stat-lbl">Active Trial</div><div class="stat-val" id="s-active">—</div><div class="stat-sub">trial चल रहा है</div></div>
     <div class="stat-card amber"><div class="stat-lbl">Expiring Soon</div><div class="stat-val" id="s-warn">—</div><div class="stat-sub">≤ 10 दिन बाकी</div></div>
     <div class="stat-card red"><div class="stat-lbl">Expired</div><div class="stat-val" id="s-expired">—</div><div class="stat-sub">trial खत्म</div></div>
   </div>
-
   <div class="toolbar">
     <input class="search-input" type="text" id="search-box" placeholder="🔍 Phone या UID से खोजें..." oninput="renderTable()">
     <div class="filter-btns">
@@ -180,17 +171,12 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     </div>
     <button class="refresh-btn" onclick="loadUsers()">🔄 Refresh</button>
   </div>
-
   <div class="table-wrap">
     <table class="lead-table">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Phone / UID</th>
-          <th>Trial Status</th>
-          <th>Registered</th>
-          <th>Last Active</th>
-          <th>Entries</th>
+          <th>#</th><th>Phone / UID</th><th>Trial Status</th>
+          <th>Registered</th><th>Last Active</th><th>Entries</th>
         </tr>
       </thead>
       <tbody id="lead-tbody"></tbody>
@@ -201,11 +187,10 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 
 <div class="toast" id="toast"></div>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDzhDpkkjXKWRd1EAbgr3AXe6yFHmXJ9W4",
@@ -234,8 +219,7 @@ window.sendOTP = async function() {
   const errEl = document.getElementById('phone-error');
   errEl.classList.remove('show');
   if (phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) {
-    errEl.textContent = '❌ सही 10 अंक का नंबर डालें';
-    errEl.classList.add('show'); return;
+    errEl.textContent = '❌ सही 10 अंक का नंबर डालें'; errEl.classList.add('show'); return;
   }
   const btn = document.getElementById('send-otp-btn');
   btn.disabled = true; btn.textContent = '⏳ भेज रहे हैं...';
@@ -248,8 +232,7 @@ window.sendOTP = async function() {
     document.getElementById('a1').focus();
     startResendTimer();
   } catch(e) {
-    errEl.textContent = '❌ OTP नहीं भेज सका। दोबारा कोशिश करें।';
-    errEl.classList.add('show');
+    errEl.textContent = '❌ OTP नहीं भेज सका। दोबारा कोशिश करें।'; errEl.classList.add('show');
     btn.disabled = false; btn.textContent = '📨 OTP भेजें';
   }
 };
@@ -265,7 +248,7 @@ window.verifyOTP = async function() {
     await confirmationResult.confirm(otp);
     succEl.textContent = '✅ Verified!'; succEl.classList.add('show'); loader.classList.remove('show');
   } catch(e) {
-    errEl.textContent = '❌ गलत OTP। दोबारा कोशिश करें।'; errEl.classList.add('show');
+    errEl.textContent = '❌ गलत OTP।'; errEl.classList.add('show');
     btn.disabled = false; btn.textContent = '✅ Verify करें'; loader.classList.remove('show');
   }
 };
@@ -303,7 +286,6 @@ function startResendTimer() {
   }, 1000);
 }
 
-// OTP auto-advance
 ['a1','a2','a3','a4','a5','a6'].forEach((id, idx, arr) => {
   const el = document.getElementById(id);
   el.addEventListener('input', () => {
@@ -317,13 +299,11 @@ onAuthStateChanged(auth, user => {
   if (user) {
     const phone = user.phoneNumber || '';
     if (phone !== ADMIN_PHONE) {
-      // Not admin — show access denied
       document.getElementById('screen-phone').classList.add('hidden');
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('access-denied').classList.add('show');
       return;
     }
-    // Admin verified ✅
     document.getElementById('screen-phone').classList.add('hidden');
     document.getElementById('screen-otp').classList.add('hidden');
     document.getElementById('dashboard').style.display = 'block';
@@ -332,22 +312,28 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-window.doLogout = async function() {
-  await fbSignOut(auth);
-  location.reload();
-};
+window.doLogout = async function() { await fbSignOut(auth); location.reload(); };
 
-// Firestore loader
+// ════════════════════════════════════════════════════
+// FIXED LOADER — reads profile/info subcollection
+// directly instead of querying parent documents
+// ════════════════════════════════════════════════════
 window._loadUsersFromFirestore = async function() {
   const users = [];
+
+  // Step 1: get all UIDs from users collection
   const usersSnap = await getDocs(collection(db, 'users'));
-  for (const userDoc of usersSnap.docs) {
-    const uid = userDoc.id;
+  const uids = usersSnap.docs.map(d => d.id);
+
+  // Step 2: for each UID, directly fetch profile/info doc
+  for (const uid of uids) {
     let profile = {};
     try {
-      const profileSnap = await getDocs(collection(db, 'users', uid, 'profile'));
-      profileSnap.forEach(d => { if (d.id === 'info') profile = d.data(); });
+      const infoDoc = await getDoc(doc(db, 'users', uid, 'profile', 'info'));
+      if (infoDoc.exists()) profile = infoDoc.data();
     } catch(e) {}
+
+    // Step 3: get entry counts
     let bikriCount = 0, maalCount = 0, udhaarCount = 0, lastActive = null;
     for (const col of ['bikri', 'maal', 'kaccha', 'udhaar', 'goal']) {
       try {
@@ -364,6 +350,7 @@ window._loadUsersFromFirestore = async function() {
         });
       } catch(e) {}
     }
+
     users.push({ uid, profile, bikriCount, maalCount, udhaarCount, lastActive });
   }
   return users;
@@ -437,7 +424,9 @@ function renderTable() {
   document.getElementById('table-state').innerHTML = '';
   filtered.forEach((u, idx) => {
     const s = getTrialStatus(u.profile.trialStart);
-    const regDate = u.profile.registeredAt ? (u.profile.registeredAt.toDate ? u.profile.registeredAt.toDate() : new Date(u.profile.registeredAt)) : null;
+    const regDate = u.profile.registeredAt
+      ? (u.profile.registeredAt.toDate ? u.profile.registeredAt.toDate() : new Date(u.profile.registeredAt))
+      : null;
     const lastActiveDate = u.lastActive ? new Date(u.lastActive) : null;
     const daysSince = lastActiveDate ? Math.floor((Date.now() - lastActiveDate.getTime()) / (1000*60*60*24)) : null;
     let dotClass = 'dot-inactive', dotLabel = '—';

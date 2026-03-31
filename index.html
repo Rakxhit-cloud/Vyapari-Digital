@@ -490,7 +490,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   <span class="sync-dot synced" id="sync-dot"></span>
   <span class="sync-status-txt" id="sync-status-txt">☁️ Cloud Sync चालू है</span>
 </div>
-
 <div class="popup-overlay" id="action-popup">
   <div class="popup-sheet">
     <div class="popup-title">देर तक दबाया — क्या करें?</div>
@@ -502,7 +501,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <button class="popup-cancel" onclick="closePopup()">रद्द करें</button>
   </div>
 </div>
-
 <div class="confirm-overlay" id="confirm-popup">
   <div class="confirm-box">
     <div class="confirm-icon">🗑️</div>
@@ -514,7 +512,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     </div>
   </div>
 </div>
-
 <div class="edit-overlay" id="edit-popup">
   <div class="edit-sheet">
     <div class="edit-title" id="edit-title">✏️ एंट्री सुधारें</div>
@@ -523,7 +520,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <button class="edit-cancel" onclick="closeEdit()">रद्द करें</button>
   </div>
 </div>
-
 <div class="date-popup-overlay" id="date-popup-overlay" onclick="closeDatePopup(event)">
   <div class="date-popup-sheet" id="date-popup-sheet">
     <div class="date-popup-handle"></div>
@@ -537,13 +533,11 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div id="dp-content"></div>
   </div>
 </div>
-
 <div class="more-menu" id="more-menu">
   <div class="more-item" onclick="go('s-monthly');toggleMore();">📅 महीने का हिसाब</div>
   <div class="more-item" onclick="go('s-goal');toggleMore();">🎯 लक्ष्य</div>
   <div class="more-item" onclick="signOut();">🚪 लॉग आउट</div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <div id="s-home" class="screen active">
@@ -803,17 +797,14 @@ window._fsLoadAll = async function(uid) {
   }
 };
 
-// ── UPDATED: Parent document भी बनाता है ──
 window._fsRegisterUser = async function(uid, phone, trialStart) {
   if (!uid || uid === 'default') return;
   try {
-    // Parent document बनाएं — admin query के लिए ज़रूरी
     await setDoc(
       doc(db, 'users', uid),
       { exists: true, createdAt: serverTimestamp() },
       { merge: true }
     );
-    // Profile save करें
     await setDoc(
       doc(db, 'users', uid, 'profile', 'info'),
       {
@@ -930,6 +921,7 @@ window.agreeTerms = async function() {
   launchApp(uid);
 };
 
+// ── SURGICAL CHANGE: हर login पर parent document ensure करें ──
 onAuthStateChanged(auth, async user => {
   if (user) {
     const uid = user.uid;
@@ -939,6 +931,10 @@ onAuthStateChanged(auth, async user => {
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
     } else {
+      // हर login पर parent document बनाएं — admin के लिए ज़रूरी
+      const phone = user.phoneNumber || '';
+      const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
+      window._fsRegisterUser(uid, phone, trialStart);
       await window._fsLoadAll(uid);
       launchApp(uid);
     }
@@ -983,7 +979,6 @@ window.signOut = async function() { await fbSignOut(auth); location.reload(); };
 
 <script>
 let CURRENT_UID = 'default';
-
 const DB = {
   _k(k) { return 'hk_' + CURRENT_UID + '_' + k; },
   get(k) { try { return JSON.parse(localStorage.getItem(this._k(k)) || '[]'); } catch(e) { return []; } },
@@ -1010,7 +1005,6 @@ const HI_MONTHS=['जनवरी','फ़रवरी','मार्च','अ�
 const CUR_MONTH=TODAY.getMonth(),CUR_YEAR=TODAY.getFullYear(),CUR_DAY=TODAY.getDate();
 const DAYS_IN_MONTH=new Date(CUR_YEAR,CUR_MONTH+1,0).getDate();
 const HAFTA_RANGES=[{start:1,end:7},{start:8,end:14},{start:15,end:21},{start:22,end:DAYS_IN_MONTH}];
-
 function parseLocalDate(ds){if(!ds)return null;const p=ds.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));}
 const TSTR=CUR_YEAR+'-'+String(CUR_MONTH+1).padStart(2,'0')+'-'+String(CUR_DAY).padStart(2,'0');
 const MSTR=CUR_YEAR+'-'+String(CUR_MONTH+1).padStart(2,'0');
@@ -1052,438 +1046,54 @@ function go(id){
 function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
 document.addEventListener('click',e=>{const m=document.getElementById('more-menu'),b=document.getElementById('n-more');if(m&&b&&!m.contains(e.target)&&!b.contains(e.target))m.style.display='none';});
 function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(()=>t.className='toast',3000);}
-
-function toggleKPI(key){
-  const panel=document.getElementById('panel-'+key);
-  const isOpen=panel.classList.contains('open');
-  document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));
-  if(!isOpen){panel.classList.add('open');if(key==='udhaar-kpi')loadUdhaarInline();}
-}
-
-function renderWeeklyTable(containerId,totalId,field,color,dimColor){
-  const bikri=DB.get(K.BIKRI);const rows=[];
-  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const entry=bikri.find(r=>r.date===ds);let val=null;if(entry){val=field==='profit'?calcEntryProfit(entry):(entry[field]||0);}rows.push({ds,val});}
-  const el=document.getElementById(containerId);let total=0;
-  el.innerHTML=rows.map(r=>{if(r.val!==null)total+=r.val;return`<div class="ptbl-row"><div class="ptbl-cell" style="color:#6090d0;">${fmtDayDate(r.ds)}</div><div class="ptbl-cell" style="color:${r.val!==null?color:dimColor};text-align:right;font-weight:${r.val!==null?700:400};font-style:${r.val!==null?'normal':'italic'};">${r.val!==null?fmt(r.val):'कोई नहीं'}</div></div>`;}).join('');
-  document.getElementById(totalId).textContent=fmt(total);
-}
-
-function loadUdhaarInline(){
-  const el=document.getElementById('udhaar-inline-list'),sel=document.getElementById('udhaar-inline-summary');
-  const rows=DB.get(K.UDHAAR);el.innerHTML='';sel.innerHTML='';
-  if(!rows.length){el.innerHTML='<div class="empty" style="padding:12px;">कोई उधार नहीं है</div>';return;}
-  let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;
-  rows.forEach(r=>{
-    const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);
-    let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';
-    if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;
-    const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';
-    const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${initials(r.name)}</div><div><div class="u-name">${r.name||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a'};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a'};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);
-    el.appendChild(card);
-  });
-  sel.innerHTML=`<div class="u-summary"><div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#f06060;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#f06060;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#f0b040;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#3dca6a;">${settledCount}</div></div></div>`;
-}
-
-function syncUdhaarToBikri(udhaarId,oldGiven,newGiven,udhaarDate,isDelete){
-  const bikri=DB.get(K.BIKRI),idx=bikri.findIndex(r=>r.date===udhaarDate&&(r.udhaar||0)>0);
-  if(idx===-1)return;
-  const entry=bikri[idx],diff=isDelete?-(oldGiven||0):(newGiven||0)-(oldGiven||0);
-  if(diff===0)return;
-  const newUdhaar=Math.max(0,(entry.udhaar||0)+diff),s=entry.sales||0,x=entry.expense||0;
-  const p=s-x-newUdhaar,m=s>0?Math.round((p/s)*100):0;
-  let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';
-  bikri[idx]={...entry,udhaar:newUdhaar,profit:p,margin:m,rating:rt};
-  DB.set(K.BIKRI,bikri);
-  if(window._fsWrite) window._fsWrite(CURRENT_UID, K.BIKRI, bikri[idx]);
-}
-
+function toggleKPI(key){const panel=document.getElementById('panel-'+key);const isOpen=panel.classList.contains('open');document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));if(!isOpen){panel.classList.add('open');if(key==='udhaar-kpi')loadUdhaarInline();}}
+function renderWeeklyTable(containerId,totalId,field,color,dimColor){const bikri=DB.get(K.BIKRI);const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const entry=bikri.find(r=>r.date===ds);let val=null;if(entry){val=field==='profit'?calcEntryProfit(entry):(entry[field]||0);}rows.push({ds,val});}const el=document.getElementById(containerId);let total=0;el.innerHTML=rows.map(r=>{if(r.val!==null)total+=r.val;return`<div class="ptbl-row"><div class="ptbl-cell" style="color:#6090d0;">${fmtDayDate(r.ds)}</div><div class="ptbl-cell" style="color:${r.val!==null?color:dimColor};text-align:right;font-weight:${r.val!==null?700:400};font-style:${r.val!==null?'normal':'italic'};">${r.val!==null?fmt(r.val):'कोई नहीं'}</div></div>`;}).join('');document.getElementById(totalId).textContent=fmt(total);}
+function loadUdhaarInline(){const el=document.getElementById('udhaar-inline-list'),sel=document.getElementById('udhaar-inline-summary');const rows=DB.get(K.UDHAAR);el.innerHTML='';sel.innerHTML='';if(!rows.length){el.innerHTML='<div class="empty" style="padding:12px;">कोई उधार नहीं है</div>';return;}let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${initials(r.name)}</div><div><div class="u-name">${r.name||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a'};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a'};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});sel.innerHTML=`<div class="u-summary"><div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#f06060;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#f06060;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#f0b040;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#3dca6a;">${settledCount}</div></div></div>`;}
+function syncUdhaarToBikri(udhaarId,oldGiven,newGiven,udhaarDate,isDelete){const bikri=DB.get(K.BIKRI),idx=bikri.findIndex(r=>r.date===udhaarDate&&(r.udhaar||0)>0);if(idx===-1)return;const entry=bikri[idx],diff=isDelete?-(oldGiven||0):(newGiven||0)-(oldGiven||0);if(diff===0)return;const newUdhaar=Math.max(0,(entry.udhaar||0)+diff),s=entry.sales||0,x=entry.expense||0;const p=s-x-newUdhaar,m=s>0?Math.round((p/s)*100):0;let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';bikri[idx]={...entry,udhaar:newUdhaar,profit:p,margin:m,rating:rt};DB.set(K.BIKRI,bikri);if(window._fsWrite) window._fsWrite(CURRENT_UID, K.BIKRI, bikri[idx]);}
 let pressTimer=null,currentEntry=null;
 function startPress(el,type,id,data){el.classList.add('pressing');pressTimer=setTimeout(()=>{el.classList.remove('pressing');currentEntry={type,id,data};showActionPopup(type,data);},600);}
 function endPress(el){clearTimeout(pressTimer);el.classList.remove('pressing');}
-function makeLPCard(cls,html,type,id,data){
-  const div=document.createElement('div');div.className=cls;div.innerHTML=html;
-  div.addEventListener('touchstart',()=>startPress(div,type,id,data),{passive:true});
-  div.addEventListener('touchend',()=>endPress(div),{passive:true});
-  div.addEventListener('touchcancel',()=>endPress(div),{passive:true});
-  div.addEventListener('mousedown',()=>startPress(div,type,id,data));
-  div.addEventListener('mouseup',()=>endPress(div));
-  div.addEventListener('mouseleave',()=>endPress(div));
-  return div;
-}
-function showActionPopup(type,data){
-  let info='';
-  if(type===K.BIKRI)info=`तारीख: <span>${data.date||'—'}</span><br>बिक्री: <span>${fmt(data.sales)}</span><br>गल्ला/कमाई: <span>${fmt(calcEntryProfit(data))}</span>`;
-  else if(type===K.MAAL)info=`तारीख: <span>${data.date||'—'}</span><br>सप्लायर: <span>${data.supplier||'—'}</span><br>रकम: <span>${fmt(data.amount)}</span>`;
-  else if(type===K.KACCHA)info=`तारीख: <span>${data.date||'—'}</span><br>सामान: <span>${data.name||'—'}</span><br>रकम: <span>${fmt(data.amount)}</span>`;
-  else if(type===K.UDHAAR){const rem=(data.given||0)-(data.returned||0);info=`ग्राहक: <span>${data.name||'—'}</span><br>बाकी: <span>${fmt(rem)}</span>`;}
-  document.getElementById('popup-info').innerHTML=info;
-  document.getElementById('action-popup').classList.add('show');
-}
+function makeLPCard(cls,html,type,id,data){const div=document.createElement('div');div.className=cls;div.innerHTML=html;div.addEventListener('touchstart',()=>startPress(div,type,id,data),{passive:true});div.addEventListener('touchend',()=>endPress(div),{passive:true});div.addEventListener('touchcancel',()=>endPress(div),{passive:true});div.addEventListener('mousedown',()=>startPress(div,type,id,data));div.addEventListener('mouseup',()=>endPress(div));div.addEventListener('mouseleave',()=>endPress(div));return div;}
+function showActionPopup(type,data){let info='';if(type===K.BIKRI)info=`तारीख: <span>${data.date||'—'}</span><br>बिक्री: <span>${fmt(data.sales)}</span><br>गल्ला/कमाई: <span>${fmt(calcEntryProfit(data))}</span>`;else if(type===K.MAAL)info=`तारीख: <span>${data.date||'—'}</span><br>सप्लायर: <span>${data.supplier||'—'}</span><br>रकम: <span>${fmt(data.amount)}</span>`;else if(type===K.KACCHA)info=`तारीख: <span>${data.date||'—'}</span><br>सामान: <span>${data.name||'—'}</span><br>रकम: <span>${fmt(data.amount)}</span>`;else if(type===K.UDHAAR){const rem=(data.given||0)-(data.returned||0);info=`ग्राहक: <span>${data.name||'—'}</span><br>बाकी: <span>${fmt(rem)}</span>`;}document.getElementById('popup-info').innerHTML=info;document.getElementById('action-popup').classList.add('show');}
 function closePopup(){document.getElementById('action-popup').classList.remove('show');}
 function openConfirm(){closePopup();document.getElementById('confirm-popup').classList.add('show');}
 function closeConfirm(){document.getElementById('confirm-popup').classList.remove('show');}
-
-function confirmDelete(){
-  const deleteId=dpDeleteId;
-  const savedDate=dpCurrentDate;
-  dpDeleteId=null;
-  document.getElementById('confirm-popup').classList.remove('show');
-  if(deleteId){
-    const bikri=DB.get(K.BIKRI);
-    const deletedEntry=bikri.find(r=>r.id===deleteId);
-    if(deletedEntry&&(deletedEntry.udhaar||0)>0){
-      const udhaarRows=DB.get(K.UDHAAR);
-      const toDelete=udhaarRows.filter(r=>{const isAuto=r.name&&(r.name.startsWith('उधार (')||r.name.startsWith('बाकी उधार ('));return isAuto&&r.date===deletedEntry.date;});
-      toDelete.forEach(r=>{ if(window._fsDelete) window._fsDelete(CURRENT_UID,K.UDHAAR,r.id); });
-      DB.set(K.UDHAAR,udhaarRows.filter(r=>!toDelete.find(d=>d.id===r.id)));
-    }
-    DB.remove(K.BIKRI,deleteId);
-    toast('✅ एंट्री हट गई!');
-    loadHome();loadUdhaarKPI();
-    if(savedDate)setTimeout(()=>openDatePopup(savedDate),200);
-    return;
-  }
-  if(!currentEntry)return;
-  const{type,id,data}=currentEntry;
-  if(type===K.UDHAAR){syncUdhaarToBikri(id,data.given,0,data.date,true);toast('✅ उधार हटा — बिक्री अपडेट हो गई!');}
-  else toast('✅ एंट्री हट गई!');
-  DB.remove(type,id);currentEntry=null;
-  loadHome();loadUdhaar();loadUdhaarKPI();
-  if(document.getElementById('panel-udhaar-kpi').classList.contains('open'))loadUdhaarInline();
-}
-
+function confirmDelete(){const deleteId=dpDeleteId;const savedDate=dpCurrentDate;dpDeleteId=null;document.getElementById('confirm-popup').classList.remove('show');if(deleteId){const bikri=DB.get(K.BIKRI);const deletedEntry=bikri.find(r=>r.id===deleteId);if(deletedEntry&&(deletedEntry.udhaar||0)>0){const udhaarRows=DB.get(K.UDHAAR);const toDelete=udhaarRows.filter(r=>{const isAuto=r.name&&(r.name.startsWith('उधार (')||r.name.startsWith('बाकी उधार ('));return isAuto&&r.date===deletedEntry.date;});toDelete.forEach(r=>{ if(window._fsDelete) window._fsDelete(CURRENT_UID,K.UDHAAR,r.id); });DB.set(K.UDHAAR,udhaarRows.filter(r=>!toDelete.find(d=>d.id===r.id)));}DB.remove(K.BIKRI,deleteId);toast('✅ एंट्री हट गई!');loadHome();loadUdhaarKPI();if(savedDate)setTimeout(()=>openDatePopup(savedDate),200);return;}if(!currentEntry)return;const{type,id,data}=currentEntry;if(type===K.UDHAAR){syncUdhaarToBikri(id,data.given,0,data.date,true);toast('✅ उधार हटा — बिक्री अपडेट हो गई!');}else toast('✅ एंट्री हट गई!');DB.remove(type,id);currentEntry=null;loadHome();loadUdhaar();loadUdhaarKPI();if(document.getElementById('panel-udhaar-kpi').classList.contains('open'))loadUdhaarInline();}
 function openEdit(){closePopup();if(!currentEntry)return;buildEditSheet(currentEntry.type,currentEntry.data);}
 function closeEdit(){document.getElementById('edit-popup').classList.remove('show');}
-
-function buildEditSheet(type,data){
-  let title='✏️ एंट्री सुधारें',fields='';
-  if(type===K.BIKRI){title='✏️ बिक्री एंट्री सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">💰 बिक्री ₹</div><input type="number" class="edit-input" id="ed-sales" value="${data.sales||''}"></div><div class="edit-row"><div class="edit-lbl">💵 नकद ₹</div><input type="number" class="edit-input" id="ed-cash" value="${data.cash||''}"></div><div class="edit-row"><div class="edit-lbl">📱 UPI ₹</div><input type="number" class="edit-input" id="ed-upi" value="${data.upi||''}"></div><div class="edit-row"><div class="edit-lbl">🧾 खर्चा ₹</div><input type="number" class="edit-input" id="ed-expense" value="${data.expense||''}"></div><div class="edit-row"><div class="edit-lbl">🤝 उधार ₹</div><input type="number" class="edit-input" id="ed-udhaar" value="${data.udhaar||''}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-notes" value="${data.notes||''}"></div>`;}
-  else if(type===K.MAAL){title='✏️ माल सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">🏪 सप्लायर</div><input type="text" class="edit-input" id="ed-supplier" value="${data.supplier||''}"></div><div class="edit-row"><div class="edit-lbl">📦 माल</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 रकम ₹</div><input type="number" class="edit-input" id="ed-amount" value="${data.amount||''}"></div><div class="edit-row"><div class="edit-lbl">💳 भुगतान</div><input type="text" class="edit-input" id="ed-pay" value="${data.pay||'नकद'}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-note" value="${data.note||''}"></div>`;}
-  else if(type===K.KACCHA){title='✏️ कच्चा माल सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">🥣 सामान</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 रकम ₹</div><input type="number" class="edit-input" id="ed-amount" value="${data.amount||''}"></div><div class="edit-row"><div class="edit-lbl">🏪 कहाँ से</div><input type="text" class="edit-input" id="ed-source" value="${data.source||''}"></div><div class="edit-row"><div class="edit-lbl">💳 भुगतान</div><input type="text" class="edit-input" id="ed-pay" value="${data.pay||'नकद'}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-note" value="${data.note||''}"></div>`;}
-  else if(type===K.UDHAAR){title='✏️ उधार सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">👤 नाम</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 उधार दिया ₹</div><input type="number" class="edit-input" id="ed-given" value="${data.given||''}"></div><div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">✅ वापस मिला ₹</div><input type="number" class="edit-input" id="ed-returned" value="${data.returned||''}"></div>`;}
-  document.getElementById('edit-title').textContent=title;
-  document.getElementById('edit-fields').innerHTML=fields;
-  document.getElementById('edit-popup').classList.add('show');
-}
-
-function saveEdit(){
-  if(!currentEntry)return;
-  const{type,id,data}=currentEntry;
-  const g=eid=>{const el=document.getElementById(eid);return el?el.value:'';};
-  let updates={};
-  if(type===K.BIKRI){const s=parseFloat(g('ed-sales'))||0,x=parseFloat(g('ed-expense'))||0,u=parseFloat(g('ed-udhaar'))||0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';updates={date:g('ed-date'),sales:s,cash:parseFloat(g('ed-cash'))||0,upi:parseFloat(g('ed-upi'))||0,expense:x,udhaar:u,notes:g('ed-notes'),profit:p,margin:m,rating:rt};}
-  else if(type===K.MAAL){updates={date:g('ed-date'),supplier:g('ed-supplier'),name:g('ed-name'),amount:parseFloat(g('ed-amount'))||0,pay:g('ed-pay'),note:g('ed-note')};}
-  else if(type===K.KACCHA){updates={date:g('ed-date'),name:g('ed-name'),amount:parseFloat(g('ed-amount'))||0,source:g('ed-source'),pay:g('ed-pay'),note:g('ed-note')};}
-  else if(type===K.UDHAAR){const given=parseFloat(g('ed-given'))||0,ret=parseFloat(g('ed-returned'))||0,rem=given-ret,days=daysSince(g('ed-date'));let status='🟡 PENDING';if(rem<=0)status='🟢 SETTLED';else if(days>=7)status='🔴 OVERDUE';updates={name:g('ed-name'),given,date:g('ed-date'),returned:ret,remaining:rem,days,status};syncUdhaarToBikri(id,data.given||0,given,g('ed-date')||data.date,false);toast('✅ उधार सुधर गई!');}
-  DB.update(type,id,updates);
-  if(type!==K.UDHAAR)toast('✅ एंट्री सुधर गई!');
-  closeEdit();currentEntry=null;loadHome();loadUdhaar();loadUdhaarKPI();
-  if(document.getElementById('panel-udhaar-kpi').classList.contains('open'))loadUdhaarInline();
-  if(dpCurrentDate){const savedDate=dpCurrentDate;closeDatePopupDirect();setTimeout(()=>openDatePopup(savedDate),300);}
-}
-
+function buildEditSheet(type,data){let title='✏️ एंट्री सुधारें',fields='';if(type===K.BIKRI){title='✏️ बिक्री एंट्री सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">💰 बिक्री ₹</div><input type="number" class="edit-input" id="ed-sales" value="${data.sales||''}"></div><div class="edit-row"><div class="edit-lbl">💵 नकद ₹</div><input type="number" class="edit-input" id="ed-cash" value="${data.cash||''}"></div><div class="edit-row"><div class="edit-lbl">📱 UPI ₹</div><input type="number" class="edit-input" id="ed-upi" value="${data.upi||''}"></div><div class="edit-row"><div class="edit-lbl">🧾 खर्चा ₹</div><input type="number" class="edit-input" id="ed-expense" value="${data.expense||''}"></div><div class="edit-row"><div class="edit-lbl">🤝 उधार ₹</div><input type="number" class="edit-input" id="ed-udhaar" value="${data.udhaar||''}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-notes" value="${data.notes||''}"></div>`;}else if(type===K.MAAL){title='✏️ माल सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">🏪 सप्लायर</div><input type="text" class="edit-input" id="ed-supplier" value="${data.supplier||''}"></div><div class="edit-row"><div class="edit-lbl">📦 माल</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 रकम ₹</div><input type="number" class="edit-input" id="ed-amount" value="${data.amount||''}"></div><div class="edit-row"><div class="edit-lbl">💳 भुगतान</div><input type="text" class="edit-input" id="ed-pay" value="${data.pay||'नकद'}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-note" value="${data.note||''}"></div>`;}else if(type===K.KACCHA){title='✏️ कच्चा माल सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">🥣 सामान</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 रकम ₹</div><input type="number" class="edit-input" id="ed-amount" value="${data.amount||''}"></div><div class="edit-row"><div class="edit-lbl">🏪 कहाँ से</div><input type="text" class="edit-input" id="ed-source" value="${data.source||''}"></div><div class="edit-row"><div class="edit-lbl">💳 भुगतान</div><input type="text" class="edit-input" id="ed-pay" value="${data.pay||'नकद'}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-note" value="${data.note||''}"></div>`;}else if(type===K.UDHAAR){title='✏️ उधार सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">👤 नाम</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 उधार दिया ₹</div><input type="number" class="edit-input" id="ed-given" value="${data.given||''}"></div><div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">✅ वापस मिला ₹</div><input type="number" class="edit-input" id="ed-returned" value="${data.returned||''}"></div>`;}document.getElementById('edit-title').textContent=title;document.getElementById('edit-fields').innerHTML=fields;document.getElementById('edit-popup').classList.add('show');}
+function saveEdit(){if(!currentEntry)return;const{type,id,data}=currentEntry;const g=eid=>{const el=document.getElementById(eid);return el?el.value:'';};let updates={};if(type===K.BIKRI){const s=parseFloat(g('ed-sales'))||0,x=parseFloat(g('ed-expense'))||0,u=parseFloat(g('ed-udhaar'))||0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';updates={date:g('ed-date'),sales:s,cash:parseFloat(g('ed-cash'))||0,upi:parseFloat(g('ed-upi'))||0,expense:x,udhaar:u,notes:g('ed-notes'),profit:p,margin:m,rating:rt};}else if(type===K.MAAL){updates={date:g('ed-date'),supplier:g('ed-supplier'),name:g('ed-name'),amount:parseFloat(g('ed-amount'))||0,pay:g('ed-pay'),note:g('ed-note')};}else if(type===K.KACCHA){updates={date:g('ed-date'),name:g('ed-name'),amount:parseFloat(g('ed-amount'))||0,source:g('ed-source'),pay:g('ed-pay'),note:g('ed-note')};}else if(type===K.UDHAAR){const given=parseFloat(g('ed-given'))||0,ret=parseFloat(g('ed-returned'))||0,rem=given-ret,days=daysSince(g('ed-date'));let status='🟡 PENDING';if(rem<=0)status='🟢 SETTLED';else if(days>=7)status='🔴 OVERDUE';updates={name:g('ed-name'),given,date:g('ed-date'),returned:ret,remaining:rem,days,status};syncUdhaarToBikri(id,data.given||0,given,g('ed-date')||data.date,false);toast('✅ उधार सुधर गई!');}DB.update(type,id,updates);if(type!==K.UDHAAR)toast('✅ एंट्री सुधर गई!');closeEdit();currentEntry=null;loadHome();loadUdhaar();loadUdhaarKPI();if(document.getElementById('panel-udhaar-kpi').classList.contains('open'))loadUdhaarInline();if(dpCurrentDate){const savedDate=dpCurrentDate;closeDatePopupDirect();setTimeout(()=>openDatePopup(savedDate),300);}}
 let mahineyOpen=false,calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calSelectedMonth=null;
 function toggleMahiney(){mahineyOpen=!mahineyOpen;document.getElementById('mahiney-body').classList.toggle('open',mahineyOpen);document.getElementById('mahiney-arrow').classList.toggle('open',mahineyOpen);if(mahineyOpen)buildMonthGrid();}
-function buildMonthGrid(){
-  const bikri=DB.get(K.BIKRI),countByMonth={};
-  bikri.forEach(r=>{if(r.date){const m=parseInt(r.date.split('-')[1])-1;countByMonth[m]=(countByMonth[m]||0)+1;}});
-  const grid=document.getElementById('month-grid');grid.innerHTML='';
-  for(let m=0;m<12;m++){
-    const count=countByMonth[m]||0,isSelected=calSelectedMonth===m;
-    const div=document.createElement('div');div.className='month-pill'+(count>0?' has-data':'')+(isSelected?' selected':'');
-    if(isSelected){const badge=document.createElement('div');badge.className='month-sel-badge';badge.textContent='● चुना';div.appendChild(badge);}
-    const nameEl=document.createElement('div');nameEl.className='month-pill-name';nameEl.textContent=HI_MONTHS[m];div.appendChild(nameEl);
-    const cntEl=document.createElement('div');cntEl.className='month-pill-count';cntEl.textContent=count>0?count+' एंट्री':'खाली';div.appendChild(cntEl);
-    div.onclick=()=>selectMonth(m);grid.appendChild(div);
-  }
-}
+function buildMonthGrid(){const bikri=DB.get(K.BIKRI),countByMonth={};bikri.forEach(r=>{if(r.date){const m=parseInt(r.date.split('-')[1])-1;countByMonth[m]=(countByMonth[m]||0)+1;}});const grid=document.getElementById('month-grid');grid.innerHTML='';for(let m=0;m<12;m++){const count=countByMonth[m]||0,isSelected=calSelectedMonth===m;const div=document.createElement('div');div.className='month-pill'+(count>0?' has-data':'')+(isSelected?' selected':'');if(isSelected){const badge=document.createElement('div');badge.className='month-sel-badge';badge.textContent='● चुना';div.appendChild(badge);}const nameEl=document.createElement('div');nameEl.className='month-pill-name';nameEl.textContent=HI_MONTHS[m];div.appendChild(nameEl);const cntEl=document.createElement('div');cntEl.className='month-pill-count';cntEl.textContent=count>0?count+' एंट्री':'खाली';div.appendChild(cntEl);div.onclick=()=>selectMonth(m);grid.appendChild(div);}}
 function selectMonth(m){calSelectedMonth=m;calYear=TODAY.getFullYear();calMonth=m;buildMonthGrid();document.getElementById('cal-section').style.display='block';renderCalendar();document.getElementById('mahiney-sub').textContent=HI_MONTHS[m]+' '+calYear+' — तारीख टैप करें';}
-
-function renderCalendar(){
-  document.getElementById('cal-label').textContent=HI_MONTHS[calMonth]+' '+calYear;
-  const bikri=DB.get(K.BIKRI);
-  const monthPrefix=calYear+'-'+String(calMonth+1).padStart(2,'0');
-  const entryDates=new Set(bikri.filter(r=>r.date&&r.date.startsWith(monthPrefix)).map(r=>r.date));
-  const firstDay=new Date(calYear,calMonth,1).getDay(),startOffset=(firstDay===0)?6:firstDay-1;
-  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
-  const grid=document.getElementById('cal-grid');grid.innerHTML='';
-  for(let i=0;i<startOffset;i++){const c=document.createElement('div');c.className='cal-cell empty';grid.appendChild(c);}
-  for(let d=1;d<=daysInMonth;d++){
-    const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const hasEntry=entryDates.has(ds),isToday=ds===TSTR;
-    const c=document.createElement('div');c.className='cal-cell '+(hasEntry?'has-entry':'no-entry')+(isToday?' today-cell':'');
-    c.textContent=d;
-    if(hasEntry){const dot=document.createElement('div');dot.className='cal-entry-dot';c.appendChild(dot);}
-    if(isToday){const lbl=document.createElement('div');lbl.className='cal-today-lbl';lbl.textContent='आज';c.appendChild(lbl);}
-    c.onclick=()=>openDatePopup(ds);grid.appendChild(c);
-  }
-}
+function renderCalendar(){document.getElementById('cal-label').textContent=HI_MONTHS[calMonth]+' '+calYear;const bikri=DB.get(K.BIKRI);const monthPrefix=calYear+'-'+String(calMonth+1).padStart(2,'0');const entryDates=new Set(bikri.filter(r=>r.date&&r.date.startsWith(monthPrefix)).map(r=>r.date));const firstDay=new Date(calYear,calMonth,1).getDay(),startOffset=(firstDay===0)?6:firstDay-1;const daysInMonth=new Date(calYear,calMonth+1,0).getDate();const grid=document.getElementById('cal-grid');grid.innerHTML='';for(let i=0;i<startOffset;i++){const c=document.createElement('div');c.className='cal-cell empty';grid.appendChild(c);}for(let d=1;d<=daysInMonth;d++){const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');const hasEntry=entryDates.has(ds),isToday=ds===TSTR;const c=document.createElement('div');c.className='cal-cell '+(hasEntry?'has-entry':'no-entry')+(isToday?' today-cell':'');c.textContent=d;if(hasEntry){const dot=document.createElement('div');dot.className='cal-entry-dot';c.appendChild(dot);}if(isToday){const lbl=document.createElement('div');lbl.className='cal-today-lbl';lbl.textContent='आज';c.appendChild(lbl);}c.onclick=()=>openDatePopup(ds);grid.appendChild(c);}}
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
-
 let dpCurrentDate=null,dpDeleteId=null;
-function openDatePopup(ds){
-  if(!ds)return;
-  dpCurrentDate=ds;
-  const bikri=DB.get(K.BIKRI),entries=bikri.filter(r=>r.date===ds);
-  const d=parseLocalDate(ds);
-  const dateLabel=d.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const isToday=ds===TSTR;
-  const titleEl=document.getElementById('dp-title'),subEl=document.getElementById('dp-sub');
-  titleEl.textContent='📅 '+dateLabel;titleEl.style.color=entries.length>0?'#5dea5d':'#f0c050';
-  document.querySelector('.date-popup-sheet').style.borderTopColor=entries.length>0?'#2dba4d':'#f0b040';
-  subEl.textContent=isToday?'आज · '+(entries.length>0?entries.length+' एंट्री':'कोई नहीं'):(entries.length>0?entries.length+' एंट्री':'कोई एंट्री नहीं');
-  subEl.style.color=entries.length>0?'#2a7a2a':'#8a6020';
-  const content=document.getElementById('dp-content');content.innerHTML='';
-  if(entries.length>0){
-    entries.forEach(r=>{
-      const rating=r.rating||'';let cls='dp-entry-card';let profCol,lblCol;
-      if(rating.includes('बहुत अच्छा')){cls+=' dp-great';profCol='#5dea5d';lblCol='#3a8a3a';}
-      else if(rating.includes('अच्छा')){cls+=' dp-ok';profCol='#f0b040';lblCol='#8a6020';}
-      else{cls+=' dp-slow';profCol='#f06060';lblCol='#6a2020';}
-      const profit=calcEntryProfit(r),margin=r.sales>0?Math.round((profit/r.sales)*100):0;
-      const card=document.createElement('div');card.className=cls;
-      card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div class="dp-rating" style="color:${profCol};">${rating}</div><div class="dp-grid"><div class="dp-item" style="color:${lblCol};">बिक्री: <span style="font-weight:800;color:${profCol};">${fmt(r.sales)}</span></div><div class="dp-item" style="color:#8a6020;">खर्चा: <span style="font-weight:800;color:#f0c050;">${fmt(r.expense)}</span></div>${r.cash?`<div class="dp-item" style="color:#2a6a3a;">नकद: <span style="font-weight:800;color:#3dca6a;">${fmt(r.cash)}</span></div>`:''} ${r.upi?`<div class="dp-item" style="color:#305080;">UPI: <span style="font-weight:800;color:#60b0f0;">${fmt(r.upi)}</span></div>`:''} ${r.udhaar?`<div class="dp-item" style="color:#6a2020;">उधार: <span style="font-weight:800;color:#f06060;">${fmt(r.udhaar)}</span></div>`:''}</div>${r.notes?`<div class="dp-note">📝 ${r.notes}</div>`:''}</div><div class="dp-right"><div class="dp-profit">${fmt(profit)}</div><div class="dp-margin">${margin}%</div></div></div><div class="dp-actions"><button class="dp-edit-btn">✏️ सुधारें</button><button class="dp-del-btn">🗑️ हटाएं</button></div>`;
-      card.querySelector('.dp-edit-btn').onclick=()=>{currentEntry={type:K.BIKRI,id:r.id,data:r};closeDatePopupDirect();setTimeout(()=>buildEditSheet(K.BIKRI,r),200);};
-      card.querySelector('.dp-del-btn').onclick=()=>{dpDeleteId=r.id;document.getElementById('confirm-popup').classList.add('show');};
-      content.appendChild(card);
-    });
-  } else {
-    content.innerHTML=`<div class="dp-empty-box"><div class="dp-empty-icon">📋</div><div class="dp-empty-title">इस दिन कोई एंट्री नहीं</div><div class="dp-empty-sub">नई एंट्री जोड़ना चाहते हैं?</div></div><button class="dp-add-btn" id="dp-add-btn">➕ इस तारीख की एंट्री जोड़ें</button>`;
-    document.getElementById('dp-add-btn').onclick=()=>{closeDatePopupDirect();document.getElementById('e-date').value=ds;setTimeout(()=>go('s-entry'),200);};
-  }
-  document.getElementById('date-popup-overlay').classList.add('show');
-}
+function openDatePopup(ds){if(!ds)return;dpCurrentDate=ds;const bikri=DB.get(K.BIKRI),entries=bikri.filter(r=>r.date===ds);const d=parseLocalDate(ds);const dateLabel=d.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const isToday=ds===TSTR;const titleEl=document.getElementById('dp-title'),subEl=document.getElementById('dp-sub');titleEl.textContent='📅 '+dateLabel;titleEl.style.color=entries.length>0?'#5dea5d':'#f0c050';document.querySelector('.date-popup-sheet').style.borderTopColor=entries.length>0?'#2dba4d':'#f0b040';subEl.textContent=isToday?'आज · '+(entries.length>0?entries.length+' एंट्री':'कोई नहीं'):(entries.length>0?entries.length+' एंट्री':'कोई एंट्री नहीं');subEl.style.color=entries.length>0?'#2a7a2a':'#8a6020';const content=document.getElementById('dp-content');content.innerHTML='';if(entries.length>0){entries.forEach(r=>{const rating=r.rating||'';let cls='dp-entry-card';let profCol,lblCol;if(rating.includes('बहुत अच्छा')){cls+=' dp-great';profCol='#5dea5d';lblCol='#3a8a3a';}else if(rating.includes('अच्छा')){cls+=' dp-ok';profCol='#f0b040';lblCol='#8a6020';}else{cls+=' dp-slow';profCol='#f06060';lblCol='#6a2020';}const profit=calcEntryProfit(r),margin=r.sales>0?Math.round((profit/r.sales)*100):0;const card=document.createElement('div');card.className=cls;card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div class="dp-rating" style="color:${profCol};">${rating}</div><div class="dp-grid"><div class="dp-item" style="color:${lblCol};">बिक्री: <span style="font-weight:800;color:${profCol};">${fmt(r.sales)}</span></div><div class="dp-item" style="color:#8a6020;">खर्चा: <span style="font-weight:800;color:#f0c050;">${fmt(r.expense)}</span></div>${r.cash?`<div class="dp-item" style="color:#2a6a3a;">नकद: <span style="font-weight:800;color:#3dca6a;">${fmt(r.cash)}</span></div>`:''} ${r.upi?`<div class="dp-item" style="color:#305080;">UPI: <span style="font-weight:800;color:#60b0f0;">${fmt(r.upi)}</span></div>`:''} ${r.udhaar?`<div class="dp-item" style="color:#6a2020;">उधार: <span style="font-weight:800;color:#f06060;">${fmt(r.udhaar)}</span></div>`:''}</div>${r.notes?`<div class="dp-note">📝 ${r.notes}</div>`:''}</div><div class="dp-right"><div class="dp-profit">${fmt(profit)}</div><div class="dp-margin">${margin}%</div></div></div><div class="dp-actions"><button class="dp-edit-btn">✏️ सुधारें</button><button class="dp-del-btn">🗑️ हटाएं</button></div>`;card.querySelector('.dp-edit-btn').onclick=()=>{currentEntry={type:K.BIKRI,id:r.id,data:r};closeDatePopupDirect();setTimeout(()=>buildEditSheet(K.BIKRI,r),200);};card.querySelector('.dp-del-btn').onclick=()=>{dpDeleteId=r.id;document.getElementById('confirm-popup').classList.add('show');};content.appendChild(card);});}else{content.innerHTML=`<div class="dp-empty-box"><div class="dp-empty-icon">📋</div><div class="dp-empty-title">इस दिन कोई एंट्री नहीं</div><div class="dp-empty-sub">नई एंट्री जोड़ना चाहते हैं?</div></div><button class="dp-add-btn" id="dp-add-btn">➕ इस तारीख की एंट्री जोड़ें</button>`;document.getElementById('dp-add-btn').onclick=()=>{closeDatePopupDirect();document.getElementById('e-date').value=ds;setTimeout(()=>go('s-entry'),200);};}document.getElementById('date-popup-overlay').classList.add('show');}
 function closeDatePopup(e){if(e.target===document.getElementById('date-popup-overlay'))closeDatePopupDirect();}
 function closeDatePopupDirect(){document.getElementById('date-popup-overlay').classList.remove('show');dpCurrentDate=null;}
-
-function calcProfit(){
-  const s=parseFloat(document.getElementById('e-sales').value)||0,x=parseFloat(document.getElementById('e-expense').value)||0,u=parseFloat(document.getElementById('e-udhaar').value)||0;
-  const p=s-x-u,m=s>0?Math.round((p/s)*100):0;
-  document.getElementById('r-profit').textContent='₹'+p.toLocaleString('en-IN');
-  document.getElementById('r-margin').textContent=m+'%';
-  let r='—';if(s>=5000)r='🔥 बहुत अच्छा';else if(s>=3000)r='👍 अच्छा';else if(s>0)r='⚠️ धीमा';
-  document.getElementById('r-rating').textContent=r;
-}
-function onUdhaarChange(){
-  calcProfit();const val=parseFloat(document.getElementById('e-udhaar').value)||0;
-  const sec=document.getElementById('udhaar-persons-section');
-  if(val>0){sec.style.display='block';if(!document.querySelector('.udhaar-person-row'))addPersonRow();}else sec.style.display='none';
-}
-function addPersonRow(name='',amt=''){
-  const list=document.getElementById('udhaar-persons-list');
-  const row=document.createElement('div');row.className='udhaar-person-row';
-  row.innerHTML=`<input type="text" class="udhaar-person-name" placeholder="ग्राहक का नाम" value="${name}"><input type="number" class="udhaar-person-amt" placeholder="₹0" value="${amt}"><button class="remove-person-btn" onclick="this.parentElement.remove()">✕</button>`;
-  list.appendChild(row);
-}
-function setPay(px,type){
-  document.getElementById(px+'-pay').value=type;
-  document.getElementById(px+'-nbtn').className='pbtn'+(type==='nakad'?' pn':'');
-  document.getElementById(px+'-ubtn').className='pbtn'+(type==='udhaar'?' pu':'');
-}
-
-function saveEntry(){
-  const s=parseFloat(document.getElementById('e-sales').value)||0;
-  if(!s){toast('❌ कुल बिक्री ज़रूर भरें',true);return;}
-  const date=document.getElementById('e-date').value,cash=parseFloat(document.getElementById('e-cash').value)||0;
-  const upi=parseFloat(document.getElementById('e-upi').value)||0,expense=parseFloat(document.getElementById('e-expense').value)||0;
-  const udhaar=parseFloat(document.getElementById('e-udhaar').value)||0,notes=document.getElementById('e-notes').value||'';
-  const profit=s-expense-udhaar,margin=s>0?Math.round((profit/s)*100):0;
-  let rating='⚠️ धीमा';if(s>=5000)rating='🔥 बहुत अच्छा';else if(s>=3000)rating='👍 अच्छा';
-  DB.push(K.BIKRI,{date,sales:s,cash,upi,expense,udhaar,notes,profit,margin,rating});
-  let namedUdhaarTotal=0;const persons=[];
-  document.querySelectorAll('.udhaar-person-row').forEach(row=>{
-    const nm=row.querySelector('.udhaar-person-name').value.trim(),amt=parseFloat(row.querySelector('.udhaar-person-amt').value)||0;
-    if(nm&&amt>0){persons.push({nm,amt});namedUdhaarTotal+=amt;DB.push(K.UDHAAR,{name:nm,given:amt,date,returned:0,remaining:amt,days:0,status:'🟡 PENDING'});}
-  });
-  if(udhaar>0&&namedUdhaarTotal===0){DB.push(K.UDHAAR,{name:'उधार ('+date+')',given:udhaar,date,returned:0,remaining:udhaar,days:0,status:'🟡 PENDING'});}
-  else if(udhaar>0&&namedUdhaarTotal<udhaar){const diff=udhaar-namedUdhaarTotal;DB.push(K.UDHAAR,{name:'बाकी उधार ('+date+')',given:diff,date,returned:0,remaining:diff,days:0,status:'🟡 PENDING'});}
-  toast('✅ एंट्री सेव हो गई!'+(persons.length>0?` + ${persons.length} उधार दर्ज`:''));
-  ['e-sales','e-cash','e-upi','e-expense','e-udhaar','e-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('udhaar-persons-list').innerHTML='';document.getElementById('udhaar-persons-section').style.display='none';
-  calcProfit();setTimeout(()=>go('s-home'),1000);
-}
-
-function saveMaal(){
-  const amount=parseFloat(document.getElementById('m-amount').value)||0;
-  if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}
-  const date=document.getElementById('m-date').value,supplier=document.getElementById('m-supplier').value||'';
-  const name=document.getElementById('m-name').value||'',pay=document.getElementById('m-pay').value==='nakad'?'नकद':'उधार';
-  const note=document.getElementById('m-note').value||'';
-  DB.push(K.MAAL,{date,supplier,name,amount,pay,note});
-  toast('✅ माल की एंट्री सेव हो गई!');
-  ['m-supplier','m-name','m-amount','m-note'].forEach(id=>document.getElementById(id).value='');
-  setPay('m','nakad');loadMaalStats();setTimeout(()=>go('s-home'),1000);
-}
-
-function saveKaccha(){
-  const amount=parseFloat(document.getElementById('k-amount').value)||0;
-  if(!amount){toast('❌ रकम ज़रूर भरें',true);return;}
-  const date=document.getElementById('k-date').value,name=document.getElementById('k-name').value||'';
-  const source=document.getElementById('k-source').value||'',pay=document.getElementById('k-pay').value==='nakad'?'नकद':'उधार';
-  const note=document.getElementById('k-note').value||'';
-  DB.push(K.KACCHA,{date,name,amount,pay,source,note});
-  toast('✅ कच्चा माल सेव हो गया!');
-  ['k-name','k-source','k-amount','k-note'].forEach(id=>document.getElementById(id).value='');
-  setPay('k','nakad');loadKacchaStats();setTimeout(()=>go('s-home'),1000);
-}
-
-function saveGoal(){
-  const month=document.getElementById('g-month').value,target=parseFloat(document.getElementById('g-target').value)||0;
-  if(!target){toast('❌ लक्ष्य रकम ज़रूर भरें',true);return;}
-  const note=document.getElementById('g-note').value||'';
-  DB.push(K.GOAL,{month,target,note});toast('✅ लक्ष्य सेव हो गया!');
-  document.getElementById('g-target').value='';document.getElementById('g-note').value='';loadGoalScreen();
-}
-
-function loadHome(){
-  const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;
-  bikri.forEach(r=>{if(thisWeek(r.date)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});
-  document.getElementById('k-sales').textContent=fmt(tS);
-  document.getElementById('k-profit').textContent=fmt(tP);
-  document.getElementById('k-expense').textContent=fmt(tE);
-  document.getElementById('w-sales').textContent=fmt(tS);
-  document.getElementById('w-expense').textContent=fmt(tE);
-  renderWeeklyTable('bikri-table-rows','bikri-total','sales','#4dca4d','#444');
-  renderWeeklyTable('galla-table-rows','galla-total','profit','#50a0f0','#444');
-  renderWeeklyTable('kharcha-table-rows','kharcha-total','expense','#f0b040','#444');
-  loadMaalHome();loadKacchaHome();loadUdhaarKPI();
-  const maalTot=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;
-  const kacchaTot=parseInt((document.getElementById('w-kaccha').textContent||'0').replace(/[₹,]/g,''))||0;
-  document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-maalTot-kacchaTot-tE));
-  buildHaftaCards();
-  if(mahineyOpen){buildMonthGrid();if(calSelectedMonth!==null)renderCalendar();}
-}
-
-function loadMaalHome(){
-  const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;const rec=[];
-  rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(rec.length<3)rec.push(r);}});
-  document.getElementById('h-maal-total').textContent=fmt(tot);document.getElementById('h-maal-pending').textContent=fmt(udh);
-  document.getElementById('h-maal-nakad').textContent=fmt(nak);document.getElementById('h-maal-udhaar').textContent=fmt(udh);
-  document.getElementById('w-maal').textContent=fmt(tot);
-  const ml=document.getElementById('h-maal-list');ml.innerHTML='<div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div>';
-  if(!rec.length)ml.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';
-  else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.supplier||'—'}</div><div class="dlr-goods">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.MAAL,r.id,r);ml.appendChild(card);});
-}
-
-function loadKacchaHome(){
-  const rows=DB.get(K.KACCHA);let tot=0,nak=0,udh=0;const items=[],sources=[],rec=[];
-  rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(r.name&&!items.includes(r.name))items.push(r.name);if(r.source&&!sources.includes(r.source))sources.push(r.source);if(rec.length<3)rec.push(r);}});
-  document.getElementById('h-kaccha-total').textContent=fmt(tot);document.getElementById('h-kaccha-avg').textContent=fmt(Math.round(tot/7));
-  document.getElementById('h-kaccha-nakad').textContent=fmt(nak);document.getElementById('h-kaccha-udhaar').textContent=fmt(udh);
-  document.getElementById('w-kaccha').textContent=fmt(tot);
-  document.getElementById('h-kaccha-tags').innerHTML=(items.length||sources.length)?items.map(i=>`<span class="tag-b">${i}</span>`).join('')+sources.map(s=>`<span class="tag-s">${s}</span>`).join(''):'<span class="tag-b">कोई एंट्री नहीं</span>';
-  const kl=document.getElementById('h-kaccha-list');kl.innerHTML='<div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div>';
-  if(!rec.length)kl.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';
-  else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.KACCHA,r.id,r);kl.appendChild(card);});
-}
-
-function loadUdhaarKPI(){
-  const rows=DB.get(K.UDHAAR);let tot=0;
-  rows.forEach(r=>{if(r.status==='🟢 SETTLED')return;const remaining=(r.given||0)-(r.returned||0);if(remaining>0)tot+=remaining;});
-  document.getElementById('k-udhaar').textContent=fmt(tot);
-}
+function calcProfit(){const s=parseFloat(document.getElementById('e-sales').value)||0,x=parseFloat(document.getElementById('e-expense').value)||0,u=parseFloat(document.getElementById('e-udhaar').value)||0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;document.getElementById('r-profit').textContent='₹'+p.toLocaleString('en-IN');document.getElementById('r-margin').textContent=m+'%';let r='—';if(s>=5000)r='🔥 बहुत अच्छा';else if(s>=3000)r='👍 अच्छा';else if(s>0)r='⚠️ धीमा';document.getElementById('r-rating').textContent=r;}
+function onUdhaarChange(){calcProfit();const val=parseFloat(document.getElementById('e-udhaar').value)||0;const sec=document.getElementById('udhaar-persons-section');if(val>0){sec.style.display='block';if(!document.querySelector('.udhaar-person-row'))addPersonRow();}else sec.style.display='none';}
+function addPersonRow(name='',amt=''){const list=document.getElementById('udhaar-persons-list');const row=document.createElement('div');row.className='udhaar-person-row';row.innerHTML=`<input type="text" class="udhaar-person-name" placeholder="ग्राहक का नाम" value="${name}"><input type="number" class="udhaar-person-amt" placeholder="₹0" value="${amt}"><button class="remove-person-btn" onclick="this.parentElement.remove()">✕</button>`;list.appendChild(row);}
+function setPay(px,type){document.getElementById(px+'-pay').value=type;document.getElementById(px+'-nbtn').className='pbtn'+(type==='nakad'?' pn':'');document.getElementById(px+'-ubtn').className='pbtn'+(type==='udhaar'?' pu':'');}
+function saveEntry(){const s=parseFloat(document.getElementById('e-sales').value)||0;if(!s){toast('❌ कुल बिक्री ज़रूर भरें',true);return;}const date=document.getElementById('e-date').value,cash=parseFloat(document.getElementById('e-cash').value)||0;const upi=parseFloat(document.getElementById('e-upi').value)||0,expense=parseFloat(document.getElementById('e-expense').value)||0;const udhaar=parseFloat(document.getElementById('e-udhaar').value)||0,notes=document.getElementById('e-notes').value||'';const profit=s-expense-udhaar,margin=s>0?Math.round((profit/s)*100):0;let rating='⚠️ धीमा';if(s>=5000)rating='🔥 बहुत अच्छा';else if(s>=3000)rating='👍 अच्छा';DB.push(K.BIKRI,{date,sales:s,cash,upi,expense,udhaar,notes,profit,margin,rating});let namedUdhaarTotal=0;const persons=[];document.querySelectorAll('.udhaar-person-row').forEach(row=>{const nm=row.querySelector('.udhaar-person-name').value.trim(),amt=parseFloat(row.querySelector('.udhaar-person-amt').value)||0;if(nm&&amt>0){persons.push({nm,amt});namedUdhaarTotal+=amt;DB.push(K.UDHAAR,{name:nm,given:amt,date,returned:0,remaining:amt,days:0,status:'🟡 PENDING'});}});if(udhaar>0&&namedUdhaarTotal===0){DB.push(K.UDHAAR,{name:'उधार ('+date+')',given:udhaar,date,returned:0,remaining:udhaar,days:0,status:'🟡 PENDING'});}else if(udhaar>0&&namedUdhaarTotal<udhaar){const diff=udhaar-namedUdhaarTotal;DB.push(K.UDHAAR,{name:'बाकी उधार ('+date+')',given:diff,date,returned:0,remaining:diff,days:0,status:'🟡 PENDING'});}toast('✅ एंट्री सेव हो गई!'+(persons.length>0?` + ${persons.length} उधार दर्ज`:''));['e-sales','e-cash','e-upi','e-expense','e-udhaar','e-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('udhaar-persons-list').innerHTML='';document.getElementById('udhaar-persons-section').style.display='none';calcProfit();setTimeout(()=>go('s-home'),1000);}
+function saveMaal(){const amount=parseFloat(document.getElementById('m-amount').value)||0;if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}const date=document.getElementById('m-date').value,supplier=document.getElementById('m-supplier').value||'';const name=document.getElementById('m-name').value||'',pay=document.getElementById('m-pay').value==='nakad'?'नकद':'उधार';const note=document.getElementById('m-note').value||'';DB.push(K.MAAL,{date,supplier,name,amount,pay,note});toast('✅ माल की एंट्री सेव हो गई!');['m-supplier','m-name','m-amount','m-note'].forEach(id=>document.getElementById(id).value='');setPay('m','nakad');loadMaalStats();setTimeout(()=>go('s-home'),1000);}
+function saveKaccha(){const amount=parseFloat(document.getElementById('k-amount').value)||0;if(!amount){toast('❌ रकम ज़रूर भरें',true);return;}const date=document.getElementById('k-date').value,name=document.getElementById('k-name').value||'';const source=document.getElementById('k-source').value||'',pay=document.getElementById('k-pay').value==='nakad'?'नकद':'उधार';const note=document.getElementById('k-note').value||'';DB.push(K.KACCHA,{date,name,amount,pay,source,note});toast('✅ कच्चा माल सेव हो गया!');['k-name','k-source','k-amount','k-note'].forEach(id=>document.getElementById(id).value='');setPay('k','nakad');loadKacchaStats();setTimeout(()=>go('s-home'),1000);}
+function saveGoal(){const month=document.getElementById('g-month').value,target=parseFloat(document.getElementById('g-target').value)||0;if(!target){toast('❌ लक्ष्य रकम ज़रूर भरें',true);return;}const note=document.getElementById('g-note').value||'';DB.push(K.GOAL,{month,target,note});toast('✅ लक्ष्य सेव हो गया!');document.getElementById('g-target').value='';document.getElementById('g-note').value='';loadGoalScreen();}
+function loadHome(){const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(thisWeek(r.date)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);renderWeeklyTable('bikri-table-rows','bikri-total','sales','#4dca4d','#444');renderWeeklyTable('galla-table-rows','galla-total','profit','#50a0f0','#444');renderWeeklyTable('kharcha-table-rows','kharcha-total','expense','#f0b040','#444');loadMaalHome();loadKacchaHome();loadUdhaarKPI();const maalTot=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;const kacchaTot=parseInt((document.getElementById('w-kaccha').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-maalTot-kacchaTot-tE));buildHaftaCards();if(mahineyOpen){buildMonthGrid();if(calSelectedMonth!==null)renderCalendar();}}
+function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;const rec=[];rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(rec.length<3)rec.push(r);}});document.getElementById('h-maal-total').textContent=fmt(tot);document.getElementById('h-maal-pending').textContent=fmt(udh);document.getElementById('h-maal-nakad').textContent=fmt(nak);document.getElementById('h-maal-udhaar').textContent=fmt(udh);document.getElementById('w-maal').textContent=fmt(tot);const ml=document.getElementById('h-maal-list');ml.innerHTML='<div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div>';if(!rec.length)ml.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.supplier||'—'}</div><div class="dlr-goods">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.MAAL,r.id,r);ml.appendChild(card);});}
+function loadKacchaHome(){const rows=DB.get(K.KACCHA);let tot=0,nak=0,udh=0;const items=[],sources=[],rec=[];rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(r.name&&!items.includes(r.name))items.push(r.name);if(r.source&&!sources.includes(r.source))sources.push(r.source);if(rec.length<3)rec.push(r);}});document.getElementById('h-kaccha-total').textContent=fmt(tot);document.getElementById('h-kaccha-avg').textContent=fmt(Math.round(tot/7));document.getElementById('h-kaccha-nakad').textContent=fmt(nak);document.getElementById('h-kaccha-udhaar').textContent=fmt(udh);document.getElementById('w-kaccha').textContent=fmt(tot);document.getElementById('h-kaccha-tags').innerHTML=(items.length||sources.length)?items.map(i=>`<span class="tag-b">${i}</span>`).join('')+sources.map(s=>`<span class="tag-s">${s}</span>`).join(''):'<span class="tag-b">कोई एंट्री नहीं</span>';const kl=document.getElementById('h-kaccha-list');kl.innerHTML='<div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div>';if(!rec.length)kl.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.KACCHA,r.id,r);kl.appendChild(card);});}
+function loadUdhaarKPI(){const rows=DB.get(K.UDHAAR);let tot=0;rows.forEach(r=>{if(r.status==='🟢 SETTLED')return;const remaining=(r.given||0)-(r.returned||0);if(remaining>0)tot+=remaining;});document.getElementById('k-udhaar').textContent=fmt(tot);}
 function loadMaalStats(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;}});document.getElementById('mw-total').textContent=fmt(tot);document.getElementById('mw-nakad').textContent=fmt(nak);document.getElementById('mw-pending').textContent=fmt(udh);}
 function loadKacchaStats(){const rows=DB.get(K.KACCHA);let tot=0,nak=0,udh=0;rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;}});document.getElementById('kw-total').textContent=fmt(tot);document.getElementById('kw-nakad').textContent=fmt(nak);document.getElementById('kw-pending').textContent=fmt(udh);}
-
 let openHafta=null;
-function toggleHafta(hNum){
-  for(let i=1;i<=4;i++)document.getElementById(`hafta-panel-${i}`).classList.remove('open');
-  document.querySelectorAll('.hafta-card-past').forEach(c=>c.classList.remove('hafta-card-selected'));
-  if(openHafta===hNum){openHafta=null;return;}
-  openHafta=hNum;
-  document.getElementById(`hafta-panel-${hNum}`).classList.add('open');
-  if(hNum!==CUR_HAFTA){
-    const allCards=Array.from(document.getElementById('hafta-grid').children);
-    const clickedCard=allCards[hNum-1];
-    if(clickedCard&&clickedCard.classList.contains('hafta-card-past'))clickedCard.classList.add('hafta-card-selected');
-  }
-}
-
-function buildHaftaCards(){
-  const bikri=DB.get(K.BIKRI),udhaar=DB.get(K.UDHAAR);
-  const grid=document.getElementById('hafta-grid');grid.innerHTML='';
-  for(let h=0;h<4;h++){
-    const hNum=h+1,isCur=(hNum===CUR_HAFTA),range=HAFTA_RANGES[h];
-    let bikriTotal=0,gallaTotal=0,udhaarTotal=0,expenseTotal=0,udhaarFromRecords=0;
-    bikri.forEach(r=>{if(inHafta(r.date,h)){bikriTotal+=r.sales||0;gallaTotal+=calcEntryProfit(r);udhaarTotal+=r.udhaar||0;expenseTotal+=r.expense||0;}});
-    udhaar.forEach(r=>{if(inHafta(r.date,h))udhaarFromRecords+=r.given||0;});
-    udhaarTotal=Math.max(udhaarTotal,udhaarFromRecords);
-    document.getElementById(`hv-bikri-${hNum}`).textContent=fmt(bikriTotal);
-    document.getElementById(`hv-galla-${hNum}`).textContent=fmt(gallaTotal);
-    document.getElementById(`hv-udhaar-${hNum}`).textContent=fmt(udhaarTotal);
-    document.getElementById(`hv-expense-${hNum}`).textContent=fmt(expenseTotal);
-    document.getElementById(`hpd-${hNum}`).textContent=`${range.start}–${range.end} ${HI_MONTHS[CUR_MONTH]}`;
-    if(isCur){
-      const daysDone=Math.min(CUR_DAY-range.start+1,range.end-range.start+1),daysTotal=range.end-range.start+1;
-      const pct=Math.max(0,Math.round((daysDone/daysTotal)*100));
-      document.getElementById('hpb-4').textContent=`${Math.max(1,daysDone)}/${daysTotal} दिन`;
-      document.getElementById('hafta-pbar').style.width=pct+'%';
-    }
-    const card=document.createElement('div');
-    card.className='hafta-card '+(isCur?'hafta-card-cur':'hafta-card-past');
-    card.innerHTML=`${isCur?'<div class="chaluu-badge">● चालू</div>':''}
-      <div class="hafta-card-name">हफ्ता-${hNum}</div>
-      <div class="hafta-card-dates">${range.start}–${range.end}</div>
-      <div class="hafta-card-divider"></div>
-      <div class="hafta-card-amt">${fmt(bikriTotal)}</div>
-      <div class="hafta-card-sublbl">बिक्री</div>
-      <div class="hafta-card-hint">▼ देखें</div>`;
-    card.onclick=()=>toggleHafta(hNum);
-    grid.appendChild(card);
-  }
-}
-
-function loadUdhaar(){
-  const el=document.getElementById('udhaar-list');el.innerHTML='';
-  const rows=DB.get(K.UDHAAR);
-  if(!rows.length){el.innerHTML='<div class="empty">🤝<br>कोई उधार नहीं है</div>';return;}
-  const hint=document.createElement('div');hint.style.cssText='font-size:9px;color:#333;text-align:center;margin-bottom:8px;';hint.textContent='देर तक दबाएं — सुधारें या हटाएं';el.appendChild(hint);
-  let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;
-  rows.forEach(r=>{
-    const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);
-    let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';
-    if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;
-    const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';
-    const dotColor=type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a';
-    const dotColor2=type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a';
-    const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${initials(r.name)}</div><div><div class="u-name">${r.name||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${dotColor};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${dotColor2};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);
-    el.appendChild(card);
-  });
-  const summary=document.createElement('div');summary.className='u-summary';
-  summary.innerHTML=`<div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#f06060;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#f06060;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#f0b040;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#3dca6a;">${settledCount}</div></div>`;
-  el.appendChild(summary);
-}
-
-function loadMonthly(){
-  const el=document.getElementById('monthly-list');el.innerHTML='';
-  const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}
-  const months={};
-  bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});
-  Object.keys(months).sort().reverse().forEach(m=>{
-    const data=months[m],parts=m.split('-');
-    const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});
-    const div=document.createElement('div');div.className='mcard';
-    div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#4dca4d;">${fmt(data.profit)}</div><div style="font-size:9px;color:#f0b040;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;
-    el.appendChild(div);
-  });
-}
-
-function loadGoalScreen(){
-  const el=document.getElementById('goal-list');el.innerHTML='';
-  const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);
-  if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}
-  goals.slice().reverse().forEach(g=>{
-    const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);
-    const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;
-    const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';
-    const parts=g.month.split('-');
-    const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});
-    const div=document.createElement('div');div.className='gcard';
-    div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;
-    el.appendChild(div);
-  });
-}
+function toggleHafta(hNum){for(let i=1;i<=4;i++)document.getElementById(`hafta-panel-${i}`).classList.remove('open');document.querySelectorAll('.hafta-card-past').forEach(c=>c.classList.remove('hafta-card-selected'));if(openHafta===hNum){openHafta=null;return;}openHafta=hNum;document.getElementById(`hafta-panel-${hNum}`).classList.add('open');if(hNum!==CUR_HAFTA){const allCards=Array.from(document.getElementById('hafta-grid').children);const clickedCard=allCards[hNum-1];if(clickedCard&&clickedCard.classList.contains('hafta-card-past'))clickedCard.classList.add('hafta-card-selected');}}
+function buildHaftaCards(){const bikri=DB.get(K.BIKRI),udhaar=DB.get(K.UDHAAR);const grid=document.getElementById('hafta-grid');grid.innerHTML='';for(let h=0;h<4;h++){const hNum=h+1,isCur=(hNum===CUR_HAFTA),range=HAFTA_RANGES[h];let bikriTotal=0,gallaTotal=0,udhaarTotal=0,expenseTotal=0,udhaarFromRecords=0;bikri.forEach(r=>{if(inHafta(r.date,h)){bikriTotal+=r.sales||0;gallaTotal+=calcEntryProfit(r);udhaarTotal+=r.udhaar||0;expenseTotal+=r.expense||0;}});udhaar.forEach(r=>{if(inHafta(r.date,h))udhaarFromRecords+=r.given||0;});udhaarTotal=Math.max(udhaarTotal,udhaarFromRecords);document.getElementById(`hv-bikri-${hNum}`).textContent=fmt(bikriTotal);document.getElementById(`hv-galla-${hNum}`).textContent=fmt(gallaTotal);document.getElementById(`hv-udhaar-${hNum}`).textContent=fmt(udhaarTotal);document.getElementById(`hv-expense-${hNum}`).textContent=fmt(expenseTotal);document.getElementById(`hpd-${hNum}`).textContent=`${range.start}–${range.end} ${HI_MONTHS[CUR_MONTH]}`;if(isCur){const daysDone=Math.min(CUR_DAY-range.start+1,range.end-range.start+1),daysTotal=range.end-range.start+1;const pct=Math.max(0,Math.round((daysDone/daysTotal)*100));document.getElementById('hpb-4').textContent=`${Math.max(1,daysDone)}/${daysTotal} दिन`;document.getElementById('hafta-pbar').style.width=pct+'%';}const card=document.createElement('div');card.className='hafta-card '+(isCur?'hafta-card-cur':'hafta-card-past');card.innerHTML=`${isCur?'<div class="chaluu-badge">● चालू</div>':''}<div class="hafta-card-name">हफ्ता-${hNum}</div><div class="hafta-card-dates">${range.start}–${range.end}</div><div class="hafta-card-divider"></div><div class="hafta-card-amt">${fmt(bikriTotal)}</div><div class="hafta-card-sublbl">बिक्री</div><div class="hafta-card-hint">▼ देखें</div>`;card.onclick=()=>toggleHafta(hNum);grid.appendChild(card);}}
+function loadUdhaar(){const el=document.getElementById('udhaar-list');el.innerHTML='';const rows=DB.get(K.UDHAAR);if(!rows.length){el.innerHTML='<div class="empty">🤝<br>कोई उधार नहीं है</div>';return;}const hint=document.createElement('div');hint.style.cssText='font-size:9px;color:#333;text-align:center;margin-bottom:8px;';hint.textContent='देर तक दबाएं — सुधारें या हटाएं';el.appendChild(hint);let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const dotColor=type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a';const dotColor2=type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${initials(r.name)}</div><div><div class="u-name">${r.name||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${dotColor};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${dotColor2};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});const summary=document.createElement('div');summary.className='u-summary';summary.innerHTML=`<div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#f06060;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#f06060;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#f0b040;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#3dca6a;">${settledCount}</div></div>`;el.appendChild(summary);}
+function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#4dca4d;">${fmt(data.profit)}</div><div style="font-size:9px;color:#f0b040;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;el.appendChild(div);});}
+function loadGoalScreen(){const el=document.getElementById('goal-list');el.innerHTML='';const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}goals.slice().reverse().forEach(g=>{const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';const parts=g.month.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='gcard';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;el.appendChild(div);});}
 </script>
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}

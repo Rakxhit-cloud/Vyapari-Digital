@@ -7,31 +7,38 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-
-/* LOGIN */
-.login-screen { position: fixed; inset: 0; background: #0a0a0a; display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 999; }
-.login-screen.hidden { display: none; }
-.login-box { background: #161616; border: 1px solid #1e1e1e; border-top: 2px solid #4dca4d; border-radius: 14px; padding: 28px; width: 100%; max-width: 340px; }
-.login-logo { text-align: center; font-size: 32px; margin-bottom: 10px; }
-.login-title { text-align: center; font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-.login-sub { text-align: center; font-size: 10px; color: #444; margin-bottom: 22px; }
-.login-label { font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
-.login-input { width: 100%; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 8px; padding: 11px 14px; font-size: 14px; color: #fff; outline: none; margin-bottom: 14px; }
-.login-input:focus { border-color: #2dba4d; background: #0d1f0d; }
-.login-btn { width: 100%; background: #1a4a2a; border: 1px solid #2dba4d; color: #4dca4d; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; }
-.login-btn:active { opacity: .8; }
-.login-error { background: #1a0808; border: 1px solid #3a1a1a; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #f06060; margin-bottom: 12px; display: none; text-align: center; }
-.login-error.show { display: block; }
-
-/* HEADER */
+.auth-screen { position: fixed; inset: 0; background: #0a0a0a; display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 999; }
+.auth-screen.hidden { display: none; }
+.auth-box { background: #161616; border: 1px solid #1e1e1e; border-top: 2px solid #4dca4d; border-radius: 14px; padding: 28px; width: 100%; max-width: 340px; }
+.auth-logo { text-align: center; font-size: 32px; margin-bottom: 10px; }
+.auth-title { text-align: center; font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.auth-sub { text-align: center; font-size: 10px; color: #444; margin-bottom: 22px; }
+.auth-label { font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
+.auth-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.auth-prefix { background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 8px; padding: 11px 14px; font-size: 14px; color: #4dca4d; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+.auth-input { flex: 1; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 8px; padding: 11px 14px; font-size: 16px; color: #fff; outline: none; width: 100%; }
+.auth-input:focus { border-color: #2dba4d; background: #0d1f0d; }
+.auth-btn { width: 100%; background: #1a4a2a; border: 1px solid #2dba4d; color: #4dca4d; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; }
+.auth-btn:disabled { opacity: .4; cursor: not-allowed; }
+.auth-btn-sec { width: 100%; background: transparent; border: none; color: #555; font-size: 12px; padding: 8px; cursor: pointer; }
+.auth-error { background: #1a0808; border: 1px solid #3a1a1a; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #f06060; margin-bottom: 12px; display: none; text-align: center; }
+.auth-error.show { display: block; }
+.auth-success { background: #0d1f0d; border: 1px solid #1a3a1a; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #4dca4d; margin-bottom: 12px; display: none; text-align: center; }
+.auth-success.show { display: block; }
+.auth-loader { display: none; width: 20px; height: 20px; border: 2px solid #1a4a2a; border-top-color: #4dca4d; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 14px; }
+.auth-loader.show { display: block; }
+.otp-inputs { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; }
+.otp-digit { width: 44px; height: 52px; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 10px; font-size: 22px; font-weight: 800; color: #fff; text-align: center; outline: none; }
+.otp-digit:focus { border-color: #2dba4d; background: #0d1f0d; }
+.resend-txt { font-size: 11px; color: #555; text-align: center; margin-top: 8px; }
+.resend-link { color: #4dca4d; cursor: pointer; font-weight: 700; }
+.wrong-number { font-size: 10px; color: #f06060; text-align: center; margin-top: 10px; }
 .header { background: #0d1f0d; border-bottom: 2px solid #2dba4d; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .header-left { display: flex; align-items: center; gap: 10px; }
 .header-icon { width: 34px; height: 34px; background: #2dba4d; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
 .header-title { font-size: 15px; font-weight: 800; color: #fff; }
 .header-sub { font-size: 9px; color: #4dca4d; }
 .logout-btn { background: #1a0808; border: 1px solid #3a1a1a; color: #f06060; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-
-/* STATS BAR */
 .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 14px 16px; background: #0f0f0f; border-bottom: 1px solid #1a1a1a; }
 .stat-card { background: #161616; border-radius: 8px; padding: 10px 12px; border-top: 2px solid; }
 .stat-card.green { border-color: #4dca4d; }
@@ -45,25 +52,18 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .stat-card.red .stat-lbl { color: #f06060; }
 .stat-val { font-size: 22px; font-weight: 800; color: #fff; }
 .stat-sub { font-size: 8px; color: #444; margin-top: 2px; }
-
-/* TOOLBAR */
-.toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; gap: 8px; border-bottom: 1px solid #1a1a1a; }
-.search-input { flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 7px; padding: 8px 12px; font-size: 12px; color: #e0e0e0; outline: none; max-width: 280px; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; gap: 8px; border-bottom: 1px solid #1a1a1a; flex-wrap: wrap; }
+.search-input { flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 7px; padding: 8px 12px; font-size: 12px; color: #e0e0e0; outline: none; max-width: 280px; min-width: 160px; }
 .search-input:focus { border-color: #2dba4d; }
 .filter-btns { display: flex; gap: 5px; }
 .fbtn { font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; border: 1px solid #2a2a2a; background: #1a1a1a; color: #666; }
 .fbtn.active { background: #0d2a1a; border-color: #2dba4d; color: #4dca4d; }
 .refresh-btn { background: #0d2a1a; border: 1px solid #2dba4d; color: #4dca4d; font-size: 11px; font-weight: 700; padding: 7px 14px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
-.refresh-btn:active { opacity: .8; }
-
-/* TABLE */
 .table-wrap { overflow-x: auto; padding: 12px 16px; }
 .lead-table { width: 100%; border-collapse: collapse; min-width: 700px; }
 .lead-table th { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: #555; padding: 8px 12px; text-align: left; border-bottom: 1px solid #1a1a1a; white-space: nowrap; }
 .lead-table td { padding: 10px 12px; border-bottom: 1px solid #111; font-size: 12px; vertical-align: middle; }
 .lead-table tr:hover td { background: #111; }
-
-/* ROW ELEMENTS */
 .phone-cell { font-size: 13px; font-weight: 800; color: #fff; }
 .uid-cell { font-size: 9px; color: #333; font-family: monospace; margin-top: 2px; }
 .trial-badge { display: inline-block; font-size: 9px; font-weight: 800; padding: 3px 9px; border-radius: 10px; white-space: nowrap; }
@@ -82,37 +82,72 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .dot-active { background: #4dca4d; }
 .dot-idle { background: #f0b040; }
 .dot-inactive { background: #f06060; }
-
-/* EMPTY / LOADING */
 .empty-state { text-align: center; padding: 48px 20px; color: #333; }
 .empty-icon { font-size: 36px; margin-bottom: 10px; }
 .loading-state { text-align: center; padding: 48px 20px; }
 .spinner { width: 28px; height: 28px; border: 2px solid #1a3a1a; border-top-color: #4dca4d; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 12px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-txt { font-size: 11px; color: #3a7a3a; }
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; padding: 9px 20px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none; }
+.access-denied { position: fixed; inset: 0; background: #0a0a0a; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; z-index: 998; }
+.access-denied.show { display: flex; }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; padding: 9px 20px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 9999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
 .toast.show { opacity: 1; }
-
-@media (max-width: 600px) {
-  .stats-bar { grid-template-columns: 1fr 1fr; }
-  .toolbar { flex-wrap: wrap; }
-  .search-input { max-width: 100%; }
-}
+.toast.err { background: #4a1a1a; border-color: #6a2a2a; color: #f06060; }
+@media (max-width: 600px) { .stats-bar { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="login-screen" id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">🔐</div>
-    <div class="login-title">Admin Panel</div>
-    <div class="login-sub">हिसाब-Kitaab — Lead Dashboard</div>
-    <div class="login-error" id="login-error">❌ गलत password</div>
-    <div class="login-label">Password</div>
-    <input class="login-input" type="password" id="admin-pass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">🔓 Login</button>
+<!-- SCREEN 1: PHONE -->
+<div class="auth-screen" id="screen-phone">
+  <div class="auth-box">
+    <div class="auth-logo">🔐</div>
+    <div class="auth-title">Admin Login</div>
+    <div class="auth-sub">हिसाब-Kitaab — Lead Dashboard</div>
+    <div class="auth-error" id="phone-error"></div>
+    <div class="auth-label">📱 Admin Mobile Number</div>
+    <div class="auth-input-row">
+      <div class="auth-prefix">🇮🇳 +91</div>
+      <input class="auth-input" type="tel" id="phone-input" placeholder="10 अंक का नंबर" maxlength="10" inputmode="numeric">
+    </div>
+    <button class="auth-btn" id="send-otp-btn" onclick="sendOTP()">📨 OTP भेजें</button>
+    <div style="font-size:10px;color:#333;text-align:center;margin-top:8px;">सिर्फ authorized admin number से login होगा</div>
+    <div id="recaptcha-container"></div>
   </div>
+</div>
+
+<!-- SCREEN 2: OTP -->
+<div class="auth-screen hidden" id="screen-otp">
+  <div class="auth-box">
+    <div class="auth-logo">💬</div>
+    <div class="auth-title">OTP दर्ज करें</div>
+    <div class="auth-sub" id="otp-sub-lbl">नंबर पर OTP भेजा गया</div>
+    <div class="auth-error" id="otp-error"></div>
+    <div class="auth-success" id="otp-success"></div>
+    <div class="auth-loader" id="otp-loader"></div>
+    <div class="otp-inputs">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a1">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a2">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a3">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a4">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a5">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a6">
+    </div>
+    <button class="auth-btn" id="verify-btn" onclick="verifyOTP()">✅ Verify करें</button>
+    <button class="auth-btn-sec" onclick="backToPhone()">← नंबर बदलें</button>
+    <div class="resend-txt">
+      <span id="resend-countdown">30 सेकंड में दोबारा भेज सकते हैं</span>
+      <span class="resend-link" id="resend-link" onclick="resendOTP()" style="display:none;">दोबारा भेजें</span>
+    </div>
+  </div>
+</div>
+
+<!-- ACCESS DENIED -->
+<div class="access-denied" id="access-denied">
+  <div style="font-size:48px;">🚫</div>
+  <div style="font-size:16px;font-weight:800;color:#f06060;">Access Denied</div>
+  <div style="font-size:12px;color:#444;">यह number admin authorized नहीं है</div>
+  <button class="auth-btn" style="width:200px;margin-top:8px;" onclick="location.reload()">← वापस जाएं</button>
 </div>
 
 <!-- MAIN DASHBOARD -->
@@ -122,33 +157,17 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div class="header-icon">📊</div>
       <div>
         <div class="header-title">Admin Dashboard</div>
-        <div class="header-sub">हिसाब-Kitaab — Lead Management</div>
+        <div class="header-sub" id="admin-phone-display">हिसाब-Kitaab — Lead Management</div>
       </div>
     </div>
     <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
   </div>
 
   <div class="stats-bar">
-    <div class="stat-card green">
-      <div class="stat-lbl">Total Users</div>
-      <div class="stat-val" id="s-total">—</div>
-      <div class="stat-sub">registered</div>
-    </div>
-    <div class="stat-card blue">
-      <div class="stat-lbl">Active Trial</div>
-      <div class="stat-val" id="s-active">—</div>
-      <div class="stat-sub">trial चल रहा है</div>
-    </div>
-    <div class="stat-card amber">
-      <div class="stat-lbl">Expiring Soon</div>
-      <div class="stat-val" id="s-warn">—</div>
-      <div class="stat-sub">≤ 10 दिन बाकी</div>
-    </div>
-    <div class="stat-card red">
-      <div class="stat-lbl">Expired</div>
-      <div class="stat-val" id="s-expired">—</div>
-      <div class="stat-sub">trial खत्म</div>
-    </div>
+    <div class="stat-card green"><div class="stat-lbl">Total Users</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">registered</div></div>
+    <div class="stat-card blue"><div class="stat-lbl">Active Trial</div><div class="stat-val" id="s-active">—</div><div class="stat-sub">trial चल रहा है</div></div>
+    <div class="stat-card amber"><div class="stat-lbl">Expiring Soon</div><div class="stat-val" id="s-warn">—</div><div class="stat-sub">≤ 10 दिन बाकी</div></div>
+    <div class="stat-card red"><div class="stat-lbl">Expired</div><div class="stat-val" id="s-expired">—</div><div class="stat-sub">trial खत्म</div></div>
   </div>
 
   <div class="toolbar">
@@ -185,6 +204,7 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -197,84 +217,162 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
+auth.languageCode = 'hi';
 
-// Expose loader to global scope
+const ADMIN_PHONE = '+917409988744';
+let confirmationResult = null, recaptchaVerifier = null, resendTimer = null;
+
+function setupRecaptcha() {
+  if (recaptchaVerifier) { try { recaptchaVerifier.clear(); } catch(e) {} recaptchaVerifier = null; }
+  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible', callback: () => {} });
+}
+
+window.sendOTP = async function() {
+  const phone = document.getElementById('phone-input').value.trim();
+  const errEl = document.getElementById('phone-error');
+  errEl.classList.remove('show');
+  if (phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) {
+    errEl.textContent = '❌ सही 10 अंक का नंबर डालें';
+    errEl.classList.add('show'); return;
+  }
+  const btn = document.getElementById('send-otp-btn');
+  btn.disabled = true; btn.textContent = '⏳ भेज रहे हैं...';
+  try {
+    setupRecaptcha();
+    confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone, recaptchaVerifier);
+    document.getElementById('screen-phone').classList.add('hidden');
+    document.getElementById('screen-otp').classList.remove('hidden');
+    document.getElementById('otp-sub-lbl').textContent = '+91 ' + phone + ' पर OTP भेजा गया';
+    document.getElementById('a1').focus();
+    startResendTimer();
+  } catch(e) {
+    errEl.textContent = '❌ OTP नहीं भेज सका। दोबारा कोशिश करें।';
+    errEl.classList.add('show');
+    btn.disabled = false; btn.textContent = '📨 OTP भेजें';
+  }
+};
+
+window.verifyOTP = async function() {
+  const otp = ['a1','a2','a3','a4','a5','a6'].map(id => document.getElementById(id).value).join('');
+  const errEl = document.getElementById('otp-error'), succEl = document.getElementById('otp-success'), loader = document.getElementById('otp-loader');
+  errEl.classList.remove('show'); succEl.classList.remove('show');
+  if (otp.length !== 6) { errEl.textContent = '❌ 6 अंक का OTP डालें'; errEl.classList.add('show'); return; }
+  const btn = document.getElementById('verify-btn');
+  btn.disabled = true; btn.textContent = '⏳ जाँच रहे हैं...'; loader.classList.add('show');
+  try {
+    await confirmationResult.confirm(otp);
+    succEl.textContent = '✅ Verified!'; succEl.classList.add('show'); loader.classList.remove('show');
+  } catch(e) {
+    errEl.textContent = '❌ गलत OTP। दोबारा कोशिश करें।'; errEl.classList.add('show');
+    btn.disabled = false; btn.textContent = '✅ Verify करें'; loader.classList.remove('show');
+  }
+};
+
+window.backToPhone = function() {
+  document.getElementById('screen-otp').classList.add('hidden');
+  document.getElementById('screen-phone').classList.remove('hidden');
+  document.getElementById('send-otp-btn').disabled = false;
+  document.getElementById('send-otp-btn').textContent = '📨 OTP भेजें';
+  ['a1','a2','a3','a4','a5','a6'].forEach(id => document.getElementById(id).value = '');
+  if (resendTimer) clearInterval(resendTimer);
+};
+
+window.resendOTP = async function() {
+  const phone = document.getElementById('phone-input').value.trim();
+  try {
+    setupRecaptcha();
+    confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone, recaptchaVerifier);
+    document.getElementById('resend-link').style.display = 'none';
+    document.getElementById('resend-countdown').style.display = 'inline';
+    startResendTimer();
+  } catch(e) {}
+};
+
+function startResendTimer() {
+  let secs = 30;
+  const cd = document.getElementById('resend-countdown'), lnk = document.getElementById('resend-link');
+  cd.style.display = 'inline'; lnk.style.display = 'none';
+  cd.textContent = secs + ' सेकंड में दोबारा भेज सकते हैं';
+  if (resendTimer) clearInterval(resendTimer);
+  resendTimer = setInterval(() => {
+    secs--;
+    if (secs <= 0) { clearInterval(resendTimer); cd.style.display = 'none'; lnk.style.display = 'inline'; }
+    else cd.textContent = secs + ' सेकंड में दोबारा भेज सकते हैं';
+  }, 1000);
+}
+
+// OTP auto-advance
+['a1','a2','a3','a4','a5','a6'].forEach((id, idx, arr) => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    if (el.value.length === 1 && idx < arr.length - 1) document.getElementById(arr[idx+1]).focus();
+    if (idx === arr.length - 1 && el.value.length === 1) setTimeout(() => window.verifyOTP(), 300);
+  });
+  el.addEventListener('keydown', e => { if (e.key === 'Backspace' && !el.value && idx > 0) document.getElementById(arr[idx-1]).focus(); });
+});
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    const phone = user.phoneNumber || '';
+    if (phone !== ADMIN_PHONE) {
+      // Not admin — show access denied
+      document.getElementById('screen-phone').classList.add('hidden');
+      document.getElementById('screen-otp').classList.add('hidden');
+      document.getElementById('access-denied').classList.add('show');
+      return;
+    }
+    // Admin verified ✅
+    document.getElementById('screen-phone').classList.add('hidden');
+    document.getElementById('screen-otp').classList.add('hidden');
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('admin-phone-display').textContent = '👤 ' + phone + ' — Admin';
+    loadUsers();
+  }
+});
+
+window.doLogout = async function() {
+  await fbSignOut(auth);
+  location.reload();
+};
+
+// Firestore loader
 window._loadUsersFromFirestore = async function() {
   const users = [];
-  try {
-    const usersSnap = await getDocs(collection(db, 'users'));
-    for (const userDoc of usersSnap.docs) {
-      const uid = userDoc.id;
-      // Load profile
-      let profile = {};
+  const usersSnap = await getDocs(collection(db, 'users'));
+  for (const userDoc of usersSnap.docs) {
+    const uid = userDoc.id;
+    let profile = {};
+    try {
+      const profileSnap = await getDocs(collection(db, 'users', uid, 'profile'));
+      profileSnap.forEach(d => { if (d.id === 'info') profile = d.data(); });
+    } catch(e) {}
+    let bikriCount = 0, maalCount = 0, udhaarCount = 0, lastActive = null;
+    for (const col of ['bikri', 'maal', 'kaccha', 'udhaar', 'goal']) {
       try {
-        const profileSnap = await getDocs(collection(db, 'users', uid, 'profile'));
-        profileSnap.forEach(d => { if(d.id === 'info') profile = d.data(); });
+        const snap = await getDocs(collection(db, 'users', uid, col));
+        if (col === 'bikri') bikriCount = snap.size;
+        else if (col === 'maal') maalCount = snap.size;
+        else if (col === 'udhaar') udhaarCount = snap.size;
+        snap.forEach(d => {
+          const data = d.data();
+          if (data.date) {
+            const ts = new Date(data.date).getTime();
+            if (!lastActive || ts > lastActive) lastActive = ts;
+          }
+        });
       } catch(e) {}
-
-      // Load entry counts
-      let bikriCount = 0, maalCount = 0, udhaarCount = 0, lastActive = null;
-      const cols = ['bikri', 'maal', 'kaccha', 'udhaar', 'goal'];
-      for (const col of cols) {
-        try {
-          const snap = await getDocs(collection(db, 'users', uid, col));
-          const count = snap.size;
-          if (col === 'bikri') bikriCount = count;
-          else if (col === 'maal') maalCount = count;
-          else if (col === 'udhaar') udhaarCount = count;
-          // Find latest entry date for last active
-          snap.forEach(d => {
-            const data = d.data();
-            if (data.date) {
-              const ts = new Date(data.date).getTime();
-              if (!lastActive || ts > lastActive) lastActive = ts;
-            }
-          });
-        } catch(e) {}
-      }
-
-      users.push({ uid, profile, bikriCount, maalCount, udhaarCount, lastActive });
     }
-  } catch(e) {
-    console.error('Load error:', e);
-    throw e;
+    users.push({ uid, profile, bikriCount, maalCount, udhaarCount, lastActive });
   }
   return users;
 };
 </script>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────
-const ADMIN_PASSWORD = 'hisaab@admin2026'; // 🔐 CHANGE THIS
-
-// ── STATE ───────────────────────────────────────────
 let allUsers = [], currentFilter = 'all';
 
-// ── LOGIN ────────────────────────────────────────────
-function doLogin() {
-  const pass = document.getElementById('admin-pass').value;
-  const err = document.getElementById('login-error');
-  if (pass === ADMIN_PASSWORD) {
-    err.classList.remove('show');
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('dashboard').style.display = 'block';
-    loadUsers();
-  } else {
-    err.classList.add('show');
-    document.getElementById('admin-pass').value = '';
-    document.getElementById('admin-pass').focus();
-  }
-}
-
-function doLogout() {
-  document.getElementById('login-screen').classList.remove('hidden');
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('admin-pass').value = '';
-  allUsers = [];
-}
-
-// ── LOAD USERS ───────────────────────────────────────
 async function loadUsers() {
   const state = document.getElementById('table-state');
   const tbody = document.getElementById('lead-tbody');
@@ -287,17 +385,16 @@ async function loadUsers() {
     renderTable();
     toast('✅ ' + allUsers.length + ' users लोड हुए');
   } catch(e) {
-    state.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div style="color:#f06060;font-size:12px;">Load failed — check Firestore rules</div></div>`;
+    state.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div style="color:#f06060;font-size:12px;">Load failed: ${e.message}</div></div>`;
   }
 }
 
-// ── STATS BAR ────────────────────────────────────────
 function updateStats() {
   let active = 0, warn = 0, expired = 0;
   allUsers.forEach(u => {
-    const status = getTrialStatus(u.profile.trialStart);
-    if (status.type === 'expired') expired++;
-    else if (status.type === 'warn') warn++;
+    const s = getTrialStatus(u.profile.trialStart);
+    if (s.type === 'expired') expired++;
+    else if (s.type === 'warn') warn++;
     else active++;
   });
   document.getElementById('s-total').textContent = allUsers.length;
@@ -306,102 +403,67 @@ function updateStats() {
   document.getElementById('s-expired').textContent = expired;
 }
 
-// ── TRIAL STATUS ─────────────────────────────────────
 function getTrialStatus(trialStart) {
   if (!trialStart) return { type: 'unknown', days: 0, label: '— unknown', cls: 'trial-expired' };
-  const daysUsed = Math.floor((Date.now() - trialStart) / (1000 * 60 * 60 * 24));
-  const daysLeft = Math.max(0, 90 - daysUsed);
+  const daysLeft = Math.max(0, 90 - Math.floor((Date.now() - trialStart) / (1000*60*60*24)));
   if (daysLeft === 0) return { type: 'expired', days: 0, label: '❌ Expired', cls: 'trial-expired' };
-  if (daysLeft <= 10) return { type: 'warn', days: daysLeft, label: '⚠️ ' + daysLeft + ' दिन बाकी', cls: 'trial-warn' };
+  if (daysLeft <= 10) return { type: 'warn', days: daysLeft, label: '🚨 ' + daysLeft + ' दिन बाकी', cls: 'trial-critical' };
   if (daysLeft <= 30) return { type: 'warn', days: daysLeft, label: '⏳ ' + daysLeft + ' दिन बाकी', cls: 'trial-warn' };
   return { type: 'active', days: daysLeft, label: '✅ ' + daysLeft + ' दिन बाकी', cls: 'trial-ok' };
 }
 
-// ── FILTER ───────────────────────────────────────────
 function setFilter(f) {
   currentFilter = f;
-  ['all','active','warn','expired'].forEach(k => {
-    document.getElementById('f-' + k).classList.toggle('active', k === f);
-  });
+  ['all','active','warn','expired'].forEach(k => document.getElementById('f-' + k).classList.toggle('active', k === f));
   renderTable();
 }
 
-// ── RENDER TABLE ─────────────────────────────────────
 function renderTable() {
   const q = (document.getElementById('search-box').value || '').toLowerCase();
   const tbody = document.getElementById('lead-tbody');
   tbody.innerHTML = '';
-
-  let filtered = allUsers.filter(u => {
+  const filtered = allUsers.filter(u => {
     const phone = (u.profile.phone || '').toLowerCase();
     const uid = (u.uid || '').toLowerCase();
     const matchSearch = !q || phone.includes(q) || uid.includes(q);
-    const status = getTrialStatus(u.profile.trialStart);
-    const matchFilter = currentFilter === 'all' || status.type === currentFilter;
+    const s = getTrialStatus(u.profile.trialStart);
+    const matchFilter = currentFilter === 'all' || s.type === currentFilter;
     return matchSearch && matchFilter;
   });
-
   if (!filtered.length) {
     document.getElementById('table-state').innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div style="font-size:12px;color:#444;">कोई user नहीं मिला</div></div>`;
     return;
   }
   document.getElementById('table-state').innerHTML = '';
-
   filtered.forEach((u, idx) => {
-    const status = getTrialStatus(u.profile.trialStart);
-    const regDate = u.profile.registeredAt
-      ? (u.profile.registeredAt.toDate ? u.profile.registeredAt.toDate() : new Date(u.profile.registeredAt))
-      : null;
+    const s = getTrialStatus(u.profile.trialStart);
+    const regDate = u.profile.registeredAt ? (u.profile.registeredAt.toDate ? u.profile.registeredAt.toDate() : new Date(u.profile.registeredAt)) : null;
     const lastActiveDate = u.lastActive ? new Date(u.lastActive) : null;
-    const daysSinceActive = lastActiveDate ? Math.floor((Date.now() - lastActiveDate.getTime()) / (1000 * 60 * 60 * 24)) : null;
-    let dotClass = 'dot-inactive', dotLabel = 'Inactive';
-    if (daysSinceActive !== null) {
-      if (daysSinceActive <= 1) { dotClass = 'dot-active'; dotLabel = 'Today'; }
-      else if (daysSinceActive <= 7) { dotClass = 'dot-idle'; dotLabel = daysSinceActive + 'd ago'; }
-      else { dotClass = 'dot-inactive'; dotLabel = daysSinceActive + 'd ago'; }
+    const daysSince = lastActiveDate ? Math.floor((Date.now() - lastActiveDate.getTime()) / (1000*60*60*24)) : null;
+    let dotClass = 'dot-inactive', dotLabel = '—';
+    if (daysSince !== null) {
+      if (daysSince <= 1) { dotClass = 'dot-active'; dotLabel = 'Today'; }
+      else if (daysSince <= 7) { dotClass = 'dot-idle'; dotLabel = daysSince + 'd ago'; }
+      else { dotClass = 'dot-inactive'; dotLabel = daysSince + 'd ago'; }
     }
-
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td style="color:#333;font-size:11px;">${idx + 1}</td>
-      <td>
-        <div class="phone-cell">${u.profile.phone || '—'}</div>
-        <div class="uid-cell">${u.uid}</div>
-      </td>
-      <td><span class="trial-badge ${status.cls}">${status.label}</span></td>
-      <td>
-        <div class="date-cell">${regDate ? regDate.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
-        <div class="date-sub">${regDate ? regDate.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'}) : ''}</div>
-      </td>
-      <td>
-        <div class="date-cell">
-          <span class="status-dot ${dotClass}"></span>${lastActiveDate ? lastActiveDate.toLocaleDateString('en-IN', {day:'numeric',month:'short'}) : '—'}
-        </div>
-        <div class="date-sub" style="margin-left:12px;">${dotLabel}</div>
-      </td>
-      <td>
-        <div class="entries-row">
-          <span class="etag etag-b">बिक्री ${u.bikriCount}</span>
-          <span class="etag etag-m">माल ${u.maalCount}</span>
-          <span class="etag etag-u">उधार ${u.udhaarCount}</span>
-        </div>
-      </td>
+      <td style="color:#333;font-size:11px;">${idx+1}</td>
+      <td><div class="phone-cell">${u.profile.phone||'—'}</div><div class="uid-cell">${u.uid}</div></td>
+      <td><span class="trial-badge ${s.cls}">${s.label}</span></td>
+      <td><div class="date-cell">${regDate ? regDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div><div class="date-sub">${regDate ? regDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : ''}</div></td>
+      <td><div class="date-cell"><span class="status-dot ${dotClass}"></span>${lastActiveDate ? lastActiveDate.toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '—'}</div><div class="date-sub" style="margin-left:12px;">${dotLabel}</div></td>
+      <td><div class="entries-row"><span class="etag etag-b">बिक्री ${u.bikriCount}</span><span class="etag etag-m">माल ${u.maalCount}</span><span class="etag etag-u">उधार ${u.udhaarCount}</span></div></td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// ── TOAST ────────────────────────────────────────────
-function toast(msg) {
+function toast(msg, err=false) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast show';
+  t.textContent = msg; t.className = 'toast' + (err?' err':'') + ' show';
   setTimeout(() => t.className = 'toast', 3000);
 }
-
-// Enter key on password
-document.getElementById('admin-pass').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
 </script>
 </body>
 </html>

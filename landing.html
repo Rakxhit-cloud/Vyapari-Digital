@@ -12,8 +12,6 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; overflow-x: hidden; }
-
-/* HERO */
 .hero { background: linear-gradient(160deg, #0a1a0a 0%, #0f0f0f 60%); padding: 48px 20px 40px; text-align: center; border-bottom: 1px solid #1a3a1a; position: relative; overflow: hidden; }
 .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, #1a4a1a33 0%, transparent 70%); pointer-events: none; }
 .hero-logo { width: 80px; height: 80px; background: linear-gradient(135deg, #0d2a0d, #1a4a1a); border: 2px solid #2dba4d; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px; box-shadow: 0 0 40px #2dba4d33; }
@@ -24,14 +22,10 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .hero-cta { display: inline-block; background: #2dba4d; color: #fff; font-size: 16px; font-weight: 800; padding: 16px 36px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 24px #2dba4d44; transition: transform .15s, box-shadow .15s; }
 .hero-cta:active { transform: scale(.97); }
 .hero-free { font-size: 11px; color: #2a6a2a; margin-top: 10px; }
-
-/* SOCIAL PROOF */
 .proof-bar { display: flex; justify-content: center; gap: 28px; padding: 18px 20px; background: #0a1a0a; border-bottom: 1px solid #1a3a1a; flex-wrap: wrap; }
 .proof-item { text-align: center; }
 .proof-val { font-size: 20px; font-weight: 800; color: #4dca4d; }
 .proof-lbl { font-size: 9px; color: #2a6a2a; margin-top: 2px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
-
-/* FEATURES */
 .section { padding: 36px 20px; max-width: 480px; margin: 0 auto; }
 .sec-title { font-size: 13px; font-weight: 800; color: #4dca4d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; text-align: center; }
 .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -45,16 +39,12 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .feat-card.red { border-top: 2px solid #f06060; }
 .feat-card.teal { border-top: 2px solid #3dca6a; }
 .feat-card.purple { border-top: 2px solid #a070f0; }
-
-/* HOW IT WORKS */
 .steps { padding: 0 20px 36px; max-width: 480px; margin: 0 auto; }
 .step { display: flex; gap: 14px; margin-bottom: 20px; align-items: flex-start; }
 .step-num { width: 32px; height: 32px; background: #0d2a1a; border: 2px solid #2dba4d; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #4dca4d; flex-shrink: 0; margin-top: 2px; }
 .step-title { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 3px; }
 .step-desc { font-size: 11px; color: #555; line-height: 1.6; }
 .step-line { width: 2px; background: #1a3a1a; height: 20px; margin-left: 15px; margin-top: -8px; margin-bottom: 0; }
-
-/* TRIAL BANNER */
 .trial-section { margin: 0 20px 36px; max-width: 440px; margin-left: auto; margin-right: auto; background: linear-gradient(135deg, #0d2a1a, #0a1a0a); border: 1.5px solid #2dba4d; border-radius: 16px; padding: 24px 20px; text-align: center; }
 .trial-icon { font-size: 36px; margin-bottom: 10px; }
 .trial-title { font-size: 20px; font-weight: 900; color: #4dca4d; margin-bottom: 6px; }
@@ -63,14 +53,10 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .trial-point { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 12px; color: #c0e0c0; }
 .trial-point::before { content: '✅'; font-size: 12px; }
 .trial-cta { display: block; background: #2dba4d; color: #fff; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 20px #2dba4d33; }
-
-/* TESTIMONIAL */
 .testimonials { padding: 0 20px 36px; max-width: 480px; margin: 0 auto; }
 .tcard { background: #161616; border: 1px solid #1e1e1e; border-left: 3px solid #4dca4d; border-radius: 0 10px 10px 0; padding: 14px 16px; margin-bottom: 10px; }
 .ttext { font-size: 12px; color: #c0e0c0; line-height: 1.7; margin-bottom: 8px; font-style: italic; }
 .tname { font-size: 10px; color: #2a6a2a; font-weight: 800; }
-
-/* PRICING */
 .pricing { padding: 0 20px 36px; max-width: 480px; margin: 0 auto; }
 .price-card { background: #161616; border: 1.5px solid #2dba4d; border-radius: 14px; padding: 24px 20px; text-align: center; }
 .price-tag { font-size: 11px; background: #2dba4d; color: #fff; padding: 3px 12px; border-radius: 20px; font-weight: 800; display: inline-block; margin-bottom: 12px; }
@@ -81,15 +67,11 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .price-row { display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; }
 .price-k { color: #555; }
 .price-v { color: #4dca4d; font-weight: 700; }
-
-/* FOOTER */
 .footer { background: #0a0a0a; border-top: 1px solid #1a1a1a; padding: 24px 20px; text-align: center; }
 .footer-logo { font-size: 18px; font-weight: 800; color: #4dca4d; margin-bottom: 6px; }
 .footer-tagline { font-size: 11px; color: #333; margin-bottom: 16px; }
 .footer-cta { display: inline-block; background: #1a4a2a; border: 1px solid #2dba4d; color: #4dca4d; font-size: 13px; font-weight: 800; padding: 12px 28px; border-radius: 10px; text-decoration: none; }
 .footer-copy { font-size: 9px; color: #222; margin-top: 16px; }
-
-/* STICKY CTA */
 .sticky-cta { position: fixed; bottom: 0; left: 0; right: 0; background: #0d2a1a; border-top: 2px solid #2dba4d; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
 .sticky-txt { font-size: 11px; color: #4dca4d; font-weight: 700; }
 .sticky-btn { background: #2dba4d; color: #fff; font-size: 13px; font-weight: 800; padding: 10px 20px; border-radius: 8px; text-decoration: none; white-space: nowrap; }
@@ -97,7 +79,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </head>
 <body>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-badge">🆓 90 दिन बिल्कुल मुफ़्त</div>
   <div class="hero-logo">📒</div>
@@ -107,70 +88,33 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   <div class="hero-free">कोई installation नहीं · कोई credit card नहीं</div>
 </div>
 
-<!-- SOCIAL PROOF -->
 <div class="proof-bar">
   <div class="proof-item"><div class="proof-val">90</div><div class="proof-lbl">दिन मुफ़्त trial</div></div>
   <div class="proof-item"><div class="proof-val">₹0</div><div class="proof-lbl">setup cost</div></div>
   <div class="proof-item"><div class="proof-val">5 मिनट</div><div class="proof-lbl">में शुरू करें</div></div>
 </div>
 
-<!-- FEATURES -->
 <div class="section">
   <div class="sec-title">📦 क्या-क्या मिलेगा?</div>
   <div class="feature-grid">
-    <div class="feat-card green">
-      <div class="feat-icon">💰</div>
-      <div class="feat-title">रोज़ की बिक्री</div>
-      <div class="feat-desc">हर दिन की बिक्री, नकद, UPI — सब दर्ज करें</div>
-    </div>
-    <div class="feat-card red">
-      <div class="feat-icon">🤝</div>
-      <div class="feat-title">उधार बही</div>
-      <div class="feat-desc">किसने कितना लिया, कब देगा — सब track करें</div>
-    </div>
-    <div class="feat-card teal">
-      <div class="feat-icon">📦</div>
-      <div class="feat-title">माल की खरीद</div>
-      <div class="feat-desc">सप्लायर, माल, रकम — हफ़्तेवार हिसाब</div>
-    </div>
-    <div class="feat-card blue">
-      <div class="feat-icon">🥣</div>
-      <div class="feat-title">कच्चा माल</div>
-      <div class="feat-desc">रोज़ का सामान — दूध, आटा, तेल सब track</div>
-    </div>
-    <div class="feat-card amber">
-      <div class="feat-icon">📊</div>
-      <div class="feat-title">हफ़्ते का हिसाब</div>
-      <div class="feat-desc">पूरे हफ़्ते का गल्ला एक नज़र में देखें</div>
-    </div>
-    <div class="feat-card purple">
-      <div class="feat-icon">☁️</div>
-      <div class="feat-title">Cloud Backup</div>
-      <div class="feat-desc">फ़ोन बदलो — data safe रहेगा हमेशा</div>
-    </div>
+    <div class="feat-card green"><div class="feat-icon">💰</div><div class="feat-title">रोज़ की बिक्री</div><div class="feat-desc">हर दिन की बिक्री, नकद, UPI — सब दर्ज करें</div></div>
+    <div class="feat-card red"><div class="feat-icon">🤝</div><div class="feat-title">उधार बही</div><div class="feat-desc">किसने कितना लिया, कब देगा — सब track करें</div></div>
+    <div class="feat-card teal"><div class="feat-icon">📦</div><div class="feat-title">माल की खरीद</div><div class="feat-desc">सप्लायर, माल, रकम — हफ़्तेवार हिसाब</div></div>
+    <div class="feat-card blue"><div class="feat-icon">🥣</div><div class="feat-title">कच्चा माल</div><div class="feat-desc">रोज़ का सामान — दूध, आटा, तेल सब track</div></div>
+    <div class="feat-card amber"><div class="feat-icon">📊</div><div class="feat-title">हफ़्ते का हिसाब</div><div class="feat-desc">पूरे हफ़्ते का गल्ला एक नज़र में देखें</div></div>
+    <div class="feat-card purple"><div class="feat-icon">☁️</div><div class="feat-title">Cloud Backup</div><div class="feat-desc">फ़ोन बदलो — data safe रहेगा हमेशा</div></div>
   </div>
 </div>
 
-<!-- HOW IT WORKS -->
 <div class="steps">
   <div class="sec-title" style="text-align:center;margin-bottom:20px;">🚀 कैसे शुरू करें?</div>
-  <div class="step">
-    <div class="step-num">1</div>
-    <div><div class="step-title">नीचे link खोलें</div><div class="step-desc">अपने mobile browser में link खोलें — कोई app download नहीं करना</div></div>
-  </div>
+  <div class="step"><div class="step-num">1</div><div><div class="step-title">नीचे link खोलें</div><div class="step-desc">अपने mobile browser में link खोलें — कोई app download नहीं करना</div></div></div>
   <div class="step-line"></div>
-  <div class="step">
-    <div class="step-num">2</div>
-    <div><div class="step-title">मोबाइल नंबर से login करें</div><div class="step-desc">OTP आएगा — बस enter करें, account बन जाएगा</div></div>
-  </div>
+  <div class="step"><div class="step-num">2</div><div><div class="step-title">मोबाइल नंबर से login करें</div><div class="step-desc">OTP आएगा — बस enter करें, account बन जाएगा</div></div></div>
   <div class="step-line"></div>
-  <div class="step">
-    <div class="step-num">3</div>
-    <div><div class="step-title">पहली एंट्री डालें</div><div class="step-desc">आज की बिक्री दर्ज करें — 2 मिनट का काम</div></div>
-  </div>
+  <div class="step"><div class="step-num">3</div><div><div class="step-title">पहली एंट्री डालें</div><div class="step-desc">आज की बिक्री दर्ज करें — 2 मिनट का काम</div></div></div>
 </div>
 
-<!-- TRIAL BANNER -->
 <div class="trial-section">
   <div class="trial-icon">🎁</div>
   <div class="trial-title">90 दिन बिल्कुल मुफ़्त!</div>
@@ -179,12 +123,11 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="trial-point">पूरे 3 महीने सारे features मुफ़्त</div>
     <div class="trial-point">Cloud backup — data कभी नहीं खोएगा</div>
     <div class="trial-point">हिंदी में — समझने में आसान</div>
-    <div class="trial-point">बाद में सिर्फ ₹5/दिन से कम</div>
+    <div class="trial-point">बाद में सिर्फ ₹3/दिन से कम</div>
   </div>
   <a href="https://rakxhit-cloud.github.io/Vyapari-Digital/" class="trial-cta">📲 अभी मुफ़्त शुरू करें →</a>
 </div>
 
-<!-- TESTIMONIALS -->
 <div class="testimonials">
   <div class="sec-title">💬 व्यापारियों की बात</div>
   <div class="tcard">
@@ -197,7 +140,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<!-- PRICING -->
 <div class="pricing">
   <div class="sec-title">💳 कीमत क्या है?</div>
   <div class="price-card">
@@ -207,14 +149,13 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="price-sub">Trial खत्म होने के बाद</div>
     <div class="price-divider"></div>
     <div class="price-row"><span class="price-k">महीने का subscription</span><span class="price-v">₹99/महीना</span></div>
-    <div class="price-row"><span class="price-k">रोज़ का खर्चा</span><span class="price-v">सिर्फ ₹5/दिन</span></div>
+    <div class="price-row"><span class="price-k">रोज़ का खर्चा</span><span class="price-v">सिर्फ ₹3/दिन</span></div>
     <div class="price-row"><span class="price-k">एक चाय की कीमत में</span><span class="price-v">पूरे महीने का हिसाब</span></div>
     <div class="price-divider"></div>
     <a href="https://rakxhit-cloud.github.io/Vyapari-Digital/" style="display:block;background:#1a4a2a;border:1px solid #2dba4d;color:#4dca4d;font-size:13px;font-weight:800;padding:12px;border-radius:8px;text-decoration:none;text-align:center;margin-top:4px;">📲 पहले मुफ़्त try करें</a>
   </div>
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
   <div class="footer-logo">📒 हिसाब-Kitaab</div>
   <div class="footer-tagline">रोज़ का हिसाब — रोज़ का मुनाफ़ा</div>
@@ -222,14 +163,12 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   <div class="footer-copy">© 2026 हिसाब-Kitaab · Made for Indian small businesses</div>
 </div>
 
-<!-- STICKY CTA -->
 <div class="sticky-cta">
   <div class="sticky-txt">90 दिन मुफ़्त · अभी शुरू करें</div>
   <a href="https://rakxhit-cloud.github.io/Vyapari-Digital/" class="sticky-btn">📲 शुरू करें</a>
 </div>
 
 <script>
-// Hide sticky CTA when user clicks any CTA
 document.querySelectorAll('a[href*="Vyapari-Digital/"]').forEach(a => {
   a.addEventListener('click', () => {
     document.querySelector('.sticky-cta').style.display = 'none';

@@ -405,6 +405,16 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .trial-days { font-size: 11px; font-weight: 800; color: #50a0f0; }
 .trial-sub { font-size: 8px; color: #305080; margin-top: 1px; }
 .trial-badge { font-size: 8px; background: #1a2a40; border: 1px solid #2a4a60; color: #4080c0; padding: 3px 8px; border-radius: 5px; font-weight: 700; }
+/* ── Install Banner ── */
+.install-banner { display: none; background: #0d1f0d; border-bottom: 2px solid #2dba4d; padding: 8px 14px; align-items: center; gap: 10px; position: relative; }
+.install-banner.show { display: flex; }
+.install-banner-icon { font-size: 24px; flex-shrink: 0; }
+.install-banner-text { flex: 1; }
+.install-banner-title { font-size: 12px; font-weight: 800; color: #4dca4d; }
+.install-banner-sub { font-size: 10px; color: #2a6a2a; margin-top: 2px; }
+.install-banner-btn { background: #2dba4d; border: none; color: #fff; font-size: 11px; font-weight: 800; padding: 7px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.install-banner-btn:active { opacity: .8; }
+.install-banner-dismiss { background: none; border: none; color: #2a6a2a; font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0; line-height: 1; }
 @media (min-width: 768px) {
   .header { padding: 14px 28px; }
   .header-title { font-size: 18px; }
@@ -486,6 +496,18 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </div>
 
 <div id="main-app" style="display:none;">
+
+<!-- Install Banner -->
+<div class="install-banner" id="install-banner">
+  <div class="install-banner-icon">📲</div>
+  <div class="install-banner-text">
+    <div class="install-banner-title">ऐप इंस्टॉल करें — फ्री!</div>
+    <div class="install-banner-sub">होम स्क्रीन पर जोड़ें, तेज़ खुलेगा</div>
+  </div>
+  <button class="install-banner-btn" id="install-banner-btn">इंस्टॉल करें</button>
+  <button class="install-banner-dismiss" id="install-banner-dismiss" title="बाद में">✕</button>
+</div>
+
 <div class="sync-status-bar">
   <span class="sync-dot synced" id="sync-dot"></span>
   <span class="sync-status-txt" id="sync-status-txt">☁️ Cloud Sync चालू है</span>
@@ -921,7 +943,6 @@ window.agreeTerms = async function() {
   launchApp(uid);
 };
 
-// ── SURGICAL CHANGE: हर login पर parent document ensure करें ──
 onAuthStateChanged(auth, async user => {
   if (user) {
     const uid = user.uid;
@@ -931,7 +952,6 @@ onAuthStateChanged(auth, async user => {
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
     } else {
-      // हर login पर parent document बनाएं — admin के लिए ज़रूरी
       const phone = user.phoneNumber || '';
       const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
       window._fsRegisterUser(uid, phone, trialStart);
@@ -1095,8 +1115,82 @@ function loadUdhaar(){const el=document.getElementById('udhaar-list');el.innerHT
 function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#4dca4d;">${fmt(data.profit)}</div><div style="font-size:9px;color:#f0b040;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;el.appendChild(div);});}
 function loadGoalScreen(){const el=document.getElementById('goal-list');el.innerHTML='';const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}goals.slice().reverse().forEach(g=>{const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';const parts=g.month.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='gcard';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;el.appendChild(div);});}
 </script>
+
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}
 </script>
+
+<script>
+(function() {
+  let deferredPrompt = null;
+  const BANNER_KEY = 'hk_install_dismissed_at';
+  const REMIND_DAYS = 3;
+
+  function isInstalled() {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.navigator.standalone === true;
+  }
+
+  function shouldShowBanner() {
+    if (isInstalled()) return false;
+    const dismissedAt = localStorage.getItem(BANNER_KEY);
+    if (!dismissedAt) return true;
+    if (dismissedAt === 'installed') return false;
+    const daysSince = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+    return daysSince >= REMIND_DAYS;
+  }
+
+  function showBanner() {
+    if (shouldShowBanner()) {
+      document.getElementById('install-banner').classList.add('show');
+    }
+  }
+
+  function hideBanner() {
+    document.getElementById('install-banner').classList.remove('show');
+  }
+
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    const observer = new MutationObserver(function() {
+      if (document.getElementById('main-app').style.display !== 'none') {
+        showBanner();
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.getElementById('main-app'), { attributes: true, attributeFilter: ['style'] });
+    if (document.getElementById('main-app').style.display !== 'none') {
+      showBanner();
+    }
+  });
+
+  document.getElementById('install-banner-btn').addEventListener('click', async function() {
+    if (!deferredPrompt) {
+      alert('iOS पर: Share बटन दबाएं → "Add to Home Screen" चुनें');
+      hideBanner();
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    hideBanner();
+    if (outcome === 'accepted') {
+      localStorage.setItem(BANNER_KEY, 'installed');
+    }
+  });
+
+  document.getElementById('install-banner-dismiss').addEventListener('click', function() {
+    localStorage.setItem(BANNER_KEY, Date.now().toString());
+    hideBanner();
+  });
+
+  window.addEventListener('appinstalled', function() {
+    localStorage.setItem(BANNER_KEY, 'installed');
+    hideBanner();
+  });
+})();
+</script>
+
 </body>
 </html>

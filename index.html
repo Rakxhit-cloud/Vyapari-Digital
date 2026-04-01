@@ -405,16 +405,28 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .trial-days { font-size: 11px; font-weight: 800; color: #50a0f0; }
 .trial-sub { font-size: 8px; color: #305080; margin-top: 1px; }
 .trial-badge { font-size: 8px; background: #1a2a40; border: 1px solid #2a4a60; color: #4080c0; padding: 3px 8px; border-radius: 5px; font-weight: 700; }
-/* ── Install Banner ── */
-.install-banner { display: none; background: #0d1f0d; border-bottom: 2px solid #2dba4d; padding: 8px 14px; align-items: center; gap: 10px; position: relative; }
-.install-banner.show { display: flex; }
-.install-banner-icon { font-size: 24px; flex-shrink: 0; }
-.install-banner-text { flex: 1; }
-.install-banner-title { font-size: 12px; font-weight: 800; color: #4dca4d; }
-.install-banner-sub { font-size: 10px; color: #2a6a2a; margin-top: 2px; }
-.install-banner-btn { background: #2dba4d; border: none; color: #fff; font-size: 11px; font-weight: 800; padding: 7px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
-.install-banner-btn:active { opacity: .8; }
-.install-banner-dismiss { background: none; border: none; color: #2a6a2a; font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0; line-height: 1; }
+/* ── Install Sheet ── */
+.install-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
+.install-overlay.show { display: flex; }
+.install-sheet { background: #161616; border-radius: 20px 20px 0 0; border-top: 2px solid #2dba4d; padding: 20px 20px 32px; width: 100%; max-width: 480px; animation: slideUp .3s ease; }
+.install-sheet-handle { width: 40px; height: 4px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 16px; }
+.install-sheet-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.install-sheet-appicon { width: 56px; height: 56px; background: linear-gradient(135deg,#0d1f0d,#1a4a1a); border: 2px solid #2dba4d; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+.install-sheet-appname { font-size: 18px; font-weight: 800; color: #fff; }
+.install-sheet-appsub { font-size: 11px; color: #4dca4d; margin-top: 3px; }
+.install-sheet-divider { height: 1px; background: #1e1e1e; margin-bottom: 16px; }
+.install-sheet-steps { margin-bottom: 18px; }
+.install-step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.install-step-num { width: 22px; height: 22px; background: #0d2a1a; border: 1px solid #2dba4d; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #4dca4d; flex-shrink: 0; margin-top: 1px; }
+.install-step-text { font-size: 12px; color: #c0c0c0; line-height: 1.5; }
+.install-step-text strong { color: #fff; }
+.install-sheet-benefits { display: flex; gap: 8px; margin-bottom: 20px; }
+.install-benefit { flex: 1; background: #0d1f0d; border: 1px solid #1a3a1a; border-radius: 8px; padding: 8px 6px; text-align: center; }
+.install-benefit-icon { font-size: 16px; margin-bottom: 4px; }
+.install-benefit-text { font-size: 9px; color: #3a8a3a; font-weight: 700; }
+.install-sheet-btn { width: 100%; background: #2dba4d; border: none; color: #fff; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 10px; letter-spacing: .3px; }
+.install-sheet-btn:active { opacity: .85; }
+.install-sheet-later { width: 100%; background: transparent; border: none; color: #555; font-size: 12px; padding: 8px; cursor: pointer; }
 @media (min-width: 768px) {
   .header { padding: 14px 28px; }
   .header-title { font-size: 18px; }
@@ -497,17 +509,38 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 
 <div id="main-app" style="display:none;">
 
-<!-- Install Banner -->
-<div class="install-banner" id="install-banner">
-  <div class="install-banner-icon">📲</div>
-  <div class="install-banner-text">
-    <div class="install-banner-title">ऐप इंस्टॉल करें — फ्री!</div>
-    <div class="install-banner-sub">होम स्क्रीन पर जोड़ें, तेज़ खुलेगा</div>
+<!-- Install Sheet -->
+<div class="install-overlay" id="install-banner">
+  <div class="install-sheet">
+    <div class="install-sheet-handle"></div>
+    <div class="install-sheet-top">
+      <div class="install-sheet-appicon">📒</div>
+      <div>
+        <div class="install-sheet-appname">हिसाब-Kitaab</div>
+        <div class="install-sheet-appsub">📲 होम स्क्रीन पर इंस्टॉल करें — बिल्कुल फ्री</div>
+      </div>
+    </div>
+    <div class="install-sheet-divider"></div>
+    <div class="install-sheet-benefits">
+      <div class="install-benefit"><div class="install-benefit-icon">⚡</div><div class="install-benefit-text">तेज़ खुलेगा</div></div>
+      <div class="install-benefit"><div class="install-benefit-icon">📵</div><div class="install-benefit-text">Offline काम</div></div>
+      <div class="install-benefit"><div class="install-benefit-icon">🖥️</div><div class="install-benefit-text">Full Screen</div></div>
+      <div class="install-benefit"><div class="install-benefit-icon">🔔</div><div class="install-benefit-text">Notification</div></div>
+    </div>
+    <div class="install-sheet-steps" id="install-steps-android">
+      <div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">नीचे <strong>इंस्टॉल करें</strong> बटन दबाएं</div></div>
+      <div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Chrome का popup आएगा — <strong>Install</strong> दबाएं</div></div>
+      <div class="install-step"><div class="install-step-num">3</div><div class="install-step-text">होम स्क्रीन पर <strong>हिसाब icon</strong> दिखेगा ✅</div></div>
+    </div>
+    <div class="install-sheet-steps" id="install-steps-ios" style="display:none;">
+      <div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Safari में <strong>Share बटन (⬆️)</strong> दबाएं</div></div>
+      <div class="install-step"><div class="install-step-num">2</div><div class="install-step-text"><strong>"Add to Home Screen"</strong> चुनें</div></div>
+      <div class="install-step"><div class="install-step-num">3</div><div class="install-step-text">ऊपर <strong>Add</strong> दबाएं — होम स्क्रीन पर icon आ जाएगा ✅</div></div>
+    </div>
+    <button class="install-sheet-btn" id="install-banner-btn">📲 अभी इंस्टॉल करें</button>
+    <button class="install-sheet-later" id="install-banner-dismiss">बाद में करूँगा / करूँगी</button>
   </div>
-  <button class="install-banner-btn" id="install-banner-btn">इंस्टॉल करें</button>
-  <button class="install-banner-dismiss" id="install-banner-dismiss" title="बाद में">✕</button>
 </div>
-
 <div class="sync-status-bar">
   <span class="sync-dot synced" id="sync-dot"></span>
   <span class="sync-status-txt" id="sync-status-txt">☁️ Cloud Sync चालू है</span>
@@ -1126,6 +1159,13 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
   const BANNER_KEY = 'hk_install_dismissed_at';
   const REMIND_DAYS = 3;
 
+  // Detect iOS
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (isIOS) {
+    document.getElementById('install-steps-android').style.display = 'none';
+    document.getElementById('install-steps-ios').style.display = 'block';
+  }
+
   function isInstalled() {
     return window.matchMedia('(display-mode: standalone)').matches ||
            window.navigator.standalone === true;
@@ -1150,29 +1190,28 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     document.getElementById('install-banner').classList.remove('show');
   }
 
-  // Capture Chrome's native prompt if available
+  // Capture Chrome's native prompt
   window.addEventListener('beforeinstallprompt', function(e) {
     e.preventDefault();
     deferredPrompt = e;
   });
 
-  // Always show banner after login — don't wait for beforeinstallprompt
+  // Show after login
   const appEl = document.getElementById('main-app');
   const observer = new MutationObserver(function() {
     if (appEl.style.display !== 'none') {
-      setTimeout(showBanner, 1500);
+      setTimeout(showBanner, 2000);
       observer.disconnect();
     }
   });
   observer.observe(appEl, { attributes: true, attributeFilter: ['style'] });
   if (appEl.style.display !== 'none') {
-    setTimeout(showBanner, 1500);
+    setTimeout(showBanner, 2000);
   }
 
-  // Install button click
+  // Install button
   document.getElementById('install-banner-btn').addEventListener('click', async function() {
     if (deferredPrompt) {
-      // Chrome native install
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       deferredPrompt = null;
@@ -1180,32 +1219,39 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
       if (outcome === 'accepted') {
         localStorage.setItem(BANNER_KEY, 'installed');
       }
+    } else if (isIOS) {
+      // iOS — steps already shown, just close
+      hideBanner();
+      localStorage.setItem(BANNER_KEY, Date.now().toString());
     } else {
-      // Fallback — show manual instructions
-      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-      if (isIOS) {
-        alert('iPhone पर इंस्टॉल करें:\n\nShare बटन (⬆️) दबाएं → "Add to Home Screen" चुनें → Add दबाएं');
-      } else {
-        alert('इंस्टॉल करें:\n\nChrome menu (⋮) दबाएं → "Add to Home screen" या "Install app" चुनें');
-      }
+      // Android fallback — Chrome menu
+      alert('Chrome menu (⋮) दबाएं → "Add to Home screen" या "Install app" चुनें');
       hideBanner();
       localStorage.setItem(BANNER_KEY, Date.now().toString());
     }
   });
 
-  // Dismiss — remind after 3 days
+  // Dismiss
   document.getElementById('install-banner-dismiss').addEventListener('click', function() {
     localStorage.setItem(BANNER_KEY, Date.now().toString());
     hideBanner();
   });
 
-  // Auto-hide once installed
+  // Close on overlay tap
+  document.getElementById('install-banner').addEventListener('click', function(e) {
+    if (e.target === this) {
+      localStorage.setItem(BANNER_KEY, Date.now().toString());
+      hideBanner();
+    }
+  });
+
+  // Auto hide once installed
   window.addEventListener('appinstalled', function() {
     localStorage.setItem(BANNER_KEY, 'installed');
     hideBanner();
   });
 })();
-</script>S
+</script>
 
 </body>
 </html>

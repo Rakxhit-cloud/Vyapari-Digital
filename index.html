@@ -1150,47 +1150,62 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     document.getElementById('install-banner').classList.remove('show');
   }
 
+  // Capture Chrome's native prompt if available
   window.addEventListener('beforeinstallprompt', function(e) {
     e.preventDefault();
     deferredPrompt = e;
-    const observer = new MutationObserver(function() {
-      if (document.getElementById('main-app').style.display !== 'none') {
-        showBanner();
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.getElementById('main-app'), { attributes: true, attributeFilter: ['style'] });
-    if (document.getElementById('main-app').style.display !== 'none') {
-      showBanner();
-    }
   });
 
+  // Always show banner after login — don't wait for beforeinstallprompt
+  const appEl = document.getElementById('main-app');
+  const observer = new MutationObserver(function() {
+    if (appEl.style.display !== 'none') {
+      setTimeout(showBanner, 1500);
+      observer.disconnect();
+    }
+  });
+  observer.observe(appEl, { attributes: true, attributeFilter: ['style'] });
+  if (appEl.style.display !== 'none') {
+    setTimeout(showBanner, 1500);
+  }
+
+  // Install button click
   document.getElementById('install-banner-btn').addEventListener('click', async function() {
-    if (!deferredPrompt) {
-      alert('iOS पर: Share बटन दबाएं → "Add to Home Screen" चुनें');
+    if (deferredPrompt) {
+      // Chrome native install
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
       hideBanner();
-      return;
-    }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    hideBanner();
-    if (outcome === 'accepted') {
-      localStorage.setItem(BANNER_KEY, 'installed');
+      if (outcome === 'accepted') {
+        localStorage.setItem(BANNER_KEY, 'installed');
+      }
+    } else {
+      // Fallback — show manual instructions
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      if (isIOS) {
+        alert('iPhone पर इंस्टॉल करें:\n\nShare बटन (⬆️) दबाएं → "Add to Home Screen" चुनें → Add दबाएं');
+      } else {
+        alert('इंस्टॉल करें:\n\nChrome menu (⋮) दबाएं → "Add to Home screen" या "Install app" चुनें');
+      }
+      hideBanner();
+      localStorage.setItem(BANNER_KEY, Date.now().toString());
     }
   });
 
+  // Dismiss — remind after 3 days
   document.getElementById('install-banner-dismiss').addEventListener('click', function() {
     localStorage.setItem(BANNER_KEY, Date.now().toString());
     hideBanner();
   });
 
+  // Auto-hide once installed
   window.addEventListener('appinstalled', function() {
     localStorage.setItem(BANNER_KEY, 'installed');
     hideBanner();
   });
 })();
-</script>
+</script>S
 
 </body>
 </html>

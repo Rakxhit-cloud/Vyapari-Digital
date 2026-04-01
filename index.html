@@ -1022,8 +1022,25 @@ function launchApp(uid) {
   initApp(uid); updateTrialBanner(uid);
 }
 
-function updateTrialBanner(uid) {
-  const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
+async function updateTrialBanner(uid) {
+  let trialStart = 0;
+  // First try Firestore (cannot be manipulated by user)
+  try {
+    const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const profileRef = doc(db, 'users', uid, 'profile', 'info');
+    const snap = await getDoc(profileRef);
+    if (snap.exists() && snap.data().trialStart) {
+      trialStart = snap.data().trialStart;
+      // Sync back to localStorage
+      localStorage.setItem('hk_trial_start_' + uid, trialStart.toString());
+    }
+  } catch(e) {
+    console.warn('Firestore trial fetch failed, using localStorage');
+  }
+  // Fallback to localStorage
+  if (!trialStart) {
+    trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
+  }
   if (!trialStart) return;
   const daysLeft = Math.max(0, 90 - Math.floor((Date.now() - trialStart) / (1000*60*60*24)));
   const el = document.getElementById('trial-days-text'), sub = document.getElementById('trial-sub-text');
@@ -1032,7 +1049,6 @@ function updateTrialBanner(uid) {
   else if (daysLeft > 0) { el.textContent = '🚨 सिर्फ ' + daysLeft + ' दिन बाकी!'; el.style.color = '#f06060'; sub.textContent = 'आज ही subscribe करें — ₹3/दिन से कम'; }
   else { el.textContent = '❌ Trial खत्म हो गया'; el.style.color = '#f06060'; sub.textContent = 'Subscribe करें और अपना data सुरक्षित रखें'; }
 }
-
 window.signOut = async function() { await fbSignOut(auth); location.reload(); };
 
 ['o1','o2','o3','o4','o5','o6'].forEach((id, idx, arr) => {

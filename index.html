@@ -405,6 +405,21 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .trial-days { font-size: 11px; font-weight: 800; color: #50a0f0; }
 .trial-sub { font-size: 8px; color: #305080; margin-top: 1px; }
 .trial-badge { font-size: 8px; background: #1a2a40; border: 1px solid #2a4a60; color: #4080c0; padding: 3px 8px; border-radius: 5px; font-weight: 700; }
+/* PWA INSTALL BANNER */
+.install-banner { position: fixed; bottom: 70px; left: 10px; right: 10px; background: #0d2a1a; border: 1.5px solid #2dba4d; border-radius: 14px; padding: 12px 14px; display: none; align-items: center; gap: 10px; z-index: 9998; box-shadow: 0 4px 24px rgba(0,0,0,0.5); max-width: 460px; margin: 0 auto; }
+.install-banner.show { display: flex; }
+.install-banner-icon { font-size: 28px; flex-shrink: 0; }
+.install-banner-text { flex: 1; }
+.install-banner-title { font-size: 12px; font-weight: 800; color: #4dca4d; margin-bottom: 2px; }
+.install-banner-sub { font-size: 10px; color: #2a6a3a; }
+.install-banner-btns { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+.install-btn-yes { background: #2dba4d; border: none; color: #fff; font-size: 11px; font-weight: 800; padding: 7px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
+.install-btn-no { background: transparent; border: 1px solid #2a3a2a; color: #3a6a3a; font-size: 10px; padding: 5px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
+.iphone-banner { position: fixed; bottom: 70px; left: 10px; right: 10px; background: #0d1520; border: 1.5px solid #50a0f0; border-radius: 14px; padding: 12px 14px; display: none; z-index: 9998; box-shadow: 0 4px 24px rgba(0,0,0,0.5); max-width: 460px; margin: 0 auto; }
+.iphone-banner.show { display: block; }
+.iphone-banner-title { font-size: 12px; font-weight: 800; color: #50a0f0; margin-bottom: 6px; }
+.iphone-banner-steps { font-size: 11px; color: #4a90d0; line-height: 2; }
+.iphone-banner-close { position: absolute; top: 10px; right: 12px; background: transparent; border: none; color: #50a0f0; font-size: 16px; cursor: pointer; }
 @media (min-width: 768px) {
   .header { padding: 14px 28px; }
   .header-title { font-size: 18px; }
@@ -539,6 +554,30 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   <div class="more-item" onclick="signOut();">🚪 लॉग आउट</div>
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- PWA INSTALL BANNER — Android -->
+<div class="install-banner" id="install-banner">
+  <div class="install-banner-icon">📒</div>
+  <div class="install-banner-text">
+    <div class="install-banner-title">Home Screen पर Add करें!</div>
+    <div class="install-banner-sub">App जैसा use करें — एक tap में खुलेगा</div>
+  </div>
+  <div class="install-banner-btns">
+    <button class="install-btn-yes" id="install-btn-yes">✅ Add करें</button>
+    <button class="install-btn-no" id="install-btn-no">बाद में</button>
+  </div>
+</div>
+
+<!-- iPHONE INSTALL GUIDE -->
+<div class="iphone-banner" id="iphone-banner">
+  <button class="iphone-banner-close" id="iphone-close">✕</button>
+  <div class="iphone-banner-title">📱 iPhone पर Add करें — Home Screen</div>
+  <div class="iphone-banner-steps">
+    1️⃣ नीचे <strong style="color:#fff;">Share बटन</strong> (□↑) दबाएं<br>
+    2️⃣ <strong style="color:#fff;">"Add to Home Screen"</strong> चुनें<br>
+    3️⃣ <strong style="color:#fff;">"Add"</strong> दबाएं — हो गया! 🎉
+  </div>
+</div>
 
 <div id="s-home" class="screen active">
   <div class="header">
@@ -921,7 +960,6 @@ window.agreeTerms = async function() {
   launchApp(uid);
 };
 
-// ── SURGICAL CHANGE: हर login पर parent document ensure करें ──
 onAuthStateChanged(auth, async user => {
   if (user) {
     const uid = user.uid;
@@ -931,7 +969,6 @@ onAuthStateChanged(auth, async user => {
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
     } else {
-      // हर login पर parent document बनाएं — admin के लिए ज़रूरी
       const phone = user.phoneNumber || '';
       const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
       window._fsRegisterUser(uid, phone, trialStart);
@@ -1095,8 +1132,64 @@ function loadUdhaar(){const el=document.getElementById('udhaar-list');el.innerHT
 function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#4dca4d;">${fmt(data.profit)}</div><div style="font-size:9px;color:#f0b040;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;el.appendChild(div);});}
 function loadGoalScreen(){const el=document.getElementById('goal-list');el.innerHTML='';const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}goals.slice().reverse().forEach(g=>{const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';const parts=g.month.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='gcard';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;el.appendChild(div);});}
 </script>
+
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}
 </script>
+
+<!-- PWA INSTALL LOGIC -->
+<script>
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(() => {
+    if (!localStorage.getItem('pwa_installed') && !localStorage.getItem('pwa_dismissed')) {
+      document.getElementById('install-banner').classList.add('show');
+    }
+  }, 3000);
+});
+
+document.getElementById('install-btn-yes').addEventListener('click', async () => {
+  document.getElementById('install-banner').classList.remove('show');
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      localStorage.setItem('pwa_installed', '1');
+    }
+    deferredPrompt = null;
+  }
+});
+
+document.getElementById('install-btn-no').addEventListener('click', () => {
+  document.getElementById('install-banner').classList.remove('show');
+  localStorage.setItem('pwa_dismissed', '1');
+});
+
+window.addEventListener('appinstalled', () => {
+  localStorage.setItem('pwa_installed', '1');
+  document.getElementById('install-banner').classList.remove('show');
+});
+
+const isIphone = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const isInStandaloneMode = window.navigator.standalone;
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+if (isIphone && isSafari && !isInStandaloneMode) {
+  if (!localStorage.getItem('iphone_guide_shown')) {
+    setTimeout(() => {
+      document.getElementById('iphone-banner').classList.add('show');
+      localStorage.setItem('iphone_guide_shown', '1');
+    }, 4000);
+  }
+}
+
+document.getElementById('iphone-close').addEventListener('click', () => {
+  document.getElementById('iphone-banner').classList.remove('show');
+});
+</script>
+
 </body>
 </html>

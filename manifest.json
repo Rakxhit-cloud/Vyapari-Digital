@@ -1,13 +1,11 @@
 {
-  "name": "व्यापारी Digital",
-  "short_name": "व्यापारी",
+  "name": "हिसाब-Kitaab",
+  "short_name": "हिसाब",
   "description": "रोज़ का हिसाब — रोज़ का मुनाफ़ा",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "
-#0f0f0f",
-  "theme_color": "
-#1a2e1a",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
   "orientation": "portrait",
   "icons": [
     {

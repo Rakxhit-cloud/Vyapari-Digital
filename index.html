@@ -435,10 +435,22 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   .kpi-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
   .month-grid { grid-template-columns: repeat(6,1fr); }
   .auth-screen { padding: 40px; }
-}
+} /* ── Splash Screen ── */
+.splash-screen { position: fixed; inset: 0; background: #0f0f0f; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: opacity .3s ease; }
+.splash-screen.hidden { opacity: 0; pointer-events: none; }
+.splash-logo { width: 80px; height: 80px; background: linear-gradient(135deg,#0d1f0d,#1a4a1a); border: 2px solid #2dba4d; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.splash-title { font-size: 22px; font-weight: 800; color: #fff; }
+.splash-sub { font-size: 12px; color: #4dca4d; }
+.splash-loader { width: 36px; height: 36px; border: 3px solid #1a4a2a; border-top-color: #4dca4d; border-radius: 50%; animation: spin .7s linear infinite; margin-top: 8px; }
 </style>
 </head>
-<body>
+<body> <!-- Splash Screen -->
+<div class="splash-screen" id="splash-screen">
+  <div class="splash-logo">📒</div>
+  <div class="splash-title">हिसाब-Kitaab</div>
+  <div class="splash-sub">रोज़ का हिसाब — रोज़ का मुनाफ़ा</div>
+  <div class="splash-loader"></div>
+</div>
 
 <div class="auth-screen" id="screen-phone">
   <div class="auth-logo">📒</div>
@@ -977,6 +989,10 @@ window.agreeTerms = async function() {
 };
 
 onAuthStateChanged(auth, async user => {
+  // Hide splash screen
+  const splash = document.getElementById('splash-screen');
+  if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
+
   if (user) {
     const uid = user.uid;
     const termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);

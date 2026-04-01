@@ -991,7 +991,7 @@ window.agreeTerms = async function() {
 onAuthStateChanged(auth, async user => {
   // Hide splash screen
   const splash = document.getElementById('splash-screen');
-  if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
+if (splash) { setTimeout(() => { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }, 800); }
 
   if (user) {
     const uid = user.uid;

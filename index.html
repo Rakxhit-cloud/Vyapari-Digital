@@ -533,15 +533,11 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div id="dp-content"></div>
   </div>
 </div>
-
-<!-- CHANGE 1: और menu with install button -->
 <div class="more-menu" id="more-menu">
   <div class="more-item" onclick="go('s-monthly');toggleMore();">📅 महीने का हिसाब</div>
   <div class="more-item" onclick="go('s-goal');toggleMore();">🎯 लक्ष्य</div>
-  <div class="more-item" id="install-menu-btn" onclick="triggerInstall();toggleMore();" style="display:none;">📲 App Install करें</div>
   <div class="more-item" onclick="signOut();">🚪 लॉग आउट</div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <div id="s-home" class="screen active">
@@ -553,29 +549,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="header-date"><div class="hd-day" id="t-day"></div><div class="hd-date" id="t-date"></div></div>
   </div>
   <div class="pad">
-
-    <!-- CHANGE 2: Install cards on home screen -->
-    <div id="install-card" style="display:none;background:#0d2a1a;border:1.5px solid #2dba4d;border-radius:12px;padding:11px 14px;align-items:center;gap:10px;margin:10px 0;">
-      <div style="font-size:22px;flex-shrink:0;">📲</div>
-      <div style="flex:1;">
-        <div style="font-size:12px;font-weight:800;color:#4dca4d;margin-bottom:2px;">App Install करें</div>
-        <div style="font-size:9px;color:#2a6a3a;">Home Screen पर add करें — एक tap में खुलेगा</div>
-      </div>
-      <button onclick="triggerInstall()" style="background:#2dba4d;border:none;color:#fff;font-size:10px;font-weight:800;padding:8px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;">Install ↓</button>
-    </div>
-
-    <div id="iphone-install-card" style="display:none;background:#0d1520;border:1.5px solid #50a0f0;border-radius:12px;padding:11px 14px;margin:10px 0;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <div style="font-size:12px;font-weight:800;color:#50a0f0;">📱 iPhone पर Install करें</div>
-        <button onclick="document.getElementById('iphone-install-card').style.display='none';localStorage.setItem('iphone_card_dismissed','1');" style="background:transparent;border:none;color:#50a0f0;font-size:14px;cursor:pointer;">✕</button>
-      </div>
-      <div style="font-size:10px;color:#4a90d0;line-height:1.9;">
-        1️⃣ नीचे <strong style="color:#fff;">Share (□↑)</strong> दबाएं<br>
-        2️⃣ <strong style="color:#fff;">"Add to Home Screen"</strong> चुनें<br>
-        3️⃣ <strong style="color:#fff;">"Add"</strong> दबाएं — हो गया! 🎉
-      </div>
-    </div>
-
     <div class="trial-banner" id="trial-banner">
       <div><div class="trial-days" id="trial-days-text">⏳ Free Trial</div><div class="trial-sub" id="trial-sub-text">लोड हो रहा है...</div></div>
       <div class="trial-badge">मुफ़्त</div>
@@ -827,10 +800,28 @@ window._fsLoadAll = async function(uid) {
 window._fsRegisterUser = async function(uid, phone, trialStart) {
   if (!uid || uid === 'default') return;
   try {
-    await setDoc(doc(db, 'users', uid), { exists: true, createdAt: serverTimestamp() }, { merge: true });
-    await setDoc(doc(db, 'users', uid, 'profile', 'info'), { uid, phone: phone || '', trialStart, termsAgreedAt: serverTimestamp(), registeredAt: serverTimestamp(), appVersion: '1.0', platform: 'PWA' }, { merge: true });
+    await setDoc(
+      doc(db, 'users', uid),
+      { exists: true, createdAt: serverTimestamp() },
+      { merge: true }
+    );
+    await setDoc(
+      doc(db, 'users', uid, 'profile', 'info'),
+      {
+        uid,
+        phone: phone || '',
+        trialStart,
+        termsAgreedAt: serverTimestamp(),
+        registeredAt: serverTimestamp(),
+        appVersion: '1.0',
+        platform: 'PWA'
+      },
+      { merge: true }
+    );
     console.log('✅ User registered in Firestore');
-  } catch(e) { console.warn('FS register error:', e); }
+  } catch(e) {
+    console.warn('FS register error:', e);
+  }
 };
 
 function setupRecaptcha() {
@@ -930,6 +921,7 @@ window.agreeTerms = async function() {
   launchApp(uid);
 };
 
+// ── SURGICAL CHANGE: हर login पर parent document ensure करें ──
 onAuthStateChanged(auth, async user => {
   if (user) {
     const uid = user.uid;
@@ -939,6 +931,7 @@ onAuthStateChanged(auth, async user => {
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
     } else {
+      // हर login पर parent document बनाएं — admin के लिए ज़रूरी
       const phone = user.phoneNumber || '';
       const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
       window._fsRegisterUser(uid, phone, trialStart);
@@ -1102,53 +1095,8 @@ function loadUdhaar(){const el=document.getElementById('udhaar-list');el.innerHT
 function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#4dca4d;">${fmt(data.profit)}</div><div style="font-size:9px;color:#f0b040;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;el.appendChild(div);});}
 function loadGoalScreen(){const el=document.getElementById('goal-list');el.innerHTML='';const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}goals.slice().reverse().forEach(g=>{const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';const parts=g.month.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='gcard';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;el.appendChild(div);});}
 </script>
-
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}
 </script>
-
-<!-- CHANGE 3: PWA Install Logic -->
-<script>
-let deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (!localStorage.getItem('pwa_installed')) {
-    document.getElementById('install-card').style.display = 'flex';
-    document.getElementById('install-menu-btn').style.display = 'flex';
-  }
-});
-
-window.triggerInstall = async function() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      localStorage.setItem('pwa_installed', '1');
-      document.getElementById('install-card').style.display = 'none';
-      document.getElementById('install-menu-btn').style.display = 'none';
-    }
-    deferredPrompt = null;
-  }
-};
-
-window.addEventListener('appinstalled', () => {
-  localStorage.setItem('pwa_installed', '1');
-  document.getElementById('install-card').style.display = 'none';
-  document.getElementById('install-menu-btn').style.display = 'none';
-});
-
-const isIphone = /iPhone|iPad|iPod/.test(navigator.userAgent);
-const isStandalone = window.navigator.standalone;
-const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-if (isIphone && isSafari && !isStandalone) {
-  if (!localStorage.getItem('iphone_card_dismissed') && !localStorage.getItem('pwa_installed')) {
-    document.getElementById('iphone-install-card').style.display = 'block';
-  }
-}
-</script>
-
 </body>
 </html>

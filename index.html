@@ -405,21 +405,6 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .trial-days { font-size: 11px; font-weight: 800; color: #50a0f0; }
 .trial-sub { font-size: 8px; color: #305080; margin-top: 1px; }
 .trial-badge { font-size: 8px; background: #1a2a40; border: 1px solid #2a4a60; color: #4080c0; padding: 3px 8px; border-radius: 5px; font-weight: 700; }
-/* PWA INSTALL BANNER */
-.install-banner { position: fixed; bottom: 70px; left: 10px; right: 10px; background: #0d2a1a; border: 1.5px solid #2dba4d; border-radius: 14px; padding: 12px 14px; display: none; align-items: center; gap: 10px; z-index: 9998; box-shadow: 0 4px 24px rgba(0,0,0,0.5); max-width: 460px; margin: 0 auto; }
-.install-banner.show { display: flex; }
-.install-banner-icon { font-size: 28px; flex-shrink: 0; }
-.install-banner-text { flex: 1; }
-.install-banner-title { font-size: 12px; font-weight: 800; color: #4dca4d; margin-bottom: 2px; }
-.install-banner-sub { font-size: 10px; color: #2a6a3a; }
-.install-banner-btns { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
-.install-btn-yes { background: #2dba4d; border: none; color: #fff; font-size: 11px; font-weight: 800; padding: 7px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
-.install-btn-no { background: transparent; border: 1px solid #2a3a2a; color: #3a6a3a; font-size: 10px; padding: 5px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
-.iphone-banner { position: fixed; bottom: 70px; left: 10px; right: 10px; background: #0d1520; border: 1.5px solid #50a0f0; border-radius: 14px; padding: 12px 14px; display: none; z-index: 9998; box-shadow: 0 4px 24px rgba(0,0,0,0.5); max-width: 460px; margin: 0 auto; }
-.iphone-banner.show { display: block; }
-.iphone-banner-title { font-size: 12px; font-weight: 800; color: #50a0f0; margin-bottom: 6px; }
-.iphone-banner-steps { font-size: 11px; color: #4a90d0; line-height: 2; }
-.iphone-banner-close { position: absolute; top: 10px; right: 12px; background: transparent; border: none; color: #50a0f0; font-size: 16px; cursor: pointer; }
 @media (min-width: 768px) {
   .header { padding: 14px 28px; }
   .header-title { font-size: 18px; }
@@ -548,36 +533,16 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div id="dp-content"></div>
   </div>
 </div>
+
+<!-- CHANGE 1: और menu with install button -->
 <div class="more-menu" id="more-menu">
   <div class="more-item" onclick="go('s-monthly');toggleMore();">📅 महीने का हिसाब</div>
   <div class="more-item" onclick="go('s-goal');toggleMore();">🎯 लक्ष्य</div>
+  <div class="more-item" id="install-menu-btn" onclick="triggerInstall();toggleMore();" style="display:none;">📲 App Install करें</div>
   <div class="more-item" onclick="signOut();">🚪 लॉग आउट</div>
 </div>
+
 <div class="toast" id="toast"></div>
-
-<!-- PWA INSTALL BANNER — Android -->
-<div class="install-banner" id="install-banner">
-  <div class="install-banner-icon">📒</div>
-  <div class="install-banner-text">
-    <div class="install-banner-title">Home Screen पर Add करें!</div>
-    <div class="install-banner-sub">App जैसा use करें — एक tap में खुलेगा</div>
-  </div>
-  <div class="install-banner-btns">
-    <button class="install-btn-yes" id="install-btn-yes">✅ Add करें</button>
-    <button class="install-btn-no" id="install-btn-no">बाद में</button>
-  </div>
-</div>
-
-<!-- iPHONE INSTALL GUIDE -->
-<div class="iphone-banner" id="iphone-banner">
-  <button class="iphone-banner-close" id="iphone-close">✕</button>
-  <div class="iphone-banner-title">📱 iPhone पर Add करें — Home Screen</div>
-  <div class="iphone-banner-steps">
-    1️⃣ नीचे <strong style="color:#fff;">Share बटन</strong> (□↑) दबाएं<br>
-    2️⃣ <strong style="color:#fff;">"Add to Home Screen"</strong> चुनें<br>
-    3️⃣ <strong style="color:#fff;">"Add"</strong> दबाएं — हो गया! 🎉
-  </div>
-</div>
 
 <div id="s-home" class="screen active">
   <div class="header">
@@ -588,6 +553,29 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="header-date"><div class="hd-day" id="t-day"></div><div class="hd-date" id="t-date"></div></div>
   </div>
   <div class="pad">
+
+    <!-- CHANGE 2: Install cards on home screen -->
+    <div id="install-card" style="display:none;background:#0d2a1a;border:1.5px solid #2dba4d;border-radius:12px;padding:11px 14px;align-items:center;gap:10px;margin:10px 0;">
+      <div style="font-size:22px;flex-shrink:0;">📲</div>
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:800;color:#4dca4d;margin-bottom:2px;">App Install करें</div>
+        <div style="font-size:9px;color:#2a6a3a;">Home Screen पर add करें — एक tap में खुलेगा</div>
+      </div>
+      <button onclick="triggerInstall()" style="background:#2dba4d;border:none;color:#fff;font-size:10px;font-weight:800;padding:8px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;">Install ↓</button>
+    </div>
+
+    <div id="iphone-install-card" style="display:none;background:#0d1520;border:1.5px solid #50a0f0;border-radius:12px;padding:11px 14px;margin:10px 0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:12px;font-weight:800;color:#50a0f0;">📱 iPhone पर Install करें</div>
+        <button onclick="document.getElementById('iphone-install-card').style.display='none';localStorage.setItem('iphone_card_dismissed','1');" style="background:transparent;border:none;color:#50a0f0;font-size:14px;cursor:pointer;">✕</button>
+      </div>
+      <div style="font-size:10px;color:#4a90d0;line-height:1.9;">
+        1️⃣ नीचे <strong style="color:#fff;">Share (□↑)</strong> दबाएं<br>
+        2️⃣ <strong style="color:#fff;">"Add to Home Screen"</strong> चुनें<br>
+        3️⃣ <strong style="color:#fff;">"Add"</strong> दबाएं — हो गया! 🎉
+      </div>
+    </div>
+
     <div class="trial-banner" id="trial-banner">
       <div><div class="trial-days" id="trial-days-text">⏳ Free Trial</div><div class="trial-sub" id="trial-sub-text">लोड हो रहा है...</div></div>
       <div class="trial-badge">मुफ़्त</div>
@@ -839,28 +827,10 @@ window._fsLoadAll = async function(uid) {
 window._fsRegisterUser = async function(uid, phone, trialStart) {
   if (!uid || uid === 'default') return;
   try {
-    await setDoc(
-      doc(db, 'users', uid),
-      { exists: true, createdAt: serverTimestamp() },
-      { merge: true }
-    );
-    await setDoc(
-      doc(db, 'users', uid, 'profile', 'info'),
-      {
-        uid,
-        phone: phone || '',
-        trialStart,
-        termsAgreedAt: serverTimestamp(),
-        registeredAt: serverTimestamp(),
-        appVersion: '1.0',
-        platform: 'PWA'
-      },
-      { merge: true }
-    );
+    await setDoc(doc(db, 'users', uid), { exists: true, createdAt: serverTimestamp() }, { merge: true });
+    await setDoc(doc(db, 'users', uid, 'profile', 'info'), { uid, phone: phone || '', trialStart, termsAgreedAt: serverTimestamp(), registeredAt: serverTimestamp(), appVersion: '1.0', platform: 'PWA' }, { merge: true });
     console.log('✅ User registered in Firestore');
-  } catch(e) {
-    console.warn('FS register error:', e);
-  }
+  } catch(e) { console.warn('FS register error:', e); }
 };
 
 function setupRecaptcha() {
@@ -1137,58 +1107,47 @@ function loadGoalScreen(){const el=document.getElementById('goal-list');el.inner
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}
 </script>
 
-<!-- PWA INSTALL LOGIC -->
+<!-- CHANGE 3: PWA Install Logic -->
 <script>
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  setTimeout(() => {
-    if (!localStorage.getItem('pwa_installed') && !localStorage.getItem('pwa_dismissed')) {
-      document.getElementById('install-banner').classList.add('show');
-    }
-  }, 3000);
+  if (!localStorage.getItem('pwa_installed')) {
+    document.getElementById('install-card').style.display = 'flex';
+    document.getElementById('install-menu-btn').style.display = 'flex';
+  }
 });
 
-document.getElementById('install-btn-yes').addEventListener('click', async () => {
-  document.getElementById('install-banner').classList.remove('show');
+window.triggerInstall = async function() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
       localStorage.setItem('pwa_installed', '1');
+      document.getElementById('install-card').style.display = 'none';
+      document.getElementById('install-menu-btn').style.display = 'none';
     }
     deferredPrompt = null;
   }
-});
-
-document.getElementById('install-btn-no').addEventListener('click', () => {
-  document.getElementById('install-banner').classList.remove('show');
-  localStorage.setItem('pwa_dismissed', '1');
-});
+};
 
 window.addEventListener('appinstalled', () => {
   localStorage.setItem('pwa_installed', '1');
-  document.getElementById('install-banner').classList.remove('show');
+  document.getElementById('install-card').style.display = 'none';
+  document.getElementById('install-menu-btn').style.display = 'none';
 });
 
 const isIphone = /iPhone|iPad|iPod/.test(navigator.userAgent);
-const isInStandaloneMode = window.navigator.standalone;
+const isStandalone = window.navigator.standalone;
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-if (isIphone && isSafari && !isInStandaloneMode) {
-  if (!localStorage.getItem('iphone_guide_shown')) {
-    setTimeout(() => {
-      document.getElementById('iphone-banner').classList.add('show');
-      localStorage.setItem('iphone_guide_shown', '1');
-    }, 4000);
+if (isIphone && isSafari && !isStandalone) {
+  if (!localStorage.getItem('iphone_card_dismissed') && !localStorage.getItem('pwa_installed')) {
+    document.getElementById('iphone-install-card').style.display = 'block';
   }
 }
-
-document.getElementById('iphone-close').addEventListener('click', () => {
-  document.getElementById('iphone-banner').classList.remove('show');
-});
 </script>
 
 </body>

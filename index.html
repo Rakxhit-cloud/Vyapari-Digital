@@ -452,7 +452,7 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   <div class="splash-loader"></div>
 </div>
 
-<div class="auth-screen" id="screen-phone">
+<div class="auth-screen hidden" id="screen-phone">
   <div class="auth-logo">📒</div>
   <div class="auth-title">हिसाब-Kitaab</div>
   <div class="auth-sub">रोज़ का हिसाब — रोज़ का मुनाफ़ा</div>
@@ -991,8 +991,7 @@ window.agreeTerms = async function() {
 onAuthStateChanged(auth, async user => {
   // Hide splash screen
   const splash = document.getElementById('splash-screen');
-if (splash) { setTimeout(() => { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }, 800); }
-
+if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
   if (user) {
     const uid = user.uid;
     const termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);

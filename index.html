@@ -917,7 +917,12 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
 
 function setupRecaptcha() {
   if (recaptchaVerifier) { try { recaptchaVerifier.clear(); } catch(e) {} recaptchaVerifier = null; }
-  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible', callback: () => {} });
+  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 
+    size: 'invisible', 
+    callback: () => {},
+    'expired-callback': () => { recaptchaVerifier = null; }
+  });
+  recaptchaVerifier.render();
 }
 
 window.sendOTP = async function() {

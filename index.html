@@ -1002,9 +1002,10 @@ window.agreeTerms = async function() {
 };
 
 onAuthStateChanged(auth, async user => {
-  // Hide splash screen
+  // Always remove splash screen
   const splash = document.getElementById('splash-screen');
-if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
+  if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
+
   if (user) {
     const uid = user.uid;
     const termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);
@@ -1019,14 +1020,11 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
       await window._fsLoadAll(uid);
       launchApp(uid);
     }
- } else {
+  } else {
     document.getElementById('screen-phone').classList.remove('hidden');
     document.getElementById('screen-otp').classList.add('hidden');
     document.getElementById('screen-terms').classList.add('hidden');
     document.getElementById('main-app').style.display = 'none';
-    // Remove splash when showing login screen
-    const splashEl = document.getElementById('splash-screen');
-    if (splashEl) { splashEl.classList.add('hidden'); setTimeout(() => splashEl.remove(), 400); }
   }
 });
 

@@ -922,7 +922,7 @@ function setupRecaptcha() {
     callback: () => {},
     'expired-callback': () => { recaptchaVerifier = null; }
   });
-  recaptchaVerifier.render();
+ 
 }
 
 window.sendOTP = async function() {

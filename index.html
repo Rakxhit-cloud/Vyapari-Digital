@@ -800,10 +800,10 @@ setTimeout(() => {
   if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
   // If still on splash, show login screen
   const phoneScreen = document.getElementById('screen-phone');
-  if (phoneScreen && phoneScreen.classList.contains('hidden')) {
+ if (phoneScreen) {
     phoneScreen.classList.remove('hidden');
   }
-}, 4000);
+}, 1500);
 let confirmationResult = null, recaptchaVerifier = null, resendCountdown = null;
 
 function setSyncStatus(state, msg) {

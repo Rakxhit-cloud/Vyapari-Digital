@@ -1207,6 +1207,14 @@ function loadGoalScreen(){const el=document.getElementById('goal-list');el.inner
 
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}
+
+// Global safety timeout — completely independent of Firebase
+setTimeout(() => {
+  const splash = document.getElementById('splash-screen');
+  if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
+  const phoneScreen = document.getElementById('screen-phone');
+  if (phoneScreen) { phoneScreen.classList.remove('hidden'); }
+}, 3000);
 </script>
 
 <script>

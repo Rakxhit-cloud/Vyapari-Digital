@@ -1,8 +1,8 @@
-const CACHE_NAME = 'hisaabkitaab-v2';
+const CACHE_NAME = 'hisaabkitaab-v3';
 const urlsToCache = [
-  '/Vyapari-Digital/',
-  '/Vyapari-Digital/index.html',
-  '/Vyapari-Digital/manifest.json'
+  '/',
+  '/index.html',
+  '/manifest.json'
 ];
 
 self.addEventListener('install', event => {
@@ -22,7 +22,14 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Network first strategy — always get fresh content
   event.respondWith(
-    caches.match(event.request).then(response => response || fetch(event.request))
+    fetch(event.request)
+      .then(response => {
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

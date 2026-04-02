@@ -779,8 +779,7 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
+import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 const firebaseConfig = {
   apiKey: "AIzaSyDzhDpkkjXKWRd1EAbgr3AXe6yFHmXJ9W4",
   authDomain: "hisaab-kitaab-9ff45.firebaseapp.com",
@@ -872,9 +871,19 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
       { exists: true, createdAt: serverTimestamp() },
       { merge: true }
     );
-    await setDoc(
-      doc(db, 'users', uid, 'profile', 'info'),
-      {
+    // Check if profile already exists — never overwrite trialStart
+    const profileRef = doc(db, 'users', uid, 'profile', 'info');
+    const existing = await getDoc(profileRef);
+    if (existing.exists() && existing.data().trialStart) {
+      // Profile exists — only update phone and platform, NEVER trialStart
+      await setDoc(profileRef, {
+        phone: phone || '',
+        appVersion: '1.0',
+        platform: 'PWA'
+      }, { merge: true });
+    } else {
+      // First time — create full profile with trialStart
+      await setDoc(profileRef, {
         uid,
         phone: phone || '',
         trialStart,
@@ -882,9 +891,13 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
         registeredAt: serverTimestamp(),
         appVersion: '1.0',
         platform: 'PWA'
-      },
-      { merge: true }
-    );
+      }, { merge: true });
+    }
+    console.log('✅ User registered in Firestore');
+  } catch(e) {
+    console.warn('FS register error:', e);
+  }
+};
     console.log('✅ User registered in Firestore');
   } catch(e) {
     console.warn('FS register error:', e);

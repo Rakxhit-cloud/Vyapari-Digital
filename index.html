@@ -1879,7 +1879,7 @@ function ubFilter(type, el) {
 function ubSearch() { ubLoadList(); }
 
 function ubGo(screenId) {
-  document.querySelectorAll('.ub-screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ub-screen, .ub-cal-screen').forEach(s => s.classList.remove('active'));
   document.getElementById(screenId).classList.add('active');
 }
 

@@ -635,7 +635,8 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .ub-cal-leg-item { display: flex; align-items: center; gap: 5px; }
 .ub-cal-leg-box { width: 12px; height: 12px; border-radius: 3px; }
 .ub-cal-leg-txt { font-size: 9px; font-weight: 700; color: #666; }
-.ub-date-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 600; display: none; align-items: flex-end; justify-content: center; }
+.ub-date-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 600; display: none; align-items: flex-end; justify-content: center; pointer-events: none; }
+.ub-date-popup-overlay.show { display: flex; pointer-events: all; }
 .ub-date-popup-overlay.show { display: flex; }
 .ub-date-popup-sheet { background: #161616; border-radius: 18px 18px 0 0; border-top: 2px solid #f06060; padding: 14px 16px 28px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; animation: slideUp .25s ease; }
 .ub-date-popup-handle { width: 40px; height: 3px; background: #333; border-radius: 2px; margin: 0 auto 12px; }

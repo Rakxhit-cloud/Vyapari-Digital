@@ -442,6 +442,68 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .splash-title { font-size: 22px; font-weight: 800; color: #fff; }
 .splash-sub { font-size: 12px; color: #4dca4d; }
 .splash-loader { width: 36px; height: 36px; border: 3px solid #1a4a2a; border-top-color: #4dca4d; border-radius: 50%; animation: spin .7s linear infinite; margin-top: 8px; }
+/* ── Terms Screen Redesign ── */
+.terms-hero { background: #0d1f0d; padding: 24px 20px 18px; border-bottom: 1px solid #1a3a1a; display: flex; flex-direction: column; align-items: center; width: 100%; }
+.terms-hero-icon { width: 64px; height: 64px; background: #0f2a0f; border: 2px solid #2dba4d; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 12px; }
+.terms-hero-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+.terms-hero-title-en { font-size: 11px; color: #3a8a3a; margin-bottom: 4px; }
+.terms-hero-sub { font-size: 11px; color: #2a6a2a; }
+.terms-progress { display: flex; gap: 6px; margin-top: 14px; }
+.terms-dot { width: 8px; height: 8px; border-radius: 50%; background: #1e2e1e; }
+.terms-dot.active { background: #2dba4d; width: 24px; border-radius: 4px; }
+.terms-sections-area { flex: 1; overflow-y: auto; padding: 16px 20px; width: 100%; max-height: 42vh; }
+.terms-sec-card { background: #111; border: 1px solid #1a3a1a; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.terms-sec-icon { font-size: 18px; margin-bottom: 5px; }
+.terms-sec-title { font-size: 12px; font-weight: 800; color: #4dca4d; margin-bottom: 1px; }
+.terms-sec-title-en { font-size: 9px; color: #2a6a2a; margin-bottom: 6px; }
+.terms-sec-text { font-size: 10px; color: #666; line-height: 1.7; }
+.terms-bottom { padding: 14px 20px 20px; width: 100%; }
+.terms-agree-box { display: flex; align-items: flex-start; gap: 10px; background: #0d1f0d; border: 1px solid #1a4a1a; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; cursor: pointer; }
+.terms-agree-chk { width: 22px; height: 22px; border: 2px solid #2a4a2a; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all .15s; }
+.terms-agree-chk.checked { background: #2dba4d; border-color: #2dba4d; }
+.terms-agree-chk.checked::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 800; }
+.terms-agree-lbl { font-size: 11px; color: #5a9a5a; line-height: 1.6; }
+.terms-agree-lbl-en { font-size: 9px; color: #2a5a2a; margin-top: 2px; }
+.terms-agree-main-btn { width: 100%; background: #2dba4d; border: none; color: #051005; font-size: 14px; font-weight: 800; padding: 14px; border-radius: 12px; cursor: pointer; margin-bottom: 4px; }
+.terms-agree-main-btn:disabled { opacity: .4; cursor: not-allowed; }
+.terms-agree-main-btn-en { font-size: 10px; color: #2a6a2a; text-align: center; }
+/* ── Mode Selection Screen ── */
+.mode-screen { position: fixed; inset: 0; background: #0f0f0f; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+.mode-screen.hidden { display: none; }
+.mode-welcome-badge { display: inline-block; background: #0d1f0d; border: 1px solid #1a4a1a; color: #4dca4d; font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 20px; margin-bottom: 14px; letter-spacing: .3px; }
+.mode-main-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 2px; text-align: center; }
+.mode-main-title-en { font-size: 11px; color: #555; margin-bottom: 20px; text-align: center; }
+.mode-cards-wrap { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 14px; }
+.mode-card-u { background: #1a0808; border: 1.5px solid #f06060; border-radius: 16px; padding: 16px; }
+.mode-card-f { background: #0d1f0d; border: 1.5px solid #2dba4d; border-radius: 16px; padding: 16px; }
+.mode-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.mode-card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.mc-icon-u { background: #2a0808; border: 1px solid #5a1a1a; }
+.mc-icon-f { background: #0a2a0a; border: 1px solid #1a4a1a; }
+.mode-card-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+.mode-card-tag { font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+.mc-tag-u { background: #2a0808; color: #f06060; border: 1px solid #5a1a1a; }
+.mc-tag-f { background: #0a2a0a; color: #4dca4d; border: 1px solid #1a4a1a; }
+.mode-card-feats { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.mc-feat { display: flex; align-items: center; gap: 8px; }
+.mc-feat-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.mc-feat-dot-u { background: #f06060; }
+.mc-feat-dot-f { background: #4dca4d; }
+.mc-feat-txt { font-size: 11px; color: #c0c0c0; }
+.mode-card-divider-u { height: 1px; background: #2a1010; margin-bottom: 12px; }
+.mode-card-divider-f { height: 1px; background: #1a3a1a; margin-bottom: 12px; }
+.mc-btn-u { width: 100%; background: #f06060; border: none; color: #1a0000; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 4px; }
+.mc-btn-f { width: 100%; background: #2dba4d; border: none; color: #051005; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 4px; }
+.mc-btn-sub { font-size: 9px; text-align: center; }
+.mc-btn-sub-u { color: #8a3030; }
+.mc-btn-sub-f { color: #2a6a2a; }
+.mode-or-divider { display: flex; align-items: center; gap: 10px; }
+.mode-or-line { flex: 1; height: 1px; background: #1a1a1a; }
+.mode-or-txt { font-size: 10px; color: #333; font-weight: 700; }
+.mode-privacy-strip { width: 100%; max-width: 400px; background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.mps-icon { font-size: 16px; flex-shrink: 0; }
+.mps-txt { font-size: 10px; color: #4dca4d; font-weight: 700; }
+.mps-txt-en { font-size: 9px; color: #2a5a2a; margin-top: 1px; }
 </style>
 </head>
 <body> <!-- Splash Screen -->
@@ -495,30 +557,123 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 
-<div class="auth-screen hidden" id="screen-terms">
-  <div style="width:100%;max-width:400px;display:flex;flex-direction:column;height:100%;max-height:90vh;">
-    <div style="text-align:center;margin-bottom:16px;">
-      <div style="font-size:28px;margin-bottom:6px;">📋</div>
-      <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:4px;">नियम और शर्तें</div>
-      <div style="font-size:10px;color:#555;">हिसाब-Kitaab उपयोग करने से पहले पढ़ें</div>
+<div class="auth-screen hidden" id="screen-terms" style="padding:0;justify-content:flex-start;">
+  <div class="terms-hero">
+    <div class="terms-hero-icon">📋</div>
+    <div class="terms-hero-title">नियम और शर्तें</div>
+    <div class="terms-hero-title-en">Terms &amp; Conditions</div>
+    <div class="terms-hero-sub">उपयोग करने से पहले ज़रूर पढ़ें</div>
+    <div class="terms-progress">
+      <div class="terms-dot active"></div>
+      <div class="terms-dot"></div>
+      <div class="terms-dot"></div>
     </div>
-    <div class="terms-body">
-      <div class="terms-heading">हिसाब-Kitaab — उपयोग की शर्तें</div>
-      <div class="terms-section"><div class="terms-section-title">1. सेवा के बारे में</div><div class="terms-text">हिसाब-Kitaab एक डिजिटल हिसाब-किताब ऐप है जो छोटे व्यापारियों और दुकानदारों के लिए बनाया गया है। यह ऐप आपकी दैनिक बिक्री, खर्च, माल और उधार का रिकॉर्ड रखने में मदद करता है।</div></div>
-      <div class="terms-section"><div class="terms-section-title">2. नि:शुल्क परीक्षण</div><div class="terms-text">नए उपयोगकर्ताओं को 3 महीने (90 दिन) का मुफ़्त परीक्षण मिलता है। परीक्षण समाप्त होने के बाद सेवा जारी रखने के लिए सदस्यता शुल्क देना होगा।</div></div>
-      <div class="terms-section"><div class="terms-section-title">3. डेटा और गोपनीयता</div><div class="terms-text">आपका सारा डेटा सुरक्षित रखा जाता है। आपका डेटा किसी तीसरे पक्ष के साथ साझा नहीं किया जाएगा। हम Google Firebase का उपयोग सुरक्षित डेटा संग्रहण के लिए करते हैं।</div></div>
-      <div class="terms-section"><div class="terms-section-title">4. उपयोगकर्ता की ज़िम्मेदारी</div><div class="terms-text">आप अपने खाते की सुरक्षा के लिए स्वयं ज़िम्मेदार हैं। अपना मोबाइल नंबर किसी और को न दें।</div></div>
-      <div class="terms-section"><div class="terms-section-title">5. सेवा में बदलाव</div><div class="terms-text">हम समय-समय पर ऐप में सुधार और बदलाव कर सकते हैं। किसी भी महत्वपूर्ण बदलाव की सूचना आपको दी जाएगी।</div></div>
-      <div class="terms-section"><div class="terms-section-title">6. संपर्क</div><div class="terms-text">किसी भी समस्या के लिए WhatsApp पर संपर्क करें। हम 24 घंटे के अंदर जवाब देने की कोशिश करेंगे।</div></div>
+  </div>
+  <div class="terms-sections-area">
+    <div class="terms-sec-card">
+      <div class="terms-sec-icon">🛡️</div>
+      <div class="terms-sec-title">1. सेवा के बारे में</div>
+      <div class="terms-sec-title-en">About the Service</div>
+      <div class="terms-sec-text">हिसाब-Kitaab एक डिजिटल हिसाब-किताब ऐप है जो छोटे व्यापारियों और दुकानदारों के लिए बनाया गया है। यह ऐप आपकी दैनिक बिक्री, खर्च, माल और उधार का रिकॉर्ड रखने में मदद करता है।</div>
     </div>
-    <div class="terms-check-row" onclick="toggleTermsCheck()">
-      <div class="terms-checkbox" id="terms-checkbox"></div>
-      <div class="terms-check-lbl">मैंने उपरोक्त नियम और शर्तें पढ़ और समझ ली हैं। मैं इनसे सहमत हूँ।</div>
+    <div class="terms-sec-card">
+      <div class="terms-sec-icon">🎁</div>
+      <div class="terms-sec-title">2. नि:शुल्क परीक्षण</div>
+      <div class="terms-sec-title-en">Free Trial</div>
+      <div class="terms-sec-text">नए उपयोगकर्ताओं को 3 महीने (90 दिन) का मुफ़्त परीक्षण मिलता है। परीक्षण समाप्त होने के बाद सेवा जारी रखने के लिए सदस्यता शुल्क देना होगा।</div>
     </div>
-    <button class="auth-btn" id="terms-agree-btn" onclick="agreeTerms()" disabled>✅ सहमत हूँ — शुरू करें</button>
+    <div class="terms-sec-card">
+      <div class="terms-sec-icon">🔒</div>
+      <div class="terms-sec-title">3. डेटा और गोपनीयता</div>
+      <div class="terms-sec-title-en">Data &amp; Privacy</div>
+      <div class="terms-sec-text">आपका सारा डेटा सुरक्षित रखा जाता है। आपका डेटा किसी तीसरे पक्ष के साथ साझा नहीं किया जाएगा। हम Google Firebase का उपयोग सुरक्षित डेटा संग्रहण के लिए करते हैं।</div>
+    </div>
+    <div class="terms-sec-card">
+      <div class="terms-sec-icon">👤</div>
+      <div class="terms-sec-title">4. उपयोगकर्ता की ज़िम्मेदारी</div>
+      <div class="terms-sec-title-en">User Responsibility</div>
+      <div class="terms-sec-text">आप अपने खाते की सुरक्षा के लिए स्वयं ज़िम्मेदार हैं। अपना मोबाइल नंबर किसी और को न दें।</div>
+    </div>
+    <div class="terms-sec-card">
+      <div class="terms-sec-icon">🔄</div>
+      <div class="terms-sec-title">5. सेवा में बदलाव</div>
+      <div class="terms-sec-title-en">Service Changes</div>
+      <div class="terms-sec-text">हम समय-समय पर ऐप में सुधार और बदलाव कर सकते हैं। किसी भी महत्वपूर्ण बदलाव की सूचना आपको दी जाएगी।</div>
+    </div>
+    <div class="terms-sec-card">
+      <div class="terms-sec-icon">📞</div>
+      <div class="terms-sec-title">6. संपर्क</div>
+      <div class="terms-sec-title-en">Contact Us</div>
+      <div class="terms-sec-text">किसी भी समस्या के लिए WhatsApp पर संपर्क करें। हम 24 घंटे के अंदर जवाब देने की कोशिश करेंगे।</div>
+    </div>
+  </div>
+  <div class="terms-bottom">
+    <div class="terms-agree-box" onclick="toggleTermsCheck()">
+      <div class="terms-agree-chk" id="terms-checkbox"></div>
+      <div>
+        <div class="terms-agree-lbl">मैंने सभी नियम और शर्तें पढ़ ली हैं और मैं सहमत हूँ।</div>
+        <div class="terms-agree-lbl-en">I have read and agree to all Terms &amp; Conditions</div>
+      </div>
+    </div>
+    <button class="terms-agree-main-btn" id="terms-agree-btn" onclick="agreeTerms()" disabled>✅ सहमत हूँ — आगे बढ़ें</button>
+    <div class="terms-agree-main-btn-en">I Agree — Continue</div>
   </div>
 </div>
 
+<!-- Mode Selection Screen -->
+<div class="mode-screen hidden" id="screen-mode">
+  <div class="mode-welcome-badge">✦ स्वागत है हिसाब-Kitaab में</div>
+  <div class="mode-main-title">आप क्या चाहते हैं?</div>
+  <div class="mode-main-title-en">What would you like to do?</div>
+  <div class="mode-cards-wrap">
+    <div class="mode-card-u">
+      <div class="mode-card-top">
+        <div class="mode-card-icon mc-icon-u">🤝</div>
+        <div>
+          <div class="mode-card-title">उधार Book</div>
+          <div class="mode-card-tag mc-tag-u">हमेशा FREE · Always Free</div>
+        </div>
+      </div>
+      <div class="mode-card-feats">
+        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-u"></div><div class="mc-feat-txt">किसने कितना उधार लिया</div></div>
+        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-u"></div><div class="mc-feat-txt">WhatsApp से reminder भेजें</div></div>
+        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-u"></div><div class="mc-feat-txt">100% private — सिर्फ आप देखें</div></div>
+      </div>
+      <div class="mode-card-divider-u"></div>
+      <button class="mc-btn-u" onclick="selectMode('udhaar')">🤝 उधार Book शुरू करें</button>
+      <div class="mc-btn-sub mc-btn-sub-u">Start Udhaar Book · No charges ever</div>
+    </div>
+    <div class="mode-or-divider">
+      <div class="mode-or-line"></div>
+      <div class="mode-or-txt">या / or</div>
+      <div class="mode-or-line"></div>
+    </div>
+    <div class="mode-card-f">
+      <div class="mode-card-top">
+        <div class="mode-card-icon mc-icon-f">📊</div>
+        <div>
+          <div class="mode-card-title">हिसाब-Kitaab</div>
+          <div class="mode-card-tag mc-tag-f">90 दिन FREE · 90 Days Free Trial</div>
+        </div>
+      </div>
+      <div class="mode-card-feats">
+        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-f"></div><div class="mc-feat-txt">बिक्री + खर्चा + माल + उधार</div></div>
+        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-f"></div><div class="mc-feat-txt">असली कमाई — हर हफ्ते</div></div>
+        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-f"></div><div class="mc-feat-txt">Cloud backup — कभी नहीं खोएगा</div></div>
+      </div>
+      <div class="mode-card-divider-f"></div>
+      <button class="mc-btn-f" onclick="selectMode('full')">📊 हिसाब-Kitaab शुरू करें</button>
+      <div class="mc-btn-sub mc-btn-sub-f">Start Full App · ₹99/month after trial</div>
+    </div>
+  </div>
+  <div class="mode-privacy-strip">
+    <div class="mps-icon">🔒</div>
+    <div>
+      <div class="mps-txt">आपका data — सिर्फ आपका</div>
+      <div class="mps-txt-en">Your data belongs only to you · Fully secure</div>
+    </div>
+  </div>
+</div>
 <div id="main-app" style="display:none;">
 
 <!-- Install Sheet -->
@@ -987,12 +1142,20 @@ window.toggleTermsCheck = function() {
 
 window.agreeTerms = async function() {
   if (!termsChecked) return;
+  // Show mode selection screen instead of launching directly
+  document.getElementById('screen-terms').classList.add('hidden');
+  document.getElementById('screen-mode').classList.remove('hidden');
+};
+
+window.selectMode = function(mode) {
   const uid = auth.currentUser ? auth.currentUser.uid : 'unknown';
   const phone = auth.currentUser ? (auth.currentUser.phoneNumber || '') : '';
   const trialStart = Date.now();
   localStorage.setItem('hk_terms_agreed_' + uid, trialStart.toString());
   localStorage.setItem('hk_trial_start_' + uid, trialStart.toString());
+  localStorage.setItem('hk_mode_' + uid, mode);
   window._fsRegisterUser(uid, phone, trialStart);
+  document.getElementById('screen-mode').classList.add('hidden');
   launchApp(uid);
 };
 

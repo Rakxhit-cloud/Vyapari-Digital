@@ -574,7 +574,8 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .ub-sum-bar-lbl { font-size: 8px; color: #555; margin-bottom: 3px; }
 .ub-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 1px solid #1e1e1e; display: flex; justify-content: space-around; padding: 7px 0 5px; z-index: 100; }
 /* ── New Udhaar Sheet ── */
-.ub-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 500; display: none; align-items: flex-end; justify-content: center; }
+.ub-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 500; display: none; align-items: flex-end; justify-content: center; pointer-events: none; }
+.ub-overlay.show { display: flex; pointer-events: all; }
 .ub-overlay.show { display: flex; }
 .ub-sheet { background: #161616; border-radius: 16px 16px 0 0; border-top: 2px solid #f06060; padding: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: slideUp .25s ease; }
 .ub-sheet-handle { width: 36px; height: 3px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 12px; }

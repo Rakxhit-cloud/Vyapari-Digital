@@ -503,7 +503,116 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .mode-privacy-strip { width: 100%; max-width: 400px; background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-top: 14px; }
 .mps-icon { font-size: 16px; flex-shrink: 0; }
 .mps-txt { font-size: 10px; color: #4dca4d; font-weight: 700; }
-.mps-txt-en { font-size: 9px; color: #2a5a2a; margin-top: 1px; }
+.mps-txt-en { font-size: 9px; color: #2a5a2a; margin-top: 1px; } 
+/* ── उधार Book Screens ── */
+.ub-screen { display: none; padding-bottom: 90px; }
+.ub-screen.active { display: block; }
+.ub-header { background: #1a0808; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f06060; position: sticky; top: 0; z-index: 100; }
+.ub-header-left { display: flex; align-items: center; gap: 10px; }
+.ub-header-icon { width: 32px; height: 32px; background: #f06060; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.ub-header-title { font-size: 15px; font-weight: 800; color: #fff; }
+.ub-header-sub { font-size: 9px; color: #f06060; }
+.ub-add-btn { background: #f06060; border: none; color: #1a0000; font-size: 11px; font-weight: 800; padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+.ub-summary { background: #1a0808; display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr; border-bottom: 1px solid #2a1010; }
+.ub-sum-item { text-align: center; padding: 10px 6px; }
+.ub-sum-div { background: #2a1010; }
+.ub-sum-lbl { font-size: 8px; color: #8a3030; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; margin-bottom: 3px; }
+.ub-sum-val { font-size: 15px; font-weight: 800; }
+.ub-sv-r { color: #f06060; } .ub-sv-a { color: #f0b040; } .ub-sv-g { color: #4dca4d; }
+.ub-search-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #0f0f0f; border-bottom: 1px solid #1a1a1a; }
+.ub-search-inp { flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #e0e0e0; outline: none; }
+.ub-search-inp::placeholder { color: #555; }
+.ub-filter-row { display: flex; gap: 6px; padding: 8px 12px; background: #0f0f0f; border-bottom: 1px solid #1a1a1a; overflow-x: auto; }
+.ub-filter-row::-webkit-scrollbar { display: none; }
+.ub-pill { font-size: 9px; font-weight: 800; padding: 4px 12px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; white-space: nowrap; }
+.ub-pill-all { background: #f06060; color: #1a0000; }
+.ub-pill-over { background: #1a0808; color: #f06060; border-color: #f06060; }
+.ub-pill-pend { background: #1a1000; color: #f0b040; border-color: #f0b040; }
+.ub-pill-done { background: #0d1f0d; color: #4dca4d; border-color: #4dca4d; }
+.ub-list { padding: 0; }
+.ub-card { padding: 12px 14px; border-bottom: 1px solid #111; cursor: pointer; user-select: none; transition: opacity .2s; }
+.ub-card.pressing { opacity: .7; }
+.ub-card-o { background: #1a0808; border-left: 3px solid #f06060; }
+.ub-card-p { background: #1a1000; border-left: 3px solid #f0b040; }
+.ub-card-s { background: #0a1a0a; border-left: 3px solid #4dca4d; }
+.ub-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 5px; }
+.ub-card-left { display: flex; align-items: flex-start; gap: 8px; }
+.ub-av { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
+.ub-av-o { background: #2a0808; border: 1px solid #5a1a1a; color: #f06060; }
+.ub-av-p { background: #2a1500; border: 1px solid #5a3000; color: #f0b040; }
+.ub-av-s { background: #0d2a1a; border: 1px solid #1a4a2a; color: #4dca4d; }
+.ub-name { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 1px; }
+.ub-taken-date { font-size: 9px; color: #555; margin-bottom: 2px; }
+.ub-status-o { font-size: 8px; color: #f06060; font-weight: 700; }
+.ub-status-p { font-size: 8px; color: #f0b040; font-weight: 700; }
+.ub-status-s { font-size: 8px; color: #4dca4d; font-weight: 700; }
+.ub-amt-o { font-size: 17px; font-weight: 800; color: #f06060; }
+.ub-amt-p { font-size: 17px; font-weight: 800; color: #f0b040; }
+.ub-amt-s { font-size: 17px; font-weight: 800; color: #4dca4d; }
+.ub-amt-sub { font-size: 8px; margin-top: 1px; text-align: right; }
+.ub-amt-sub-o { color: #8a3030; } .ub-amt-sub-p { color: #8a6020; } .ub-amt-sub-s { color: #2a6a2a; }
+.ub-due-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.ub-due { display: flex; align-items: center; gap: 4px; }
+.ub-due-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.ub-due-txt { font-size: 9px; font-weight: 700; }
+.ub-dt-r { color: #f09090; } .ub-dt-a { color: #f0c870; } .ub-dt-g { color: #5dea8a; }
+.ub-prog-meta { display: flex; justify-content: space-between; font-size: 8px; margin-bottom: 3px; }
+.ub-pm-o { color: #8a3030; } .ub-pm-p { color: #8a6020; } .ub-pm-s { color: #2a6a2a; }
+.ub-pbar { background: #111; border-radius: 3px; height: 4px; overflow: hidden; margin-bottom: 8px; }
+.ub-pf-o { height: 100%; background: #f06060; border-radius: 3px; }
+.ub-pf-p { height: 100%; background: #f0b040; border-radius: 3px; }
+.ub-pf-s { height: 100%; background: #4dca4d; border-radius: 3px; }
+.ub-actions { display: flex; gap: 5px; }
+.ub-btn { flex: 1; padding: 7px 4px; border-radius: 6px; border: none; font-size: 9px; font-weight: 800; cursor: pointer; text-align: center; }
+.ub-btn-wa { background: #0d2a0d; border: 1px solid #2dba4d; color: #4dca4d; }
+.ub-btn-call { background: #0d1520; border: 1px solid #50a0f0; color: #50a0f0; }
+.ub-btn-pay { background: #2a1500; border: 1px solid #f0b040; color: #f0b040; }
+.ub-btn-done { background: #0d2a1a; border: 1px solid #2dba4d; color: #4dca4d; }
+.ub-empty { text-align: center; color: #444; padding: 48px 16px; font-size: 13px; line-height: 1.8; }
+.ub-summary-bar { background: #161616; border: 1px solid #222; border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; margin: 12px 14px; }
+.ub-sum-bar-item { text-align: center; }
+.ub-sum-bar-lbl { font-size: 8px; color: #555; margin-bottom: 3px; }
+.ub-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 1px solid #1e1e1e; display: flex; justify-content: space-around; padding: 7px 0 5px; z-index: 100; }
+/* ── New Udhaar Sheet ── */
+.ub-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 500; display: none; align-items: flex-end; justify-content: center; }
+.ub-overlay.show { display: flex; }
+.ub-sheet { background: #161616; border-radius: 16px 16px 0 0; border-top: 2px solid #f06060; padding: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: slideUp .25s ease; }
+.ub-sheet-handle { width: 36px; height: 3px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 12px; }
+.ub-sheet-title { font-size: 14px; font-weight: 800; color: #f06060; text-align: center; margin-bottom: 2px; }
+.ub-sheet-title-en { font-size: 10px; color: #6a2020; text-align: center; margin-bottom: 14px; }
+.ub-sheet-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #1a1a1a; }
+.ub-sheet-lbl { font-size: 11px; color: #888; flex: 1; }
+.ub-sheet-inp { background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 6px; padding: 7px 10px; font-size: 12px; color: #e0e0e0; width: 150px; text-align: right; outline: none; }
+.ub-sheet-inp:focus { border-color: #f06060; background: #1a0808; }
+.ub-phone-wrap { display: flex; gap: 5px; width: 150px; }
+.ub-phone-inp { flex: 1; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 6px; padding: 7px 8px; font-size: 11px; color: #e0e0e0; outline: none; min-width: 0; }
+.ub-phone-inp:focus { border-color: #f06060; }
+.ub-contact-btn { background: #0d1f0d; border: 1px solid #2dba4d; border-radius: 6px; padding: 5px 7px; font-size: 9px; color: #4dca4d; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.ub-auto-date { background: #0d1520; border: 1px solid #1a2a40; border-radius: 6px; padding: 6px 10px; font-size: 10px; color: #50a0f0; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.ub-reminder-row { display: flex; gap: 5px; }
+.ub-rem-btn { font-size: 9px; font-weight: 800; padding: 5px 10px; border-radius: 5px; cursor: pointer; border: 1px solid #2a2a2a; background: #1a1a1a; color: #555; }
+.ub-rem-btn.active { background: #2a0808; border-color: #f06060; color: #f06060; }
+.ub-sheet-save { width: 100%; background: #f06060; border: none; color: #1a0000; font-size: 14px; font-weight: 800; padding: 14px; border-radius: 10px; cursor: pointer; margin-top: 12px; }
+/* ── Partial Payment Sheet ── */
+.ub-pay-sheet { background: #161616; border-radius: 16px 16px 0 0; border-top: 2px solid #f0b040; padding: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: slideUp .25s ease; }
+.ub-pay-title { font-size: 14px; font-weight: 800; color: #f0b040; text-align: center; margin-bottom: 2px; }
+.ub-pay-sub { font-size: 10px; color: #6a5020; text-align: center; margin-bottom: 12px; }
+.ub-pay-total-box { background: #1a1000; border: 1px solid #3a2000; border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 12px; }
+.ub-pay-total-lbl { font-size: 9px; color: #8a6020; margin-bottom: 3px; }
+.ub-pay-total-val { font-size: 22px; font-weight: 800; color: #f0b040; }
+.ub-pay-inp { width: 100%; background: #1e1e1e; border: 1px solid #f0b040; border-radius: 8px; padding: 12px; font-size: 18px; color: #fff; text-align: center; outline: none; margin-bottom: 10px; }
+.ub-pay-calc-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.ub-pay-calc-box { flex: 1; border-radius: 8px; padding: 8px; text-align: center; }
+.ub-pay-calc-lbl { font-size: 8px; margin-bottom: 3px; }
+.ub-pay-calc-val { font-size: 14px; font-weight: 800; }
+.ub-pbar2 { background: #1a1a1a; border-radius: 3px; height: 6px; overflow: hidden; margin-bottom: 4px; }
+.ub-pay-save { width: 100%; background: #f0b040; border: none; color: #1a0800; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 10px; cursor: pointer; margin-bottom: 6px; }
+.ub-pay-settle { width: 100%; background: transparent; border: none; color: #4dca4d; font-size: 12px; padding: 8px; cursor: pointer; }
+/* ── WhatsApp Preview Sheet ── */
+.ub-wa-sheet { background: #0d1f0d; border-radius: 16px 16px 0 0; border-top: 2px solid #2dba4d; padding: 16px; width: 100%; max-width: 480px; animation: slideUp .25s ease; }
+.ub-wa-title { font-size: 13px; font-weight: 800; color: #4dca4d; text-align: center; margin-bottom: 12px; }
+.ub-wa-msg { background: #111; border: 1px solid #1a3a1a; border-radius: 10px; padding: 14px; margin-bottom: 12px; font-size: 11px; color: #c0e0c0; line-height: 1.9; }
+.ub-wa-send { width: 100%; background: #2dba4d; border: none; color: #051005; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 10px; cursor: pointer; }
 </style>
 </head>
 <body> <!-- Splash Screen -->
@@ -673,6 +782,149 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div class="mps-txt-en">Your data belongs only to you · Fully secure</div>
     </div>
   </div>
+</div>
+<!-- ══════════════════════════════════════
+     उधार Book — Standalone Mode Screens
+     ══════════════════════════════════════ -->
+<div id="ub-app" style="display:none;">
+  <div class="sync-status-bar">
+    <span class="sync-dot synced" id="ub-sync-dot"></span>
+    <span class="sync-status-txt" id="ub-sync-txt">☁️ Cloud Sync चालू है</span>
+  </div>
+
+  <!-- Main उधार List Screen -->
+  <div class="ub-screen active" id="ub-home">
+    <div class="ub-header">
+      <div class="ub-header-left">
+        <div class="ub-header-icon">🤝</div>
+        <div>
+          <div class="ub-header-title">उधार Book</div>
+          <div class="ub-header-sub">आपकी उधार बही · Udhaar Book</div>
+        </div>
+      </div>
+      <button class="ub-add-btn" onclick="openUBSheet()">+ नया उधार</button>
+    </div>
+    <div class="ub-summary" id="ub-summary-strip">
+      <div class="ub-sum-item"><div class="ub-sum-lbl">कुल बाकी</div><div class="ub-sum-val ub-sv-r" id="ub-total-amt">₹0</div></div>
+      <div class="ub-sum-div"></div>
+      <div class="ub-sum-item"><div class="ub-sum-lbl">Overdue</div><div class="ub-sum-val ub-sv-a" id="ub-overdue-count">0</div></div>
+      <div class="ub-sum-div"></div>
+      <div class="ub-sum-item"><div class="ub-sum-lbl">कुल लोग</div><div class="ub-sum-val ub-sv-r" id="ub-total-count">0</div></div>
+    </div>
+    <div class="ub-search-row">
+      <input class="ub-search-inp" id="ub-search" placeholder="🔍 नाम से खोजें · Search by name" oninput="ubSearch()">
+    </div>
+    <div class="ub-filter-row">
+      <div class="ub-pill ub-pill-all" onclick="ubFilter('all',this)">सभी · All</div>
+      <div class="ub-pill ub-pill-over" onclick="ubFilter('overdue',this)">⚠ Overdue</div>
+      <div class="ub-pill ub-pill-pend" onclick="ubFilter('pending',this)">⏳ Pending</div>
+      <div class="ub-pill ub-pill-done" onclick="ubFilter('settled',this)">✓ Settled</div>
+    </div>
+    <div class="ub-list" id="ub-list"><div class="ub-empty">⏳<br>लोड हो रहा है...</div></div>
+  </div>
+
+  <!-- New Udhaar Overlay -->
+  <div class="ub-overlay" id="ub-add-overlay">
+    <div class="ub-sheet">
+      <div class="ub-sheet-handle"></div>
+      <div class="ub-sheet-title">🤝 नया उधार दर्ज करें</div>
+      <div class="ub-sheet-title-en">Add New Udhaar Entry</div>
+      <div class="ub-sheet-row">
+        <div class="ub-sheet-lbl">👤 नाम / Name</div>
+        <input class="ub-sheet-inp" id="ub-name" placeholder="ग्राहक का नाम">
+      </div>
+      <div class="ub-sheet-row">
+        <div class="ub-sheet-lbl">📱 नंबर / Phone</div>
+        <div class="ub-phone-wrap">
+          <input class="ub-phone-inp" id="ub-phone" placeholder="+91" type="tel" inputmode="numeric">
+          <div class="ub-contact-btn" onclick="ubPickContact()">👤 Contacts</div>
+        </div>
+      </div>
+      <div class="ub-sheet-row">
+        <div class="ub-sheet-lbl">💰 रकम / Amount</div>
+        <input class="ub-sheet-inp" id="ub-amount" placeholder="₹0" type="number" inputmode="numeric">
+      </div>
+      <div class="ub-sheet-row">
+        <div class="ub-sheet-lbl">📅 Due Date</div>
+        <input class="ub-sheet-inp" id="ub-due-date" type="date">
+      </div>
+      <div class="ub-sheet-row">
+        <div class="ub-sheet-lbl">🗓️ उधार लिया</div>
+        <div class="ub-auto-date" id="ub-auto-date">⚡ Auto: आज</div>
+      </div>
+      <div class="ub-sheet-row" style="border-bottom:none;">
+        <div class="ub-sheet-lbl">🔔 Auto Reminder</div>
+        <div class="ub-reminder-row">
+          <div class="ub-rem-btn active" id="ubr-3" onclick="ubSetReminder(3)">3 दिन</div>
+          <div class="ub-rem-btn" id="ubr-7" onclick="ubSetReminder(7)">7 दिन</div>
+          <div class="ub-rem-btn" id="ubr-15" onclick="ubSetReminder(15)">15 दिन</div>
+        </div>
+      </div>
+      <button class="ub-sheet-save" onclick="ubSaveEntry()">💾 उधार दर्ज करें · Save Udhaar</button>
+      <button style="width:100%;background:transparent;border:none;color:#555;font-size:12px;padding:8px;cursor:pointer;margin-top:4px;" onclick="closeUBSheet()">रद्द करें · Cancel</button>
+    </div>
+  </div>
+
+  <!-- Partial Payment Overlay -->
+  <div class="ub-overlay" id="ub-pay-overlay">
+    <div class="ub-pay-sheet">
+      <div class="ub-sheet-handle"></div>
+      <div class="ub-pay-title">💰 रकम आई — दर्ज करें</div>
+      <div class="ub-pay-sub" id="ub-pay-sub">Partial Payment</div>
+      <div class="ub-pay-total-box">
+        <div class="ub-pay-total-lbl">कुल बाकी है</div>
+        <div class="ub-pay-total-val" id="ub-pay-remaining">₹0</div>
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:8px;text-align:center;">कितना मिला? · How much received?</div>
+      <input class="ub-pay-inp" id="ub-pay-amount" placeholder="₹ 0" type="number" inputmode="numeric" oninput="ubCalcPayment()">
+      <div class="ub-pay-calc-row">
+        <div class="ub-pay-calc-box" style="background:#1a0808;border:1px solid #2a1010;">
+          <div class="ub-pay-calc-lbl" style="color:#8a3030;">बाकी रहेगा</div>
+          <div class="ub-pay-calc-val" style="color:#f06060;" id="ub-pay-left">₹0</div>
+        </div>
+        <div class="ub-pay-calc-box" style="background:#0d1f0d;border:1px solid #1a3a1a;">
+          <div class="ub-pay-calc-lbl" style="color:#2a6a2a;">मिल जाएगा</div>
+          <div class="ub-pay-calc-val" style="color:#4dca4d;" id="ub-pay-receive">₹0</div>
+        </div>
+      </div>
+      <div style="background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:8px 10px;margin-bottom:10px;">
+        <div style="font-size:9px;color:#4dca4d;font-weight:800;margin-bottom:4px;">Progress</div>
+        <div class="ub-pbar2"><div id="ub-pay-bar" style="height:100%;background:#f0b040;border-radius:3px;width:0%;transition:width .3s;"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:#555;margin-top:3px;">
+          <span id="ub-pay-bar-paid">चुका: ₹0</span><span id="ub-pay-bar-left">बाकी: ₹0</span>
+        </div>
+      </div>
+      <button class="ub-pay-save" onclick="ubSavePayment()">✅ Payment दर्ज करें · Save</button>
+      <button class="ub-pay-settle" onclick="ubSettleFull()">पूरा चुक गया · Mark as Fully Settled</button>
+      <button style="width:100%;background:transparent;border:none;color:#555;font-size:12px;padding:6px;cursor:pointer;" onclick="closeUBPaySheet()">रद्द करें</button>
+    </div>
+  </div>
+
+  <!-- WhatsApp Preview Overlay -->
+  <div class="ub-overlay" id="ub-wa-overlay">
+    <div class="ub-wa-sheet">
+      <div class="ub-sheet-handle"></div>
+      <div class="ub-wa-title">📱 WhatsApp Reminder</div>
+      <div class="ub-wa-msg" id="ub-wa-msg-preview"></div>
+      <button class="ub-wa-send" onclick="ubSendWhatsApp()">📱 WhatsApp पर भेजें · Send</button>
+      <button style="width:100%;background:transparent;border:none;color:#2a6a2a;font-size:11px;padding:8px;cursor:pointer;margin-top:4px;" onclick="closeUBWASheet()">बंद करें</button>
+    </div>
+  </div>
+
+  <!-- उधार Book Bottom Nav -->
+  <div class="ub-nav">
+    <div class="nav-item active" id="ubn-home" onclick="ubGo('ub-home')">
+      <div class="nav-icon">🤝</div>
+      <div class="nav-lbl" style="color:#f06060;font-weight:700;">उधार</div>
+      <div style="width:4px;height:4px;background:#f06060;border-radius:50%;"></div>
+    </div>
+    <div class="nav-item" onclick="ubSignOut()">
+      <div class="nav-icon">🚪</div>
+      <div class="nav-lbl">लॉग आउट</div>
+    </div>
+  </div>
+
+  <div class="toast" id="ub-toast"></div>
 </div>
 <div id="main-app" style="display:none;">
 
@@ -1200,25 +1452,12 @@ function launchApp(uid) {
 }
 
 function launchUdhaarMode(uid) {
-  CURRENT_UID = uid;
-  // Change header
-  document.getElementById('header-title').textContent = 'उधार Book';
-  document.getElementById('header-sub').textContent = 'आपकी उधार बही — Udhaar Book';
-  // Hide irrelevant nav items
-  document.getElementById('n-entry').style.display = 'none';
-  document.getElementById('n-maal').style.display = 'none';
-  document.getElementById('n-kaccha').style.display = 'none';
-  // Hide trial banner
-  document.getElementById('trial-banner').style.display = 'none';
-  // Hide home screen sections except udhaar
-  document.getElementById('hafta-section-wrap') && (document.getElementById('hafta-section-wrap').style.display = 'none');
-  // Go directly to udhaar screen
-  go('s-udhaar');
-  loadUdhaar();
-  // Set date
-  const TODAY = new Date();
-  const TSTR = TODAY.getFullYear() + '-' + String(TODAY.getMonth()+1).padStart(2,'0') + '-' + String(TODAY.getDate()).padStart(2,'0');
-  document.getElementById('e-date') && (document.getElementById('e-date').value = TSTR);
+  // Hide full app, show उधार Book app
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('ub-app').style.display = 'block';
+  ubInitApp(uid);
+  // Load cloud data
+  if (window._fsLoadAll) window._fsLoadAll(uid).then(() => ubLoadList());
 }
 
 async function updateTrialBanner(uid) {
@@ -1380,6 +1619,321 @@ function loadGoalScreen(){const el=document.getElementById('goal-list');el.inner
 </script>
 
 <script>
+// ══════════════════════════════════════
+// उधार Book — Complete Logic
+// ══════════════════════════════════════
+let UB_UID = 'default';
+let UB_FILTER = 'all';
+let UB_CURRENT_PAY_ID = null;
+let UB_CURRENT_WA_PHONE = '';
+let UB_CURRENT_WA_MSG = '';
+let UB_REMINDER_DAYS = 3;
+
+const UB_DB = {
+  _k() { return 'hk_' + UB_UID + '_udhaar'; },
+  get() { try { return JSON.parse(localStorage.getItem(this._k()) || '[]'); } catch(e) { return []; } },
+  set(v) { localStorage.setItem(this._k(), JSON.stringify(v)); },
+  push(item) {
+    item.id = Date.now() + '_' + Math.random().toString(36).substr(2,5);
+    const a = this.get(); a.push(item); this.set(a);
+    if (window._fsWrite) window._fsWrite(UB_UID, 'udhaar', item);
+    return item;
+  },
+  update(id, u) {
+    const a = this.get(), i = a.findIndex(r => r.id === id);
+    if (i > -1) { a[i] = { ...a[i], ...u }; this.set(a); if (window._fsWrite) window._fsWrite(UB_UID, 'udhaar', a[i]); }
+  },
+  remove(id) {
+    this.set(this.get().filter(r => r.id !== id));
+    if (window._fsDelete) window._fsDelete(UB_UID, 'udhaar', id);
+  }
+};
+
+function ubInitApp(uid) {
+  UB_UID = uid;
+  // Update auto date display
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('ub-auto-date').textContent = '⚡ Auto: ' + dateStr;
+  // Set default due date to 7 days from now
+  const due = new Date(); due.setDate(due.getDate() + 7);
+  document.getElementById('ub-due-date').value = due.toISOString().split('T')[0];
+  ubLoadList();
+}
+
+function ubToast(msg, err = false) {
+  const t = document.getElementById('ub-toast');
+  t.textContent = msg;
+  t.className = 'toast' + (err ? ' err' : '') + ' show';
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function ubDaysSince(ds) {
+  if (!ds) return 0;
+  const p = ds.split('-');
+  const d = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+  return Math.floor((new Date() - d) / (1000 * 60 * 60 * 24));
+}
+
+function ubFmtDate(ds) {
+  if (!ds) return '—';
+  try {
+    const p = ds.split('-');
+    return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]))
+      .toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  } catch(e) { return ds; }
+}
+
+function ubFmt(n) { return '₹' + (parseInt(n) || 0).toLocaleString('en-IN'); }
+
+function ubInitials(name) {
+  if (!name) return '?';
+  const p = name.trim().split(' ');
+  return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
+}
+
+function ubLoadList() {
+  const rows = UB_DB.get();
+  const search = (document.getElementById('ub-search')?.value || '').toLowerCase();
+  let totalAmt = 0, overdueCount = 0, totalPeople = 0;
+
+  const filtered = rows.filter(r => {
+    const given = r.given || 0, returned = r.returned || 0, remaining = given - returned;
+    const days = ubDaysSince(r.date);
+    let type = 'pending';
+    if (r.status === '🟢 SETTLED' || remaining <= 0) type = 'settled';
+    else if (r.status === '🔴 OVERDUE' || days >= 7) type = 'overdue';
+    r._type = type;
+    r._remaining = Math.max(0, remaining);
+    if (type !== 'settled') { totalAmt += r._remaining; totalPeople++; }
+    if (type === 'overdue') overdueCount++;
+    if (search && !(r.name || '').toLowerCase().includes(search)) return false;
+    if (UB_FILTER === 'all') return true;
+    return r._type === UB_FILTER;
+  });
+
+  document.getElementById('ub-total-amt').textContent = ubFmt(totalAmt);
+  document.getElementById('ub-overdue-count').textContent = overdueCount;
+  document.getElementById('ub-total-count').textContent = totalPeople;
+
+  const el = document.getElementById('ub-list');
+  if (!filtered.length) {
+    el.innerHTML = '<div class="ub-empty">🤝<br>कोई उधार नहीं है<br><span style="font-size:11px;color:#333;">ऊपर "+ नया उधार" दबाएं</span></div>';
+    return;
+  }
+
+  el.innerHTML = '';
+  filtered.forEach(r => {
+    const type = r._type;
+    const remaining = r._remaining;
+    const given = r.given || 0, returned = r.returned || 0;
+    const days = ubDaysSince(r.date);
+    const pct = given > 0 ? Math.round((returned / given) * 100) : 0;
+    const dueStr = r.dueDate ? ubFmtDate(r.dueDate) : '—';
+    const daysToDue = r.dueDate ? -ubDaysSince(r.dueDate) : null;
+    let dueLabel = '', dueDotColor = '#555', dueTxtClass = '';
+    if (r.dueDate) {
+      if (daysToDue < 0) { dueLabel = 'Due: ' + dueStr + ' — ' + Math.abs(daysToDue) + ' दिन late'; dueDotColor = '#f06060'; dueTxtClass = 'ub-dt-r'; }
+      else if (daysToDue === 0) { dueLabel = 'Due: आज!'; dueDotColor = '#f06060'; dueTxtClass = 'ub-dt-r'; }
+      else if (daysToDue <= 3) { dueLabel = 'Due: ' + dueStr + ' — ' + daysToDue + ' दिन बाकी'; dueDotColor = '#f0b040'; dueTxtClass = 'ub-dt-a'; }
+      else { dueLabel = 'Due: ' + dueStr + ' — ' + daysToDue + ' दिन बाकी'; dueDotColor = '#5dea8a'; dueTxtClass = 'ub-dt-g'; }
+    }
+
+    const takenDate = r.date ? '📅 उधार लिया: ' + ubFmtDate(r.date) : '';
+    const actionBtn = type === 'settled'
+      ? `<div class="ub-btn ub-btn-done">✅ Done</div>`
+      : `<div class="ub-btn ub-btn-pay" onclick="openUBPaySheet('${r.id}')">💰 आया</div>`;
+
+    const hasPhone = r.phone && r.phone.length >= 10;
+
+    const card = document.createElement('div');
+    card.className = `ub-card ub-card-${type[0]}`;
+    card.innerHTML = `
+      <div class="ub-card-top">
+        <div class="ub-card-left">
+          <div class="ub-av ub-av-${type[0]}">${ubInitials(r.name)}</div>
+          <div>
+            <div class="ub-name">${r.name || '—'}</div>
+            <div class="ub-taken-date">${takenDate}</div>
+            <div class="ub-status-${type[0]}">${type === 'overdue' ? '🔴 OVERDUE' : type === 'pending' ? '🟡 PENDING' : '🟢 SETTLED'} · ${days} दिन पहले</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div class="ub-amt-${type[0]}">${ubFmt(remaining)}</div>
+          <div class="ub-amt-sub ub-amt-sub-${type[0]}">बाकी रकम</div>
+        </div>
+      </div>
+      ${r.dueDate ? `<div class="ub-due-row"><div class="ub-due"><div class="ub-due-dot" style="background:${dueDotColor};"></div><div class="ub-due-txt ${dueTxtClass}">${dueLabel}</div></div><div style="font-size:8px;color:#3a1a1a;">दिया: ${ubFmt(given)}</div></div>` : ''}
+      <div class="ub-prog-meta"><span class="ub-pm-${type[0]}">चुका: ${ubFmt(returned)}</span><span class="ub-pm-${type[0]}">${pct}% चुका</span></div>
+      <div class="ub-pbar"><div class="ub-pf-${type[0]}" style="width:${pct}%"></div></div>
+      <div class="ub-actions">
+        <div class="ub-btn ub-btn-wa" onclick="openUBWA('${r.id}')" ${!hasPhone ? 'style="opacity:.4;cursor:not-allowed;"' : ''}>📱 WhatsApp</div>
+        <div class="ub-btn ub-btn-call" onclick="ubCall('${r.phone || ''}')" ${!hasPhone ? 'style="opacity:.4;cursor:not-allowed;"' : ''}>📞 Call</div>
+        ${actionBtn}
+      </div>
+    `;
+    el.appendChild(card);
+  });
+}
+
+function ubFilter(type, el) {
+  UB_FILTER = type;
+  document.querySelectorAll('.ub-pill').forEach(p => {
+    p.style.background = ''; p.style.color = '';
+  });
+  ubLoadList();
+}
+
+function ubSearch() { ubLoadList(); }
+
+function ubGo(screenId) {
+  document.querySelectorAll('.ub-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+function openUBSheet() {
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('ub-auto-date').textContent = '⚡ Auto: ' + dateStr;
+  const due = new Date(); due.setDate(due.getDate() + 7);
+  document.getElementById('ub-due-date').value = due.toISOString().split('T')[0];
+  document.getElementById('ub-name').value = '';
+  document.getElementById('ub-phone').value = '';
+  document.getElementById('ub-amount').value = '';
+  document.getElementById('ub-add-overlay').classList.add('show');
+}
+
+function closeUBSheet() { document.getElementById('ub-add-overlay').classList.remove('show'); }
+
+function ubSetReminder(days) {
+  UB_REMINDER_DAYS = days;
+  [3, 7, 15].forEach(d => {
+    const btn = document.getElementById('ubr-' + d);
+    if (btn) btn.className = 'ub-rem-btn' + (d === days ? ' active' : '');
+  });
+}
+
+async function ubPickContact() {
+  if ('contacts' in navigator && 'ContactsManager' in window) {
+    try {
+      const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+      if (contacts.length > 0) {
+        if (contacts[0].name?.[0]) document.getElementById('ub-name').value = contacts[0].name[0];
+        if (contacts[0].tel?.[0]) document.getElementById('ub-phone').value = contacts[0].tel[0].replace(/\D/g, '').slice(-10);
+      }
+    } catch(e) { ubToast('❌ Contact नहीं चुना', true); }
+  } else { ubToast('यह browser Contact Picker support नहीं करता — नंबर manually डालें', true); }
+}
+
+function ubSaveEntry() {
+  const name = document.getElementById('ub-name').value.trim();
+  const phone = document.getElementById('ub-phone').value.trim().replace(/\D/g, '').slice(-10);
+  const amount = parseFloat(document.getElementById('ub-amount').value) || 0;
+  const dueDate = document.getElementById('ub-due-date').value;
+  if (!name) { ubToast('❌ नाम ज़रूर भरें', true); return; }
+  if (!amount) { ubToast('❌ रकम ज़रूर भरें', true); return; }
+  const today = new Date();
+  const dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  UB_DB.push({ name, phone, given: amount, returned: 0, remaining: amount, date: dateStr, dueDate, reminderDays: UB_REMINDER_DAYS, status: '🟡 PENDING' });
+  ubToast('✅ उधार दर्ज हो गया!');
+  closeUBSheet();
+  ubLoadList();
+}
+
+function openUBPaySheet(id) {
+  const rows = UB_DB.get();
+  const r = rows.find(x => x.id === id);
+  if (!r) return;
+  UB_CURRENT_PAY_ID = id;
+  const remaining = Math.max(0, (r.given || 0) - (r.returned || 0));
+  document.getElementById('ub-pay-sub').textContent = r.name + ' · Partial Payment';
+  document.getElementById('ub-pay-remaining').textContent = ubFmt(remaining);
+  document.getElementById('ub-pay-amount').value = '';
+  document.getElementById('ub-pay-left').textContent = ubFmt(remaining);
+  document.getElementById('ub-pay-receive').textContent = '₹0';
+  document.getElementById('ub-pay-bar').style.width = '0%';
+  document.getElementById('ub-pay-bar-paid').textContent = 'चुका: ' + ubFmt(r.returned || 0);
+  document.getElementById('ub-pay-bar-left').textContent = 'बाकी: ' + ubFmt(remaining);
+  document.getElementById('ub-pay-overlay').classList.add('show');
+}
+
+function closeUBPaySheet() { document.getElementById('ub-pay-overlay').classList.remove('show'); UB_CURRENT_PAY_ID = null; }
+
+function ubCalcPayment() {
+  const rows = UB_DB.get();
+  const r = rows.find(x => x.id === UB_CURRENT_PAY_ID);
+  if (!r) return;
+  const totalRemaining = Math.max(0, (r.given || 0) - (r.returned || 0));
+  const received = Math.min(parseFloat(document.getElementById('ub-pay-amount').value) || 0, totalRemaining);
+  const left = totalRemaining - received;
+  const alreadyPaid = r.returned || 0;
+  const totalPaid = alreadyPaid + received;
+  const pct = r.given > 0 ? Math.round((totalPaid / r.given) * 100) : 0;
+  document.getElementById('ub-pay-left').textContent = ubFmt(left);
+  document.getElementById('ub-pay-receive').textContent = ubFmt(received);
+  document.getElementById('ub-pay-bar').style.width = pct + '%';
+  document.getElementById('ub-pay-bar-paid').textContent = 'चुका: ' + ubFmt(totalPaid);
+  document.getElementById('ub-pay-bar-left').textContent = 'बाकी: ' + ubFmt(left);
+}
+
+function ubSavePayment() {
+  const rows = UB_DB.get();
+  const r = rows.find(x => x.id === UB_CURRENT_PAY_ID);
+  if (!r) return;
+  const received = parseFloat(document.getElementById('ub-pay-amount').value) || 0;
+  if (!received) { ubToast('❌ रकम डालें', true); return; }
+  const totalRemaining = Math.max(0, (r.given || 0) - (r.returned || 0));
+  const newReturned = Math.min((r.returned || 0) + received, r.given || 0);
+  const newRemaining = Math.max(0, (r.given || 0) - newReturned);
+  const days = ubDaysSince(r.date);
+  let status = newRemaining <= 0 ? '🟢 SETTLED' : (days >= 7 ? '🔴 OVERDUE' : '🟡 PENDING');
+  UB_DB.update(UB_CURRENT_PAY_ID, { returned: newReturned, remaining: newRemaining, status });
+  ubToast('✅ Payment दर्ज हो गई!');
+  closeUBPaySheet();
+  ubLoadList();
+}
+
+function ubSettleFull() {
+  const rows = UB_DB.get();
+  const r = rows.find(x => x.id === UB_CURRENT_PAY_ID);
+  if (!r) return;
+  UB_DB.update(UB_CURRENT_PAY_ID, { returned: r.given, remaining: 0, status: '🟢 SETTLED' });
+  ubToast('✅ पूरा चुक गया — SETTLED!');
+  closeUBPaySheet();
+  ubLoadList();
+}
+
+function openUBWA(id) {
+  const rows = UB_DB.get();
+  const r = rows.find(x => x.id === id);
+  if (!r) return;
+  if (!r.phone || r.phone.length < 10) { ubToast('❌ फोन नंबर नहीं है — पहले नंबर जोड़ें', true); return; }
+  const remaining = Math.max(0, (r.given || 0) - (r.returned || 0));
+  const takenDate = ubFmtDate(r.date);
+  const dueDate = r.dueDate ? ubFmtDate(r.dueDate) : '—';
+  const msg = `${r.name} जी 🙏\n\nआपका ${ubFmt(remaining)} का उधार बाकी है।\n\n📅 उधार लिया: ${takenDate}\n⏰ Due Date: ${dueDate}\n📊 बाकी: ${ubFmt(remaining)} (${ubFmt(r.returned || 0)} चुका दिया)\n\nसुविधा हो तो जल्द चुका दें।\nधन्यवाद 🙏`;
+  UB_CURRENT_WA_PHONE = r.phone;
+  UB_CURRENT_WA_MSG = msg;
+  document.getElementById('ub-wa-msg-preview').innerHTML = msg.replace(/\n/g, '<br>');
+  document.getElementById('ub-wa-overlay').classList.add('show');
+}
+
+function closeUBWASheet() { document.getElementById('ub-wa-overlay').classList.remove('show'); }
+
+function ubSendWhatsApp() {
+  const url = 'https://wa.me/91' + UB_CURRENT_WA_PHONE + '?text=' + encodeURIComponent(UB_CURRENT_WA_MSG);
+  window.open(url, '_blank');
+  closeUBWASheet();
+}
+
+function ubCall(phone) {
+  if (!phone || phone.length < 10) { ubToast('❌ फोन नंबर नहीं है', true); return; }
+  window.location.href = 'tel:+91' + phone;
+}
+
+function ubSignOut() {
+  if (confirm('लॉग आउट करें?')) window.signOut();
+}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}
 </script>
 

@@ -1189,8 +1189,36 @@ function launchApp(uid) {
   document.getElementById('screen-phone').classList.add('hidden');
   document.getElementById('screen-otp').classList.add('hidden');
   document.getElementById('screen-terms').classList.add('hidden');
+  document.getElementById('screen-mode').classList.add('hidden');
   document.getElementById('main-app').style.display = 'block';
-  initApp(uid); updateTrialBanner(uid);
+  const mode = localStorage.getItem('hk_mode_' + uid) || 'full';
+  if (mode === 'udhaar') {
+    launchUdhaarMode(uid);
+  } else {
+    initApp(uid); updateTrialBanner(uid);
+  }
+}
+
+function launchUdhaarMode(uid) {
+  CURRENT_UID = uid;
+  // Change header
+  document.getElementById('header-title').textContent = 'उधार Book';
+  document.getElementById('header-sub').textContent = 'आपकी उधार बही — Udhaar Book';
+  // Hide irrelevant nav items
+  document.getElementById('n-entry').style.display = 'none';
+  document.getElementById('n-maal').style.display = 'none';
+  document.getElementById('n-kaccha').style.display = 'none';
+  // Hide trial banner
+  document.getElementById('trial-banner').style.display = 'none';
+  // Hide home screen sections except udhaar
+  document.getElementById('hafta-section-wrap') && (document.getElementById('hafta-section-wrap').style.display = 'none');
+  // Go directly to udhaar screen
+  go('s-udhaar');
+  loadUdhaar();
+  // Set date
+  const TODAY = new Date();
+  const TSTR = TODAY.getFullYear() + '-' + String(TODAY.getMonth()+1).padStart(2,'0') + '-' + String(TODAY.getDate()).padStart(2,'0');
+  document.getElementById('e-date') && (document.getElementById('e-date').value = TSTR);
 }
 
 async function updateTrialBanner(uid) {

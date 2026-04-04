@@ -910,7 +910,51 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <button style="width:100%;background:transparent;border:none;color:#2a6a2a;font-size:11px;padding:8px;cursor:pointer;margin-top:4px;" onclick="closeUBWASheet()">बंद करें</button>
     </div>
   </div>
+<!-- Calendar Screen -->
+  <div class="ub-screen" id="ub-cal" style="padding-bottom:90px;">
+    <div class="ub-header">
+      <div class="ub-header-left">
+        <div class="ub-header-icon">📅</div>
+        <div>
+          <div class="ub-header-title">Calendar</div>
+          <div class="ub-header-sub">उधार की तारीखें</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="background:#1a0808;border:1px solid #3a1010;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:13px;color:#f06060;font-weight:800;" onclick="ubCalPrev()">◀</div>
+        <div style="font-size:14px;font-weight:800;color:#fff;" id="ub-cal-label">अप्रैल 2026</div>
+        <div style="background:#1a0808;border:1px solid #3a1010;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:13px;color:#f06060;font-weight:800;" onclick="ubCalNext()">▶</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
+        <div style="text-align:center;font-size:9px;font-weight:800;color:#f06060;padding:4px 0;">सो</div>
+        <div style="text-align:center;font-size:9px;font-weight:800;color:#f06060;padding:4px 0;">मं</div>
+        <div style="text-align:center;font-size:9px;font-weight:800;color:#f06060;padding:4px 0;">बु</div>
+        <div style="text-align:center;font-size:9px;font-weight:800;color:#f06060;padding:4px 0;">गु</div>
+        <div style="text-align:center;font-size:9px;font-weight:800;color:#f06060;padding:4px 0;">शु</div>
+        <div style="text-align:center;font-size:9px;font-weight:800;color:#f06060;padding:4px 0;">श</div>
+        <div style="text-align:center;font-size:9px;font-weight:800;color:#f06060;padding:4px 0;">र</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;" id="ub-cal-grid"></div>
+      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:4px;"><div style="width:11px;height:11px;border-radius:3px;background:#2a0808;border:1.5px solid #f06060;"></div><span style="font-size:8px;color:#f06060;font-weight:700;">उधार है</span></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div style="width:11px;height:11px;border-radius:3px;background:#1a1a1a;border:2px solid #f06060;"></div><span style="font-size:8px;color:#aaa;font-weight:700;">आज</span></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div style="width:11px;height:11px;border-radius:3px;background:#1a1a1a;"></div><span style="font-size:8px;color:#555;font-weight:700;">खाली</span></div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Calendar Date Popup -->
+  <div id="ub-date-popup-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:600;display:none;align-items:flex-end;justify-content:center;">
+    <div style="background:#161616;border-radius:18px 18px 0 0;border-top:2px solid #f06060;padding:16px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;animation:slideUp .25s ease;">
+      <div style="width:36px;height:3px;background:#2a2a2a;border-radius:2px;margin:0 auto 12px;"></div>
+      <div style="font-size:13px;font-weight:800;color:#f06060;margin-bottom:4px;" id="ub-dp-title"></div>
+      <div style="font-size:10px;color:#6a2020;margin-bottom:14px;" id="ub-dp-sub"></div>
+      <div id="ub-dp-content"></div>
+      <button onclick="ubCloseDatePopup()" style="width:100%;background:#1a0808;border:1px solid #3a1010;color:#f06060;font-size:13px;font-weight:800;padding:12px;border-radius:8px;cursor:pointer;margin-top:10px;">✕ बंद करें</button>
+    </div>
+  </div>
   <!-- उधार Book Bottom Nav -->
   <div class="ub-nav">
     <div class="nav-item active" id="ubn-home" onclick="ubGo('ub-home')">

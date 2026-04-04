@@ -1988,9 +1988,10 @@ function ubNavGo(screenId, navId) {
   document.getElementById(screenId).classList.add('active');
   document.querySelectorAll('.ub-nav .nav-item').forEach(n => {
     n.classList.remove('active');
-    n.querySelector('.nav-lbl') && (n.querySelector('.nav-lbl').style.color = '');
-    const dot = n.querySelector('.nav-dot');
-    if (dot) dot.remove();
+    const lbl = n.querySelector('.nav-lbl');
+    if (lbl) lbl.style.color = '';
+    const dots = n.querySelectorAll('div[style*="border-radius:50%"]');
+    dots.forEach(d => d.remove());
   });
   if (navId) {
     const activeNav = document.getElementById(navId);
@@ -1998,6 +1999,8 @@ function ubNavGo(screenId, navId) {
       activeNav.classList.add('active');
       const lbl = activeNav.querySelector('.nav-lbl');
       if (lbl) lbl.style.color = '#f06060';
+      const existing = activeNav.querySelectorAll('div[style*="border-radius:50%"]');
+      existing.forEach(d => d.remove());
       const dot = document.createElement('div');
       dot.style.cssText = 'width:4px;height:4px;background:#f06060;border-radius:50%;margin-top:2px;';
       activeNav.appendChild(dot);

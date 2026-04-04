@@ -1884,8 +1884,9 @@ function ubSaveEntry() {
   const dueDate = document.getElementById('ub-due-date').value;
   if (!name) { ubToast('❌ नाम ज़रूर भरें', true); return; }
   if (!amount) { ubToast('❌ रकम ज़रूर भरें', true); return; }
+ const manualDate = document.getElementById('ub-manual-date').value;
   const today = new Date();
-  const dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  const dateStr = manualDate || today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
   UB_DB.push({ name, phone, given: amount, returned: 0, remaining: amount, date: dateStr, dueDate, reminderDays: UB_REMINDER_DAYS, status: '🟡 PENDING' });
   ubToast('✅ उधार दर्ज हो गया!');
   closeUBSheet();

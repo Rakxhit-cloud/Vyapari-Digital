@@ -1316,6 +1316,15 @@ window._fsLoadAll = async function(uid) {
       localStorage.setItem(lsKey, JSON.stringify(merged));
     }
     setSyncStatus('synced', '☁️ Data sync हो गया ✅');
+    // ── Refresh UI after cloud data is in localStorage ──
+    if (typeof CURRENT_UID !== 'undefined' && CURRENT_UID !== 'default') {
+      if (typeof loadHome === 'function') loadHome();
+      if (typeof loadUdhaarKPI === 'function') loadUdhaarKPI();
+      if (typeof updateTrialBanner === 'function') updateTrialBanner(uid);
+    }
+    if (typeof UB_UID !== 'undefined' && UB_UID !== 'default') {
+      if (typeof ubLoadList === 'function') ubLoadList();
+    }
   } catch(e) {
     console.warn('FS load error:', e);
     setSyncStatus('offline', '☁️ Offline — Local data से चल रहा है');

@@ -1475,11 +1475,16 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
     } else {
-      const phone = user.phoneNumber || '';
+     const phone = user.phoneNumber || '';
       const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
       window._fsRegisterUser(uid, phone, trialStart);
       await window._fsLoadAll(uid);
       launchApp(uid);
+      // Re-render after cloud sync to catch fresh data
+      setTimeout(() => {
+        if (typeof loadHome === 'function') loadHome();
+        if (typeof loadUdhaarKPI === 'function') loadUdhaarKPI();
+      }, 1500);
     }
   } else {
     document.getElementById('screen-phone').classList.remove('hidden');

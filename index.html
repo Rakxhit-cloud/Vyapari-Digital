@@ -1488,9 +1488,6 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
       window._fsRegisterUser(uid, phone, trialStart);
       await window._fsLoadAll(uid);
       launchApp(uid);
-      window._fsRegisterUser(uid, phone, trialStart);
-      await window._fsLoadAll(uid);
-      launchApp(uid);
     }
   } else {
     document.getElementById('screen-phone').classList.remove('hidden');

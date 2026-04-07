@@ -1520,7 +1520,7 @@ function launchUdhaarMode(uid) {
   document.getElementById('ub-app').style.display = 'block';
   ubInitApp(uid);
   // Load cloud data
-  if (window._fsLoadAll) window._fsLoadAll(uid).then(() => ubLoadList());
+if (window._fsLoadAll) window._fsLoadAll(uid).then(() => { if (typeof ubLoadList === 'function') ubLoadList(); });
 }
 
 async function updateTrialBanner(uid) {

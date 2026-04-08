@@ -1690,7 +1690,15 @@ function go(id){
   if(id==='s-maal')loadMaalStats();
   if(id==='s-kaccha')loadKacchaStats();
 }
-function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
+function switchToUdhaarBook(){
+  if(!CURRENT_UID||CURRENT_UID==='default')return;
+  localStorage.setItem('hk_mode_'+CURRENT_UID,'udhaar');
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('ub-app').style.display='block';
+  if(typeof ubInitApp==='function')ubInitApp(CURRENT_UID);
+  if(typeof ubLoadList==='function')ubLoadList();
+}
+  function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
 document.addEventListener('click',e=>{const m=document.getElementById('more-menu'),b=document.getElementById('n-more');if(m&&b&&!m.contains(e.target)&&!b.contains(e.target))m.style.display='none';});
 function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(()=>t.className='toast',3000);}
 function toggleKPI(key){const panel=document.getElementById('panel-'+key);const isOpen=panel.classList.contains('open');document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));if(!isOpen){panel.classList.add('open');if(key==='udhaar-kpi')loadUdhaarInline();}}

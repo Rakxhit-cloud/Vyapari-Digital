@@ -983,23 +983,59 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <button onclick="ubCloseDatePopup()" style="width:100%;background:#1a0808;border:1px solid #3a1010;color:#f06060;font-size:13px;font-weight:800;padding:12px;border-radius:8px;cursor:pointer;margin-top:10px;">✕ बंद करें</button>
     </div>
   </div>
+ <!-- Settings Sheet -->
+  <div class="ub-settings-overlay" id="ub-settings-overlay">
+    <div class="ub-settings-sheet">
+      <div class="ub-settings-handle"></div>
+      <div class="ub-settings-user-row">
+        <div class="ub-settings-avatar">🤝</div>
+        <div>
+          <div class="ub-settings-name" id="ub-settings-name">उधार Book</div>
+          <div class="ub-settings-phone" id="ub-settings-phone">लोड हो रहा है...</div>
+          <div class="ub-settings-mode-badge">उधार Book · Free</div>
+        </div>
+      </div>
+      <div class="ub-settings-item" onclick="ubSwitchToHisaab()">
+        <div class="ub-settings-item-ico ub-settings-item-ico-g">📊</div>
+        <div class="ub-settings-item-txt">
+          <div class="ub-settings-item-title" style="color:#4dca4d;">हिसाब-Kitaab पर जाएं</div>
+          <div class="ub-settings-item-sub" style="color:#2a6a2a;">बिक्री · माल · कमाई · 90 दिन Free Trial</div>
+        </div>
+        <div class="ub-settings-item-arr">›</div>
+      </div>
+      <div class="ub-settings-item" onclick="ubSignOut()">
+        <div class="ub-settings-item-ico ub-settings-item-ico-r">🚪</div>
+        <div class="ub-settings-item-txt">
+          <div class="ub-settings-item-title" style="color:#f06060;">लॉग आउट</div>
+          <div class="ub-settings-item-sub">Sign out from this device</div>
+        </div>
+      </div>
+      <button onclick="ubCloseSettings()" style="width:100%;background:transparent;border:none;color:#444;font-size:12px;padding:10px;cursor:pointer;margin-top:4px;">बंद करें</button>
+    </div>
+  </div>
+
   <!-- उधार Book Bottom Nav -->
-  <div class="ub-nav">
-    <div class="nav-item active" id="ubn-home" onclick="ubNavGo('ub-home','ubn-home')">
+  <div class="ub-nav" style="padding:6px 8px 5px;align-items:center;">
+    <div class="nav-item active" id="ubn-home" onclick="ubNavGo('ub-home','ubn-home')" style="padding:3px 10px;">
       <div class="nav-icon">🤝</div>
       <div class="nav-lbl" style="color:#f06060;font-weight:700;">उधार</div>
       <div class="ub-nav-dot" style="width:4px;height:4px;background:#f06060;border-radius:50%;"></div>
     </div>
- <div class="nav-item" id="ubn-cal" onclick="ubNavGo('ub-cal','ubn-cal')">
+    <div class="nav-item" id="ubn-cal" onclick="ubNavGo('ub-cal','ubn-cal')" style="padding:3px 10px;">
       <div class="nav-icon">📅</div>
       <div class="nav-lbl">Calendar</div>
     </div>
-    <div class="nav-item" onclick="ubSignOut()">
-      <div class="nav-icon">🚪</div>
-      <div class="nav-lbl">लॉग आउट</div>
+    <div class="nav-item" id="ubn-settings" onclick="ubOpenSettings()" style="padding:3px 10px;">
+      <div class="nav-icon">⚙️</div>
+      <div class="nav-lbl">Settings</div>
+    </div>
+    <div style="width:1px;background:#2a1a1a;align-self:stretch;margin:4px 2px;flex-shrink:0;"></div>
+    <div class="ub-hisaab-btn" onclick="ubSwitchToHisaab()">
+      <div class="ub-hisaab-btn-icon">📒</div>
+      <div class="ub-hisaab-btn-lbl">हिसाब-Kitaab</div>
+      <div class="ub-hisaab-btn-sub">Switch करें</div>
     </div>
   </div>
-
   <div class="toast" id="ub-toast"></div>
 </div>
 <div id="main-app" style="display:none;">

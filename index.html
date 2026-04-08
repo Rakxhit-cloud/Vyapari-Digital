@@ -1532,6 +1532,7 @@ window.selectMode = function(mode) {
 };
 
 onAuthStateChanged(auth, async user => {
+  window._currentAuthUser = user;
   // Hide splash screen
   const splash = document.getElementById('splash-screen');
 if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }

@@ -2180,7 +2180,38 @@ function ubOpenDatePopup(ds) {
 function ubCloseDatePopup() {
   document.getElementById('ub-date-popup-overlay').style.display = 'none';
 }
+function ubOpenSettings() {
+  const authUser = window._currentAuthUser;
+  const phone = (authUser && authUser.phoneNumber) ? authUser.phoneNumber : '';
+  const el = document.getElementById('ub-settings-name');
+  const ph = document.getElementById('ub-settings-phone');
+  if (el) el.textContent = phone || 'उधार Book User';
+  if (ph) ph.textContent = 'उधार Book · हमेशा Free';
+  document.getElementById('ub-settings-overlay').classList.add('show');
+}
+function ubCloseSettings() {
+  document.getElementById('ub-settings-overlay').classList.remove('show');
+}
+function ubSwitchToHisaab() {
+  ubCloseSettings();
+  if (!UB_UID || UB_UID === 'default') return;
+  localStorage.setItem('hk_mode_' + UB_UID, 'full');
+  if (!localStorage.getItem('hk_trial_start_' + UB_UID)) {
+    const ts = Date.now();
+    localStorage.setItem('hk_trial_start_' + UB_UID, ts.toString());
+    if (window._fsRegisterUser) {
+      const p = (window._currentAuthUser && window._currentAuthUser.phoneNumber) ? window._currentAuthUser.phoneNumber : '';
+      window._fsRegisterUser(UB_UID, p, ts);
+    }
+  }
+  document.getElementById('ub-app').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  if (typeof initApp === 'function') initApp(UB_UID);
+  if (typeof updateTrialBanner === 'function') updateTrialBanner(UB_UID);
+  setTimeout(() => { if (typeof loadHome === 'function') loadHome(); if (typeof loadUdhaarKPI === 'function') loadUdhaarKPI(); }, 600);
+}
 function ubSignOut() {
+  ubCloseSettings();
   if (confirm('लॉग आउट करें?')) window.signOut();
 }
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}

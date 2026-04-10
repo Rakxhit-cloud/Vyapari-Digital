@@ -1682,7 +1682,7 @@ function initApp(uid){
   document.getElementById('t-date').textContent=TODAY.toLocaleDateString('hi-IN',{day:'numeric',month:'long'});
   ['e-date','m-date','k-date'].forEach(id=>document.getElementById(id).value=TSTR);
   document.getElementById('g-month').value=MSTR;
-  document.getElementById('hafta-month-heading').textContent='📅 '+HI_MONTHS[CUR_MONTH]+' '+CUR_YEAR+' — हफ्तेवार';
+ document.getElementById('month-nav-heading').textContent='📅 '+CUR_YEAR+' — महीनेवार';
   loadHome();
 }
 

@@ -1728,6 +1728,108 @@ function openEdit(){closePopup();if(!currentEntry)return;buildEditSheet(currentE
 function closeEdit(){document.getElementById('edit-popup').classList.remove('show');}
 function buildEditSheet(type,data){let title='✏️ एंट्री सुधारें',fields='';if(type===K.BIKRI){title='✏️ बिक्री एंट्री सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">💰 बिक्री ₹</div><input type="number" class="edit-input" id="ed-sales" value="${data.sales||''}"></div><div class="edit-row"><div class="edit-lbl">💵 नकद ₹</div><input type="number" class="edit-input" id="ed-cash" value="${data.cash||''}"></div><div class="edit-row"><div class="edit-lbl">📱 UPI ₹</div><input type="number" class="edit-input" id="ed-upi" value="${data.upi||''}"></div><div class="edit-row"><div class="edit-lbl">🧾 खर्चा ₹</div><input type="number" class="edit-input" id="ed-expense" value="${data.expense||''}"></div><div class="edit-row"><div class="edit-lbl">🤝 उधार ₹</div><input type="number" class="edit-input" id="ed-udhaar" value="${data.udhaar||''}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-notes" value="${data.notes||''}"></div>`;}else if(type===K.MAAL){title='✏️ माल सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">🏪 सप्लायर</div><input type="text" class="edit-input" id="ed-supplier" value="${data.supplier||''}"></div><div class="edit-row"><div class="edit-lbl">📦 माल</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 रकम ₹</div><input type="number" class="edit-input" id="ed-amount" value="${data.amount||''}"></div><div class="edit-row"><div class="edit-lbl">💳 भुगतान</div><input type="text" class="edit-input" id="ed-pay" value="${data.pay||'नकद'}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-note" value="${data.note||''}"></div>`;}else if(type===K.KACCHA){title='✏️ कच्चा माल सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">🥣 सामान</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 रकम ₹</div><input type="number" class="edit-input" id="ed-amount" value="${data.amount||''}"></div><div class="edit-row"><div class="edit-lbl">🏪 कहाँ से</div><input type="text" class="edit-input" id="ed-source" value="${data.source||''}"></div><div class="edit-row"><div class="edit-lbl">💳 भुगतान</div><input type="text" class="edit-input" id="ed-pay" value="${data.pay||'नकद'}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-note" value="${data.note||''}"></div>`;}else if(type===K.UDHAAR){title='✏️ उधार सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">👤 नाम</div><input type="text" class="edit-input" id="ed-name" value="${data.name||''}"></div><div class="edit-row"><div class="edit-lbl">💰 उधार दिया ₹</div><input type="number" class="edit-input" id="ed-given" value="${data.given||''}"></div><div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">✅ वापस मिला ₹</div><input type="number" class="edit-input" id="ed-returned" value="${data.returned||''}"></div>`;}document.getElementById('edit-title').textContent=title;document.getElementById('edit-fields').innerHTML=fields;document.getElementById('edit-popup').classList.add('show');}
 function saveEdit(){if(!currentEntry)return;const{type,id,data}=currentEntry;const g=eid=>{const el=document.getElementById(eid);return el?el.value:'';};let updates={};if(type===K.BIKRI){const s=parseFloat(g('ed-sales'))||0,x=parseFloat(g('ed-expense'))||0,u=parseFloat(g('ed-udhaar'))||0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';updates={date:g('ed-date'),sales:s,cash:parseFloat(g('ed-cash'))||0,upi:parseFloat(g('ed-upi'))||0,expense:x,udhaar:u,notes:g('ed-notes'),profit:p,margin:m,rating:rt};}else if(type===K.MAAL){updates={date:g('ed-date'),supplier:g('ed-supplier'),name:g('ed-name'),amount:parseFloat(g('ed-amount'))||0,pay:g('ed-pay'),note:g('ed-note')};}else if(type===K.KACCHA){updates={date:g('ed-date'),name:g('ed-name'),amount:parseFloat(g('ed-amount'))||0,source:g('ed-source'),pay:g('ed-pay'),note:g('ed-note')};}else if(type===K.UDHAAR){const given=parseFloat(g('ed-given'))||0,ret=parseFloat(g('ed-returned'))||0,rem=given-ret,days=daysSince(g('ed-date'));let status='🟡 PENDING';if(rem<=0)status='🟢 SETTLED';else if(days>=7)status='🔴 OVERDUE';updates={name:g('ed-name'),given,date:g('ed-date'),returned:ret,remaining:rem,days,status};syncUdhaarToBikri(id,data.given||0,given,g('ed-date')||data.date,false);toast('✅ उधार सुधर गई!');}DB.update(type,id,updates);if(type!==K.UDHAAR)toast('✅ एंट्री सुधर गई!');closeEdit();currentEntry=null;loadHome();loadUdhaar();loadUdhaarKPI();const ukpiPanel=document.getElementById('panel-udhaar-kpi');if(ukpiPanel&&ukpiPanel.classList.contains('open'))loadUdhaarInline();if(dpCurrentDate){const savedDate=dpCurrentDate;closeDatePopupDirect();setTimeout(()=>openDatePopup(savedDate),300);}}
+let monthNavOffset=Math.max(0,CUR_MONTH-2);
+let monthNavSelected=CUR_MONTH;
+function inMonth(ds,mIdx){if(!ds)return false;const p=ds.split('-');return parseInt(p[0])===CUR_YEAR&&parseInt(p[1])-1===mIdx;}
+function buildMonthNav(){
+  const bikri=DB.get(K.BIKRI),maal=DB.get(K.MAAL),kaccha=DB.get(K.KACCHA);
+  const track=document.getElementById('month-nav-track');
+  if(!track)return;
+  track.innerHTML='';
+  for(let i=0;i<3;i++){
+    const mi=monthNavOffset+i;
+    if(mi<0||mi>11){track.innerHTML+='<div></div>';continue;}
+    const isCur=mi===CUR_MONTH,isSel=mi===monthNavSelected;
+    const entries=bikri.filter(r=>inMonth(r.date,mi));
+    const hasData=entries.length>0;
+    const sales=entries.reduce((s,r)=>s+(r.sales||0),0);
+    const card=document.createElement('div');
+    card.style.cssText=`border-radius:7px;padding:5px 3px;text-align:center;cursor:pointer;position:relative;border:${isSel?'1.5px solid #2dba4d':isCur?'1.5px solid #5dca20':'1px solid #1e1e1e'};background:${isSel?'#0d1a0d':isCur?'#0c1a00':'#161616'};`;
+    if(isCur)card.innerHTML+=`<div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);background:#5dca20;color:#0a1a00;font-size:5px;font-weight:800;padding:1px 5px;border-radius:3px;white-space:nowrap;">चालू</div>`;
+    card.innerHTML+=`<div style="font-size:7px;font-weight:800;color:${isSel?'#2dba4d':isCur?'#7dea30':hasData?'#4dca4d':'#444'};margin-bottom:2px;">${HI_MONTHS[mi].substring(0,4)}</div>`;
+    card.innerHTML+=`<div style="width:100%;height:1px;background:${isCur?'#2a4a00':'#1e1e1e'};margin-bottom:3px;"></div>`;
+    card.innerHTML+=`<div style="font-size:9px;font-weight:800;color:${isSel?'#2dba4d':isCur?'#7dea30':hasData?'#3a6a3a':'#2a2a2a'};">${hasData?'₹'+(sales/1000).toFixed(0)+'k':'₹0'}</div>`;
+    card.innerHTML+=`<div style="font-size:5px;color:${isCur?'#4a8a10':'#2a5a2a'};margin-top:1px;">${hasData?entries.length+' एंट्री':'खाली'}</div>`;
+    card.onclick=()=>selectMonthNav(mi);
+    track.appendChild(card);
+  }
+  const prevBtn=document.getElementById('month-nav-prev'),nextBtn=document.getElementById('month-nav-next');
+  if(prevBtn)prevBtn.style.opacity=monthNavOffset<=0?'0.3':'1';
+  if(nextBtn)nextBtn.style.opacity=monthNavOffset>=9?'0.3':'1';
+}
+function selectMonthNav(mi){
+  monthNavSelected=mi;
+  const bikri=DB.get(K.BIKRI);
+  const entries=bikri.filter(r=>inMonth(r.date,mi));
+  const det=document.getElementById('month-nav-detail');
+  const sales=entries.reduce((s,r)=>s+(r.sales||0),0);
+  const expense=entries.reduce((s,r)=>s+(r.expense||0),0);
+  const galla=entries.reduce((s,r)=>s+calcEntryProfit(r),0);
+  if(entries.length>0){
+    det.style.display='block';
+    document.getElementById('month-detail-title').textContent=HI_MONTHS[mi]+' '+CUR_YEAR;
+    document.getElementById('month-detail-entries').textContent=entries.length+' एंट्री';
+    document.getElementById('month-detail-sales').textContent=fmt(sales);
+    document.getElementById('month-detail-galla').textContent=fmt(galla);
+    document.getElementById('month-detail-expense').textContent=fmt(expense);
+  } else {
+    det.style.display='none';
+  }
+  loadKPIForMonth(mi);
+  loadMaalForMonth(mi);
+  loadKacchaForMonth(mi);
+  buildMonthNav();
+}
+function monthNavSlide(dir){
+  const newOff=monthNavOffset+dir;
+  if(newOff<0||newOff>9)return;
+  monthNavOffset=newOff;
+  buildMonthNav();
+}
+function loadKPIForMonth(mi){
+  const bikri=DB.get(K.BIKRI);
+  const entries=bikri.filter(r=>inMonth(r.date,mi));
+  const tS=entries.reduce((s,r)=>s+(r.sales||0),0);
+  const tE=entries.reduce((s,r)=>s+(r.expense||0),0);
+  const tP=entries.reduce((s,r)=>s+calcEntryProfit(r),0);
+  const margin=tS>0?Math.round((tP/tS)*100):0;
+  document.getElementById('k-sales').textContent=fmt(tS);
+  document.getElementById('k-profit').textContent=fmt(tP);
+  document.getElementById('k-expense').textContent=fmt(tE);
+  document.getElementById('k-margin-pct').textContent=margin+'%';
+  document.getElementById('k-margin-bar').style.width=Math.min(margin,100)+'%';
+  renderWeeklyTable('bikri-table-rows','bikri-total','sales','#4dca4d','#444');
+  renderWeeklyTable('galla-table-rows','galla-total','profit','#50a0f0','#444');
+  renderWeeklyTable('kharcha-table-rows','kharcha-total','expense','#f0b040','#444');
+}
+function loadMaalForMonth(mi){
+  const rows=DB.get(K.MAAL);
+  let tot=0,nak=0,udh=0;const rec=[];
+  rows.forEach(r=>{if(inMonth(r.date,mi)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(rec.length<3)rec.push(r);}});
+  document.getElementById('h-maal-total').textContent=fmt(tot);
+  document.getElementById('h-maal-pending').textContent=fmt(udh);
+  document.getElementById('h-maal-nakad').textContent=fmt(nak);
+  document.getElementById('h-maal-udhaar').textContent=fmt(udh);
+  const ml=document.getElementById('h-maal-list');
+  ml.innerHTML='<div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div>';
+  if(!rec.length)ml.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';
+  else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.supplier||'—'}</div><div class="dlr-goods">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.MAAL,r.id,r);ml.appendChild(card);});
+}
+function loadKacchaForMonth(mi){
+  const rows=DB.get(K.KACCHA);
+  let tot=0,nak=0,udh=0;const items=[],sources=[],rec=[];
+  rows.forEach(r=>{if(inMonth(r.date,mi)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(r.name&&!items.includes(r.name))items.push(r.name);if(r.source&&!sources.includes(r.source))sources.push(r.source);if(rec.length<3)rec.push(r);}});
+  const avg=new Date(CUR_YEAR,mi+1,0).getDate();
+  document.getElementById('h-kaccha-total').textContent=fmt(tot);
+  document.getElementById('h-kaccha-avg').textContent=fmt(Math.round(tot/avg));
+  document.getElementById('h-kaccha-nakad').textContent=fmt(nak);
+  document.getElementById('h-kaccha-udhaar').textContent=fmt(udh);
+  document.getElementById('h-kaccha-tags').innerHTML=(items.length||sources.length)?items.map(i=>`<span class="tag-b">${i}</span>`).join('')+sources.map(s=>`<span class="tag-s">${s}</span>`).join(''):'<span class="tag-b">कोई एंट्री नहीं</span>';
+  const kl=document.getElementById('h-kaccha-list');
+  kl.innerHTML='<div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div>';
+  if(!rec.length)kl.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';
+  else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.KACCHA,r.id,r);kl.appendChild(card);});
+}
 let mahineyOpen=false,calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calSelectedMonth=null;
 function toggleMahiney(){mahineyOpen=!mahineyOpen;document.getElementById('mahiney-body').classList.toggle('open',mahineyOpen);document.getElementById('mahiney-arrow').classList.toggle('open',mahineyOpen);if(mahineyOpen)buildMonthGrid();}
 function buildMonthGrid(){const bikri=DB.get(K.BIKRI),countByMonth={};bikri.forEach(r=>{if(r.date){const m=parseInt(r.date.split('-')[1])-1;countByMonth[m]=(countByMonth[m]||0)+1;}});const grid=document.getElementById('month-grid');grid.innerHTML='';for(let m=0;m<12;m++){const count=countByMonth[m]||0,isSelected=calSelectedMonth===m;const div=document.createElement('div');div.className='month-pill'+(count>0?' has-data':'')+(isSelected?' selected':'');if(isSelected){const badge=document.createElement('div');badge.className='month-sel-badge';badge.textContent='● चुना';div.appendChild(badge);}const nameEl=document.createElement('div');nameEl.className='month-pill-name';nameEl.textContent=HI_MONTHS[m];div.appendChild(nameEl);const cntEl=document.createElement('div');cntEl.className='month-pill-count';cntEl.textContent=count>0?count+' एंट्री':'खाली';div.appendChild(cntEl);div.onclick=()=>selectMonth(m);grid.appendChild(div);}}

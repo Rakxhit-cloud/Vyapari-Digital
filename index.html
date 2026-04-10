@@ -2065,8 +2065,12 @@ async function ubPickContact() {
     try {
       const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
       if (contacts.length > 0) {
-        if (contacts[0].name?.[0]) document.getElementById('ub-name').value = contacts[0].name[0];
-        if (contacts[0].tel?.[0]) document.getElementById('ub-phone').value = contacts[0].tel[0].replace(/\D/g, '').slice(-10);
+        const cName = contacts[0].name?.[0] || '';
+        const cTel = contacts[0].tel?.[0] || '';
+        if (cName) document.getElementById('ub-name').value = cName;
+        const digits = cTel.replace(/\D/g, '');
+        const phone10 = digits.length >= 10 ? digits.slice(-10) : digits;
+        if (phone10) document.getElementById('ub-phone').value = phone10;
       }
     } catch(e) { ubToast('❌ Contact नहीं चुना', true); }
   } else { ubToast('यह browser Contact Picker support नहीं करता — नंबर manually डालें', true); }

@@ -1903,6 +1903,79 @@ function loadHome(){buildMonthNav();loadKPIForMonth(monthNavSelected);loadMaalFo
 function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;const rec=[];rows.forEach(r=>{if(inHafta(r.date,activeHafta-1)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(rec.length<3)rec.push(r);}});document.getElementById('h-maal-total').textContent=fmt(tot);document.getElementById('h-maal-pending').textContent=fmt(udh);document.getElementById('h-maal-nakad').textContent=fmt(nak);document.getElementById('h-maal-udhaar').textContent=fmt(udh);document.getElementById('w-maal').textContent=fmt(tot);const ml=document.getElementById('h-maal-list');ml.innerHTML='<div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div>';if(!rec.length)ml.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.supplier||'—'}</div><div class="dlr-goods">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.MAAL,r.id,r);ml.appendChild(card);});}
 function loadKacchaHome(){const rows=DB.get(K.KACCHA);let tot=0,nak=0,udh=0;const items=[],sources=[],rec=[];rows.forEach(r=>{if(inHafta(r.date,activeHafta-1)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(r.name&&!items.includes(r.name))items.push(r.name);if(r.source&&!sources.includes(r.source))sources.push(r.source);if(rec.length<3)rec.push(r);}});document.getElementById('h-kaccha-total').textContent=fmt(tot);document.getElementById('h-kaccha-avg').textContent=fmt(Math.round(tot/7));document.getElementById('h-kaccha-nakad').textContent=fmt(nak);document.getElementById('h-kaccha-udhaar').textContent=fmt(udh);document.getElementById('w-kaccha').textContent=fmt(tot);document.getElementById('h-kaccha-tags').innerHTML=(items.length||sources.length)?items.map(i=>`<span class="tag-b">${i}</span>`).join('')+sources.map(s=>`<span class="tag-s">${s}</span>`).join(''):'<span class="tag-b">कोई एंट्री नहीं</span>';const kl=document.getElementById('h-kaccha-list');kl.innerHTML='<div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div>';if(!rec.length)kl.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.KACCHA,r.id,r);kl.appendChild(card);});}
 function loadUdhaarKPI(){const el=document.getElementById('k-udhaar');if(!el)return;const rows=DB.get(K.UDHAAR);let tot=0;rows.forEach(r=>{if(r.status==='🟢 SETTLED')return;const remaining=(r.given||0)-(r.returned||0);if(remaining>0)tot+=remaining;});el.textContent=fmt(tot);}
+let _supplierPayId=null,_kacchaPayId=null;
+
+function openSupplierPayOverlay(id){
+  const r=DB.get(K.MAAL).find(x=>x.id===id);if(!r)return;
+  _supplierPayId=id;
+  const remaining=(r.amount||0)-(r.paid||0);
+  document.getElementById('supplier-pay-info').innerHTML=`सप्लायर: <span>${r.supplier||'—'}</span><br>माल: <span>${r.name||'—'}</span><br>कुल उधार: <span>${fmt(r.amount)}</span><br>पहले चुका: <span>${fmt(r.paid||0)}</span>`;
+  document.getElementById('supplier-pay-amount').value='';
+  document.getElementById('supplier-pay-remaining-lbl').textContent='बाकी: '+fmt(remaining);
+  document.getElementById('supplier-pay-after-lbl').textContent='चुकाने के बाद: '+fmt(remaining);
+  document.getElementById('supplier-pay-amount').oninput=function(){
+    const v=Math.min(parseFloat(this.value)||0,remaining);
+    document.getElementById('supplier-pay-after-lbl').textContent='चुकाने के बाद: '+fmt(remaining-v);
+  };
+  document.getElementById('supplier-pay-overlay').classList.add('show');
+}
+function closeSupplierPayOverlay(){document.getElementById('supplier-pay-overlay').classList.remove('show');_supplierPayId=null;}
+function saveSupplierPayment(){
+  if(!_supplierPayId)return;
+  const r=DB.get(K.MAAL).find(x=>x.id===_supplierPayId);if(!r)return;
+  const amt=parseFloat(document.getElementById('supplier-pay-amount').value)||0;
+  if(!amt){toast('❌ रकम डालें',true);return;}
+  const newPaid=Math.min((r.paid||0)+amt,r.amount||0);
+  const newPay=newPaid>=(r.amount||0)?'नकद':'उधार';
+  DB.update(K.MAAL,_supplierPayId,{paid:newPaid,pay:newPay});
+  toast('✅ Payment दर्ज हो गई!');
+  closeSupplierPayOverlay();
+  loadMaalForMonth(monthNavSelected);
+}
+function settleSupplierFull(){
+  if(!_supplierPayId)return;
+  const r=DB.get(K.MAAL).find(x=>x.id===_supplierPayId);if(!r)return;
+  DB.update(K.MAAL,_supplierPayId,{paid:r.amount||0,pay:'नकद'});
+  toast('✅ पूरा चुक गया!');
+  closeSupplierPayOverlay();
+  loadMaalForMonth(monthNavSelected);
+}
+
+function openKacchaPayOverlay(id){
+  const r=DB.get(K.KACCHA).find(x=>x.id===id);if(!r)return;
+  _kacchaPayId=id;
+  const remaining=(r.amount||0)-(r.paid||0);
+  document.getElementById('kaccha-pay-info').innerHTML=`सामान: <span>${r.name||'—'}</span><br>कहाँ से: <span>${r.source||'—'}</span><br>कुल उधार: <span>${fmt(r.amount)}</span><br>पहले चुका: <span>${fmt(r.paid||0)}</span>`;
+  document.getElementById('kaccha-pay-amount').value='';
+  document.getElementById('kaccha-pay-remaining-lbl').textContent='बाकी: '+fmt(remaining);
+  document.getElementById('kaccha-pay-after-lbl').textContent='चुकाने के बाद: '+fmt(remaining);
+  document.getElementById('kaccha-pay-amount').oninput=function(){
+    const v=Math.min(parseFloat(this.value)||0,remaining);
+    document.getElementById('kaccha-pay-after-lbl').textContent='चुकाने के बाद: '+fmt(remaining-v);
+  };
+  document.getElementById('kaccha-pay-overlay').classList.add('show');
+}
+function closeKacchaPayOverlay(){document.getElementById('kaccha-pay-overlay').classList.remove('show');_kacchaPayId=null;}
+function saveKacchaPayment(){
+  if(!_kacchaPayId)return;
+  const r=DB.get(K.KACCHA).find(x=>x.id===_kacchaPayId);if(!r)return;
+  const amt=parseFloat(document.getElementById('kaccha-pay-amount').value)||0;
+  if(!amt){toast('❌ रकम डालें',true);return;}
+  const newPaid=Math.min((r.paid||0)+amt,r.amount||0);
+  const newPay=newPaid>=(r.amount||0)?'नकद':'उधार';
+  DB.update(K.KACCHA,_kacchaPayId,{paid:newPaid,pay:newPay});
+  toast('✅ Payment दर्ज हो गई!');
+  closeKacchaPayOverlay();
+  loadKacchaForMonth(monthNavSelected);
+}
+function settleKacchaFull(){
+  if(!_kacchaPayId)return;
+  const r=DB.get(K.KACCHA).find(x=>x.id===_kacchaPayId);if(!r)return;
+  DB.update(K.KACCHA,_kacchaPayId,{paid:r.amount||0,pay:'नकद'});
+  toast('✅ पूरा चुक गया!');
+  closeKacchaPayOverlay();
+  loadKacchaForMonth(monthNavSelected);
+}
 function loadMaalStats(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;}});document.getElementById('mw-total').textContent=fmt(tot);document.getElementById('mw-nakad').textContent=fmt(nak);document.getElementById('mw-pending').textContent=fmt(udh);}
 function loadKacchaStats(){const rows=DB.get(K.KACCHA);let tot=0,nak=0,udh=0;rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;}});document.getElementById('kw-total').textContent=fmt(tot);document.getElementById('kw-nakad').textContent=fmt(nak);document.getElementById('kw-pending').textContent=fmt(udh);}
 let openHafta=null;

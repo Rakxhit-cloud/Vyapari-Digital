@@ -1903,7 +1903,16 @@ function loadKacchaForMonth(mi){
 let mahineyOpen=false,calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calSelectedMonth=null;
 function toggleMahiney(){mahineyOpen=!mahineyOpen;document.getElementById('mahiney-body').classList.toggle('open',mahineyOpen);document.getElementById('mahiney-arrow').classList.toggle('open',mahineyOpen);if(mahineyOpen)buildMonthGrid();}
 function buildMonthGrid(){const bikri=DB.get(K.BIKRI),countByMonth={};bikri.forEach(r=>{if(r.date){const m=parseInt(r.date.split('-')[1])-1;countByMonth[m]=(countByMonth[m]||0)+1;}});const grid=document.getElementById('month-grid');grid.innerHTML='';for(let m=0;m<12;m++){const count=countByMonth[m]||0,isSelected=calSelectedMonth===m;const div=document.createElement('div');div.className='month-pill'+(count>0?' has-data':'')+(isSelected?' selected':'');if(isSelected){const badge=document.createElement('div');badge.className='month-sel-badge';badge.textContent='● चुना';div.appendChild(badge);}const nameEl=document.createElement('div');nameEl.className='month-pill-name';nameEl.textContent=HI_MONTHS[m];div.appendChild(nameEl);const cntEl=document.createElement('div');cntEl.className='month-pill-count';cntEl.textContent=count>0?count+' एंट्री':'खाली';div.appendChild(cntEl);div.onclick=()=>selectMonth(m);grid.appendChild(div);}}
-function selectMonth(m){calSelectedMonth=m;calYear=TODAY.getFullYear();calMonth=m;buildMonthGrid();document.getElementById('cal-section').style.display='block';renderCalendar();document.getElementById('mahiney-sub').textContent=HI_MONTHS[m]+' '+calYear+' — तारीख टैप करें';}
+function selectMonth(m){
+  if(calSelectedMonth===m){
+    calSelectedMonth=null;
+    document.getElementById('cal-section').style.display='none';
+    document.getElementById('mahiney-sub').textContent='Month Selector · तारीख देखें';
+    buildMonthGrid();
+    return;
+  }
+  calSelectedMonth=m;calYear=TODAY.getFullYear();calMonth=m;buildMonthGrid();document.getElementById('cal-section').style.display='block';renderCalendar();document.getElementById('mahiney-sub').textContent=HI_MONTHS[m]+' '+calYear+' — तारीख टैप करें';
+}
 function renderCalendar(){document.getElementById('cal-label').textContent=HI_MONTHS[calMonth]+' '+calYear;const bikri=DB.get(K.BIKRI);const monthPrefix=calYear+'-'+String(calMonth+1).padStart(2,'0');const entryDates=new Set(bikri.filter(r=>r.date&&r.date.startsWith(monthPrefix)).map(r=>r.date));const firstDay=new Date(calYear,calMonth,1).getDay(),startOffset=(firstDay===0)?6:firstDay-1;const daysInMonth=new Date(calYear,calMonth+1,0).getDate();const grid=document.getElementById('cal-grid');grid.innerHTML='';for(let i=0;i<startOffset;i++){const c=document.createElement('div');c.className='cal-cell empty';grid.appendChild(c);}for(let d=1;d<=daysInMonth;d++){const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');const hasEntry=entryDates.has(ds),isToday=ds===TSTR;const c=document.createElement('div');c.className='cal-cell '+(hasEntry?'has-entry':'no-entry')+(isToday?' today-cell':'');c.textContent=d;if(hasEntry){const dot=document.createElement('div');dot.className='cal-entry-dot';c.appendChild(dot);}if(isToday){const lbl=document.createElement('div');lbl.className='cal-today-lbl';lbl.textContent='आज';c.appendChild(lbl);}c.onclick=()=>openDatePopup(ds);grid.appendChild(c);}}
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}

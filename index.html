@@ -1289,7 +1289,47 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div style="margin-top:14px;" id="goal-list"><div class="loading">⏳</div></div>
   </div>
 </div>
+<div class="popup-overlay" id="supplier-pay-overlay">
+  <div class="popup-sheet">
+    <div class="popup-title" style="color:#3dca6a;font-size:12px;">💳 सप्लायर उधार चुकाएं / Pay Supplier</div>
+    <div class="popup-entry-info" id="supplier-pay-info"></div>
+    <div style="margin-bottom:12px;">
+      <div style="font-size:10px;color:#555;margin-bottom:6px;">कितना चुका रहे हैं? / Amount paying:</div>
+      <input type="number" id="supplier-pay-amount" placeholder="₹ 0" inputmode="numeric"
+        style="width:100%;background:#1e1e1e;border:1px solid #3dca6a;border-radius:8px;padding:10px 14px;font-size:16px;color:#fff;outline:none;text-align:center;">
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;">
+        <span style="color:#2a6a3a;" id="supplier-pay-remaining-lbl">बाकी: ₹0</span>
+        <span style="color:#3dca6a;" id="supplier-pay-after-lbl">चुकाने के बाद: ₹0</span>
+      </div>
+    </div>
+    <div class="popup-btns">
+      <button class="popup-btn popup-edit" style="background:#0d2a1a;border-color:#2dba4d;color:#3dca6a;" onclick="saveSupplierPayment()">✅ Payment दर्ज करें</button>
+      <button class="popup-btn" style="background:#0d2a1a;border:1px solid #2dba4d;color:#3dca6a;" onclick="settleSupplierFull()">🎉 पूरा चुक गया</button>
+    </div>
+    <button class="popup-cancel" onclick="closeSupplierPayOverlay()">रद्द करें</button>
+  </div>
+</div>
 
+<div class="popup-overlay" id="kaccha-pay-overlay">
+  <div class="popup-sheet">
+    <div class="popup-title" style="color:#50a0f0;font-size:12px;">💳 कच्चा माल उधार चुकाएं / Pay Raw Material</div>
+    <div class="popup-entry-info" id="kaccha-pay-info"></div>
+    <div style="margin-bottom:12px;">
+      <div style="font-size:10px;color:#555;margin-bottom:6px;">कितना चुका रहे हैं? / Amount paying:</div>
+      <input type="number" id="kaccha-pay-amount" placeholder="₹ 0" inputmode="numeric"
+        style="width:100%;background:#1e1e1e;border:1px solid #50a0f0;border-radius:8px;padding:10px 14px;font-size:16px;color:#fff;outline:none;text-align:center;">
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;">
+        <span style="color:#2a4a6a;" id="kaccha-pay-remaining-lbl">बाकी: ₹0</span>
+        <span style="color:#50a0f0;" id="kaccha-pay-after-lbl">चुकाने के बाद: ₹0</span>
+      </div>
+    </div>
+    <div class="popup-btns">
+      <button class="popup-btn" style="background:#080f1a;border:1px solid #50a0f0;color:#50a0f0;" onclick="saveKacchaPayment()">✅ Payment दर्ज करें</button>
+      <button class="popup-btn" style="background:#080f1a;border:1px solid #50a0f0;color:#50a0f0;" onclick="settleKacchaFull()">🎉 पूरा चुक गया</button>
+    </div>
+    <button class="popup-cancel" onclick="closeKacchaPayOverlay()">रद्द करें</button>
+  </div>
+</div>
 <button class="fab" onclick="go('s-entry')">+</button>
 <div class="bottom-nav">
   <div class="nav-item active" id="n-home" onclick="go('s-home')"><div class="nav-icon">🏠</div><div class="nav-lbl">होम</div><div class="nav-dot"></div></div>

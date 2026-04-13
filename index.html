@@ -1873,7 +1873,12 @@ function loadKacchaForMonth(mi){
   const kl=document.getElementById('h-kaccha-list');
   kl.innerHTML='<div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div>';
   if(!rec.length)kl.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';
-  else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.KACCHA,r.id,r);kl.appendChild(card);});
+  else rec.forEach(r=>{
+    const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
+    const remaining=(r.amount||0)-(r.paid||0);
+    const html=`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openKacchaPayOverlay('${r.id}')" style="background:#080f1a;border:1px solid #50a0f0;color:#50a0f0;font-size:7px;font-weight:800;padding:2px 6px;border-radius:4px;cursor:pointer;">💳 चुकाएं</button>`:''}<div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
+    const card=makeLPCard('dlr-row',html,K.KACCHA,r.id,r);kl.appendChild(card);
+  });
 }
 let mahineyOpen=false,calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calSelectedMonth=null;
 function toggleMahiney(){mahineyOpen=!mahineyOpen;document.getElementById('mahiney-body').classList.toggle('open',mahineyOpen);document.getElementById('mahiney-arrow').classList.toggle('open',mahineyOpen);if(mahineyOpen)buildMonthGrid();}

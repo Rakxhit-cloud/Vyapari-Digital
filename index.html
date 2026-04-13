@@ -1876,7 +1876,7 @@ function loadKacchaForMonth(mi){
   else rec.forEach(r=>{
     const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
     const remaining=(r.amount||0)-(r.paid||0);
-    const html=`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openKacchaPayOverlay('${r.id}')"style="background:#080f1a;border:1.5px solid #50a0f0;color:#50a0f0;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
+    const html=`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openKacchaPayOverlay('${r.id}')" style="background:#080f1a;border:1.5px solid #50a0f0;color:#50a0f0;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
     const card=makeLPCard('dlr-row',html,K.KACCHA,r.id,r);kl.appendChild(card);
   });
 }

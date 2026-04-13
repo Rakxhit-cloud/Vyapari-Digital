@@ -1178,10 +1178,30 @@ body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="sec-card sc-blue"><div class="mini-grid"><div class="mini-card mc-ba"><div class="mini-lbl">कुल सामान</div><div class="mini-val" id="h-kaccha-total">₹0</div></div><div class="mini-card mc-bb"><div class="mini-lbl">रोज़ औसत</div><div class="mini-val" id="h-kaccha-avg">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद चुकाया</span><span class="vb" id="h-kaccha-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार बाकी</span><span class="va" id="h-kaccha-udhaar">₹0</span></div><div class="tag-row" id="h-kaccha-tags"><span class="tag-b">⏳</span></div><div class="dealer-list" id="h-kaccha-list"><div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
     
     <div class="sec-head"><div class="sec-bar" style="background:#c060f0;"></div><span class="sec-label" style="color:#c060f0;">📅 महीने की एंट्री</span><div class="sec-line" style="background:#2a1a3a;"></div></div>
-    <div class="mahiney-section">
+   <div class="mahiney-section" style="background:#120a1a;border-color:#2a1a3a;">
       <div class="mahiney-header" onclick="toggleMahiney()">
-        <div><div class="mahiney-title">📅 महीना चुनें</div><div class="mahiney-subtitle" id="mahiney-sub">तारीख देखने के लिए टैप करें</div></div>
-        <div class="mahiney-arrow" id="mahiney-arrow">▼</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:42px;height:42px;background:#1a0a2a;border:1.5px solid #7030c0;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;">
+            <div style="background:#c060f0;height:11px;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;">
+              <div style="width:3px;height:5px;background:#fff;border-radius:2px;margin-top:-3px;"></div>
+              <div style="width:3px;height:5px;background:#fff;border-radius:2px;margin-top:-3px;"></div>
+            </div>
+            <div style="flex:1;padding:2px 3px;display:flex;flex-direction:column;gap:2px;justify-content:center;">
+              <div style="display:flex;gap:2px;justify-content:center;">
+                <div style="width:5px;height:5px;background:#7030c0;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#7030c0;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#7030c0;border-radius:1px;"></div>
+              </div>
+              <div style="display:flex;gap:2px;justify-content:center;">
+                <div style="width:5px;height:5px;background:#c060f0;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#3a1a5a;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#3a1a5a;border-radius:1px;"></div>
+              </div>
+            </div>
+          </div>
+          <div><div class="mahiney-title" style="color:#fff;font-size:14px;">महीना चुनें</div><div class="mahiney-subtitle" style="color:#c060f0;" id="mahiney-sub">Month Selector · तारीख देखें</div></div>
+        </div>
+        <div style="background:#1a0a2a;border:1px solid #4a1a7a;border-radius:6px;padding:4px 10px;font-size:9px;color:#d080ff;font-weight:700;" id="mahiney-arrow">▼ खोलें</div>
       </div>
       <div class="mahiney-body" id="mahiney-body">
         <div class="month-grid" id="month-grid"></div>

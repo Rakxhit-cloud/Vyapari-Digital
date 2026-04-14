@@ -1658,6 +1658,7 @@ function launchApp(uid) {
     launchUdhaarMode(uid);
   } else {
    initApp(uid);
+    appLockInit(); appLockStart();
     updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
     // Re-render after short delay to catch Firestore data
     setTimeout(() => { loadHome(); loadUdhaarKPI(); }, 3500);

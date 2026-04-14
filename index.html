@@ -637,26 +637,9 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .ub-wa-title { font-size: 13px; font-weight: 800; color: #4dca4d; text-align: center; margin-bottom: 12px; }
 .ub-wa-msg { background: #111; border: 1px solid #1a3a1a; border-radius: 10px; padding: 14px; margin-bottom: 12px; font-size: 11px; color: #c0e0c0; line-height: 1.9; }
 .ub-wa-send { width: 100%; background: #2dba4d; border: none; color: #051005; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 10px; cursor: pointer; }
-#app-lock-screen{position:fixed;inset:0;background:#0a0a0a;z-index:999999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
-#app-lock-screen.active{display:flex;}
-.lock-logo{width:72px;height:72px;background:#0d2a0d;border:2px solid #2dba4d;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;}
-.lock-title{font-size:20px;font-weight:800;color:#fff;}
-.lock-sub{font-size:11px;color:#4dca4d;text-align:center;}
-.lock-btn{background:#1a4a2a;border:1px solid #2dba4d;color:#4dca4d;font-size:14px;font-weight:800;padding:14px 32px;border-radius:12px;cursor:pointer;margin-top:8px;}
-.lock-btn:active{opacity:.8;}
-.lock-toggle{width:42px;height:24px;border-radius:12px;background:#2a2a2a;border:none;cursor:pointer;position:relative;transition:background .2s;}
-.lock-toggle.on{background:#2dba4d;}
-.lock-toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;}
-.lock-toggle.on::after{left:21px;}
 </style>
 </head>
 <body> <!-- Splash Screen -->
-  <div id="app-lock-screen">
-  <div class="lock-logo">🔐</div>
-  <div class="lock-title">हिसाब-Kitaab</div>
-  <div class="lock-sub">अपना डेटा सुरक्षित है<br>App Lock · आपकी Privacy</div>
-  <button class="lock-btn" onclick="appLockUnlock()">🔓 खोलें · Unlock</button>
-</div>
 <div class="splash-screen" id="splash-screen">
   <div class="splash-logo">📒</div>
   <div class="splash-title">हिसाब-Kitaab</div>
@@ -1137,7 +1120,6 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 <div class="more-menu" id="more-menu">
-  <div class="more-item" onclick="appLockToggle();toggleMore();">🔐 App Lock: <span id="lock-status-lbl">बंद</span></div>
   <div class="more-item" onclick="go('s-monthly');toggleMore();">📅 महीने का हिसाब</div>
   <div class="more-item" onclick="go('s-goal');toggleMore();">🎯 लक्ष्य</div>
   <div class="more-item" onclick="signOut();">🚪 लॉग आउट</div>
@@ -1658,7 +1640,6 @@ function launchApp(uid) {
     launchUdhaarMode(uid);
   } else {
    initApp(uid);
-    appLockInit(); appLockStart();
     updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
     // Re-render after short delay to catch Firestore data
     setTimeout(() => { loadHome(); loadUdhaarKPI(); }, 3500);
@@ -2041,77 +2022,6 @@ window.addEventListener('popstate', function() {
   const active=document.querySelector('.screen.active');
   if(active&&active.id!=='s-home'){go('s-home');history.pushState(null,'',location.href);return;}
 });  
-const LOCK_KEY = 'hk_app_lock_enabled';
-const LOCK_TIMEOUT = 5 * 60 * 1000;
-let lockTimer = null;
-let lockEnabled = false;
-
-function appLockInit() {
-  lockEnabled = localStorage.getItem(LOCK_KEY) === 'true';
-}
-
-function appLockStart() {
-  if (!lockEnabled) return;
-  clearTimeout(lockTimer);
-  lockTimer = setTimeout(appLockActivate, LOCK_TIMEOUT);
-}
-
-function appLockReset() {
-  if (!lockEnabled) return;
-  clearTimeout(lockTimer);
-  lockTimer = setTimeout(appLockActivate, LOCK_TIMEOUT);
-}
-
-function appLockActivate() {
-  if (!lockEnabled) return;
-  document.getElementById('app-lock-screen').classList.add('active');
-}
-
-async function appLockUnlock() {
-  if (window.PublicKeyCredential) {
-    try {
-      const challenge = new Uint8Array(32);
-      crypto.getRandomValues(challenge);
-      await navigator.credentials.get({
-        publicKey: {
-          challenge,
-          timeout: 60000,
-          userVerification: 'required',
-          rpId: location.hostname
-        }
-      });
-      document.getElementById('app-lock-screen').classList.remove('active');
-      appLockStart();
-      return;
-    } catch(e) {}
-  }
-  document.getElementById('app-lock-screen').classList.remove('active');
-  appLockStart();
-}
-
-function appLockToggle() {
-  lockEnabled = !lockEnabled;
-  localStorage.setItem(LOCK_KEY, lockEnabled.toString());
-  const lbl = document.getElementById('lock-status-lbl');
-  if (lbl) lbl.textContent = lockEnabled ? 'चालू' : 'बंद';
-  if (lockEnabled) appLockStart();
-  else clearTimeout(lockTimer);
-  toast(lockEnabled ? '🔐 App Lock चालू हो गया' : '🔓 App Lock बंद हो गया');
-}
-
-document.addEventListener('visibilitychange', function() {
-  if (document.visibilityState === 'visible') {
-    if (lockEnabled) appLockActivate();
-  } else {
-    clearTimeout(lockTimer);
-  }
-});
-
-['touchstart','click','keydown'].forEach(evt => {
-  document.addEventListener(evt, appLockReset, { passive: true });
-});
-
-appLockInit();
 function loadGoalScreen(){const el=document.getElementById('goal-list');el.innerHTML='';const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}goals.slice().reverse().forEach(g=>{const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';const parts=g.month.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='gcard';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;el.appendChild(div);});}
 </script>
 
@@ -2704,7 +2614,6 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
 </body>
 </html>
-
 
 
 

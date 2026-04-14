@@ -2498,7 +2498,14 @@ function ubSwitchToHisaab() {
   if (typeof updateTrialBanner === 'function') updateTrialBanner(UB_UID);
   setTimeout(() => { if (typeof loadHome === 'function') loadHome(); if (typeof loadUdhaarKPI === 'function') loadUdhaarKPI(); }, 600);
 }
-function ubSignOut() {
+ window.addEventListener('popstate', function() {
+  if(document.getElementById('ub-app').style.display==='none') return;
+  const ubOverlays=['ub-add-overlay','ub-pay-overlay','ub-wa-overlay','ub-settings-overlay'];
+  for(const id of ubOverlays){const el=document.getElementById(id);if(el&&el.classList.contains('show')){el.classList.remove('show');history.pushState(null,'',location.href);return;}}
+  const activeUB=document.querySelector('.ub-screen.active');
+  if(activeUB&&activeUB.id!=='ub-home'){ubNavGo('ub-home','ubn-home');history.pushState(null,'',location.href);return;}
+}); 
+  function ubSignOut() {
   ubCloseSettings();
   if (confirm('लॉग आउट करें?')) window.signOut();
 }

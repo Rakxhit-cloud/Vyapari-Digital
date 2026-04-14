@@ -2039,6 +2039,77 @@ window.addEventListener('popstate', function() {
   const active=document.querySelector('.screen.active');
   if(active&&active.id!=='s-home'){go('s-home');history.pushState(null,'',location.href);return;}
 });  
+const LOCK_KEY = 'hk_app_lock_enabled';
+const LOCK_TIMEOUT = 5 * 60 * 1000;
+let lockTimer = null;
+let lockEnabled = false;
+
+function appLockInit() {
+  lockEnabled = localStorage.getItem(LOCK_KEY) === 'true';
+}
+
+function appLockStart() {
+  if (!lockEnabled) return;
+  clearTimeout(lockTimer);
+  lockTimer = setTimeout(appLockActivate, LOCK_TIMEOUT);
+}
+
+function appLockReset() {
+  if (!lockEnabled) return;
+  clearTimeout(lockTimer);
+  lockTimer = setTimeout(appLockActivate, LOCK_TIMEOUT);
+}
+
+function appLockActivate() {
+  if (!lockEnabled) return;
+  document.getElementById('app-lock-screen').classList.add('active');
+}
+
+async function appLockUnlock() {
+  if (window.PublicKeyCredential) {
+    try {
+      const challenge = new Uint8Array(32);
+      crypto.getRandomValues(challenge);
+      await navigator.credentials.get({
+        publicKey: {
+          challenge,
+          timeout: 60000,
+          userVerification: 'required',
+          rpId: location.hostname
+        }
+      });
+      document.getElementById('app-lock-screen').classList.remove('active');
+      appLockStart();
+      return;
+    } catch(e) {}
+  }
+  document.getElementById('app-lock-screen').classList.remove('active');
+  appLockStart();
+}
+
+function appLockToggle() {
+  lockEnabled = !lockEnabled;
+  localStorage.setItem(LOCK_KEY, lockEnabled.toString());
+  const lbl = document.getElementById('lock-status-lbl');
+  if (lbl) lbl.textContent = lockEnabled ? 'चालू' : 'बंद';
+  if (lockEnabled) appLockStart();
+  else clearTimeout(lockTimer);
+  toast(lockEnabled ? '🔐 App Lock चालू हो गया' : '🔓 App Lock बंद हो गया');
+}
+
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') {
+    if (lockEnabled) appLockActivate();
+  } else {
+    clearTimeout(lockTimer);
+  }
+});
+
+['touchstart','click','keydown'].forEach(evt => {
+  document.addEventListener(evt, appLockReset, { passive: true });
+});
+
+appLockInit();
 function loadGoalScreen(){const el=document.getElementById('goal-list');el.innerHTML='';const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}goals.slice().reverse().forEach(g=>{const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';const parts=g.month.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='gcard';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;el.appendChild(div);});}
 </script>
 

@@ -191,6 +191,35 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="stat-card amber"><div class="stat-lbl">Expiring Soon</div><div class="stat-val" id="s-warn">—</div><div class="stat-sub">≤ 10 दिन बाकी</div></div>
     <div class="stat-card red"><div class="stat-lbl">Expired</div><div class="stat-val" id="s-expired">—</div><div class="stat-sub">trial खत्म</div></div>
   </div>
+  <div class="timeline-section">
+  <div class="timeline-title">Trial Expiry Timeline — sorted by urgency</div>
+  <div id="timeline-list"><div style="font-size:11px;color:#333;padding:8px 0;">Loading...</div></div>
+</div>
+
+<!-- Extend Trial Modal -->
+<div class="modal-overlay" id="extend-modal">
+  <div class="modal-box">
+    <div class="modal-title">Trial बढ़ाएं</div>
+    <div class="modal-sub" id="extend-modal-sub">Loading...</div>
+    <div class="modal-days-row">
+      <div class="modal-day-btn" onclick="setExtendDays(7)">+7 दिन</div>
+      <div class="modal-day-btn" onclick="setExtendDays(15)">+15 दिन</div>
+      <div class="modal-day-btn" onclick="setExtendDays(30)">+30 दिन</div>
+    </div>
+    <button class="modal-confirm" id="extend-confirm-btn" onclick="confirmExtend()">✅ Confirm करें</button>
+    <button class="modal-cancel" onclick="closeExtendModal()">रद्द करें</button>
+  </div>
+</div>
+
+<!-- WhatsApp Modal -->
+<div class="modal-overlay" id="wa-modal">
+  <div class="wa-modal-box">
+    <div class="wa-modal-title">📱 WhatsApp भेजें</div>
+    <div class="wa-msg-preview" id="wa-msg-preview"></div>
+    <button class="wa-send-btn" onclick="sendWhatsApp()">📱 WhatsApp पर भेजें</button>
+    <button class="wa-cancel-btn" onclick="closeWAModal()">बंद करें</button>
+  </div>
+</div>
   <div class="toolbar">
     <input class="search-input" type="text" id="search-box" placeholder="🔍 Phone या UID से खोजें..." oninput="renderTable()">
     <div class="filter-btns">

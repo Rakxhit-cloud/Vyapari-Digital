@@ -774,7 +774,19 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="terms-agree-main-btn-en">I Agree — Continue</div>
   </div>
 </div>
-
+<!-- Name Screen -->
+<div class="name-screen hidden" id="screen-name">
+  <div class="auth-logo">👤</div>
+  <div class="auth-title">आपका नाम बताएं</div>
+  <div class="auth-sub">हम आपको इसी नाम से जानेंगे</div>
+  <div class="auth-card">
+    <div class="auth-label">📝 अपना नाम डालें</div>
+    <div class="auth-error" id="name-error"></div>
+    <input class="auth-input" type="text" id="name-input" placeholder="जैसे: Ramesh Kumar" style="margin-bottom:16px;" maxlength="40">
+    <button class="auth-btn" onclick="saveName()">✅ आगे बढ़ें · Continue</button>
+    <button class="auth-btn-secondary" onclick="skipName()">बाद में बताऊँगा / बताऊँगी</button>
+  </div>
+</div>
 <!-- Mode Selection Screen -->
 <div class="mode-screen hidden" id="screen-mode">
   <div class="mode-welcome-badge">✦ स्वागत है हिसाब-Kitaab में</div>

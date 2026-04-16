@@ -1620,8 +1620,30 @@ window.toggleTermsCheck = function() {
 
 window.agreeTerms = async function() {
   if (!termsChecked) return;
-  // Show mode selection screen instead of launching directly
   document.getElementById('screen-terms').classList.add('hidden');
+  document.getElementById('screen-name').classList.remove('hidden');
+  setTimeout(() => document.getElementById('name-input').focus(), 300);
+};
+
+window.saveName = async function() {
+  const name = document.getElementById('name-input').value.trim();
+  const errEl = document.getElementById('name-error');
+  errEl.classList.remove('show');
+  if (!name) { errEl.textContent = '❌ नाम ज़रूर डालें'; errEl.classList.add('show'); return; }
+  const uid = window._currentAuthUser ? window._currentAuthUser.uid : null;
+  if (uid && window._fsRegisterUser) {
+    try {
+      const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const db = window._db;
+      await setDoc(doc(db, 'users', uid, 'profile', 'info'), { name }, { merge: true });
+    } catch(e) { console.warn('Name save error:', e); }
+  }
+  document.getElementById('screen-name').classList.add('hidden');
+  document.getElementById('screen-mode').classList.remove('hidden');
+};
+
+window.skipName = function() {
+  document.getElementById('screen-name').classList.add('hidden');
   document.getElementById('screen-mode').classList.remove('hidden');
 };
 

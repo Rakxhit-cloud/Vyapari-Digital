@@ -2045,7 +2045,14 @@ let appWasHidden=false;
 function appLockInit(){lockEnabled=localStorage.getItem(LOCK_KEY)==='true';const lbl=document.getElementById('lock-status-lbl');if(lbl)lbl.textContent=lockEnabled?'चालू':'बंद';}
 function appLockStart(){clearTimeout(lockTimer);if(!lockEnabled)return;lockTimer=setTimeout(appLockActivate,LOCK_TIMEOUT);}
 function appLockActivate(){if(!lockEnabled)return;document.getElementById('app-lock-screen').classList.add('active');}
-function appLockUnlock(){document.getElementById('app-lock-screen').classList.remove('active');appLockStart();}
+function appLockUnlock(){
+  document.getElementById('app-lock-screen').classList.remove('active');
+  document.getElementById('app-lock-screen').style.display='none';
+  document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(function(el){
+    el.style.visibility='';
+  });
+  appLockStart();
+}
 function appLockToggle(){lockEnabled=!lockEnabled;localStorage.setItem(LOCK_KEY,lockEnabled.toString());const lbl=document.getElementById('lock-status-lbl');if(lbl)lbl.textContent=lockEnabled?'चालू':'बंद';if(lockEnabled){appLockStart();toast('🔐 App Lock चालू — 5 मिनट बाद lock होगा');}else{clearTimeout(lockTimer);toast('🔓 App Lock बंद हो गया');}}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){appWasHidden=true;clearTimeout(lockTimer);}else{if(appWasHidden&&lockEnabled){appLockActivate();appWasHidden=false;}}});
 ['touchstart','click','keydown'].forEach(evt=>{document.addEventListener(evt,function(){if(lockEnabled&&!document.getElementById('app-lock-screen').classList.contains('active')){clearTimeout(lockTimer);lockTimer=setTimeout(appLockActivate,LOCK_TIMEOUT);}},{passive:true});});

@@ -508,7 +508,8 @@ function renderTable() {
     tr.innerHTML = `
       <td style="color:#333;font-size:11px;">${idx+1}</td>
       <td><div class="phone-cell">${u.profile.phone||'—'}</div><div class="uid-cell">${u.uid}</div></td>
-      <td><span class="trial-badge ${s.cls}">${s.label}</span></td>
+<td><div style="font-size:12px;font-weight:700;color:#e0e0e0;">${u.profile.name||'—'}</div></td>
+<td><span class="trial-badge ${s.cls}">${s.label}</span></td>
       <td><div class="date-cell">${regDate ? regDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div><div class="date-sub">${regDate ? regDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : ''}</div></td>
       <td><div class="date-cell"><span class="status-dot ${dotClass}"></span>${lastActiveDate ? lastActiveDate.toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '—'}</div><div class="date-sub" style="margin-left:12px;">${dotLabel}</div></td>
       <td><div class="entries-row"><span class="etag etag-b">बिक्री ${u.bikriCount}</span><span class="etag etag-m">माल ${u.maalCount}</span><span class="etag etag-u">उधार ${u.udhaarCount}</span></div></td>

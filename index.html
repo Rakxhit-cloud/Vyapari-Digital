@@ -637,10 +637,22 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .ub-wa-title { font-size: 13px; font-weight: 800; color: #4dca4d; text-align: center; margin-bottom: 12px; }
 .ub-wa-msg { background: #111; border: 1px solid #1a3a1a; border-radius: 10px; padding: 14px; margin-bottom: 12px; font-size: 11px; color: #c0e0c0; line-height: 1.9; }
 .ub-wa-send { width: 100%; background: #2dba4d; border: none; color: #051005; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 10px; cursor: pointer; }
+  #app-lock-screen{position:fixed;inset:0;background:#0d1f0d;z-index:999999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;}
+#app-lock-screen.active{display:flex;}
+.lock-logo{width:72px;height:72px;background:#0d2a0d;border:2px solid #2dba4d;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.lock-title{font-size:22px;font-weight:800;color:#fff;}
+.lock-sub{font-size:11px;color:#4dca4d;text-align:center;line-height:1.7;}
+.lock-btn{background:#2dba4d;border:none;color:#051005;font-size:15px;font-weight:800;padding:14px 40px;border-radius:12px;cursor:pointer;margin-top:8px;}
 </style>
 </head>
 <body> <!-- Splash Screen -->
-<div class="splash-screen" id="splash-screen">
+<div id="app-lock-screen">
+  <div class="lock-logo">🔐</div>
+  <div class="lock-title">हिसाब-Kitaab</div>
+  <div class="lock-sub">आपका data सुरक्षित है<br>App Lock · Privacy Protection</div>
+  <button class="lock-btn" onclick="appLockUnlock()">🔓 खोलें · Unlock</button>
+</div>
+  <div class="splash-screen" id="splash-screen">
   <div class="splash-logo">📒</div>
   <div class="splash-title">हिसाब-Kitaab</div>
   <div class="splash-sub">रोज़ का हिसाब — रोज़ का मुनाफ़ा</div>

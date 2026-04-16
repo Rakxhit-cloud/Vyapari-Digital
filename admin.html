@@ -515,7 +515,81 @@ function renderTable() {
     tbody.appendChild(tr);
   });
 }
+let extendUID = '', extendPhone = '', extendDaysSelected = 7, waPhone = '', waMsg = '';
 
+function renderTimeline() {
+  const el = document.getElementById('timeline-list');
+  if (!allUsers.length) { el.innerHTML = '<div style="font-size:11px;color:#333;padding:8px 0;">No users loaded</div>'; return; }
+  const sorted = [...allUsers].sort((a,b) => {
+    const da = getTrialStatus(a.profile.trialStart).days;
+    const db2 = getTrialStatus(b.profile.trialStart).days;
+    return da - db2;
+  });
+  el.innerHTML = '';
+  sorted.forEach(u => {
+    const s = getTrialStatus(u.profile.trialStart);
+    const phone = u.profile.phone || '—';
+    let rowCls, subCls, btnCls, subText;
+    if (s.type === 'expired') { rowCls='tl-red'; subCls='tl-sub-red'; btnCls='tl-btn-days-red'; subText='Trial खत्म — Contact NOW'; }
+    else if (s.days <= 10) { rowCls='tl-red'; subCls='tl-sub-red'; btnCls='tl-btn-days-red'; subText=s.days+' दिन बाकी — Contact NOW'; }
+    else if (s.days <= 30) { rowCls='tl-amber'; subCls='tl-sub-amber'; btnCls='tl-btn-days-amber'; subText=s.days+' दिन बाकी — Follow up soon'; }
+    else { rowCls='tl-green'; subCls='tl-sub-green'; btnCls='tl-btn-days-green'; subText=s.days+' दिन बाकी — Healthy'; }
+    const div = document.createElement('div');
+    div.className = 'tl-row ' + rowCls;
+    div.innerHTML = `
+      <div>
+        <div class="tl-phone">${phone}</div>
+        <div class="${subCls}">${subText}</div>
+      </div>
+      <div class="tl-actions">
+        <div class="${btnCls}" onclick="openExtendModal('${u.uid}','${phone}',${s.days})">+Days</div>
+        <div class="tl-btn-wa" onclick="openWAModal('${phone}',${s.days})">WhatsApp</div>
+      </div>
+    `;
+    el.appendChild(div);
+  });
+}
+
+function openExtendModal(uid, phone, daysLeft) {
+  extendUID = uid; extendPhone = phone; extendDaysSelected = 7;
+  document.getElementById('extend-modal-sub').textContent = phone + ' · अभी ' + daysLeft + ' दिन बाकी';
+  document.getElementById('extend-modal').classList.add('show');
+}
+
+function setExtendDays(d) { extendDaysSelected = d; toast('✅ ' + d + ' दिन select हुए'); }
+
+function closeExtendModal() { document.getElementById('extend-modal').classList.remove('show'); }
+
+async function confirmExtend() {
+  const btn = document.getElementById('extend-confirm-btn');
+  btn.disabled = true; btn.textContent = '⏳ Saving...';
+  try {
+    await window._extendTrial(extendUID, extendDaysSelected);
+    toast('✅ Trial +' + extendDaysSelected + ' दिन बढ़ा दिया!');
+    closeExtendModal();
+    await loadUsers();
+  } catch(e) {
+    toast('❌ Error: ' + e.message, true);
+  }
+  btn.disabled = false; btn.textContent = '✅ Confirm करें';
+}
+
+function openWAModal(phone, daysLeft) {
+  const cleanPhone = phone.replace(/\D/g,'').slice(-10);
+  waPhone = cleanPhone;
+  const msg = `नमस्ते! 🙏\n\nआपका हिसाब-Kitaab trial सिर्फ ${daysLeft} दिनों में खत्म हो रहा है।\n\nसिर्फ ₹99/महीने में अपना पूरा हिसाब-किताब जारी रखें।\n\n📲 hisaabkitab.online\n\nधन्यवाद 🙏`;
+  waMsg = msg;
+  document.getElementById('wa-msg-preview').innerHTML = msg.replace(/\n/g,'<br>');
+  document.getElementById('wa-modal').classList.add('show');
+}
+
+function closeWAModal() { document.getElementById('wa-modal').classList.remove('show'); }
+
+function sendWhatsApp() {
+  const url = 'https://wa.me/91' + waPhone + '?text=' + encodeURIComponent(waMsg);
+  window.open(url, '_blank');
+  closeWAModal();
+}
 function toast(msg, err=false) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast' + (err?' err':'') + ' show';

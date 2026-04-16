@@ -2046,12 +2046,15 @@ function appLockInit(){lockEnabled=localStorage.getItem(LOCK_KEY)==='true';const
 function appLockStart(){clearTimeout(lockTimer);if(!lockEnabled)return;lockTimer=setTimeout(appLockActivate,LOCK_TIMEOUT);}
 function appLockActivate(){if(!lockEnabled)return;var s=document.getElementById('app-lock-screen');s.style.cssText='display:flex!important;position:fixed;inset:0;background:#0d1f0d;z-index:999999;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;';document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(function(el){el.style.visibility='hidden';});}
 function appLockUnlock(){
-  document.getElementById('app-lock-screen').classList.remove('active');
-  document.getElementById('app-lock-screen').style.display='none';
+  appWasHidden=false;
+  clearTimeout(lockTimer);
+  var s=document.getElementById('app-lock-screen');
+  s.style.display='none';
+  s.classList.remove('active');
   document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(function(el){
     el.style.visibility='';
   });
-  appLockStart();
+  setTimeout(function(){appLockStart();},1000);
 }
 function appLockToggle(){lockEnabled=!lockEnabled;localStorage.setItem(LOCK_KEY,lockEnabled.toString());const lbl=document.getElementById('lock-status-lbl');if(lbl)lbl.textContent=lockEnabled?'चालू':'बंद';if(lockEnabled){appLockStart();toast('🔐 App Lock चालू — 5 मिनट बाद lock होगा');}else{clearTimeout(lockTimer);toast('🔓 App Lock बंद हो गया');}}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){appWasHidden=true;clearTimeout(lockTimer);}else{if(appWasHidden&&lockEnabled){appLockActivate();appWasHidden=false;}}});

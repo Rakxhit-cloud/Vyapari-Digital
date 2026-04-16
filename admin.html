@@ -438,6 +438,7 @@ async function loadUsers() {
     state.innerHTML = '';
     updateStats();
     renderTable();
+    renderTimeline();
     toast('✅ ' + allUsers.length + ' users लोड हुए');
   } catch(e) {
     state.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div style="color:#f06060;font-size:12px;">Load failed: ${e.message}</div></div>`;

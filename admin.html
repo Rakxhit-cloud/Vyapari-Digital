@@ -538,9 +538,10 @@ function renderTimeline() {
     else { rowCls='tl-green'; subCls='tl-sub-green'; btnCls='tl-btn-days-green'; subText=s.days+' दिन बाकी — Healthy'; }
     const div = document.createElement('div');
     div.className = 'tl-row ' + rowCls;
-    div.innerHTML = `
+  div.innerHTML = `
       <div>
         <div class="tl-phone">${phone}</div>
+        <div style="font-size:9px;color:#888;margin-bottom:2px;">${u.profile.name||''}</div>
         <div class="${subCls}">${subText}</div>
       </div>
       <div class="tl-actions">

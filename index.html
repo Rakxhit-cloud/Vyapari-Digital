@@ -8,6 +8,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>हिसाब-Kitaab</title>
+<script>
+if(localStorage.getItem('hk_app_lock_enabled')==='true'){
+  document.addEventListener('DOMContentLoaded',function(){
+    var s=document.getElementById('app-lock-screen');
+    if(s){s.style.cssText='display:flex !important;position:fixed;inset:0;background:#0d1f0d;z-index:999999;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;';}
+  });
+}
+</script>
 <link rel="manifest" href="manifest.json">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }

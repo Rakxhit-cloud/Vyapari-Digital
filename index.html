@@ -1417,6 +1417,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+window._db = db;
 auth.languageCode = 'hi';
 let confirmationResult = null, recaptchaVerifier = null, resendCountdown = null;
 

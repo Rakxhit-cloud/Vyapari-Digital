@@ -1668,6 +1668,7 @@ window.selectMode = function(mode) {
   localStorage.setItem('hk_trial_start_' + uid, trialStart.toString());
   localStorage.setItem('hk_mode_' + uid, mode);
   window._fsRegisterUser(uid, phone, trialStart);
+  if(window._db){try{import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>{m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{mode:mode},{merge:true});});}catch(e){}}
   document.getElementById('screen-mode').classList.add('hidden');
   launchApp(uid);
 };

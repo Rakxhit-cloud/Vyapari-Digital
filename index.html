@@ -1721,9 +1721,9 @@ updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
 }
 
 function launchUdhaarMode(uid) {
-  // Hide full app, show उधार Book app
   document.getElementById('main-app').style.display = 'none';
   document.getElementById('ub-app').style.display = 'block';
+  if(window._startHeartbeat) window._startHeartbeat(uid);
   ubInitApp(uid);
   // Load cloud data
 if (window._fsLoadAll) window._fsLoadAll(uid).then(() => { if (typeof ubLoadList === 'function') ubLoadList(); });

@@ -617,7 +617,16 @@ function getOnlineStatus(lastSeen) {
   const d = Math.floor(diff / 86400000);
   return { dot: 'dot-inactive', label: d + 'd ago', sub: new Date(lastSeen).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) };
 }
-setInterval(() => { if (allUsers.length) renderTable(); }, 10000);
+setInterval(async () => {
+  if (!allUsers.length) return;
+  for (const u of allUsers) {
+    try {
+      const snap = await window._getProfileDoc(u.uid);
+      if (snap && snap.lastSeen) u.profile.lastSeen = snap.lastSeen;
+    } catch(e) {}
+  }
+  renderTable();
+}, 10000);
 function toast(msg, err=false) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast' + (err?' err':'') + ' show';

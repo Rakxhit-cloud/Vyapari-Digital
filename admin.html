@@ -403,7 +403,7 @@ window._loadUsersFromFirestore = async function() {
     } catch(e) {}
 
     // Step 3: get entry counts
-    let bikriCount = 0, maalCount = 0, udhaarCount = 0, lastActive = null;
+   let bikriCount = 0, maalCount = 0, kacchaCount = 0, udhaarCount = 0, lastActive = null;
     for (const col of ['bikri', 'maal', 'kaccha', 'udhaar', 'goal']) {
       try {
         const snap = await getDocs(collection(db, 'users', uid, col));

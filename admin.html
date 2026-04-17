@@ -598,6 +598,12 @@ function sendWhatsApp() {
   window.open(url, '_blank');
   closeWAModal();
 }
+function renderOnlineCell(lastSeen) {
+  const s = getOnlineStatus(lastSeen);
+  const isOnline = s.dot === 'dot-online';
+  const isRecent = s.dot === 'dot-recent';
+  return `<div class="date-cell"><span class="status-dot ${s.dot}"></span><span class="online-label ${isOnline?'green':isRecent?'amber':''}">${s.label}</span></div><div class="date-sub" style="margin-left:12px;">${s.sub}</div>`;
+}
 function getOnlineStatus(lastSeen) {
   if (!lastSeen) return { dot: 'dot-inactive', label: '—', sub: '—' };
   const diff = Date.now() - lastSeen;

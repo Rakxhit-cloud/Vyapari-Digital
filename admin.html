@@ -14,24 +14,18 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .auth-title { text-align: center; font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
 .auth-sub { text-align: center; font-size: 10px; color: #444; margin-bottom: 22px; }
 .auth-label { font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
-.auth-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
-.auth-prefix { background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 8px; padding: 11px 14px; font-size: 14px; color: #4dca4d; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
-.auth-input { flex: 1; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 8px; padding: 11px 14px; font-size: 16px; color: #fff; outline: none; width: 100%; }
+.auth-input { width: 100%; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px; font-size: 18px; color: #fff; outline: none; text-align: center; letter-spacing: 8px; margin-bottom: 14px; }
 .auth-input:focus { border-color: #2dba4d; background: #0d1f0d; }
 .auth-btn { width: 100%; background: #1a4a2a; border: 1px solid #2dba4d; color: #4dca4d; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; }
 .auth-btn:disabled { opacity: .4; cursor: not-allowed; }
-.auth-btn-sec { width: 100%; background: transparent; border: none; color: #555; font-size: 12px; padding: 8px; cursor: pointer; }
 .auth-error { background: #1a0808; border: 1px solid #3a1a1a; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #f06060; margin-bottom: 12px; display: none; text-align: center; }
 .auth-error.show { display: block; }
-.auth-success { background: #0d1f0d; border: 1px solid #1a3a1a; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #4dca4d; margin-bottom: 12px; display: none; text-align: center; }
-.auth-success.show { display: block; }
-.auth-loader { display: none; width: 20px; height: 20px; border: 2px solid #1a4a2a; border-top-color: #4dca4d; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 14px; }
-.auth-loader.show { display: block; }
-.otp-inputs { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; }
-.otp-digit { width: 44px; height: 52px; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 10px; font-size: 22px; font-weight: 800; color: #fff; text-align: center; outline: none; }
-.otp-digit:focus { border-color: #2dba4d; background: #0d1f0d; }
-.resend-txt { font-size: 11px; color: #555; text-align: center; margin-top: 8px; }
-.resend-link { color: #4dca4d; cursor: pointer; font-weight: 700; }
+.lockout-msg { background: #1a0808; border: 1px solid #3a1a1a; border-radius: 8px; padding: 14px; text-align: center; margin-bottom: 14px; display: none; }
+.lockout-msg.show { display: block; }
+.lockout-msg .lockout-icon { font-size: 28px; margin-bottom: 6px; }
+.lockout-msg .lockout-title { font-size: 13px; font-weight: 800; color: #f06060; margin-bottom: 4px; }
+.lockout-msg .lockout-timer { font-size: 11px; color: #8a3030; }
+.attempts-left { font-size: 10px; color: #555; text-align: center; margin-top: 8px; }
 .header { background: #0d1f0d; border-bottom: 2px solid #2dba4d; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .header-left { display: flex; align-items: center; gap: 10px; }
 .header-icon { width: 34px; height: 34px; background: #2dba4d; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
@@ -71,18 +65,27 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .etag-b { background: #0d2a1a; color: #4dca4d; }
 .etag-m { background: #0a1a0f; color: #3dca6a; }
 .etag-u { background: #1a0808; color: #f06060; }
+.etag-k { background: #080f1a; color: #50a0f0; }
 .date-cell { font-size: 11px; color: #888; white-space: nowrap; }
 .date-sub { font-size: 9px; color: #333; margin-top: 2px; }
 .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; }
 .dot-active { background: #4dca4d; } .dot-idle { background: #f0b040; } .dot-inactive { background: #f06060; }
+.dot-online { background: #4dca4d; box-shadow: 0 0 0 3px rgba(77,202,77,0.3); animation: pulse .8s ease-in-out infinite; }
+.dot-recent { background: #f0b040; }
+.online-label { font-size: 11px; font-weight: 800; }
+.online-label.green { color: #4dca4d; }
+.online-label.amber { color: #f0b040; }
+.mode-badge { display: inline-block; font-size: 8px; font-weight: 800; padding: 2px 7px; border-radius: 4px; }
+.mode-full { background: #0d2a1a; border: 1px solid #2dba4d; color: #4dca4d; }
+.mode-udhaar { background: #1a0808; border: 1px solid #f06060; color: #f06060; }
+.call-btn { width: 28px; height: 28px; background: #0d1520; border: 1px solid #50a0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; text-decoration: none; }
 .empty-state { text-align: center; padding: 48px 20px; color: #333; }
 .empty-icon { font-size: 36px; margin-bottom: 10px; }
 .loading-state { text-align: center; padding: 48px 20px; }
 .spinner { width: 28px; height: 28px; border: 2px solid #1a3a1a; border-top-color: #4dca4d; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 12px; }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 .loading-txt { font-size: 11px; color: #3a7a3a; }
-.access-denied { position: fixed; inset: 0; background: #0a0a0a; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; z-index: 998; }
-.access-denied.show { display: flex; }
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; padding: 9px 20px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 9999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
 .toast.show { opacity: 1; }
 .toast.err { background: #4a1a1a; border-color: #6a2a2a; color: #f06060; }
@@ -117,70 +120,27 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .wa-msg-preview{background:#111;border:1px solid #1a3a1a;border-radius:8px;padding:12px;font-size:11px;color:#aaa;line-height:1.9;margin-bottom:12px;}
 .wa-send-btn{width:100%;background:#2dba4d;border:none;color:#051005;font-size:13px;font-weight:800;padding:11px;border-radius:8px;cursor:pointer;margin-bottom:6px;}
 .wa-cancel-btn{width:100%;background:transparent;border:none;color:#2a6a2a;font-size:11px;padding:7px;cursor:pointer;}
-.dot-online{background:#4dca4d;box-shadow:0 0 0 3px rgba(77,202,77,0.3);animation:pulse .8s ease-in-out infinite;}
-.dot-recent{background:#f0b040;}
-.online-label{font-size:11px;font-weight:800;}
-.online-label.green{color:#4dca4d;}
-.online-label.amber{color:#f0b040;}
-.etag-k{background:#080f1a;color:#50a0f0;}
-.mode-badge{display:inline-block;font-size:8px;font-weight:800;padding:2px 7px;border-radius:4px;}
-.mode-full{background:#0d2a1a;border:1px solid #2dba4d;color:#4dca4d;}
-.mode-udhaar{background:#1a0808;border:1px solid #f06060;color:#f06060;}
-.call-btn{width:28px;height:28px;background:#0d1520;border:1px solid #50a0f0;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;text-decoration:none;}
 </style>
 </head>
 <body>
 
-<!-- SCREEN 1: PHONE -->
-<div class="auth-screen" id="screen-phone">
+<!-- PASSWORD LOGIN SCREEN -->
+<div class="auth-screen" id="screen-password">
   <div class="auth-box">
     <div class="auth-logo">🔐</div>
     <div class="auth-title">Admin Login</div>
-    <div class="auth-sub">हिसाब-Kitaab — Lead Dashboard</div>
-    <div class="auth-error" id="phone-error"></div>
-    <div class="auth-label">📱 Admin Mobile Number</div>
-    <div class="auth-input-row">
-      <div class="auth-prefix">🇮🇳 +91</div>
-      <input class="auth-input" type="tel" id="phone-input" placeholder="10 अंक का नंबर" maxlength="10" inputmode="numeric">
+    <div class="auth-sub">हिसाब-Kitaab — Secure Dashboard</div>
+    <div class="auth-error" id="pw-error"></div>
+    <div class="lockout-msg" id="lockout-box">
+      <div class="lockout-icon">🚫</div>
+      <div class="lockout-title">Too many attempts — Locked</div>
+      <div class="lockout-timer" id="lockout-timer">Please wait 10:00</div>
     </div>
-    <button class="auth-btn" id="send-otp-btn" onclick="sendOTP()">📨 OTP भेजें</button>
-    <div style="font-size:10px;color:#333;text-align:center;margin-top:8px;">सिर्फ authorized admin number से login होगा</div>
-    <div id="recaptcha-container"></div>
+    <div class="auth-label">🔑 Admin Password</div>
+    <input class="auth-input" type="password" id="pw-input" placeholder="••••••" inputmode="numeric" maxlength="20">
+    <button class="auth-btn" id="pw-btn" onclick="checkPassword()">🔓 Login</button>
+    <div class="attempts-left" id="attempts-info">3 attempts remaining</div>
   </div>
-</div>
-
-<!-- SCREEN 2: OTP -->
-<div class="auth-screen hidden" id="screen-otp">
-  <div class="auth-box">
-    <div class="auth-logo">💬</div>
-    <div class="auth-title">OTP दर्ज करें</div>
-    <div class="auth-sub" id="otp-sub-lbl">नंबर पर OTP भेजा गया</div>
-    <div class="auth-error" id="otp-error"></div>
-    <div class="auth-success" id="otp-success"></div>
-    <div class="auth-loader" id="otp-loader"></div>
-    <div class="otp-inputs">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a1">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a2">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a3">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a4">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a5">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="a6">
-    </div>
-    <button class="auth-btn" id="verify-btn" onclick="verifyOTP()">✅ Verify करें</button>
-    <button class="auth-btn-sec" onclick="backToPhone()">← नंबर बदलें</button>
-    <div class="resend-txt">
-      <span id="resend-countdown">30 सेकंड में दोबारा भेज सकते हैं</span>
-      <span class="resend-link" id="resend-link" onclick="resendOTP()" style="display:none;">दोबारा भेजें</span>
-    </div>
-  </div>
-</div>
-
-<!-- ACCESS DENIED -->
-<div class="access-denied" id="access-denied">
-  <div style="font-size:48px;">🚫</div>
-  <div style="font-size:16px;font-weight:800;color:#f06060;">Access Denied</div>
-  <div style="font-size:12px;color:#444;">यह number admin authorized नहीं है</div>
-  <button class="auth-btn" style="width:200px;margin-top:8px;" onclick="location.reload()">← वापस जाएं</button>
 </div>
 
 <!-- MAIN DASHBOARD -->
@@ -202,34 +162,30 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="stat-card red"><div class="stat-lbl">Expired</div><div class="stat-val" id="s-expired">—</div><div class="stat-sub">trial खत्म</div></div>
   </div>
   <div class="timeline-section">
-  <div class="timeline-title">Trial Expiry Timeline — sorted by urgency</div>
-  <div id="timeline-list"><div style="font-size:11px;color:#333;padding:8px 0;">Loading...</div></div>
-</div>
-
-<!-- Extend Trial Modal -->
-<div class="modal-overlay" id="extend-modal">
-  <div class="modal-box">
-    <div class="modal-title">Trial बढ़ाएं</div>
-    <div class="modal-sub" id="extend-modal-sub">Loading...</div>
-    <div class="modal-days-row">
-      <div class="modal-day-btn" onclick="setExtendDays(7)">+7 दिन</div>
-      <div class="modal-day-btn" onclick="setExtendDays(15)">+15 दिन</div>
-      <div class="modal-day-btn" onclick="setExtendDays(30)">+30 दिन</div>
+    <div class="timeline-title">Trial Expiry Timeline — sorted by urgency</div>
+    <div id="timeline-list"><div style="font-size:11px;color:#333;padding:8px 0;">Loading...</div></div>
+  </div>
+  <div class="modal-overlay" id="extend-modal">
+    <div class="modal-box">
+      <div class="modal-title">Trial बढ़ाएं</div>
+      <div class="modal-sub" id="extend-modal-sub">Loading...</div>
+      <div class="modal-days-row">
+        <div class="modal-day-btn" onclick="setExtendDays(7)">+7 दिन</div>
+        <div class="modal-day-btn" onclick="setExtendDays(15)">+15 दिन</div>
+        <div class="modal-day-btn" onclick="setExtendDays(30)">+30 दिन</div>
+      </div>
+      <button class="modal-confirm" id="extend-confirm-btn" onclick="confirmExtend()">✅ Confirm करें</button>
+      <button class="modal-cancel" onclick="closeExtendModal()">रद्द करें</button>
     </div>
-    <button class="modal-confirm" id="extend-confirm-btn" onclick="confirmExtend()">✅ Confirm करें</button>
-    <button class="modal-cancel" onclick="closeExtendModal()">रद्द करें</button>
   </div>
-</div>
-
-<!-- WhatsApp Modal -->
-<div class="modal-overlay" id="wa-modal">
-  <div class="wa-modal-box">
-    <div class="wa-modal-title">📱 WhatsApp भेजें</div>
-    <div class="wa-msg-preview" id="wa-msg-preview"></div>
-    <button class="wa-send-btn" onclick="sendWhatsApp()">📱 WhatsApp पर भेजें</button>
-    <button class="wa-cancel-btn" onclick="closeWAModal()">बंद करें</button>
+  <div class="modal-overlay" id="wa-modal">
+    <div class="wa-modal-box">
+      <div class="wa-modal-title">📱 WhatsApp भेजें</div>
+      <div class="wa-msg-preview" id="wa-msg-preview"></div>
+      <button class="wa-send-btn" onclick="sendWhatsApp()">📱 WhatsApp पर भेजें</button>
+      <button class="wa-cancel-btn" onclick="closeWAModal()">बंद करें</button>
+    </div>
   </div>
-</div>
   <div class="toolbar">
     <input class="search-input" type="text" id="search-box" placeholder="🔍 Phone या UID से खोजें..." oninput="renderTable()">
     <div class="filter-btns">
@@ -244,7 +200,7 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <table class="lead-table">
       <thead>
         <tr>
-        <th>#</th><th>Phone / UID</th><th>Name</th><th>Mode</th><th>Trial Status</th>
+          <th>#</th><th>Phone / UID</th><th>Name</th><th>Mode</th><th>Trial Status</th>
           <th>Registered</th><th>Last Active</th><th>Entries</th><th>Call</th>
         </tr>
       </thead>
@@ -256,9 +212,123 @@ body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 
 <div class="toast" id="toast"></div>
 
+<script>
+// ════════════════════════════════════════
+// PASSWORD SECURITY SYSTEM
+// ════════════════════════════════════════
+// *** CHANGE YOUR PASSWORD HERE ***
+// Replace the hash below with your own.
+// To generate: open browser console, type:
+// crypto.subtle.digest('SHA-256', new TextEncoder().encode('YOUR_NUMBER_HERE')).then(b=>console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')))
+// Then paste the result below.
+const ADMIN_HASH = '2c624232cdd221771294dfbb310aca000a0df6ac8b166e8b32c4bdc2636d0bab';
+// Default placeholder hash above = "3" (just the digit 3)
+// YOU MUST CHANGE THIS to your own password hash!
+
+const MAX_ATTEMPTS = 3;
+const LOCKOUT_MS = 10 * 60 * 1000;
+let attempts = parseInt(sessionStorage.getItem('_adm_att') || '0');
+let lockedUntil = parseInt(sessionStorage.getItem('_adm_lock') || '0');
+let lockInterval = null;
+
+async function hashPassword(pw) {
+  const data = new TextEncoder().encode(pw);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+function updateAttemptsUI() {
+  const left = MAX_ATTEMPTS - attempts;
+  document.getElementById('attempts-info').textContent = left + ' attempt' + (left !== 1 ? 's' : '') + ' remaining';
+  if (left <= 1) document.getElementById('attempts-info').style.color = '#f06060';
+  else document.getElementById('attempts-info').style.color = '#555';
+}
+
+function startLockoutTimer() {
+  const box = document.getElementById('lockout-box');
+  const timerEl = document.getElementById('lockout-timer');
+  const btn = document.getElementById('pw-btn');
+  const inp = document.getElementById('pw-input');
+  box.classList.add('show');
+  btn.disabled = true;
+  inp.disabled = true;
+  document.getElementById('attempts-info').style.display = 'none';
+  if (lockInterval) clearInterval(lockInterval);
+  lockInterval = setInterval(() => {
+    const remaining = lockedUntil - Date.now();
+    if (remaining <= 0) {
+      clearInterval(lockInterval);
+      box.classList.remove('show');
+      btn.disabled = false;
+      inp.disabled = false;
+      attempts = 0;
+      sessionStorage.setItem('_adm_att', '0');
+      sessionStorage.removeItem('_adm_lock');
+      document.getElementById('attempts-info').style.display = 'block';
+      updateAttemptsUI();
+      return;
+    }
+    const m = Math.floor(remaining / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    timerEl.textContent = 'Please wait ' + m + ':' + String(s).padStart(2, '0');
+  }, 1000);
+}
+
+window.checkPassword = async function() {
+  if (Date.now() < lockedUntil) return;
+  const pw = document.getElementById('pw-input').value;
+  const errEl = document.getElementById('pw-error');
+  errEl.classList.remove('show');
+  if (!pw) { errEl.textContent = '❌ Password डालें'; errEl.classList.add('show'); return; }
+  const hash = await hashPassword(pw);
+  if (hash === ADMIN_HASH) {
+    attempts = 0;
+    sessionStorage.setItem('_adm_att', '0');
+    sessionStorage.setItem('_adm_auth', 'true');
+    document.getElementById('screen-password').classList.add('hidden');
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('admin-phone-display').textContent = '🔐 Admin — Authenticated';
+    loadUsers();
+  } else {
+    attempts++;
+    sessionStorage.setItem('_adm_att', attempts.toString());
+    if (attempts >= MAX_ATTEMPTS) {
+      lockedUntil = Date.now() + LOCKOUT_MS;
+      sessionStorage.setItem('_adm_lock', lockedUntil.toString());
+      startLockoutTimer();
+      errEl.textContent = '🚫 3 wrong attempts — locked for 10 minutes';
+      errEl.classList.add('show');
+    } else {
+      errEl.textContent = '❌ Wrong password — ' + (MAX_ATTEMPTS - attempts) + ' attempts left';
+      errEl.classList.add('show');
+      updateAttemptsUI();
+    }
+    document.getElementById('pw-input').value = '';
+  }
+};
+
+document.getElementById('pw-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') window.checkPassword();
+});
+
+window.doLogout = function() {
+  sessionStorage.removeItem('_adm_auth');
+  location.reload();
+};
+
+(function initAuth() {
+  if (Date.now() < lockedUntil) { startLockoutTimer(); }
+  else { updateAttemptsUI(); }
+  if (sessionStorage.getItem('_adm_auth') === 'true') {
+    document.getElementById('screen-password').classList.add('hidden');
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('admin-phone-display').textContent = '🔐 Admin — Authenticated';
+  }
+})();
+</script>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -271,144 +341,24 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
-auth.languageCode = 'hi';
 
-const ADMIN_PHONE = '+917409988744';
-let confirmationResult = null, recaptchaVerifier = null, resendTimer = null;
-
-function setupRecaptcha() {
-  if (recaptchaVerifier) { try { recaptchaVerifier.clear(); } catch(e) {} recaptchaVerifier = null; }
-  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible', callback: () => {} });
-}
-
-window.sendOTP = async function() {
-  const phone = document.getElementById('phone-input').value.trim();
-  const errEl = document.getElementById('phone-error');
-  errEl.classList.remove('show');
-  if (phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) {
-    errEl.textContent = '❌ सही 10 अंक का नंबर डालें'; errEl.classList.add('show'); return;
-  }
-  const btn = document.getElementById('send-otp-btn');
-  btn.disabled = true; btn.textContent = '⏳ भेज रहे हैं...';
-  try {
-    setupRecaptcha();
-    confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone, recaptchaVerifier);
-    document.getElementById('screen-phone').classList.add('hidden');
-    document.getElementById('screen-otp').classList.remove('hidden');
-    document.getElementById('otp-sub-lbl').textContent = '+91 ' + phone + ' पर OTP भेजा गया';
-    document.getElementById('a1').focus();
-    startResendTimer();
-  } catch(e) {
-    errEl.textContent = '❌ OTP नहीं भेज सका। दोबारा कोशिश करें।'; errEl.classList.add('show');
-    btn.disabled = false; btn.textContent = '📨 OTP भेजें';
-  }
-};
-
-window.verifyOTP = async function() {
-  const otp = ['a1','a2','a3','a4','a5','a6'].map(id => document.getElementById(id).value).join('');
-  const errEl = document.getElementById('otp-error'), succEl = document.getElementById('otp-success'), loader = document.getElementById('otp-loader');
-  errEl.classList.remove('show'); succEl.classList.remove('show');
-  if (otp.length !== 6) { errEl.textContent = '❌ 6 अंक का OTP डालें'; errEl.classList.add('show'); return; }
-  const btn = document.getElementById('verify-btn');
-  btn.disabled = true; btn.textContent = '⏳ जाँच रहे हैं...'; loader.classList.add('show');
-  try {
-    await confirmationResult.confirm(otp);
-    succEl.textContent = '✅ Verified!'; succEl.classList.add('show'); loader.classList.remove('show');
-  } catch(e) {
-    errEl.textContent = '❌ गलत OTP।'; errEl.classList.add('show');
-    btn.disabled = false; btn.textContent = '✅ Verify करें'; loader.classList.remove('show');
-  }
-};
-
-window.backToPhone = function() {
-  document.getElementById('screen-otp').classList.add('hidden');
-  document.getElementById('screen-phone').classList.remove('hidden');
-  document.getElementById('send-otp-btn').disabled = false;
-  document.getElementById('send-otp-btn').textContent = '📨 OTP भेजें';
-  ['a1','a2','a3','a4','a5','a6'].forEach(id => document.getElementById(id).value = '');
-  if (resendTimer) clearInterval(resendTimer);
-};
-
-window.resendOTP = async function() {
-  const phone = document.getElementById('phone-input').value.trim();
-  try {
-    setupRecaptcha();
-    confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone, recaptchaVerifier);
-    document.getElementById('resend-link').style.display = 'none';
-    document.getElementById('resend-countdown').style.display = 'inline';
-    startResendTimer();
-  } catch(e) {}
-};
-
-function startResendTimer() {
-  let secs = 30;
-  const cd = document.getElementById('resend-countdown'), lnk = document.getElementById('resend-link');
-  cd.style.display = 'inline'; lnk.style.display = 'none';
-  cd.textContent = secs + ' सेकंड में दोबारा भेज सकते हैं';
-  if (resendTimer) clearInterval(resendTimer);
-  resendTimer = setInterval(() => {
-    secs--;
-    if (secs <= 0) { clearInterval(resendTimer); cd.style.display = 'none'; lnk.style.display = 'inline'; }
-    else cd.textContent = secs + ' सेकंड में दोबारा भेज सकते हैं';
-  }, 1000);
-}
-
-['a1','a2','a3','a4','a5','a6'].forEach((id, idx, arr) => {
-  const el = document.getElementById(id);
-  el.addEventListener('input', () => {
-    if (el.value.length === 1 && idx < arr.length - 1) document.getElementById(arr[idx+1]).focus();
-    if (idx === arr.length - 1 && el.value.length === 1) setTimeout(() => window.verifyOTP(), 300);
-  });
-  el.addEventListener('keydown', e => { if (e.key === 'Backspace' && !el.value && idx > 0) document.getElementById(arr[idx-1]).focus(); });
-});
-
-onAuthStateChanged(auth, user => {
-  if (user) {
-    const phone = user.phoneNumber || '';
-    if (phone !== ADMIN_PHONE) {
-      document.getElementById('screen-phone').classList.add('hidden');
-      document.getElementById('screen-otp').classList.add('hidden');
-      document.getElementById('access-denied').classList.add('show');
-      return;
-    }
-    document.getElementById('screen-phone').classList.add('hidden');
-    document.getElementById('screen-otp').classList.add('hidden');
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('admin-phone-display').textContent = '👤 ' + phone + ' — Admin';
-    loadUsers();
-  }
-});
-
-window.doLogout = async function() { await fbSignOut(auth); location.reload(); };
-
-// ════════════════════════════════════════════════════
-// FIXED LOADER — reads profile/info subcollection
-// directly instead of querying parent documents
-// ════════════════════════════════════════════════════
 window._loadUsersFromFirestore = async function() {
   const users = [];
-
-  // Step 1: get all UIDs from users collection
   const usersSnap = await getDocs(collection(db, 'users'));
   const uids = usersSnap.docs.map(d => d.id);
-
-  // Step 2: for each UID, directly fetch profile/info doc
   for (const uid of uids) {
     let profile = {};
     try {
       const infoDoc = await getDoc(doc(db, 'users', uid, 'profile', 'info'));
       if (infoDoc.exists()) profile = infoDoc.data();
     } catch(e) {}
-
-    // Step 3: get entry counts
-   let bikriCount = 0, maalCount = 0, kacchaCount = 0, udhaarCount = 0, lastActive = null;
+    let bikriCount = 0, maalCount = 0, kacchaCount = 0, udhaarCount = 0, lastActive = null;
     for (const col of ['bikri', 'maal', 'kaccha', 'udhaar', 'goal']) {
       try {
         const snap = await getDocs(collection(db, 'users', uid, col));
         if (col === 'bikri') bikriCount = snap.size;
-       else if (col === 'maal') maalCount = snap.size;
+        else if (col === 'maal') maalCount = snap.size;
         else if (col === 'kaccha') kacchaCount = snap.size;
         else if (col === 'udhaar') udhaarCount = snap.size;
         snap.forEach(d => {
@@ -420,17 +370,18 @@ window._loadUsersFromFirestore = async function() {
         });
       } catch(e) {}
     }
-
-  users.push({ uid, profile, bikriCount, maalCount, kacchaCount, udhaarCount, lastActive });
+    users.push({ uid, profile, bikriCount, maalCount, kacchaCount, udhaarCount, lastActive });
   }
   return users;
 };
+
 window._getProfileDoc = async function(uid) {
   try {
     const snap = await getDoc(doc(db, 'users', uid, 'profile', 'info'));
     return snap.exists() ? snap.data() : null;
   } catch(e) { return null; }
 };
+
 window._extendTrial = async function(uid, additionalDays) {
   const profileRef = doc(db, 'users', uid, 'profile', 'info');
   const snap = await getDoc(profileRef);
@@ -440,6 +391,8 @@ window._extendTrial = async function(uid, additionalDays) {
   const newTrialStart = Date.now() - ((daysUsed - additionalDays) * 24*60*60*1000);
   await setDoc(profileRef, { trialStart: newTrialStart }, { merge: true });
 };
+
+if (sessionStorage.getItem('_adm_auth') === 'true') { loadUsers(); }
 </script>
 
 <script>
@@ -513,29 +466,22 @@ function renderTable() {
     const regDate = u.profile.registeredAt
       ? (u.profile.registeredAt.toDate ? u.profile.registeredAt.toDate() : new Date(u.profile.registeredAt))
       : null;
-    const lastActiveDate = u.lastActive ? new Date(u.lastActive) : null;
-    const daysSince = lastActiveDate ? Math.floor((Date.now() - lastActiveDate.getTime()) / (1000*60*60*24)) : null;
-    let dotClass = 'dot-inactive', dotLabel = '—';
-    if (daysSince !== null) {
-      if (daysSince <= 1) { dotClass = 'dot-active'; dotLabel = 'Today'; }
-      else if (daysSince <= 7) { dotClass = 'dot-idle'; dotLabel = daysSince + 'd ago'; }
-      else { dotClass = 'dot-inactive'; dotLabel = daysSince + 'd ago'; }
-    }
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td style="color:#333;font-size:11px;">${idx+1}</td>
       <td><div class="phone-cell">${u.profile.phone||'—'}</div><div class="uid-cell">${u.uid}</div></td>
-<td><div style="font-size:12px;font-weight:700;color:#e0e0e0;">${u.profile.name||'—'}</div></td>
-<td><span class="mode-badge ${u.profile.mode==='udhaar'?'mode-udhaar':'mode-full'}">${u.profile.mode==='udhaar'?'उधार Book':'हिसाब-Kitaab'}</span></td>
-<td><span class="trial-badge ${s.cls}">${s.label}</span></td>
+      <td><div style="font-size:12px;font-weight:700;color:#e0e0e0;">${u.profile.name||'—'}</div></td>
+      <td><span class="mode-badge ${u.profile.mode==='udhaar'?'mode-udhaar':'mode-full'}">${u.profile.mode==='udhaar'?'उधार Book':'हिसाब-Kitaab'}</span></td>
+      <td><span class="trial-badge ${s.cls}">${s.label}</span></td>
       <td><div class="date-cell">${regDate ? regDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div><div class="date-sub">${regDate ? regDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : ''}</div></td>
-     <td>${renderOnlineCell(u.profile.lastSeen)}</td>
+      <td>${renderOnlineCell(u.profile.lastSeen)}</td>
       <td><div class="entries-row"><span class="etag etag-b">B ${u.bikriCount}</span><span class="etag etag-m">M ${u.maalCount}</span><span class="etag etag-k">K ${u.kacchaCount}</span><span class="etag etag-u">U ${u.udhaarCount}</span></div></td>
-<td><a class="call-btn" href="tel:${u.profile.phone||''}" title="Call ${u.profile.phone||''}">📞</a></td>
+      <td><a class="call-btn" href="tel:${u.profile.phone||''}" title="Call ${u.profile.phone||''}">📞</a></td>
     `;
     tbody.appendChild(tr);
   });
 }
+
 let extendUID = '', extendPhone = '', extendDaysSelected = 7, waPhone = '', waMsg = '';
 
 function renderTimeline() {
@@ -557,7 +503,7 @@ function renderTimeline() {
     else { rowCls='tl-green'; subCls='tl-sub-green'; btnCls='tl-btn-days-green'; subText=s.days+' दिन बाकी — Healthy'; }
     const div = document.createElement('div');
     div.className = 'tl-row ' + rowCls;
-  div.innerHTML = `
+    div.innerHTML = `
       <div>
         <div class="tl-phone"><span class="status-dot ${getOnlineStatus(u.profile.lastSeen).dot}" style="margin-right:5px;"></span>${phone}</div>
         <div style="font-size:9px;color:#888;margin-bottom:2px;">${u.profile.name||''}</div>
@@ -577,9 +523,7 @@ function openExtendModal(uid, phone, daysLeft) {
   document.getElementById('extend-modal-sub').textContent = phone + ' · अभी ' + daysLeft + ' दिन बाकी';
   document.getElementById('extend-modal').classList.add('show');
 }
-
 function setExtendDays(d) { extendDaysSelected = d; toast('✅ ' + d + ' दिन select हुए'); }
-
 function closeExtendModal() { document.getElementById('extend-modal').classList.remove('show'); }
 
 async function confirmExtend() {
@@ -590,9 +534,7 @@ async function confirmExtend() {
     toast('✅ Trial +' + extendDaysSelected + ' दिन बढ़ा दिया!');
     closeExtendModal();
     await loadUsers();
-  } catch(e) {
-    toast('❌ Error: ' + e.message, true);
-  }
+  } catch(e) { toast('❌ Error: ' + e.message, true); }
   btn.disabled = false; btn.textContent = '✅ Confirm करें';
 }
 
@@ -604,25 +546,25 @@ function openWAModal(phone, daysLeft) {
   document.getElementById('wa-msg-preview').innerHTML = msg.replace(/\n/g,'<br>');
   document.getElementById('wa-modal').classList.add('show');
 }
-
 function closeWAModal() { document.getElementById('wa-modal').classList.remove('show'); }
-
 function sendWhatsApp() {
   const url = 'https://wa.me/91' + waPhone + '?text=' + encodeURIComponent(waMsg);
   window.open(url, '_blank');
   closeWAModal();
 }
+
 function renderOnlineCell(lastSeen) {
   const s = getOnlineStatus(lastSeen);
   const isOnline = s.dot === 'dot-online';
   const isRecent = s.dot === 'dot-recent';
   return `<div class="date-cell"><span class="status-dot ${s.dot}"></span><span class="online-label ${isOnline?'green':isRecent?'amber':''}">${s.label}</span></div><div class="date-sub" style="margin-left:12px;">${s.sub}</div>`;
 }
+
 function getOnlineStatus(lastSeen) {
   if (!lastSeen) return { dot: 'dot-inactive', label: '—', sub: '—' };
   const diff = Date.now() - lastSeen;
   const mins = Math.floor(diff / 60000);
- if (diff < 20000) return { dot: 'dot-online', label: 'Online', sub: 'अभी active' };
+  if (diff < 20000) return { dot: 'dot-online', label: 'Online', sub: 'अभी active' };
   if (diff < 30 * 60000) return { dot: 'dot-recent', label: mins + ' min ago', sub: 'हाल में active' };
   if (diff < 24 * 60 * 60000) {
     const h = Math.floor(diff / 3600000);
@@ -631,16 +573,19 @@ function getOnlineStatus(lastSeen) {
   const d = Math.floor(diff / 86400000);
   return { dot: 'dot-inactive', label: d + 'd ago', sub: new Date(lastSeen).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) };
 }
+
 setInterval(async () => {
   if (!allUsers.length) return;
   for (const u of allUsers) {
     try {
       const snap = await window._getProfileDoc(u.uid);
       if (snap && snap.lastSeen) u.profile.lastSeen = snap.lastSeen;
+      if (snap && snap.mode) u.profile.mode = snap.mode;
     } catch(e) {}
   }
   renderTable();
 }, 10000);
+
 function toast(msg, err=false) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast' + (err?' err':'') + ' show';

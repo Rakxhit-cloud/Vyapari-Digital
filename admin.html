@@ -419,6 +419,12 @@ window._loadUsersFromFirestore = async function() {
   }
   return users;
 };
+window._getProfileDoc = async function(uid) {
+  try {
+    const snap = await getDoc(doc(db, 'users', uid, 'profile', 'info'));
+    return snap.exists() ? snap.data() : null;
+  } catch(e) { return null; }
+};
 window._extendTrial = async function(uid, additionalDays) {
   const profileRef = doc(db, 'users', uid, 'profile', 'info');
   const snap = await getDoc(profileRef);

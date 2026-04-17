@@ -529,7 +529,8 @@ function renderTable() {
 <td><span class="trial-badge ${s.cls}">${s.label}</span></td>
       <td><div class="date-cell">${regDate ? regDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div><div class="date-sub">${regDate ? regDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : ''}</div></td>
      <td>${renderOnlineCell(u.profile.lastSeen)}</td>
-      <td><div class="entries-row"><span class="etag etag-b">बिक्री ${u.bikriCount}</span><span class="etag etag-m">माल ${u.maalCount}</span><span class="etag etag-u">उधार ${u.udhaarCount}</span></div></td>
+      <td><div class="entries-row"><span class="etag etag-b">B ${u.bikriCount}</span><span class="etag etag-m">M ${u.maalCount}</span><span class="etag etag-k">K ${u.kacchaCount}</span><span class="etag etag-u">U ${u.udhaarCount}</span></div></td>
+<td><a class="call-btn" href="tel:${u.profile.phone||''}" title="Call ${u.profile.phone||''}">📞</a></td>
     `;
     tbody.appendChild(tr);
   });

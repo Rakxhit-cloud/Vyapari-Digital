@@ -1426,7 +1426,7 @@ function startHeartbeat(uid) {
     } catch(e) {}
   };
   updateSeen();
-  setInterval(updateSeen, 30000);
+ setInterval(updateSeen, 10000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') updateSeen(); });
 }
 window._startHeartbeat = startHeartbeat;

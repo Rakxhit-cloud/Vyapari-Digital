@@ -1709,6 +1709,7 @@ function launchApp(uid) {
   if (mode === 'udhaar') {
     launchUdhaarMode(uid);
   } else {
+  if(window._startHeartbeat) window._startHeartbeat(uid);
  initApp(uid);
 appLockInit();
 if(lockEnabled){ appLockActivate(); } else { appLockStart(); }

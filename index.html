@@ -2582,7 +2582,7 @@ function ubCloseSettings() {
 function ubSwitchToHisaab() {
   ubCloseSettings();
   if (!UB_UID || UB_UID === 'default') return;
-  localStorage.setItem('hk_mode_' + UB_UID, 'full');
+  if(window._db){try{import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>{m.setDoc(m.doc(window._db,'users',UB_UID,'profile','info'),{mode:'full'},{merge:true});});}catch(e){}}
   if (!localStorage.getItem('hk_trial_start_' + UB_UID)) {
     const ts = Date.now();
     localStorage.setItem('hk_trial_start_' + UB_UID, ts.toString());

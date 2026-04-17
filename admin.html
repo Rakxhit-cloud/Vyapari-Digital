@@ -614,7 +614,7 @@ function getOnlineStatus(lastSeen) {
   if (!lastSeen) return { dot: 'dot-inactive', label: '—', sub: '—' };
   const diff = Date.now() - lastSeen;
   const mins = Math.floor(diff / 60000);
-  if (diff < 2 * 60000) return { dot: 'dot-online', label: 'Online', sub: 'अभी active' };
+ if (diff < 20000) return { dot: 'dot-online', label: 'Online', sub: 'अभी active' };
   if (diff < 30 * 60000) return { dot: 'dot-recent', label: mins + ' min ago', sub: 'हाल में active' };
   if (diff < 24 * 60 * 60000) {
     const h = Math.floor(diff / 3600000);

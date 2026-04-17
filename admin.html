@@ -408,7 +408,8 @@ window._loadUsersFromFirestore = async function() {
       try {
         const snap = await getDocs(collection(db, 'users', uid, col));
         if (col === 'bikri') bikriCount = snap.size;
-        else if (col === 'maal') maalCount = snap.size;
+       else if (col === 'maal') maalCount = snap.size;
+        else if (col === 'kaccha') kacchaCount = snap.size;
         else if (col === 'udhaar') udhaarCount = snap.size;
         snap.forEach(d => {
           const data = d.data();

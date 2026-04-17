@@ -1420,9 +1420,10 @@ const db = getFirestore(app);
 window._db = db;
 function startHeartbeat(uid) {
   if (!uid || uid === 'default') return;
-  const updateSeen = () => {
+ const updateSeen = () => {
     try {
-      setDoc(doc(db, 'users', uid, 'profile', 'info'), { lastSeen: Date.now() }, { merge: true });
+      const mode = localStorage.getItem('hk_mode_' + uid) || 'full';
+      setDoc(doc(db, 'users', uid, 'profile', 'info'), { lastSeen: Date.now(), mode: mode }, { merge: true });
     } catch(e) {}
   };
   updateSeen();

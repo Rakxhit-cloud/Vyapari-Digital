@@ -593,6 +593,19 @@ function sendWhatsApp() {
   window.open(url, '_blank');
   closeWAModal();
 }
+function getOnlineStatus(lastSeen) {
+  if (!lastSeen) return { dot: 'dot-inactive', label: '—', sub: '—' };
+  const diff = Date.now() - lastSeen;
+  const mins = Math.floor(diff / 60000);
+  if (diff < 2 * 60000) return { dot: 'dot-online', label: 'Online', sub: 'अभी active' };
+  if (diff < 30 * 60000) return { dot: 'dot-recent', label: mins + ' min ago', sub: 'हाल में active' };
+  if (diff < 24 * 60 * 60000) {
+    const h = Math.floor(diff / 3600000);
+    return { dot: 'dot-idle', label: h + 'h ago', sub: new Date(lastSeen).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) };
+  }
+  const d = Math.floor(diff / 86400000);
+  return { dot: 'dot-inactive', label: d + 'd ago', sub: new Date(lastSeen).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) };
+}
 function toast(msg, err=false) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast' + (err?' err':'') + ' show';

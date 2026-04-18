@@ -443,30 +443,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   .kpi-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
   .month-grid { grid-template-columns: repeat(6,1fr); }
   .auth-screen { padding: 40px; }
-} /* ── UI POLISH PATCH — 18 Apr 2026 ── */
-.kpi-val { font-size: 22px; }
-.kpi-red .kpi-val { color: #f06060; }
-.kpi-amber .kpi-val { color: #f0b040; }
-.purple-name-badge { display:inline-block; background:#3C3489; color:#fff; font-size:10px; font-weight:700; padding:3px 10px; border-radius:12px; white-space:nowrap; max-width:140px; overflow:hidden; text-overflow:ellipsis; }
-.pay-status-badge { display:inline-block; font-size:8px; font-weight:700; padding:2px 8px; border-radius:8px; }
-.pay-status-nakad { background:#0d2a1a; color:#4dca4d; border:1px solid #1a4a2a; }
-.pay-status-udhar { background:#1a0808; color:#f06060; border:1px solid #3a1a1a; }
-.flbl { color: #bbb; }
-.u-name { font-size: 15px; }
-.u-amt-overdue,.u-amt-pending,.u-amt-settled { font-size: 20px; }
-.ub-name { font-size: 15px; }
-.ub-amt-o,.ub-amt-p,.ub-amt-s { font-size: 19px; }
-.more-menu { min-width:180px; padding:6px; border-radius:14px; }
-.more-item { border-bottom:1px solid #1a1a1a; font-weight:500; }
-.more-item:last-child { border-bottom:none; }
-.more-icon-circle { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
-.cal-cell.today-cell { background:#0d2a1a !important; border:1.5px solid #2dba4d !important; color:#4dca4d !important; outline:none; font-weight:800; font-size:13px; }
-.maal-summary-split { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-bottom:7px; }
-.maal-sum-left { background:#0d2a1a; padding:8px 10px; border-radius:8px 0 0 8px; }
-.maal-sum-right { background:#1a0808; padding:8px 10px; border-radius:0 8px 8px 0; }
-.maal-sum-label { font-size:8px; color:#666; font-weight:700; }
-.maal-sum-val { font-size:15px; font-weight:800; }
-/* ── Splash Screen ── */
+} /* ── Splash Screen ── */
 .splash-screen { position: fixed; inset: 0; background: #0f0f0f; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: opacity .3s ease; }
 .splash-screen.hidden { opacity: 0; pointer-events: none; }
 .splash-logo { width: 80px; height: 80px; background: linear-gradient(135deg,#0d1f0d,#1a4a1a); border: 2px solid #2dba4d; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
@@ -1177,10 +1154,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 <div class="more-menu" id="more-menu">
-  <div class="more-item" onclick="appLockToggle();toggleMore();"><div class="more-icon-circle" style="background:#1a1a3a;">🔐</div> App Lock: <span id="lock-status-lbl" style="margin-left:auto;font-size:9px;padding:2px 8px;border-radius:8px;background:#0d2a1a;color:#4dca4d;border:1px solid #1a4a2a;">बंद</span></div>
-  <div class="more-item" onclick="go('s-monthly');toggleMore();"><div class="more-icon-circle" style="background:#1a1500;">📅</div> महीने का हिसाब</div>
-  <div class="more-item" onclick="go('s-goal');toggleMore();"><div class="more-icon-circle" style="background:#1a0808;">🎯</div> लक्ष्य</div>
-  <div class="more-item" onclick="signOut();" style="border-bottom:none;"><div class="more-icon-circle" style="background:#1a1a1a;">🚪</div> <span style="color:#888;">लॉग आउट</span></div>
+  <div class="more-item" onclick="appLockToggle();toggleMore();">🔐 App Lock: <span id="lock-status-lbl">बंद</span></div>
+  <div class="more-item" onclick="go('s-monthly');toggleMore();">📅 महीने का हिसाब</div>
+  <div class="more-item" onclick="go('s-goal');toggleMore();">🎯 लक्ष्य</div>
+  <div class="more-item" onclick="signOut();">🚪 लॉग आउट</div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -1223,15 +1200,15 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="kpi-grid">
       <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl">💰 बिक्री</div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
       <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl">📈 गल्ला/कमाई</div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-     <div class="kpi-card kpi-red" onclick="toggleKPI('kharcha')"><div class="kpi-lbl">🧾 खर्चा</div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card" style="background:#0a1a14;border:1px solid #1a4a3a;border-top:2px solid #3dca6a;border-radius:9px;padding:10px;"><div class="kpi-lbl" style="color:#f0b040;">📊 मुनाफ़ा %</div><div class="kpi-val" id="k-margin-pct" style="color:#f0b040;">0%</div><div class="kpi-sub" style="color:#1a5a3a;">इस महीने</div><div style="margin-top:5px;background:#0d2a1a;border-radius:3px;height:4px;overflow:hidden;"><div id="k-margin-bar" style="height:100%;background:#3dca6a;border-radius:3px;width:0%;transition:width .4s;"></div></div></div>
+      <div class="kpi-card kpi-amber" onclick="toggleKPI('kharcha')"><div class="kpi-lbl">🧾 खर्चा</div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
+      <div class="kpi-card" style="background:#0a1a14;border:1px solid #1a4a3a;border-top:2px solid #3dca6a;border-radius:9px;padding:10px;"><div class="kpi-lbl" style="color:#3dca6a;">📊 मुनाफ़ा %</div><div class="kpi-val" id="k-margin-pct">0%</div><div class="kpi-sub" style="color:#1a5a3a;">इस महीने</div><div style="margin-top:5px;background:#0d2a1a;border-radius:3px;height:4px;overflow:hidden;"><div id="k-margin-bar" style="height:100%;background:#3dca6a;border-radius:3px;width:0%;transition:width .4s;"></div></div></div>
     </div>
     <div class="kpi-panel" id="panel-bikri"><div class="kpi-panel-inner panel-green"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;text-align:right;">बिक्री</div></div><div id="bikri-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a3a1a;"><div class="ptbl-total-cell" style="background:#0d2a1a;color:#2dba4d;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d2a1a;color:#4dca4d;text-align:right;" id="bikri-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#50a0f0;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#50a0f0;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#50a0f0;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#50a0f0;text-align:right;" id="galla-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#f0b040;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#f0b040;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#f0b040;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#f0b040;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
     
     <div class="sec-head"><div class="sec-bar" style="background:#3dca6a;"></div><span class="sec-label" style="color:#3dca6a;">📦 माल की खरीद / Goods Purchase</span><div class="sec-line" style="background:#1a3a2a;"></div><span class="sec-badge" style="background:#0a2a1a;color:#2dba4d;border:1px solid #1a4a2a;">महीने में</span></div>
-<div class="sec-card sc-teal"><div class="maal-summary-split"><div class="maal-sum-left"><div class="maal-sum-label">कुल माल आया</div><div class="maal-sum-val" style="color:#4dca4d;" id="h-maal-total">₹0</div></div><div class="maal-sum-right"><div class="maal-sum-label">सप्लायर बाकी</div><div class="maal-sum-val" style="color:#f06060;" id="h-maal-pending">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद दिया</span><span class="vg" id="h-maal-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार लिया</span><span style="color:#f06060;font-weight:800;" id="h-maal-udhaar">₹0</span></div><div class="dealer-list" id="h-maal-list"><div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
+    <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद दिया</span><span class="vg" id="h-maal-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार लिया</span><span class="va" id="h-maal-udhaar">₹0</span></div><div class="dealer-list" id="h-maal-list"><div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
     <div class="sec-head"><div class="sec-bar" style="background:#50a0f0;"></div><span class="sec-label" style="color:#50a0f0;">🥣 कच्चा माल / Raw Materials</span><div class="sec-line" style="background:#1a2a3a;"></div><span class="sec-badge" style="background:#0a1a2a;color:#3080c0;border:1px solid #1a3a5a;">महीने में</span></div>
     <div class="sec-card sc-blue"><div class="mini-grid"><div class="mini-card mc-ba"><div class="mini-lbl">कुल सामान</div><div class="mini-val" id="h-kaccha-total">₹0</div></div><div class="mini-card mc-bb"><div class="mini-lbl">रोज़ औसत</div><div class="mini-val" id="h-kaccha-avg">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद चुकाया</span><span class="vb" id="h-kaccha-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार बाकी</span><span class="va" id="h-kaccha-udhaar">₹0</span></div><div class="tag-row" id="h-kaccha-tags"><span class="tag-b">⏳</span></div><div class="dealer-list" id="h-kaccha-list"><div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
     
@@ -1294,10 +1271,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div class="frow"><div class="flbl">📝 नोट्स</div><input type="text" class="finput" id="e-notes" placeholder="कोई बात..."></div>
     </div>
    
-   <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-left:3px solid #4dca4d;border-radius:0 9px 9px 0;padding:10px 12px;margin-top:10px;">
-      <div class="rrow"><div class="rlbl" style="color:#4dca4d;">आज का गल्ला/कमाई</div><div class="rg" id="r-profit" style="font-size:18px;">₹0</div></div>
-      <div class="rrow"><div class="rlbl" style="color:#4dca4d;">गल्ला/कमाई %</div><div class="ra" id="r-margin">0%</div></div>
-      <div class="rrow"><div class="rlbl" style="color:#4dca4d;">दिन कैसा रहा</div><div class="rr" id="r-rating">—</div></div>
+    <div class="rsec">
+      <div class="rrow"><div class="rlbl">आज का गल्ला/कमाई</div><div class="rg" id="r-profit">₹0</div></div>
+      <div class="rrow"><div class="rlbl">गल्ला/कमाई %</div><div class="ra" id="r-margin">0%</div></div>
+      <div class="rrow"><div class="rlbl">दिन कैसा रहा</div><div class="rr" id="r-rating">—</div></div>
     </div>
     <button class="sbtn" onclick="saveEntry()">💾 एंट्री सेव करें</button>
   </div>
@@ -1315,10 +1292,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <input type="hidden" id="m-pay" value="nakad">
       <div class="frow"><div class="flbl">📝 नोट</div><input type="text" class="finput" id="m-note" placeholder="कोई बात..."></div>
     </div>
-    <div style="background:#0a1a0f;border:1px solid #1a3a2a;border-left:3px solid #3dca6a;border-radius:0 9px 9px 0;padding:10px 12px;margin-top:10px;">
-      <div class="rrow" style="border-color:#0f2a1a;"><div class="rlbl" style="color:#2a8a4a;">इस हफ़्ते कुल माल</div><div style="font-size:15px;font-weight:800;color:#fff;" id="mw-total">₹0</div></div>
-      <div class="rrow" style="border-color:#0f2a1a;"><div class="rlbl" style="color:#2a8a4a;">नकद दिया</div><div style="font-size:14px;font-weight:800;color:#4dca4d;" id="mw-nakad">₹0</div></div>
-      <div class="rrow"><div class="rlbl" style="color:#2a8a4a;">सप्लायर को बाकी</div><div style="font-size:14px;font-weight:800;color:#f06060;" id="mw-pending">₹0</div></div>
+    <div class="rsec" style="background:#0a1a0f;border-color:#1a3a2a;">
+      <div class="rrow" style="border-color:#0f2a1a;"><div class="rlbl" style="color:#2a8a4a;">इस हफ़्ते कुल माल</div><div style="font-size:15px;font-weight:800;color:#3dca6a;" id="mw-total">₹0</div></div>
+      <div class="rrow" style="border-color:#0f2a1a;"><div class="rlbl" style="color:#2a8a4a;">नकद दिया</div><div class="rg" id="mw-nakad">₹0</div></div>
+      <div class="rrow"><div class="rlbl" style="color:#2a8a4a;">सप्लायर को बाकी</div><div class="ra" id="mw-pending">₹0</div></div>
     </div>
     <button class="sbtn" onclick="saveMaal()" style="background:#0d2a1a;border-color:#2dba4d;color:#3dca6a;">💾 माल की एंट्री सेव करें</button>
   </div>
@@ -1336,10 +1313,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <input type="hidden" id="k-pay" value="nakad">
       <div class="frow"><div class="flbl">📝 नोट</div><input type="text" class="finput" id="k-note" placeholder="कोई बात..."></div>
     </div>
-   <div style="background:#080f1a;border:1px solid #1a2a4a;border-left:3px solid #50a0f0;border-radius:0 9px 9px 0;padding:10px 12px;margin-top:10px;">
-      <div class="rrow" style="border-color:#0f1a2a;"><div class="rlbl" style="color:#305080;">इस हफ़्ते कुल सामान</div><div style="font-size:15px;font-weight:800;color:#fff;" id="kw-total">₹0</div></div>
-      <div class="rrow" style="border-color:#0f1a2a;"><div class="rlbl" style="color:#305080;">नकद चुकाया</div><div style="font-size:14px;font-weight:800;color:#4dca4d;" id="kw-nakad">₹0</div></div>
-      <div class="rrow"><div class="rlbl" style="color:#305080;">उधार बाकी</div><div style="font-size:14px;font-weight:800;color:#f06060;" id="kw-pending">₹0</div></div>
+    <div class="rsec" style="background:#080f1a;border-color:#1a2a4a;">
+      <div class="rrow" style="border-color:#0f1a2a;"><div class="rlbl" style="color:#305080;">इस हफ़्ते कुल सामान</div><div style="font-size:15px;font-weight:800;color:#50a0f0;" id="kw-total">₹0</div></div>
+      <div class="rrow" style="border-color:#0f1a2a;"><div class="rlbl" style="color:#305080;">नकद चुकाया</div><div style="font-size:14px;font-weight:800;color:#50a0f0;" id="kw-nakad">₹0</div></div>
+      <div class="rrow"><div class="rlbl" style="color:#305080;">उधार बाकी</div><div class="ra" id="kw-pending">₹0</div></div>
     </div>
     <button class="sbtn" onclick="saveKaccha()" style="background:#080f1a;border-color:#50a0f0;color:#50a0f0;">💾 कच्चा माल सेव करें</button>
   </div>
@@ -1975,7 +1952,7 @@ function loadMaalForMonth(mi){
  else rec.forEach(r=>{
     const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
     const remaining=(r.amount||0)-(r.paid||0);
-   const html=`<div><div class="purple-name-badge">${r.supplier||'—'}</div><div class="dlr-goods" style="margin-top:3px;">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt" style="color:${r.pay==='नकद'?'#4dca4d':'#f06060'};">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openSupplierPayOverlay('${r.id}')" style="background:#0d2a1a;border:1.5px solid #2dba4d;color:#3dca6a;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="pay-status-badge ${r.pay==='नकद'?'pay-status-nakad':'pay-status-udhar'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
+    const html=`<div><div class="dlr-name">${r.supplier||'—'}</div><div class="dlr-goods">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openSupplierPayOverlay('${r.id}')" style="background:#0d2a1a;border:1.5px solid #2dba4d;color:#3dca6a;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
     const card=makeLPCard('dlr-row',html,K.MAAL,r.id,r);ml.appendChild(card);
   });
 }
@@ -1995,7 +1972,7 @@ function loadKacchaForMonth(mi){
   else rec.forEach(r=>{
     const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
     const remaining=(r.amount||0)-(r.paid||0);
-   const html=`<div><div class="purple-name-badge">${r.name||'—'}</div><div class="dlr-goods" style="margin-top:3px;">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt" style="color:${r.pay==='नकद'?'#4dca4d':'#f06060'};">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openKacchaPayOverlay('${r.id}')" style="background:#080f1a;border:1.5px solid #50a0f0;color:#50a0f0;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="pay-status-badge ${r.pay==='नकद'?'pay-status-nakad':'pay-status-udhar'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
+    const html=`<div><div class="dlr-name">${r.name||'—'}</div><div class="dlr-goods">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openKacchaPayOverlay('${r.id}')" style="background:#080f1a;border:1.5px solid #50a0f0;color:#50a0f0;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
     const card=makeLPCard('dlr-row',html,K.KACCHA,r.id,r);kl.appendChild(card);
   });
 }
@@ -2132,7 +2109,7 @@ function appLockUnlock(){
   });
   setTimeout(function(){appLockStart();},1000);
 }
-function appLockToggle(){lockEnabled=!lockEnabled;localStorage.setItem(LOCK_KEY,lockEnabled.toString());const lbl=document.getElementById('lock-status-lbl');if(lbl){lbl.textContent=lockEnabled?'ON':'OFF';lbl.style.cssText=lockEnabled?'margin-left:auto;font-size:9px;padding:2px 8px;border-radius:8px;background:#0d2a1a;color:#4dca4d;border:1px solid #1a4a2a;':'margin-left:auto;font-size:9px;padding:2px 8px;border-radius:8px;background:#1a0808;color:#f06060;border:1px solid #3a1a1a;';}
+function appLockToggle(){lockEnabled=!lockEnabled;localStorage.setItem(LOCK_KEY,lockEnabled.toString());const lbl=document.getElementById('lock-status-lbl');if(lbl)lbl.textContent=lockEnabled?'चालू':'बंद';if(lockEnabled){appLockStart();toast('🔐 App Lock चालू — 5 मिनट बाद lock होगा');}else{clearTimeout(lockTimer);toast('🔓 App Lock बंद हो गया');}}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){appWasHidden=true;clearTimeout(lockTimer);}else{if(appWasHidden&&lockEnabled){appLockActivate();appWasHidden=false;}}});
 ['touchstart','click','keydown'].forEach(evt=>{document.addEventListener(evt,function(){if(lockEnabled&&!document.getElementById('app-lock-screen').classList.contains('active')){clearTimeout(lockTimer);lockTimer=setTimeout(appLockActivate,LOCK_TIMEOUT);}},{passive:true});});
 appLockInit();
@@ -2737,6 +2714,10 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
 </body>
 </html>
+
+
+
+
 
 
 

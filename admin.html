@@ -471,8 +471,8 @@ function renderTable() {
     tr.innerHTML = `
       <td style="color:#333;font-size:11px;">${idx+1}</td>
       <td><div class="phone-cell">${u.profile.phone||'—'}</div><div class="uid-cell">${u.uid}</div></td>
-      <td><div style="font-size:12px;font-weight:700;color:#e0e0e0;">${u.profile.name||'—'}</div></td>
-      <td><span class="mode-badge ${u.profile.mode==='udhaar'?'mode-udhaar':'mode-full'}">${u.profile.mode==='udhaar'?'उधार Book':'हिसाब-Kitaab'}</span></td>
+     <td>${u.profile.name ? '<span class="name-badge">'+u.profile.name+'</span>' : '<span style="color:#555;font-size:13px;">—</span>'}</td>
+      <td><span class="mode-badge ${u.profile.mode==='udhaar'?'mode-udhaar':'mode-full'}">${u.profile.mode==='udhaar'?'UB':'HK'}</span></td>
       <td><span class="trial-badge ${s.cls}">${s.label}</span></td>
       <td><div class="date-cell">${regDate ? regDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div><div class="date-sub">${regDate ? regDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : ''}</div></td>
       <td>${renderOnlineCell(u.profile.lastSeen)}</td>

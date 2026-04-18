@@ -1169,10 +1169,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 <div class="more-menu" id="more-menu">
-  <div class="more-item" onclick="appLockToggle();toggleMore();">🔐 App Lock: <span id="lock-status-lbl">बंद</span></div>
-  <div class="more-item" onclick="go('s-monthly');toggleMore();">📅 महीने का हिसाब</div>
-  <div class="more-item" onclick="go('s-goal');toggleMore();">🎯 लक्ष्य</div>
-  <div class="more-item" onclick="signOut();">🚪 लॉग आउट</div>
+  <div class="more-item" onclick="appLockToggle();toggleMore();"><div style="width:32px;height:32px;border-radius:8px;background:#1a1a3a;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔐</div> App Lock: <span id="lock-status-lbl" style="margin-left:auto;font-size:9px;padding:2px 8px;border-radius:8px;background:#0d2a1a;color:#4dca4d;border:1px solid #1a4a2a;">बंद</span></div>
+  <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:32px;height:32px;border-radius:8px;background:#1a1500;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📅</div> महीने का हिसाब</div>
+  <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:32px;height:32px;border-radius:8px;background:#1a0808;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🎯</div> लक्ष्य</div>
+  <div class="more-item" style="border-bottom:none;" onclick="signOut();"><div style="width:32px;height:32px;border-radius:8px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🚪</div> <span style="color:#888;">लॉग आउट</span></div>
 </div>
 <div class="toast" id="toast"></div>
 

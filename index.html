@@ -2672,14 +2672,16 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
   // Show after login
   const appEl = document.getElementById('main-app');
+  const ubEl = document.getElementById('ub-app');
   const observer = new MutationObserver(function() {
-    if (appEl.style.display !== 'none') {
+    if (appEl.style.display !== 'none' || ubEl.style.display !== 'none') {
       setTimeout(showBanner, 2000);
       observer.disconnect();
     }
   });
   observer.observe(appEl, { attributes: true, attributeFilter: ['style'] });
-  if (appEl.style.display !== 'none') {
+  observer.observe(ubEl, { attributes: true, attributeFilter: ['style'] });
+  if (appEl.style.display !== 'none' || ubEl.style.display !== 'none') {
     setTimeout(showBanner, 2000);
   }
 

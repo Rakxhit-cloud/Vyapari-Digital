@@ -1283,24 +1283,56 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </div>
 
 <div id="s-entry" class="screen">
-  <div class="header"><div class="header-left"><div class="header-icon">📝</div><div><div class="header-title">नई एंट्री</div><div class="header-sub">आज की बिक्री दर्ज करें</div></div></div></div>
+  <div class="header"><div class="header-left"><div class="header-icon">📝</div><div><div class="header-title" id="entry-header-title">⚡ तुरंत एंट्री</div><div class="header-sub" id="entry-header-sub">Quick Entry · 30 सेकंड में</div></div></div></div>
   <div class="fw">
+    <div class="entry-mode-toggle">
+      <div class="entry-mode-btn active-quick" id="mode-btn-quick" onclick="setEntryMode('quick')">⚡ तुरंत</div>
+      <div class="entry-mode-btn" id="mode-btn-full" onclick="setEntryMode('full')">📝 पूरा</div>
+    </div>
+    <div id="quick-entry-form">
+      <div style="text-align:center;margin-bottom:4px;font-size:14px;font-weight:800;color:#fff;">📋 आज का हिसाब दर्ज करें</div>
+      <div style="text-align:center;margin-bottom:14px;font-size:9px;color:#2a6a2a;">Today's Entry · सिर्फ 2 अंक डालें</div>
+      <div class="quick-date-bar">
+        <span style="font-size:12px;">📅</span>
+        <span style="font-size:11px;color:#50a0f0;font-weight:600;" id="q-date-display">आज</span>
+        <span style="font-size:8px;color:#305080;background:#0a1520;padding:2px 6px;border-radius:4px;border:1px solid #1a3050;">⚡ स्वतः</span>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:12px;color:#4dca4d;font-weight:700;margin-bottom:3px;">💰 आज की कुल बिक्री ₹</div>
+        <div style="font-size:8px;color:#1a5a1a;margin-bottom:6px;">Today's Total Sales</div>
+        <input type="number" class="quick-big-input" id="q-sales" placeholder="0" inputmode="numeric" oninput="quickCalc()">
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:12px;color:#f0b040;font-weight:700;margin-bottom:3px;">🧾 आज का कुल खर्चा ₹</div>
+        <div style="font-size:8px;color:#6a4a10;margin-bottom:6px;">Today's Total Expense</div>
+        <input type="number" class="quick-big-input quick-big-input-exp" id="q-expense" placeholder="0" inputmode="numeric" oninput="quickCalc()">
+      </div>
+      <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-left:3px solid #4dca4d;border-radius:0 9px 9px 0;padding:12px 14px;margin-bottom:14px;">
+        <div style="font-size:10px;color:#2a6a2a;font-weight:700;margin-bottom:8px;">📊 आज का नतीजा · Today's Result</div>
+        <div class="rrow"><div class="rlbl" style="color:#4dca4d;">आज का गल्ला/कमाई</div><div style="font-size:20px;font-weight:800;color:#4dca4d;" id="q-profit">₹0</div></div>
+        <div class="rrow"><div class="rlbl" style="color:#4dca4d;">कमाई का प्रतिशत</div><div style="font-size:14px;font-weight:700;color:#f0b040;" id="q-margin">0%</div></div>
+        <div class="rrow"><div class="rlbl" style="color:#4dca4d;">दिन कैसा रहा</div><div style="font-size:12px;font-weight:700;" id="q-rating">—</div></div>
+      </div>
+      <button class="sbtn" onclick="saveQuickEntry()" style="background:#2dba4d;border-color:#2dba4d;color:#051005;font-size:14px;padding:14px;">💾 एंट्री सेव करें · Save Entry</button>
+      <div style="text-align:center;margin-top:8px;"><button onclick="setEntryMode('full')" style="background:#161616;border:1px solid #1e1e1e;border-radius:8px;color:#555;font-size:10px;padding:10px 16px;cursor:pointer;width:100%;line-height:1.5;">✏️ UPI, नकद, नोट्स भी डालना है?<br><span style="color:#4dca4d;font-weight:700;">पूरा मोड में जाएं →</span> <span style="color:#2a6a2a;">Switch to Full Mode</span></button></div>
+    </div>
+    <div id="full-entry-form" style="display:none;">
     <div class="fcard">
       <div class="frow"><div class="flbl">📅 तारीख</div><input type="date" class="finput" id="e-date"></div>
       <div class="frow"><div class="flbl">💰 कुल बिक्री ₹</div><input type="number" class="finput" id="e-sales" placeholder="0" oninput="calcProfit()"></div>
       <div class="frow"><div class="flbl">💵 हाथ का नकद ₹</div><input type="number" class="finput" id="e-cash" placeholder="0"></div>
       <div class="frow"><div class="flbl">📱 UPI / फ़ोन पे ₹</div><input type="number" class="finput" id="e-upi" placeholder="0"></div>
       <div class="frow"><div class="flbl">🧾 आज का खर्चा ₹</div><input type="number" class="finput" id="e-expense" placeholder="0" oninput="calcProfit()"></div>
-      
       <div class="frow"><div class="flbl">📝 नोट्स</div><input type="text" class="finput" id="e-notes" placeholder="कोई बात..."></div>
     </div>
-   
     <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-left:3px solid #4dca4d;border-radius:0 9px 9px 0;padding:10px 12px;margin-top:10px;">
       <div class="rrow"><div class="rlbl">आज का गल्ला/कमाई</div><div class="rg" id="r-profit">₹0</div></div>
       <div class="rrow"><div class="rlbl">गल्ला/कमाई %</div><div class="ra" id="r-margin">0%</div></div>
       <div class="rrow"><div class="rlbl">दिन कैसा रहा</div><div class="rr" id="r-rating">—</div></div>
     </div>
     <button class="sbtn" onclick="saveEntry()">💾 एंट्री सेव करें</button>
+    <div style="text-align:center;margin-top:8px;"><button onclick="setEntryMode('quick')" style="background:transparent;border:none;color:#50a0f0;font-size:10px;padding:8px;cursor:pointer;">⚡ तुरंत मोड पर वापस जाएं</button></div>
+    </div>
   </div>
 </div>
 

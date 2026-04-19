@@ -1929,6 +1929,10 @@ function initApp(uid){
 }
 
 const NM={'s-home':'n-home','s-entry':'n-entry','s-maal':'n-maal','s-kaccha':'n-kaccha','s-udhaar':'n-udhaar'};
+function quickEntryFromHome(mode){
+go('s-entry');
+setTimeout(function(){ setEntryMode(mode); },100);
+}
 function go(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');

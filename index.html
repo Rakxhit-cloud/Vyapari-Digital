@@ -677,6 +677,31 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .quick-big-input-exp{background:#1a1000;border-color:#3a2000;}
 .quick-big-input-exp:focus{border-color:#f0b040;background:#2a1500;}
 .quick-date-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;background:#0d1520;border:1px solid #1a2a40;border-radius:8px;margin-bottom:14px;}
+/* ── तुरंत एंट्री Quick Entry Card ── */
+.quick-entry-card{background:#111;border:1.5px solid #2a2a2a;border-radius:16px;overflow:hidden;cursor:pointer;margin:10px 0;transition:transform .15s;}
+.quick-entry-card:active{transform:scale(.97);}
+.qec-rainbow{height:4px;background:linear-gradient(90deg,#4dca4d,#f0b040,#f06060,#a855f7,#50a0f0);}
+.qec-body{padding:16px 18px;}
+.qec-top{display:flex;align-items:center;gap:12px;}
+.qec-icons{display:flex;align-items:center;flex-shrink:0;}
+.qec-icons .ico-note{font-size:30px;}
+.qec-icons .ico-bolt{font-size:26px;margin-left:-2px;}
+.qec-title{font-size:19px;font-weight:800;color:#fff;}
+.qec-sub{font-size:12px;color:#888;margin-top:3px;}
+.qec-sub span{color:#f0b040;}
+.qec-badge{background:rgba(77,202,77,0.15);color:#4dca4d;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid rgba(77,202,77,0.3);white-space:nowrap;flex-shrink:0;}
+.qec-toggle{display:flex;gap:6px;background:#1a1a1a;border-radius:12px;padding:4px;margin-top:14px;}
+.qec-tog-btn{flex:1;border-radius:10px;padding:9px 0;text-align:center;font-size:13px;font-weight:700;cursor:pointer;border:none;background:transparent;color:#666;}
+.qec-tog-btn.qec-active{background:rgba(77,202,77,0.12);border:1px solid rgba(77,202,77,0.3);color:#4dca4d;}
+.qec-flow{margin-top:14px;background:linear-gradient(90deg,rgba(80,160,240,0.08),rgba(168,85,247,0.08),rgba(240,96,96,0.08));border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-around;}
+.qec-flow-item{text-align:center;}
+.qec-flow-item p{margin:0;}
+.qec-flow-ico{font-size:18px;}
+.qec-flow-lbl{font-size:11px;font-weight:700;margin-top:4px;}
+.qec-flow-arrow{color:#333;font-size:18px;}
+.qec-cta{margin-top:14px;text-align:center;}
+.qec-cta-btn{background:linear-gradient(90deg,#4dca4d,#2ea82e);color:#fff;font-size:13px;font-weight:700;padding:9px 32px;border-radius:25px;display:inline-block;border:none;cursor:pointer;}
+.qec-cta-btn:active{opacity:.85;}
 </style>
 </head>
 <body> <!-- Splash Screen -->

@@ -2052,6 +2052,38 @@ let dpCurrentDate=null,dpDeleteId=null;
 function openDatePopup(ds){if(!ds)return;dpCurrentDate=ds;const bikri=DB.get(K.BIKRI),entries=bikri.filter(r=>r.date===ds);const d=parseLocalDate(ds);const dateLabel=d.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const isToday=ds===TSTR;const titleEl=document.getElementById('dp-title'),subEl=document.getElementById('dp-sub');titleEl.textContent='📅 '+dateLabel;titleEl.style.color=entries.length>0?'#5dea5d':'#f0c050';document.querySelector('.date-popup-sheet').style.borderTopColor=entries.length>0?'#2dba4d':'#f0b040';subEl.textContent=isToday?'आज · '+(entries.length>0?entries.length+' एंट्री':'कोई नहीं'):(entries.length>0?entries.length+' एंट्री':'कोई एंट्री नहीं');subEl.style.color=entries.length>0?'#2a7a2a':'#8a6020';const content=document.getElementById('dp-content');content.innerHTML='';if(entries.length>0){entries.forEach(r=>{const rating=r.rating||'';let cls='dp-entry-card';let profCol,lblCol;if(rating.includes('बहुत अच्छा')){cls+=' dp-great';profCol='#5dea5d';lblCol='#3a8a3a';}else if(rating.includes('अच्छा')){cls+=' dp-ok';profCol='#f0b040';lblCol='#8a6020';}else{cls+=' dp-slow';profCol='#f06060';lblCol='#6a2020';}const profit=calcEntryProfit(r),margin=r.sales>0?Math.round((profit/r.sales)*100):0;const card=document.createElement('div');card.className=cls;card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div class="dp-rating" style="color:${profCol};">${rating}</div><div class="dp-grid"><div class="dp-item" style="color:${lblCol};">बिक्री: <span style="font-weight:800;color:${profCol};">${fmt(r.sales)}</span></div><div class="dp-item" style="color:#8a6020;">खर्चा: <span style="font-weight:800;color:#f0c050;">${fmt(r.expense)}</span></div>${r.cash?`<div class="dp-item" style="color:#2a6a3a;">नकद: <span style="font-weight:800;color:#3dca6a;">${fmt(r.cash)}</span></div>`:''} ${r.upi?`<div class="dp-item" style="color:#305080;">UPI: <span style="font-weight:800;color:#60b0f0;">${fmt(r.upi)}</span></div>`:''} ${r.udhaar?`<div class="dp-item" style="color:#6a2020;">उधार: <span style="font-weight:800;color:#f06060;">${fmt(r.udhaar)}</span></div>`:''}</div>${r.notes?`<div class="dp-note">📝 ${r.notes}</div>`:''}</div><div class="dp-right"><div class="dp-profit">${fmt(profit)}</div><div class="dp-margin">${margin}%</div></div></div><div class="dp-actions"><button class="dp-edit-btn">✏️ सुधारें</button><button class="dp-del-btn">🗑️ हटाएं</button></div>`;card.querySelector('.dp-edit-btn').onclick=()=>{currentEntry={type:K.BIKRI,id:r.id,data:r};closeDatePopupDirect();setTimeout(()=>buildEditSheet(K.BIKRI,r),200);};card.querySelector('.dp-del-btn').onclick=()=>{dpDeleteId=r.id;document.getElementById('confirm-popup').classList.add('show');};content.appendChild(card);});}else{content.innerHTML=`<div class="dp-empty-box"><div class="dp-empty-icon">📋</div><div class="dp-empty-title">इस दिन कोई एंट्री नहीं</div><div class="dp-empty-sub">नई एंट्री जोड़ना चाहते हैं?</div></div><button class="dp-add-btn" id="dp-add-btn">➕ इस तारीख की एंट्री जोड़ें</button>`;document.getElementById('dp-add-btn').onclick=()=>{closeDatePopupDirect();document.getElementById('e-date').value=ds;setTimeout(()=>go('s-entry'),200);};}document.getElementById('date-popup-overlay').classList.add('show');}
 function closeDatePopup(e){if(e.target===document.getElementById('date-popup-overlay'))closeDatePopupDirect();}
 function closeDatePopupDirect(){document.getElementById('date-popup-overlay').classList.remove('show');dpCurrentDate=null;}
+let entryMode='quick';
+function setEntryMode(mode){
+  entryMode=mode;
+  document.getElementById('quick-entry-form').style.display=mode==='quick'?'block':'none';
+  document.getElementById('full-entry-form').style.display=mode==='full'?'block':'none';
+  document.getElementById('mode-btn-quick').className='entry-mode-btn'+(mode==='quick'?' active-quick':'');
+  document.getElementById('mode-btn-full').className='entry-mode-btn'+(mode==='full'?' active-full':'');
+  document.getElementById('entry-header-title').textContent=mode==='quick'?'⚡ तुरंत एंट्री':'📝 नई एंट्री';
+  document.getElementById('entry-header-sub').textContent=mode==='quick'?'Quick Entry · 30 सेकंड में':'आज की बिक्री दर्ज करें';
+  if(mode==='quick'){const t=new Date();document.getElementById('q-date-display').textContent=t.toLocaleDateString('hi-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});}
+}
+function quickCalc(){
+  const s=parseFloat(document.getElementById('q-sales').value)||0;
+  const x=parseFloat(document.getElementById('q-expense').value)||0;
+  const p=s-x,m=s>0?Math.round((p/s)*100):0;
+  document.getElementById('q-profit').textContent='₹'+p.toLocaleString('en-IN');
+  document.getElementById('q-margin').textContent=m+'%';
+  let r='—';if(s>=5000)r='🔥 बहुत बढ़िया';else if(s>=3000)r='👍 अच्छा';else if(s>0)r='⚠️ धीमा';
+  document.getElementById('q-rating').textContent=r;
+  document.getElementById('q-rating').style.color=s>=5000?'#4dca4d':s>=3000?'#f0b040':'#f06060';
+}
+function saveQuickEntry(){
+  const s=parseFloat(document.getElementById('q-sales').value)||0;
+  if(!s){toast('❌ बिक्री ज़रूर भरें',true);return;}
+  const x=parseFloat(document.getElementById('q-expense').value)||0;
+  const p=s-x,m=s>0?Math.round((p/s)*100):0;
+  let rating='⚠️ धीमा';if(s>=5000)rating='🔥 बहुत अच्छा';else if(s>=3000)rating='👍 अच्छा';
+  DB.push(K.BIKRI,{date:TSTR,sales:s,cash:0,upi:0,expense:x,udhaar:0,notes:'',profit:p,margin:m,rating:rating});
+  toast('✅ तुरंत एंट्री सेव हो गई!');
+  document.getElementById('q-sales').value='';document.getElementById('q-expense').value='';quickCalc();
+  setTimeout(()=>go('s-home'),1000);
+}
 function calcProfit(){const s=parseFloat(document.getElementById('e-sales').value)||0,x=parseFloat(document.getElementById('e-expense').value)||0,u=0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;document.getElementById('r-profit').textContent='₹'+p.toLocaleString('en-IN');document.getElementById('r-margin').textContent=m+'%';let r='—';if(s>=5000)r='🔥 बहुत अच्छा';else if(s>=3000)r='👍 अच्छा';else if(s>0)r='⚠️ धीमा';document.getElementById('r-rating').textContent=r;}
 function onUdhaarChange(){calcProfit();const val=parseFloat(document.getElementById('e-udhaar').value)||0;const sec=document.getElementById('udhaar-persons-section');if(val>0){sec.style.display='block';if(!document.querySelector('.udhaar-person-row'))addPersonRow();}else sec.style.display='none';}
 function addPersonRow(name='',amt=''){const list=document.getElementById('udhaar-persons-list');const row=document.createElement('div');row.className='udhaar-person-row';row.innerHTML=`<input type="text" class="udhaar-person-name" placeholder="ग्राहक का नाम" value="${name}"><input type="number" class="udhaar-person-amt" placeholder="₹0" value="${amt}"><button class="remove-person-btn" onclick="this.parentElement.remove()">✕</button>`;list.appendChild(row);}

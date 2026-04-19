@@ -1223,6 +1223,32 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div><div class="trial-days" id="trial-days-text">⏳ Free Trial</div><div class="trial-sub" id="trial-sub-text">लोड हो रहा है...</div></div>
       <div class="trial-badge">मुफ़्त</div>
     </div>
+    <!-- ── तुरंत एंट्री Quick Entry Card ── -->
+<div class="quick-entry-card" id="quick-entry-home-card" onclick="quickEntryFromHome('quick')">
+  <div class="qec-rainbow"></div>
+  <div class="qec-body">
+    <div class="qec-top">
+      <div class="qec-icons"><span class="ico-note">📝</span><span class="ico-bolt">⚡</span></div>
+      <div style="flex:1;">
+        <div class="qec-title">तुरंत एंट्री</div>
+        <div class="qec-sub">Quick Entry · <span>30 सेकंड</span> में</div>
+      </div>
+      <div class="qec-badge">⚡ QUICK</div>
+    </div>
+    <div class="qec-toggle">
+      <div class="qec-tog-btn qec-active" onclick="event.stopPropagation();quickEntryFromHome('quick')">⚡ तुरंत</div>
+      <div class="qec-tog-btn" onclick="event.stopPropagation();quickEntryFromHome('full')" style="color:#666;">📋 पूरा</div>
+    </div>
+    <div class="qec-flow">
+      <div class="qec-flow-item"><p class="qec-flow-ico">💰</p><p class="qec-flow-lbl" style="color:#50a0f0;">बिक्री</p></div>
+      <span class="qec-flow-arrow">→</span>
+      <div class="qec-flow-item"><p class="qec-flow-ico">🧾</p><p class="qec-flow-lbl" style="color:#a855f7;">खर्चा</p></div>
+      <span class="qec-flow-arrow">→</span>
+      <div class="qec-flow-item"><p class="qec-flow-ico">✅</p><p class="qec-flow-lbl" style="color:#4dca4d;">सेव</p></div>
+    </div>
+    <div class="qec-cta"><button class="qec-cta-btn" onclick="event.stopPropagation();quickEntryFromHome('quick')">शुरू करें →</button></div>
+  </div>
+</div>
    <div style="display:flex;align-items:center;gap:7px;margin:14px 0 8px;">
       <div class="sec-bar" style="background:#f0b040;"></div>
       <span class="sec-label" style="color:#f0b040;font-size:9px;" id="month-nav-heading">📅 2026 — महीनेवार</span>

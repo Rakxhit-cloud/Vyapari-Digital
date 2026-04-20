@@ -1893,6 +1893,44 @@ async function updateTrialBanner(uid) {
   else if (daysLeft > 0) { el.textContent = '🚨 सिर्फ ' + daysLeft + ' दिन बाकी!'; el.style.color = '#f06060'; sub.textContent = 'आज ही subscribe करें — ₹3/दिन से कम'; }
   else { el.textContent = '❌ Trial खत्म हो गया'; el.style.color = '#f06060'; sub.textContent = 'Subscribe करें और अपना data सुरक्षित रखें'; }
 }
+async function requestNotificationPermission(uid) {
+if (!('Notification' in window)) return;
+if (Notification.permission === 'denied') return;
+try {
+if (Notification.permission !== 'granted') {
+// Show a friendly banner first, then ask
+setTimeout(async () => {
+const perm = await Notification.requestPermission();
+if (perm === 'granted') {
+await saveFCMToken(uid);
+}
+}, 5000); // Wait 5 seconds after app load
+} else {
+await saveFCMToken(uid);
+}
+} catch(e) {
+console.warn('Notification permission error:', e);
+}
+}
+async function saveFCMToken(uid) {
+try {
+const { getMessaging, getToken } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+const messaging = getMessaging();
+const token = await getToken(messaging, {
+vapidKey: 'BHcuITQH5quQYd7xO5_DmUWq5l6wTFXR-FbsO_H-L7LhT3aBACgn_Z8_jIyPwdwXvuKAJZ9I_sNqCrd1cpUeyFc'
+});
+if (token && uid) {
+await setDoc(doc(db, 'users', uid, 'profile', 'info'), {
+fcmToken: token,
+notificationsEnabled: true,
+tokenUpdatedAt: Date.now()
+}, { merge: true });
+console.log('✅ FCM Token saved');
+}
+} catch(e) {
+console.warn('FCM token error:', e);
+}
+}
 window.signOut = async function() { await fbSignOut(auth); location.reload(); };
 
 ['o1','o2','o3','o4','o5','o6'].forEach((id, idx, arr) => {

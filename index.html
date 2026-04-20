@@ -1852,6 +1852,7 @@ if(lockEnabled){ appLockActivate(); } else { appLockStart(); }
 updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
     // Re-render after short delay to catch Firestore data
     setTimeout(() => { loadHome(); loadUdhaarKPI(); }, 3500);
+    requestNotificationPermission(uid);
     // ── FCM Push Notifications ──
 requestNotificationPermission(uid);
   }

@@ -2014,6 +2014,9 @@ function dismissNotifBanner() {
   } catch(e) {}
   if (banner) banner.style.display = 'none';
 }
+window.requestNotificationPermission = requestNotificationPermission;
+window.enableNotifFromBanner = enableNotifFromBanner;
+window.dismissNotifBanner = dismissNotifBanner;
 async function saveFCMToken(uid) {
   try {
     const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');

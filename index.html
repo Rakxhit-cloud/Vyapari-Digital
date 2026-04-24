@@ -1959,7 +1959,7 @@ function launchUdhaarMode(uid) {
 if (window._fsLoadAll) window._fsLoadAll(uid).then(() => { if (typeof ubLoadList === 'function') ubLoadList(); });
 }
 
-async function updateTrialBanner(uid) {
+window.updateTrialBanner = async function updateTrialBanner(uid) {
   let trialStart = 0;
   // First try Firestore (cannot be manipulated by user)
   try {

@@ -1891,7 +1891,24 @@ onAuthStateChanged(auth, async user => {
 if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
   if (user) {
     const uid = user.uid;
-    const termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);
+ let termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);
+    
+    // Check Firestore first — if user already registered on another device, sync it to this device
+    if (!termsAgreed) {
+      try {
+        const { getDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+        const existingProfile = await getDoc(doc(window._db, 'users', uid, 'profile', 'info'));
+        if (existingProfile.exists() && existingProfile.data().trialStart) {
+          const cloudTrialStart = existingProfile.data().trialStart;
+          localStorage.setItem('hk_trial_start_' + uid, cloudTrialStart.toString());
+          localStorage.setItem('hk_terms_agreed_' + uid, cloudTrialStart.toString());
+          localStorage.setItem('hk_mode_' + uid, existingProfile.data().mode || 'full');
+          termsAgreed = cloudTrialStart.toString();
+          console.log('✅ Trial restored from cloud');
+        }
+      } catch(e) { console.warn('Cloud sync error:', e); }
+    }
+    
     if (!termsAgreed) {
       document.getElementById('screen-phone').classList.add('hidden');
       document.getElementById('screen-otp').classList.add('hidden');

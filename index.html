@@ -539,7 +539,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .ub-hisaab-btn-lbl { font-size: 9px; color: #082a2a; font-weight: 500; text-align: center; line-height: 1.2; }
 .ub-hisaab-btn-sub { font-size: 7px; color: #0a3a2a; font-weight: 500; }
   /* ── उधार Book Screens ── */
-.ub-screen { display: none; padding-bottom: 90px; }
+.ub-screen { display: none; padding-bottom: 100px; }
 .ub-screen.active { display: block; }
 .ub-header { background: linear-gradient(135deg, #1a1545 0%, #2a1a4a 100%); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #7a6cf0; position: sticky; top: 0; z-index: 100; }
 .ub-header-left { display: flex; align-items: center; gap: 10px; }
@@ -616,7 +616,8 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .ub-summary-bar { background: #161616; border: 1px solid #222; border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; margin: 12px 14px; }
 .ub-sum-bar-item { text-align: center; }
 .ub-sum-bar-lbl { font-size: 8px; color: #555; margin-bottom: 3px; }
-.ub-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1545; border-top: 1px solid #4a3878; display: flex; justify-content: space-around; align-items: flex-end; padding: 12px 12px 14px; z-index: 100; gap: 8px; }
+.ub-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1545; border-top: 1px solid #4a3878; display: flex; justify-content: space-around; align-items: flex-end; padding: 12px 12px 14px; z-index: 1000; gap: 8px; visibility: visible; opacity: 1; min-height: 70px; }
+.ub-nav .nav-item, .ub-nav .ub-hisaab-btn { visibility: visible; opacity: 1; }
 /* ── New Udhaar Sheet ── */
 .ub-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 500; display: none; align-items: flex-end; justify-content: center; }
 .ub-overlay.show { display: flex; }
@@ -915,15 +916,15 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   <div class="ub-screen active" id="ub-home">
   <div class="ub-header">
       <div class="ub-header-left">
-       <div style="width:46px;height:46px;background:#2a1a4a;border:2px solid #7a6cf0;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">🤝</div>
+        <div style="width:46px;height:46px;background:#2a1a4a;border:2px solid #7a6cf0;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">🤝</div>
         <div>
-        <div style="font-size:18px;font-weight:800;color:#e0d8ff;letter-spacing:-.3px;">उधार <span style="color:#f0c040;">Book</span></div>
+          <div style="font-size:18px;font-weight:800;color:#e0d8ff;letter-spacing:-.3px;">उधार <span style="color:#f0c040;">Book</span></div>
           <div class="ub-header-sub">आपकी उधार बही · Udhaar Book</div>
         </div>
       </div>
-     <button class="ub-add-btn" onclick="openUBSheet()">+ नया उधार</button>
+      <button class="ub-add-btn" onclick="openUBSheet()">+ नया उधार</button>
     </div>
-  <div class="ub-summary" id="ub-summary-strip">
+    <div class="ub-summary" id="ub-summary-strip">
       <div class="ub-sum-item ubs-gold"><div class="ub-sum-lbl">कुल बाकी</div><div class="ub-sum-val ub-sv-a" id="ub-total-amt">₹0</div></div>
       <div class="ub-sum-item ubs-coral"><div class="ub-sum-lbl">OVERDUE</div><div class="ub-sum-val ub-sv-r" id="ub-overdue-count">0</div></div>
       <div class="ub-sum-item ubs-teal"><div class="ub-sum-lbl">कुल लोग</div><div class="ub-sum-val ub-sv-g" id="ub-total-count">0</div></div>
@@ -932,7 +933,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <input class="ub-search-inp" id="ub-search" placeholder="🔍 नाम से खोजें · Search by name" oninput="ubSearch()">
     </div>
     <div class="ub-filter-row">
-    <div class="ub-pill ub-pill-all active" onclick="ubFilter('all',this)">सभी · All</div>
+      <div class="ub-pill ub-pill-all active" onclick="ubFilter('all',this)">सभी · All</div>
       <div class="ub-pill ub-pill-over" onclick="ubFilter('overdue',this)">⚠ Overdue</div>
       <div class="ub-pill ub-pill-pend" onclick="ubFilter('pending',this)">⏳ Pending</div>
       <div class="ub-pill ub-pill-done" onclick="ubFilter('settled',this)">✓ Settled</div>
@@ -1044,12 +1045,12 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     </div>
     <div style="padding:12px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-       <div style="background:#2a1a4a;border:1px solid #4a3878;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;color:#b0a0e8;font-weight:500;" onclick="ubCalPrev()">◀</div>
+        <div style="background:#2a1a4a;border:1px solid #4a3878;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;color:#b0a0e8;font-weight:500;" onclick="ubCalPrev()">◀</div>
         <div style="font-size:14px;font-weight:800;color:#fff;" id="ub-cal-label">अप्रैल 2026</div>
         <div style="background:#2a1a4a;border:1px solid #4a3878;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;color:#b0a0e8;font-weight:500;" onclick="ubCalNext()">▶</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
-       <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">सो</div>
+        <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">सो</div>
         <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">मं</div>
         <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">बु</div>
         <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">गु</div>
@@ -1059,15 +1060,16 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       </div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;" id="ub-cal-grid"></div>
       <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
-     <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:3px;background:#2a1a4a;border:1.5px solid #7a6cf0;"></div><span style="font-size:10px;color:#b0a0e8;font-weight:500;">उधार है</span></div>
+        <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:3px;background:#2a1a4a;border:1.5px solid #7a6cf0;"></div><span style="font-size:10px;color:#b0a0e8;font-weight:500;">उधार है</span></div>
         <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:3px;background:#f0c040;"></div><span style="font-size:10px;color:#b0a0e8;font-weight:500;">आज</span></div>
         <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:3px;background:#1a1530;"></div><span style="font-size:10px;color:#555;font-weight:500;">खाली</span></div>
+      </div>
     </div>
   </div>
 
   <!-- Calendar Date Popup -->
   <div id="ub-date-popup-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:600;display:none;align-items:flex-end;justify-content:center;">
-   <div style="background:#161616;border-radius:18px 18px 0 0;border-top:2px solid #f0c040;padding:16px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;animation:slideUp .25s ease;">
+    <div style="background:#161616;border-radius:18px 18px 0 0;border-top:2px solid #f0c040;padding:16px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;animation:slideUp .25s ease;">
       <div style="width:36px;height:3px;background:#2a2a2a;border-radius:2px;margin:0 auto 12px;"></div>
       <div style="font-size:14px;font-weight:500;color:#ffe090;margin-bottom:4px;" id="ub-dp-title"></div>
       <div style="font-size:10px;color:#b0a0e8;margin-bottom:14px;" id="ub-dp-sub"></div>
@@ -1107,21 +1109,21 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 
   <!-- उधार Book Bottom Nav -->
- <div class="ub-nav">
-  <div class="nav-item active" id="ubn-home" onclick="ubNavGo('ub-home','ubn-home')">
+  <div class="ub-nav">
+    <div class="nav-item active" id="ubn-home" onclick="ubNavGo('ub-home','ubn-home')">
       <div class="nav-icon">🤝</div>
       <div class="nav-lbl" style="color:#f06060;font-weight:700;">उधार</div>
       <div class="ub-nav-dot" style="width:4px;height:4px;background:#f06060;border-radius:50%;"></div>
     </div>
-   <div class="nav-item" id="ubn-cal" onclick="ubNavGo('ub-cal','ubn-cal')">
+    <div class="nav-item" id="ubn-cal" onclick="ubNavGo('ub-cal','ubn-cal')">
       <div class="nav-icon">📅</div>
       <div class="nav-lbl">Calendar</div>
     </div>
-   <div class="nav-item" id="ubn-settings" onclick="ubOpenSettings()">
+    <div class="nav-item" id="ubn-settings" onclick="ubOpenSettings()">
       <div class="nav-icon">⚙️</div>
       <div class="nav-lbl">Settings</div>
     </div>
-   
+    
     <div class="ub-hisaab-btn" onclick="ubSwitchToHisaab()">
       <div class="ub-hisaab-btn-icon">📒</div>
       <div class="ub-hisaab-btn-lbl">हिसाब-Kitaab</div>
@@ -2613,7 +2615,7 @@ function ubLoadList() {
           <div class="ub-amt-sub ub-amt-sub-${type[0]}">बाकी रकम</div>
         </div>
       </div>
-     ${r.dueDate && type !== 'settled' ? `<div class="ub-due-row"><div class="ub-due"><div class="ub-due-dot" style="background:${dueDotColor};"></div><div class="ub-due-txt ${dueTxtClass}">${dueLabel}</div></div><div style="font-size:8px;color:#3a1a1a;">दिया: ${ubFmt(given)}</div></div>` : ''}
+      ${r.dueDate && type !== 'settled' ? `<div class="ub-due-row"><div class="ub-due"><div class="ub-due-dot" style="background:${dueDotColor};"></div><div class="ub-due-txt ${dueTxtClass}">${dueLabel}</div></div><div style="font-size:8px;color:#3a1a1a;">दिया: ${ubFmt(given)}</div></div>` : ''}
       <div class="ub-prog-meta"><span class="ub-pm-${type[0]}">चुका: ${ubFmt(returned)}</span><span class="ub-pm-${type[0]}">${pct}% चुका</span></div>
       <div class="ub-pbar"><div class="ub-pf-${type[0]}" style="width:${pct}%"></div></div>
       <div class="ub-actions">
@@ -2807,11 +2809,11 @@ function ubNavGo(screenId, navId) {
     if (activeNav) {
       activeNav.classList.add('active');
       const lbl = activeNav.querySelector('.nav-lbl');
-     if (lbl) lbl.style.color = '#ffe090';
+      if (lbl) lbl.style.color = '#ffe090';
       activeNav.querySelectorAll('.ub-nav-dot').forEach(d => d.remove());
      const dot = document.createElement('div');
       dot.className = 'ub-nav-dot';
-     dot.style.cssText = 'display:none;';
+      dot.style.cssText = 'display:none;';
       activeNav.appendChild(dot);
     }
   }
@@ -2840,7 +2842,7 @@ function ubRenderCalendar() {
     const hasEntry = entryDates.has(ds);
     const isToday = ds === todayStr;
     const cell = document.createElement('div');
-   let cellStyle = 'height:42px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:500;position:relative;';
+    let cellStyle = 'height:42px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:500;position:relative;';
     if (isToday) {
       cellStyle += 'background:#f0c040;border:1.5px solid #ffd870;color:#2a1808;';
     } else if (hasEntry) {
@@ -3068,48 +3070,3 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

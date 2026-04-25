@@ -919,12 +919,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       </div>
      <button class="ub-add-btn" onclick="openUBSheet()">+ नया उधार</button>
     </div>
-    <div class="ub-summary" id="ub-summary-strip">
-      <div class="ub-sum-item"><div class="ub-sum-lbl">कुल बाकी</div><div class="ub-sum-val ub-sv-r" id="ub-total-amt">₹0</div></div>
-      <div class="ub-sum-div"></div>
-      <div class="ub-sum-item"><div class="ub-sum-lbl">Overdue</div><div class="ub-sum-val ub-sv-a" id="ub-overdue-count">0</div></div>
-      <div class="ub-sum-div"></div>
-      <div class="ub-sum-item"><div class="ub-sum-lbl">कुल लोग</div><div class="ub-sum-val ub-sv-r" id="ub-total-count">0</div></div>
+  <div class="ub-summary" id="ub-summary-strip">
+      <div class="ub-sum-item ubs-gold"><div class="ub-sum-lbl">कुल बाकी</div><div class="ub-sum-val ub-sv-a" id="ub-total-amt">₹0</div></div>
+      <div class="ub-sum-item ubs-coral"><div class="ub-sum-lbl">OVERDUE</div><div class="ub-sum-val ub-sv-r" id="ub-overdue-count">0</div></div>
+      <div class="ub-sum-item ubs-teal"><div class="ub-sum-lbl">कुल लोग</div><div class="ub-sum-val ub-sv-g" id="ub-total-count">0</div></div>
     </div>
     <div class="ub-search-row">
       <input class="ub-search-inp" id="ub-search" placeholder="🔍 नाम से खोजें · Search by name" oninput="ubSearch()">

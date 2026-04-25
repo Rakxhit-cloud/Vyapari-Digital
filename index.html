@@ -2840,18 +2840,25 @@ function ubRenderCalendar() {
     const hasEntry = entryDates.has(ds);
     const isToday = ds === todayStr;
     const cell = document.createElement('div');
-    cell.style.cssText = 'height:38px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:700;position:relative;' +
-      (hasEntry ? 'background:#2a0808;border:1.5px solid #f06060;color:#f09090;' : 'background:#1a1a1a;color:#666;border:1px solid #222;') +
-      (isToday ? 'outline:2px solid #f06060;outline-offset:1px;' : '');
+   let cellStyle = 'height:42px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:500;position:relative;';
+    if (isToday) {
+      cellStyle += 'background:#f0c040;border:1.5px solid #ffd870;color:#2a1808;';
+    } else if (hasEntry) {
+      cellStyle += 'background:#2a1a4a;border:1.5px solid #7a6cf0;color:#e0d8ff;';
+    } else {
+      cellStyle += 'background:#1a1530;color:#555;border:1px solid #2a2545;';
+    }
+    cell.style.cssText = cellStyle;
     cell.textContent = d;
-    if (hasEntry) {
+    if (hasEntry || isToday) {
       const dot = document.createElement('div');
-      dot.style.cssText = 'width:4px;height:4px;background:#f06060;border-radius:50%;position:absolute;bottom:3px;';
+      const dotColor = isToday ? '#2a1808' : '#7a6cf0';
+      dot.style.cssText = 'width:4px;height:4px;background:' + dotColor + ';border-radius:50%;position:absolute;bottom:4px;';
       cell.appendChild(dot);
     }
     if (isToday) {
       const lbl = document.createElement('div');
-      lbl.style.cssText = 'font-size:5px;color:#f06060;font-weight:800;position:absolute;top:2px;';
+      lbl.style.cssText = 'font-size:6px;color:#2a1808;font-weight:500;position:absolute;top:3px;';
       lbl.textContent = 'आज';
       cell.appendChild(lbl);
     }

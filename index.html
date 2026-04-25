@@ -270,7 +270,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .pbtn { flex: 1; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; border: 1px solid #2a4078; background: #14254a; font-size: 11px; color: #8aa0d8; font-weight: 500; }
 .pbtn.pn { background: #0a2820; border: 1.5px solid #6ab070; color: #a0e8a8; }
 .pbtn.pu { background: #2a1810; border: 1.5px solid #cc7a47; color: #e8c898; }
-.mcard { background: #161616; border: 1px solid #1e1e1e; border-radius: 9px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.mcard { background: linear-gradient(135deg, #0a1530 0%, #14254a 100%); border: 1px solid #2a4078; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 .gcard { background: #161616; border: 1px solid #1e1e1e; border-radius: 9px; padding: 12px; margin-bottom: 8px; }
 .gbar-bg { background: #1a1a1a; border-radius: 4px; height: 7px; overflow: hidden; margin: 6px 0; }
 .gbar { height: 100%; background: #2dba4d; border-radius: 4px; }
@@ -341,12 +341,12 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .hafta-panel-past .hsg-expense { background: #1a1000; border-color: #3a2000; }
 .hafta-panel-past .hsg-expense .hsg-lbl { color: #c08020; }
 .hafta-panel-past .hsg-expense .hsg-val { color: #f0b040; }
-.mahiney-section { background: #0d1520; border: 1px solid #1a2a40; border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
-.mahiney-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; cursor: pointer; user-select: none; }
-.mahiney-header:active { background: #111e30; }
-.mahiney-title { font-size: 11px; font-weight: 800; color: #fff; }
-.mahiney-subtitle { font-size: 8px; color: #c060f0; margin-top: 2px; }
-.mahiney-arrow { font-size: 9px; color: #d080ff; transition: transform .25s; }
+.mahiney-section { background: linear-gradient(135deg, #14254a 0%, #0a1530 100%); border: 1px solid #2a4078; border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
+.mahiney-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; cursor: pointer; user-select: none; }
+.mahiney-header:active { background: #1a3060; }
+.mahiney-title { font-size: 13px; font-weight: 500; color: #e8d8b8; }
+.mahiney-subtitle { font-size: 9px; color: #b0a0e8; margin-top: 2px; }
+.mahiney-arrow { font-size: 10px; color: #d4a850; transition: transform .25s; }
 .mahiney-arrow.open { transform: rotate(180deg); }
 .mahiney-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
 .mahiney-body.open { max-height: 3000px; }
@@ -384,35 +384,38 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .cal-leg-txt { font-size: 7px; font-weight: 700; }
 .date-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 700; display: none; align-items: flex-end; justify-content: center; }
 .date-popup-overlay.show { display: flex; }
-.date-popup-sheet { background: #161616; border-radius: 18px 18px 0 0; border-top: 2px solid #2dba4d; padding: 14px 16px 24px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; animation: slideUp .25s ease; }
+.date-popup-sheet { background: #161616; border-radius: 18px 18px 0 0; border-top: 2px solid #d4a850; padding: 14px 16px 24px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; animation: slideUp .25s ease; }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.date-popup-handle { width: 40px; height: 3px; background: #333; border-radius: 2px; margin: 0 auto 12px; }
+.date-popup-handle { width: 40px; height: 3px; background: #4a3878; border-radius: 2px; margin: 0 auto 12px; }
 .date-popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.date-popup-title { font-size: 12px; font-weight: 800; color: #5dea5d; }
-.date-popup-sub { font-size: 8px; color: #2a7a2a; margin-top: 2px; }
-.date-popup-close { background: #1a0808; border: 1px solid #3a1a1a; border-radius: 6px; padding: 4px 10px; font-size: 8px; color: #f06060; font-weight: 800; cursor: pointer; }
+.date-popup-title { font-size: 14px; font-weight: 500; color: #e8d8b8; }
+.date-popup-sub { font-size: 9px; color: #b0a0e8; margin-top: 2px; }
+.date-popup-close { background: #2a0818; border: 1px solid #4a182a; border-radius: 7px; padding: 6px 12px; font-size: 10px; color: #ff8aa8; font-weight: 500; cursor: pointer; }
 .dp-entry-card { border-radius: 0 9px 9px 0; padding: 10px 11px; margin-bottom: 8px; }
-.dp-great { background: #0d1f0d; border: 1px solid #1a3a1a; border-left: 3px solid #4dca4d; }
-.dp-ok    { background: #1a1000; border: 1px solid #2a2000; border-left: 3px solid #f0b040; }
-.dp-slow  { background: #1a0808; border: 1px solid #2a1010; border-left: 3px solid #f06060; }
-.dp-rating { font-size: 8px; font-weight: 800; margin-bottom: 4px; }
-.dp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-bottom: 3px; }
-.dp-item { font-size: 9px; }
-.dp-note { font-size: 8px; color: #555; margin-top: 2px; }
+.dp-great { background: linear-gradient(135deg, #1a3060 0%, #0a1530 100%); border: 1px solid #2a4078; border-left: 3px solid #d4a850; border-radius: 10px; }
+.dp-ok    { background: linear-gradient(135deg, #2a1810 0%, #1a0f08 100%); border: 1px solid #4a2818; border-left: 3px solid #cc7a47; border-radius: 10px; }
+.dp-slow  { background: linear-gradient(135deg, #2a0818 0%, #1a0510 100%); border: 1px solid #4a182a; border-left: 3px solid #e84878; border-radius: 10px; }
+.dp-rating { font-size: 10px; font-weight: 500; margin-bottom: 6px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+.dp-great .dp-rating { background: #4a3818; color: #d4a850; }
+.dp-ok .dp-rating { background: #4a2818; color: #cc7a47; }
+.dp-slow .dp-rating { background: #4a182a; color: #ff8aa8; }
+.dp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; }
+.dp-item { font-size: 10px; color: #b0a0e8; }
+.dp-note { font-size: 9px; color: #8aa0d8; margin-top: 3px; }
 .dp-right { text-align: right; padding-left: 8px; flex-shrink: 0; }
 .dp-profit { font-size: 16px; font-weight: 800; }
-.dp-great .dp-profit { color: #5dea5d; }
-.dp-ok    .dp-profit { color: #f0b040; }
-.dp-slow  .dp-profit { color: #f06060; }
-.dp-margin { font-size: 9px; color: #f0b040; font-weight: 700; margin-top: 1px; }
+.dp-great .dp-profit { color: #e8d8b8; font-weight: 500; }
+.dp-ok    .dp-profit { color: #e8c898; font-weight: 500; }
+.dp-slow  .dp-profit { color: #ff8aa8; font-weight: 500; }
+.dp-margin { font-size: 10px; color: #d4a850; font-weight: 500; margin-top: 2px; }
 .dp-actions { display: flex; gap: 5px; margin-top: 8px; }
-.dp-edit-btn { flex: 1; background: #0d2a1a; border: 1px solid #2dba4d; color: #5dea5d; font-size: 11px; font-weight: 800; padding: 10px; border-radius: 8px; cursor: pointer; }
-.dp-del-btn  { flex: 1; background: #2a0d0d; border: 1px solid #8a2a2a; color: #f07070; font-size: 11px; font-weight: 800; padding: 10px; border-radius: 8px; cursor: pointer; }
-.dp-empty-box { background: #1a1500; border: 1.5px dashed #3a2a00; border-radius: 10px; padding: 18px; text-align: center; margin-bottom: 10px; }
-.dp-empty-icon { font-size: 28px; margin-bottom: 6px; }
-.dp-empty-title { font-size: 11px; color: #f0b040; font-weight: 800; margin-bottom: 4px; }
-.dp-empty-sub { font-size: 9px; color: #6a5020; }
-.dp-add-btn { width: 100%; background: #1a4a2a; border: 1px solid #2dba4d; color: #5dea5d; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; }
+.dp-edit-btn { flex: 1; background: linear-gradient(135deg, #1a3060 0%, #0a1530 100%); border: 1.5px solid #d4a850; color: #d4a850; font-size: 12px; font-weight: 500; padding: 11px; border-radius: 9px; cursor: pointer; }
+.dp-del-btn  { flex: 1; background: linear-gradient(135deg, #2a0818 0%, #1a0510 100%); border: 1.5px solid #e84878; color: #ff8aa8; font-size: 12px; font-weight: 500; padding: 11px; border-radius: 9px; cursor: pointer; }
+.dp-empty-box { background: linear-gradient(135deg, #2a1810 0%, #1a0f08 100%); border: 1.5px dashed #cc7a47; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 10px; }
+.dp-empty-icon { font-size: 32px; margin-bottom: 8px; }
+.dp-empty-title { font-size: 12px; color: #e8c898; font-weight: 500; margin-bottom: 4px; }
+.dp-empty-sub { font-size: 10px; color: #b0a0e8; }
+.dp-add-btn { width: 100%; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border: 2px solid #f0d890; color: #1a1208; font-size: 13px; font-weight: 500; padding: 13px; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 0 #8a6818; }
 .trial-banner { background: linear-gradient(90deg, #1a2050 0%, #2a3070 100%); border: 1px solid #4a5aa8; border-radius: 10px; padding: 11px 14px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; }
 .trial-days { font-size: 11px; font-weight: 800; color: #50a0f0; }
 .trial-sub { font-size: 8px; color: #305080; margin-top: 1px; }
@@ -664,13 +667,13 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 #app-lock-screen.active{display:flex;}
 .lock-logo{width:72px;height:72px;background:#0d2a0d;border:2px solid #2dba4d;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;}
 .lock-title{font-size:22px;font-weight:800;color:#fff;}
-.lock-sub{font-size:11px;color:#4dca4d;text-align:center;line-height:1.7;}
+.lock-sub{font-size:11px;color:#d4a850;text-align:center;line-height:1.7;}
 .lock-btn{background:#2dba4d;border:none;color:#051005;font-size:15px;font-weight:800;padding:14px 40px;border-radius:12px;cursor:pointer;margin-top:8px;}
 .name-screen{position:fixed;inset:0;background:#0f0f0f;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .name-screen.hidden{display:none;}
 /* UI POLISH v1 */
-.kpi-red .kpi-val{color:#f06060;}
-.kpi-amber .kpi-val{color:#f0b040;}
+.kpi-red .kpi-val{color:#ff8aa8;}
+.kpi-amber .kpi-val{color:#cc7a47;}
 .flbl{color:#bbb;}
 .u-name{font-size:15px;}
 .u-amt-overdue,.u-amt-pending,.u-amt-settled{font-size:20px;}
@@ -681,17 +684,17 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .more-item:last-child{border-bottom:none;}
 .cal-cell.today-cell{background:#d4a850 !important;border:1.5px solid #f0d890 !important;color:#1a1208 !important;outline:none;font-weight:500;font-size:13px;}
 .purple-name-badge{display:inline-block;background:#3C3489;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pay-badge-nakad{display:inline-block;font-size:8px;font-weight:700;padding:2px 8px;border-radius:8px;background:#0d2a1a;color:#4dca4d;border:1px solid #1a4a2a;}
-.pay-badge-udhar{display:inline-block;font-size:8px;font-weight:700;padding:2px 8px;border-radius:8px;background:#1a0808;color:#f06060;border:1px solid #3a1a1a;}
+.pay-badge-nakad{display:inline-block;font-size:8px;font-weight:700;padding:2px 8px;border-radius:8px;background:#0d2a1a;color:#d4a850;border:1px solid #1a4a2a;}
+.pay-badge-udhar{display:inline-block;font-size:8px;font-weight:700;padding:2px 8px;border-radius:8px;background:#1a0808;color:#ff8aa8;border:1px solid #3a1a1a;}
 .entry-mode-toggle{display:flex;background:#0a1530;border:1px solid #2a4078;border-radius:9px;overflow:hidden;margin-bottom:12px;}
 .entry-mode-btn{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#8aa0d8;}
 .entry-mode-btn.active-full{background:#14254a;color:#d4a850;border:1.5px solid #d4a850;border-radius:8px;}
 .entry-mode-btn.active-quick{background:#2a1a4a;color:#b0a0e8;border:1.5px solid #7a6cf0;border-radius:8px;}
-.quick-big-input{width:100%;background:#0d1f0d;border:1.5px solid #1a4a1a;border-radius:10px;padding:14px 16px;font-size:24px;font-weight:800;color:#fff;text-align:center;outline:none;}
-.quick-big-input:focus{border-color:#2dba4d;background:#0a2a0a;}
-.quick-big-input-exp{background:#1a1000;border-color:#3a2000;}
-.quick-big-input-exp:focus{border-color:#f0b040;background:#2a1500;}
-.quick-date-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;background:#0d1520;border:1px solid #1a2a40;border-radius:8px;margin-bottom:14px;}
+.quick-big-input{width:100%;background:linear-gradient(135deg, #1a3060 0%, #0a1530 100%);border:1.5px solid #2a4078;border-top:2px solid #d4a850;border-radius:10px;padding:14px 16px;font-size:26px;font-weight:500;color:#e8d8b8;text-align:center;outline:none;}
+.quick-big-input:focus{border-color:#d4a850;background:linear-gradient(135deg, #1a3060 0%, #14254a 100%);box-shadow:0 0 0 2px rgba(212, 168, 80, 0.2);}
+.quick-big-input-exp{background:linear-gradient(135deg, #2a1810 0%, #1a0f08 100%);border-color:#4a2818;border-top:2px solid #cc7a47;color:#e8c898;}
+.quick-big-input-exp:focus{border-color:#cc7a47;background:linear-gradient(135deg, #2a1810 0%, #3a2818 100%);box-shadow:0 0 0 2px rgba(204, 122, 71, 0.2);}
+.quick-date-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:linear-gradient(90deg, #14254a 0%, #1a3060 50%, #14254a 100%);border:1px solid #2a4078;border-radius:9px;margin-bottom:14px;}
 /* ── तुरंत एंट्री Quick Entry Card ── */
 .quick-entry-card{background:linear-gradient(135deg, #1a0a30 0%, #0a1024 100%);border:1.5px solid #4a3878;border-radius:16px;overflow:hidden;cursor:pointer;margin:10px 0;transition:transform .15s;position:relative;box-shadow:0 0 0 1px rgba(212, 168, 80, 0.15), 0 4px 20px rgba(74, 56, 120, 0.3);}
 .quick-entry-card:active{transform:scale(.97);}
@@ -1114,7 +1117,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   <div class="ub-nav">
     <div class="nav-item active" id="ubn-home" onclick="ubNavGo('ub-home','ubn-home')">
       <div class="nav-icon">🤝</div>
-      <div class="nav-lbl" style="color:#f06060;font-weight:700;">उधार</div>
+      <div class="nav-lbl" style="color:#ff8aa8;font-weight:700;">उधार</div>
       <div class="ub-nav-dot" style="width:4px;height:4px;background:#f06060;border-radius:50%;"></div>
     </div>
     <div class="nav-item" id="ubn-cal" onclick="ubNavGo('ub-cal','ubn-cal')">
@@ -1329,35 +1332,35 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div class="qec-tog-btn" onclick="event.stopPropagation();quickEntryFromHome('full')" style="color:#666;">📋 पूरा</div>
     </div>
     <div class="qec-flow">
-      <div class="qec-flow-item"><p class="qec-flow-ico">💰</p><p class="qec-flow-lbl" style="color:#50a0f0;">बिक्री</p></div>
+      <div class="qec-flow-item"><p class="qec-flow-ico">💰</p><p class="qec-flow-lbl" style="color:#4a90d4;">बिक्री</p></div>
       <span class="qec-flow-arrow">→</span>
-      <div class="qec-flow-item"><p class="qec-flow-ico">🧾</p><p class="qec-flow-lbl" style="color:#a855f7;">खर्चा</p></div>
+      <div class="qec-flow-item"><p class="qec-flow-ico">🧾</p><p class="qec-flow-lbl" style="color:#b0a0e8;">खर्चा</p></div>
       <span class="qec-flow-arrow">→</span>
-      <div class="qec-flow-item"><p class="qec-flow-ico">✅</p><p class="qec-flow-lbl" style="color:#4dca4d;">सेव</p></div>
+      <div class="qec-flow-item"><p class="qec-flow-ico">✅</p><p class="qec-flow-lbl" style="color:#d4a850;">सेव</p></div>
     </div>
     <div class="qec-cta"><button class="qec-cta-btn" onclick="event.stopPropagation();quickEntryFromHome('quick')">शुरू करें →</button></div>
   </div>
 </div>
    <div style="display:flex;align-items:center;gap:7px;margin:14px 0 8px;">
       <div class="sec-bar" style="background:#f0b040;"></div>
-      <span class="sec-label" style="color:#f0b040;font-size:9px;" id="month-nav-heading">📅 2026 — महीनेवार</span>
+      <span class="sec-label" style="color:#cc7a47;font-size:9px;" id="month-nav-heading">📅 2026 — महीनेवार</span>
       <div class="sec-line" style="background:#3a2a00;"></div>
       <span class="sec-badge" style="background:#1a1200;color:#6a5020;border:1px solid #3a2000;font-size:6px;">चालू वर्ष</span>
     </div>
     <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
-      <div onclick="monthNavSlide(-1)" id="month-nav-prev" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#f0b040;flex-shrink:0;">◀</div>
+      <div onclick="monthNavSlide(-1)" id="month-nav-prev" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#cc7a47;flex-shrink:0;">◀</div>
       <div id="month-nav-track" style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;"></div>
-      <div onclick="monthNavSlide(1)" id="month-nav-next" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#f0b040;flex-shrink:0;">▶</div>
+      <div onclick="monthNavSlide(1)" id="month-nav-next" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#cc7a47;flex-shrink:0;">▶</div>
     </div>
     <div id="month-nav-detail" style="display:none;background:#161616;border:1px solid #1e1e1e;border-radius:8px;padding:10px 12px;margin-bottom:10px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span id="month-detail-title" style="font-size:10px;font-weight:800;color:#4dca4d;"></span>
+        <span id="month-detail-title" style="font-size:10px;font-weight:800;color:#d4a850;"></span>
         <span id="month-detail-entries" style="font-size:8px;color:#2a6a2a;background:#0d1f0d;padding:2px 7px;border-radius:4px;border:1px solid #1a4a1a;"></span>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
-        <div style="background:#0d1f0d;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#2dba4d;font-weight:700;margin-bottom:3px;">बिक्री</div><div id="month-detail-sales" style="font-size:13px;font-weight:800;color:#4dca4d;"></div></div>
-        <div style="background:#080f1a;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#50a0f0;font-weight:700;margin-bottom:3px;">गल्ला</div><div id="month-detail-galla" style="font-size:13px;font-weight:800;color:#60b0f0;"></div></div>
-        <div style="background:#1a1000;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#f0b040;font-weight:700;margin-bottom:3px;">खर्चा</div><div id="month-detail-expense" style="font-size:13px;font-weight:800;color:#f0b040;"></div></div>
+        <div style="background:#0d1f0d;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#2dba4d;font-weight:700;margin-bottom:3px;">बिक्री</div><div id="month-detail-sales" style="font-size:13px;font-weight:800;color:#d4a850;"></div></div>
+        <div style="background:#080f1a;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#4a90d4;font-weight:700;margin-bottom:3px;">गल्ला</div><div id="month-detail-galla" style="font-size:13px;font-weight:800;color:#8ab8e8;"></div></div>
+        <div style="background:#1a1000;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#cc7a47;font-weight:700;margin-bottom:3px;">खर्चा</div><div id="month-detail-expense" style="font-size:13px;font-weight:800;color:#cc7a47;"></div></div>
       </div>
     </div>
     <div class="sec-head"><div class="sec-bar" style="background:#d4a850;"></div><span class="sec-label" style="color:#d4a850;">💰 बिक्री और गल्ला/कमाई</span><div class="sec-line" style="background:#2a4078;"></div></div>
@@ -1365,42 +1368,42 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl">💰 बिक्री</div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
       <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl">📈 गल्ला/कमाई</div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
       <div class="kpi-card kpi-amber" onclick="toggleKPI('kharcha')"><div class="kpi-lbl">🧾 खर्चा</div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card" style="background:#0a1a14;border:1px solid #1a4a3a;border-top:2px solid #3dca6a;border-radius:9px;padding:10px;"><div class="kpi-lbl" style="color:#f0b040;">📊 मुनाफ़ा %</div><div class="kpi-val" id="k-margin-pct" style="color:#f0b040;">0%</div><div class="kpi-sub" style="color:#1a5a3a;">इस महीने</div><div style="margin-top:5px;background:#0d2a1a;border-radius:3px;height:4px;overflow:hidden;"><div id="k-margin-bar" style="height:100%;background:#3dca6a;border-radius:3px;width:0%;transition:width .4s;"></div></div></div>
+      <div class="kpi-card" style="background:#0a1a14;border:1px solid #1a4a3a;border-top:2px solid #3dca6a;border-radius:9px;padding:10px;"><div class="kpi-lbl" style="color:#cc7a47;">📊 मुनाफ़ा %</div><div class="kpi-val" id="k-margin-pct" style="color:#cc7a47;">0%</div><div class="kpi-sub" style="color:#1a5a3a;">इस महीने</div><div style="margin-top:5px;background:#0d2a1a;border-radius:3px;height:4px;overflow:hidden;"><div id="k-margin-bar" style="height:100%;background:#3dca6a;border-radius:3px;width:0%;transition:width .4s;"></div></div></div>
     </div>
-    <div class="kpi-panel" id="panel-bikri"><div class="kpi-panel-inner panel-green"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;text-align:right;">बिक्री</div></div><div id="bikri-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a3a1a;"><div class="ptbl-total-cell" style="background:#0d2a1a;color:#2dba4d;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d2a1a;color:#4dca4d;text-align:right;" id="bikri-total">₹0</div></div></div></div>
-    <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#50a0f0;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#50a0f0;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#50a0f0;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#50a0f0;text-align:right;" id="galla-total">₹0</div></div></div></div>
-    <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#f0b040;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#f0b040;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#f0b040;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#f0b040;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
+    <div class="kpi-panel" id="panel-bikri"><div class="kpi-panel-inner panel-green"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;text-align:right;">बिक्री</div></div><div id="bikri-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a3a1a;"><div class="ptbl-total-cell" style="background:#0d2a1a;color:#2dba4d;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d2a1a;color:#d4a850;text-align:right;" id="bikri-total">₹0</div></div></div></div>
+    <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
+    <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
     
-    <div class="sec-head"><div class="sec-bar" style="background:#3dca6a;"></div><span class="sec-label" style="color:#3dca6a;">📦 माल की खरीद / Goods Purchase</span><div class="sec-line" style="background:#1a3a2a;"></div><span class="sec-badge" style="background:#0a2a1a;color:#2dba4d;border:1px solid #1a4a2a;">महीने में</span></div>
+    <div class="sec-head"><div class="sec-bar" style="background:#3dca6a;"></div><span class="sec-label" style="color:#d4a850;">📦 माल की खरीद / Goods Purchase</span><div class="sec-line" style="background:#1a3a2a;"></div><span class="sec-badge" style="background:#0a2a1a;color:#2dba4d;border:1px solid #1a4a2a;">महीने में</span></div>
     <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद दिया</span><span class="vg" id="h-maal-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार लिया</span><span class="va" id="h-maal-udhaar">₹0</span></div><div class="dealer-list" id="h-maal-list"><div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
-    <div class="sec-head"><div class="sec-bar" style="background:#50a0f0;"></div><span class="sec-label" style="color:#50a0f0;">🥣 कच्चा माल / Raw Materials</span><div class="sec-line" style="background:#1a2a3a;"></div><span class="sec-badge" style="background:#0a1a2a;color:#3080c0;border:1px solid #1a3a5a;">महीने में</span></div>
+    <div class="sec-head"><div class="sec-bar" style="background:#50a0f0;"></div><span class="sec-label" style="color:#4a90d4;">🥣 कच्चा माल / Raw Materials</span><div class="sec-line" style="background:#1a2a3a;"></div><span class="sec-badge" style="background:#0a1a2a;color:#3080c0;border:1px solid #1a3a5a;">महीने में</span></div>
     <div class="sec-card sc-blue"><div class="mini-grid"><div class="mini-card mc-ba"><div class="mini-lbl">कुल सामान</div><div class="mini-val" id="h-kaccha-total">₹0</div></div><div class="mini-card mc-bb"><div class="mini-lbl">रोज़ औसत</div><div class="mini-val" id="h-kaccha-avg">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद चुकाया</span><span class="vb" id="h-kaccha-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार बाकी</span><span class="va" id="h-kaccha-udhaar">₹0</span></div><div class="tag-row" id="h-kaccha-tags"><span class="tag-b">⏳</span></div><div class="dealer-list" id="h-kaccha-list"><div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
     
-    <div class="sec-head"><div class="sec-bar" style="background:#c060f0;"></div><span class="sec-label" style="color:#c060f0;">📅 महीने की एंट्री</span><div class="sec-line" style="background:#2a1a3a;"></div></div>
-   <div class="mahiney-section" style="background:#120a1a;border-color:#2a1a3a;">
+    <div class="sec-head"><div class="sec-bar" style="background:#d4a850;"></div><span class="sec-label" style="color:#d4a850;">📅 महीने की एंट्री</span><div class="sec-line" style="background:#2a4078;"></div></div>
+   <div class="mahiney-section">
       <div class="mahiney-header" onclick="toggleMahiney()">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:42px;height:42px;background:#1a0a2a;border:1.5px solid #7030c0;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;">
-            <div style="background:#c060f0;height:11px;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;">
+          <div style="width:42px;height:42px;background:#1a1545;border:1.5px solid #7a6cf0;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;">
+            <div style="background:#d4a850;height:11px;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;">
               <div style="width:3px;height:5px;background:#fff;border-radius:2px;margin-top:-3px;"></div>
               <div style="width:3px;height:5px;background:#fff;border-radius:2px;margin-top:-3px;"></div>
             </div>
             <div style="flex:1;padding:2px 3px;display:flex;flex-direction:column;gap:2px;justify-content:center;">
               <div style="display:flex;gap:2px;justify-content:center;">
-                <div style="width:5px;height:5px;background:#7030c0;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#7030c0;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#7030c0;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
               </div>
               <div style="display:flex;gap:2px;justify-content:center;">
-                <div style="width:5px;height:5px;background:#c060f0;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#3a1a5a;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#3a1a5a;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#d4a850;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#2a1a4a;border-radius:1px;"></div>
+                <div style="width:5px;height:5px;background:#2a1a4a;border-radius:1px;"></div>
               </div>
             </div>
           </div>
-          <div><div class="mahiney-title" style="color:#fff;font-size:14px;">महीना चुनें</div><div class="mahiney-subtitle" style="color:#c060f0;" id="mahiney-sub">Month Selector · तारीख देखें</div></div>
+          <div><div class="mahiney-title" style="font-size:14px;">महीना चुनें</div><div class="mahiney-subtitle" id="mahiney-sub">Month Selector · तारीख देखें</div></div>
         </div>
-        <div style="background:#1a0a2a;border:1px solid #4a1a7a;border-radius:6px;padding:4px 10px;font-size:9px;color:#d080ff;font-weight:700;" id="mahiney-arrow">▼ खोलें</div>
+        <div style="background:#2a1a4a;border:1px solid #4a3878;border-radius:8px;padding:5px 12px;font-size:10px;color:#d4a850;font-weight:500;" id="mahiney-arrow">▼ खोलें</div>
       </div>
       <div class="mahiney-body" id="mahiney-body">
         <div class="month-grid" id="month-grid"></div>
@@ -1410,11 +1413,11 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
             <div class="cal-days-header"><div class="cal-day-name">सो</div><div class="cal-day-name">मं</div><div class="cal-day-name">बु</div><div class="cal-day-name">गु</div><div class="cal-day-name">शु</div><div class="cal-day-name">श</div><div class="cal-day-name">र</div></div>
             <div class="cal-grid" id="cal-grid"></div>
             <div class="cal-legend">
-              <div class="cal-leg-item"><div class="cal-leg-box" style="background:#0a2a0a;border:1.5px solid #2dba4d;"></div><span class="cal-leg-txt" style="color:#4dca4d;">एंट्री है</span></div>
+              <div class="cal-leg-item"><div class="cal-leg-box" style="background:#0a2a0a;border:1.5px solid #2dba4d;"></div><span class="cal-leg-txt" style="color:#d4a850;">एंट्री है</span></div>
               <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;outline:2px solid #2dba4d;outline-offset:1px;"></div><span class="cal-leg-txt" style="color:#70c0ff;">आज</span></div>
               <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;"></div><span class="cal-leg-txt" style="color:#555;">खाली — टैप करें</span></div>
             </div>
-            <div style="margin-top:8px;background:#0d1a2a;border:1px solid #1a2a3a;border-radius:6px;padding:5px 10px;text-align:center;"><div style="font-size:8px;color:#50a0f0;font-weight:700;">👆 किसी भी तारीख पर टैप करें — popup खुलेगा</div></div>
+            <div style="margin-top:8px;background:#0d1a2a;border:1px solid #1a2a3a;border-radius:6px;padding:5px 10px;text-align:center;"><div style="font-size:8px;color:#4a90d4;font-weight:700;">👆 किसी भी तारीख पर टैप करें — popup खुलेगा</div></div>
           </div>
         </div>
       </div>
@@ -1438,46 +1441,46 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div class="entry-mode-btn" id="mode-btn-full" onclick="setEntryMode('full')" style="border-radius:10px;">📋 पूरा</div>
     </div>
     <div id="quick-entry-form">
-      <div style="text-align:center;margin-bottom:4px;font-size:15px;font-weight:800;color:#fff;">📋 आज का हिसाब दर्ज करें</div>
-      <div style="text-align:center;margin-bottom:14px;font-size:10px;color:#2a6a2a;">Today's Entry · सिर्फ 2 अंक डालें</div>
+      <div style="text-align:center;margin-bottom:4px;font-size:16px;font-weight:500;color:#e8d8b8;">📋 आज का हिसाब दर्ज करें</div>
+      <div style="text-align:center;margin-bottom:14px;font-size:11px;color:#b0a0e8;">Today's Entry · सिर्फ 2 अंक डालें</div>
       <div class="quick-date-bar">
         <span style="font-size:12px;">📅</span>
-        <span style="font-size:11px;color:#50a0f0;font-weight:600;" id="q-date-display">आज</span>
-        <span style="font-size:8px;color:#305080;background:#0a1520;padding:2px 6px;border-radius:4px;border:1px solid #1a3050;">⚡ स्वतः</span>
+        <span style="font-size:12px;color:#e8d8b8;font-weight:500;" id="q-date-display">आज</span>
+        <span style="font-size:9px;color:#d4a850;background:#4a3818;padding:3px 8px;border-radius:5px;border:1px solid #d4a850;font-weight:500;">⚡ स्वतः</span>
       </div>
       <div style="margin-bottom:14px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:18px;">💰</span><span style="font-size:13px;color:#4dca4d;font-weight:700;">आज की कुल बिक्री ₹</span></div>
-        <div style="font-size:9px;color:#1a5a1a;margin-bottom:6px;">Today's Total Sales</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:18px;">💰</span><span style="font-size:14px;color:#d4a850;font-weight:500;">आज की कुल बिक्री ₹</span></div>
+        <div style="font-size:10px;color:#8aa0d8;margin-bottom:8px;">Today's Total Sales</div>
         <input type="number" class="quick-big-input" id="q-sales" placeholder="0" inputmode="numeric" oninput="quickCalc()" style="border-radius:12px;border-width:2px;padding:18px 16px;font-size:28px;">
       </div>
       <div style="margin-bottom:14px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:18px;">🧾</span><span style="font-size:13px;color:#f0b040;font-weight:700;">आज का कुल खर्चा ₹</span></div>
-        <div style="font-size:9px;color:#6a4a10;margin-bottom:6px;">Today's Total Expense</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:18px;">🧾</span><span style="font-size:14px;color:#cc7a47;font-weight:500;">आज का कुल खर्चा ₹</span></div>
+        <div style="font-size:10px;color:#8aa0d8;margin-bottom:8px;">Today's Total Expense</div>
         <input type="number" class="quick-big-input quick-big-input-exp" id="q-expense" placeholder="0" inputmode="numeric" oninput="quickCalc()" style="border-radius:12px;border-width:2px;padding:18px 16px;font-size:28px;">
       </div>
-      <div style="background:#111;border:1.5px solid #2a2a2a;border-radius:14px;overflow:hidden;margin-bottom:14px;">
-        <div style="height:3px;background:linear-gradient(90deg,#4dca4d,#50a0f0,#a855f7);"></div>
+      <div style="background:linear-gradient(135deg, #0a1530 0%, #14254a 100%);border:1.5px solid #2a4078;border-radius:14px;overflow:hidden;margin-bottom:14px;">
+        <div style="height:3px;background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%);"></div>
         <div style="padding:14px;">
-          <div style="font-size:11px;color:#888;font-weight:700;margin-bottom:10px;">📊 आज का नतीजा · Today's Result</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1e1e1e;">
+          <div style="font-size:12px;color:#d4a850;font-weight:500;margin-bottom:10px;">📊 आज का नतीजा · Today's Result</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #2a4078;">
             <span style="font-size:12px;color:#d4a850;font-weight:500;">आज का गल्ला/कमाई</span>
-            <span style="font-size:22px;font-weight:800;color:#4dca4d;" id="q-profit">₹0</span>
+            <span style="font-size:22px;font-weight:500;color:#e8d8b8;" id="q-profit">₹0</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1e1e1e;">
-            <span style="font-size:12px;color:#f0b040;font-weight:700;">कमाई का प्रतिशत</span>
-            <span style="font-size:16px;font-weight:800;color:#f0b040;" id="q-margin">0%</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #2a4078;">
+            <span style="font-size:12px;color:#cc7a47;font-weight:500;">कमाई का प्रतिशत</span>
+            <span style="font-size:16px;font-weight:500;color:#e8c898;" id="q-margin">0%</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;">
             <span style="font-size:12px;color:#b0a0e8;font-weight:500;">दिन कैसा रहा</span>
-            <span style="font-size:14px;font-weight:800;color:#888;" id="q-rating">—</span>
+            <span style="font-size:14px;font-weight:500;color:#8aa0d8;" id="q-rating">—</span>
           </div>
         </div>
       </div>
-      <button class="sbtn" onclick="saveQuickEntry()" style="background:linear-gradient(90deg,#4dca4d,#2ea82e);border:none;color:#fff;font-size:15px;font-weight:800;padding:16px;border-radius:14px;">💾 एंट्री सेव करें · Save Entry</button>
+      <button class="sbtn" onclick="saveQuickEntry()" style="background:linear-gradient(135deg, #d4a850 0%, #e8c870 100%);border:2px solid #f0d890;color:#1a1208;font-size:15px;font-weight:500;padding:15px;border-radius:12px;box-shadow:0 2px 0 #8a6818;">💾 एंट्री सेव करें · Save Entry</button>
       <div style="text-align:center;margin-top:10px;">
-        <div style="background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:10px;cursor:pointer;" onclick="setEntryMode('full')">
-          <div style="font-size:10px;color:#555;">✏️ UPI, नकद, नोट्स भी डालना है?</div>
-          <div style="font-size:11px;color:#a855f7;font-weight:700;margin-top:2px;">पूरा मोड में जाएं →</div>
+        <div style="background:#0a1530;border:1px solid #2a4078;border-radius:10px;padding:11px;cursor:pointer;" onclick="setEntryMode('full')">
+          <div style="font-size:11px;color:#8aa0d8;">✏️ UPI, नकद, नोट्स भी डालना है?</div>
+          <div style="font-size:12px;color:#d4a850;font-weight:500;margin-top:3px;">पूरा मोड में जाएं →</div>
         </div>
       </div>
     </div>
@@ -1490,16 +1493,16 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <div class="frow"><div class="flbl">🧾 आज का खर्चा ₹</div><input type="number" class="finput" id="e-expense" placeholder="0" oninput="calcProfit()"></div>
       <div class="frow"><div class="flbl">📝 नोट्स</div><input type="text" class="finput" id="e-notes" placeholder="कोई बात..."></div>
     </div>
-    <div style="background:#111;border:1.5px solid #2a2a2a;border-radius:14px;overflow:hidden;margin-top:10px;">
-      <div style="height:3px;background:linear-gradient(90deg,#4dca4d,#50a0f0,#a855f7);"></div>
+    <div style="background:linear-gradient(135deg, #0a1530 0%, #14254a 100%);border:1.5px solid #2a4078;border-radius:14px;overflow:hidden;margin-top:10px;">
+      <div style="height:3px;background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%);"></div>
       <div style="padding:12px;">
         <div class="rrow"><div class="rlbl">आज का गल्ला/कमाई</div><div class="rg" id="r-profit">₹0</div></div>
         <div class="rrow"><div class="rlbl">गल्ला/कमाई %</div><div class="ra" id="r-margin">0%</div></div>
         <div class="rrow"><div class="rlbl">दिन कैसा रहा</div><div class="rr" id="r-rating">—</div></div>
       </div>
     </div>
-    <button class="sbtn" onclick="saveEntry()" style="background:linear-gradient(90deg,#4dca4d,#2ea82e);border:none;color:#fff;font-size:14px;font-weight:800;padding:14px;border-radius:14px;margin-top:12px;">💾 एंट्री सेव करें</button>
-    <div style="text-align:center;margin-top:8px;"><button onclick="setEntryMode('quick')" style="background:transparent;border:none;color:#50a0f0;font-size:10px;padding:8px;cursor:pointer;">⚡ तुरंत मोड पर वापस जाएं</button></div>
+    <button class="sbtn" onclick="saveEntry()" style="background:linear-gradient(135deg, #d4a850 0%, #e8c870 100%);border:2px solid #f0d890;color:#1a1208;font-size:14px;font-weight:500;padding:14px;border-radius:12px;margin-top:12px;box-shadow:0 2px 0 #8a6818;">💾 एंट्री सेव करें</button>
+    <div style="text-align:center;margin-top:10px;"><button onclick="setEntryMode('quick')" style="background:#2a1a4a;border:1px solid #4a3878;color:#b0a0e8;font-size:11px;font-weight:500;padding:10px 20px;cursor:pointer;border-radius:8px;">⚡ तुरंत मोड पर वापस जाएं</button></div>
     </div>
   </div>
 </div>
@@ -1569,43 +1572,43 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </div>
 <div class="popup-overlay" id="supplier-pay-overlay">
   <div class="popup-sheet">
-    <div class="popup-title" style="color:#3dca6a;font-size:12px;">💳 सप्लायर उधार चुकाएं / Pay Supplier</div>
+    <div class="popup-title" style="color:#d4a850;font-size:12px;">💳 सप्लायर उधार चुकाएं / Pay Supplier</div>
     <div class="popup-entry-info" id="supplier-pay-info"></div>
     <div style="margin-bottom:12px;">
-      <div style="font-size:11px;font-weight:800;color:#3dca6a;margin-bottom:8px;letter-spacing:.3px;">💰 कितना चुका रहे हैं? / Amount paying</div><div style="font-size:11px;font-weight:800;color:#3dca6a;margin-bottom:8px;letter-spacing:.3px;">💰 कितना चुका रहे हैं? / Amount paying</div>
+      <div style="font-size:11px;font-weight:800;color:#d4a850;margin-bottom:8px;letter-spacing:.3px;">💰 कितना चुका रहे हैं? / Amount paying</div><div style="font-size:11px;font-weight:800;color:#d4a850;margin-bottom:8px;letter-spacing:.3px;">💰 कितना चुका रहे हैं? / Amount paying</div>
       <input type="number" id="supplier-pay-amount" placeholder="₹ 0" inputmode="numeric"
         style="width:100%;background:#1e1e1e;border:1px solid #3dca6a;border-radius:8px;padding:10px 14px;font-size:16px;color:#fff;outline:none;text-align:center;">
       <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;">
-       <span style="color:#3dca6a;font-weight:700;" id="supplier-pay-remaining-lbl">बाकी: ₹0</span>
+       <span style="color:#d4a850;font-weight:700;" id="supplier-pay-remaining-lbl">बाकी: ₹0</span>
         <span style="color:#7dea8a;font-weight:700;" id="supplier-pay-after-lbl">चुकाने के बाद: ₹0</span>
       </div>
     </div>
     <div class="popup-btns">
-      <button class="popup-btn popup-edit" style="background:#0d2a1a;border-color:#2dba4d;color:#3dca6a;" onclick="saveSupplierPayment()">✅ Payment दर्ज करें</button>
-      <button class="popup-btn" style="background:#0d2a1a;border:1px solid #2dba4d;color:#3dca6a;" onclick="settleSupplierFull()">🎉 पूरा चुक गया</button>
+      <button class="popup-btn popup-edit" onclick="saveSupplierPayment()">✅ Payment दर्ज करें</button>
+      <button class="popup-btn" style="background:#0d2a1a;border:1px solid #2dba4d;color:#d4a850;" onclick="settleSupplierFull()">🎉 पूरा चुक गया</button>
     </div>
-  <button class="popup-cancel" onclick="closeSupplierPayOverlay()" style="background:#1a0808;border:1px solid #f06060;color:#f06060;font-weight:700;">✕ रद्द करें · Cancel</button>
+  <button class="popup-cancel" onclick="closeSupplierPayOverlay()" style="background:#1a0808;border:1px solid #f06060;color:#ff8aa8;font-weight:700;">✕ रद्द करें · Cancel</button>
   </div>
 </div>
 
 <div class="popup-overlay" id="kaccha-pay-overlay">
   <div class="popup-sheet">
-    <div class="popup-title" style="color:#50a0f0;font-size:12px;">💳 कच्चा माल उधार चुकाएं / Pay Raw Material</div>
+    <div class="popup-title" style="color:#4a90d4;font-size:12px;">💳 कच्चा माल उधार चुकाएं / Pay Raw Material</div>
     <div class="popup-entry-info" id="kaccha-pay-info"></div>
     <div style="margin-bottom:12px;">
       <div style="font-size:11px;font-weight:800;color:#70c8ff;margin-bottom:8px;letter-spacing:.3px;">💰 कितना चुका रहे हैं? / Amount paying</div>
       <input type="number" id="kaccha-pay-amount" placeholder="₹ 0" inputmode="numeric"
         style="width:100%;background:#1e1e1e;border:1px solid #50a0f0;border-radius:8px;padding:10px 14px;font-size:16px;color:#fff;outline:none;text-align:center;">
       <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;">
-        <span style="color:#50a0f0;font-weight:700;" id="kaccha-pay-remaining-lbl">बाकी: ₹0</span>
+        <span style="color:#4a90d4;font-weight:700;" id="kaccha-pay-remaining-lbl">बाकी: ₹0</span>
         <span style="color:#70c8ff;font-weight:700;" id="kaccha-pay-after-lbl">चुकाने के बाद: ₹0</span>
       </div>
     </div>
     <div class="popup-btns">
-      <button class="popup-btn" style="background:#080f1a;border:1px solid #50a0f0;color:#50a0f0;" onclick="saveKacchaPayment()">✅ Payment दर्ज करें</button>
-      <button class="popup-btn" style="background:#080f1a;border:1px solid #50a0f0;color:#50a0f0;" onclick="settleKacchaFull()">🎉 पूरा चुक गया</button>
+      <button class="popup-btn" style="background:#080f1a;border:1px solid #50a0f0;color:#4a90d4;" onclick="saveKacchaPayment()">✅ Payment दर्ज करें</button>
+      <button class="popup-btn" style="background:#080f1a;border:1px solid #50a0f0;color:#4a90d4;" onclick="settleKacchaFull()">🎉 पूरा चुक गया</button>
     </div>
-  <button class="popup-cancel" onclick="closeKacchaPayOverlay()" style="background:#1a0808;border:1px solid #f06060;color:#f06060;font-weight:700;">✕ रद्द करें · Cancel</button>
+  <button class="popup-cancel" onclick="closeKacchaPayOverlay()" style="background:#1a0808;border:1px solid #f06060;color:#ff8aa8;font-weight:700;">✕ रद्द करें · Cancel</button>
   </div>
 </div>
 <button class="fab" onclick="go('s-entry')">+</button>
@@ -2164,7 +2167,7 @@ document.addEventListener('click',e=>{const m=document.getElementById('more-menu
 function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(()=>t.className='toast',3000);}
 function toggleKPI(key){const panel=document.getElementById('panel-'+key);const isOpen=panel.classList.contains('open');document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));if(!isOpen){panel.classList.add('open');if(key==='udhaar-kpi')loadUdhaarInline();}}
 function renderWeeklyTable(containerId,totalId,field,color,dimColor){const bikri=DB.get(K.BIKRI);const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const entry=bikri.find(r=>r.date===ds);let val=null;if(entry){val=field==='profit'?calcEntryProfit(entry):(entry[field]||0);}rows.push({ds,val});}const el=document.getElementById(containerId);let total=0;el.innerHTML=rows.map(r=>{if(r.val!==null)total+=r.val;return`<div class="ptbl-row"><div class="ptbl-cell" style="color:#6090d0;">${fmtDayDate(r.ds)}</div><div class="ptbl-cell" style="color:${r.val!==null?color:dimColor};text-align:right;font-weight:${r.val!==null?700:400};font-style:${r.val!==null?'normal':'italic'};">${r.val!==null?fmt(r.val):'कोई नहीं'}</div></div>`;}).join('');document.getElementById(totalId).textContent=fmt(total);}
-function loadUdhaarInline(){const el=document.getElementById('udhaar-inline-list'),sel=document.getElementById('udhaar-inline-summary');const rows=DB.get(K.UDHAAR);el.innerHTML='';sel.innerHTML='';if(!rows.length){el.innerHTML='<div class="empty" style="padding:12px;">कोई उधार नहीं है</div>';return;}let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${initials(r.name)}</div><div><div class="u-name">${r.name||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a'};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a'};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});sel.innerHTML=`<div class="u-summary"><div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#f06060;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#f06060;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#f0b040;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#3dca6a;">${settledCount}</div></div></div>`;}
+function loadUdhaarInline(){const el=document.getElementById('udhaar-inline-list'),sel=document.getElementById('udhaar-inline-summary');const rows=DB.get(K.UDHAAR);el.innerHTML='';sel.innerHTML='';if(!rows.length){el.innerHTML='<div class="empty" style="padding:12px;">कोई उधार नहीं है</div>';return;}let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${initials(r.name)}</div><div><div class="u-name">${r.name||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a'};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a'};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});sel.innerHTML=`<div class="u-summary"><div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#cc7a47;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#d4a850;">${settledCount}</div></div></div>`;}
 function syncUdhaarToBikri(udhaarId,oldGiven,newGiven,udhaarDate,isDelete){const bikri=DB.get(K.BIKRI),idx=bikri.findIndex(r=>r.date===udhaarDate&&(r.udhaar||0)>0);if(idx===-1)return;const entry=bikri[idx],diff=isDelete?-(oldGiven||0):(newGiven||0)-(oldGiven||0);if(diff===0)return;const newUdhaar=Math.max(0,(entry.udhaar||0)+diff),s=entry.sales||0,x=entry.expense||0;const p=s-x-newUdhaar,m=s>0?Math.round((p/s)*100):0;let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';bikri[idx]={...entry,udhaar:newUdhaar,profit:p,margin:m,rating:rt};DB.set(K.BIKRI,bikri);if(window._fsWrite) window._fsWrite(CURRENT_UID, K.BIKRI, bikri[idx]);}
 let pressTimer=null,currentEntry=null;
 function startPress(el,type,id,data){el.classList.add('pressing');pressTimer=setTimeout(()=>{el.classList.remove('pressing');currentEntry={type,id,data};showActionPopup(type,data);},600);}
@@ -2267,7 +2270,7 @@ function loadMaalForMonth(mi){
  else rec.forEach(r=>{
     const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
     const remaining=(r.amount||0)-(r.paid||0);
-    const html=`<div><div class="purple-name-badge">${r.supplier||'—'}</div><div class="dlr-goods" style="margin-top:3px;">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt" style="color:${r.pay==='नकद'?'#4dca4d':'#f06060'};">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openSupplierPayOverlay('${r.id}')" style="background:#0d2a1a;border:1.5px solid #2dba4d;color:#3dca6a;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="${r.pay==='नकद'?'pay-badge-nakad':'pay-badge-udhar'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
+    const html=`<div><div class="purple-name-badge">${r.supplier||'—'}</div><div class="dlr-goods" style="margin-top:3px;">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt" style="color:${r.pay==='नकद'?'#4dca4d':'#f06060'};">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openSupplierPayOverlay('${r.id}')" style="background:#0d2a1a;border:1.5px solid #2dba4d;color:#d4a850;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="${r.pay==='नकद'?'pay-badge-nakad':'pay-badge-udhar'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
     const card=makeLPCard('dlr-row',html,K.MAAL,r.id,r);ml.appendChild(card);
   });
 }
@@ -2287,7 +2290,7 @@ function loadKacchaForMonth(mi){
   else rec.forEach(r=>{
     const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
     const remaining=(r.amount||0)-(r.paid||0);
-    const html=`<div><div class="purple-name-badge">${r.name||'—'}</div><div class="dlr-goods" style="margin-top:3px;">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt" style="color:${r.pay==='नकद'?'#4dca4d':'#f06060'};">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openKacchaPayOverlay('${r.id}')" style="background:#080f1a;border:1.5px solid #50a0f0;color:#50a0f0;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="${r.pay==='नकद'?'pay-badge-nakad':'pay-badge-udhar'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
+    const html=`<div><div class="purple-name-badge">${r.name||'—'}</div><div class="dlr-goods" style="margin-top:3px;">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt" style="color:${r.pay==='नकद'?'#4dca4d':'#f06060'};">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openKacchaPayOverlay('${r.id}')" style="background:#080f1a;border:1.5px solid #50a0f0;color:#4a90d4;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="${r.pay==='नकद'?'pay-badge-nakad':'pay-badge-udhar'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
     const card=makeLPCard('dlr-row',html,K.KACCHA,r.id,r);kl.appendChild(card);
   });
 }
@@ -2308,7 +2311,7 @@ function renderCalendar(){document.getElementById('cal-label').textContent=HI_MO
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
 let dpCurrentDate=null,dpDeleteId=null;
-function openDatePopup(ds){if(!ds)return;dpCurrentDate=ds;const bikri=DB.get(K.BIKRI),entries=bikri.filter(r=>r.date===ds);const d=parseLocalDate(ds);const dateLabel=d.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const isToday=ds===TSTR;const titleEl=document.getElementById('dp-title'),subEl=document.getElementById('dp-sub');titleEl.textContent='📅 '+dateLabel;titleEl.style.color=entries.length>0?'#5dea5d':'#f0c050';document.querySelector('.date-popup-sheet').style.borderTopColor=entries.length>0?'#2dba4d':'#f0b040';subEl.textContent=isToday?'आज · '+(entries.length>0?entries.length+' एंट्री':'कोई नहीं'):(entries.length>0?entries.length+' एंट्री':'कोई एंट्री नहीं');subEl.style.color=entries.length>0?'#2a7a2a':'#8a6020';const content=document.getElementById('dp-content');content.innerHTML='';if(entries.length>0){entries.forEach(r=>{const rating=r.rating||'';let cls='dp-entry-card';let profCol,lblCol;if(rating.includes('बहुत अच्छा')){cls+=' dp-great';profCol='#5dea5d';lblCol='#3a8a3a';}else if(rating.includes('अच्छा')){cls+=' dp-ok';profCol='#f0b040';lblCol='#8a6020';}else{cls+=' dp-slow';profCol='#f06060';lblCol='#6a2020';}const profit=calcEntryProfit(r),margin=r.sales>0?Math.round((profit/r.sales)*100):0;const card=document.createElement('div');card.className=cls;card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div class="dp-rating" style="color:${profCol};">${rating}</div><div class="dp-grid"><div class="dp-item" style="color:${lblCol};">बिक्री: <span style="font-weight:800;color:${profCol};">${fmt(r.sales)}</span></div><div class="dp-item" style="color:#8a6020;">खर्चा: <span style="font-weight:800;color:#f0c050;">${fmt(r.expense)}</span></div>${r.cash?`<div class="dp-item" style="color:#2a6a3a;">नकद: <span style="font-weight:800;color:#3dca6a;">${fmt(r.cash)}</span></div>`:''} ${r.upi?`<div class="dp-item" style="color:#305080;">UPI: <span style="font-weight:800;color:#60b0f0;">${fmt(r.upi)}</span></div>`:''} ${r.udhaar?`<div class="dp-item" style="color:#6a2020;">उधार: <span style="font-weight:800;color:#f06060;">${fmt(r.udhaar)}</span></div>`:''}</div>${r.notes?`<div class="dp-note">📝 ${r.notes}</div>`:''}</div><div class="dp-right"><div class="dp-profit">${fmt(profit)}</div><div class="dp-margin">${margin}%</div></div></div><div class="dp-actions"><button class="dp-edit-btn">✏️ सुधारें</button><button class="dp-del-btn">🗑️ हटाएं</button></div>`;card.querySelector('.dp-edit-btn').onclick=()=>{currentEntry={type:K.BIKRI,id:r.id,data:r};closeDatePopupDirect();setTimeout(()=>buildEditSheet(K.BIKRI,r),200);};card.querySelector('.dp-del-btn').onclick=()=>{dpDeleteId=r.id;document.getElementById('confirm-popup').classList.add('show');};content.appendChild(card);});}else{content.innerHTML=`<div class="dp-empty-box"><div class="dp-empty-icon">📋</div><div class="dp-empty-title">इस दिन कोई एंट्री नहीं</div><div class="dp-empty-sub">नई एंट्री जोड़ना चाहते हैं?</div></div><button class="dp-add-btn" id="dp-add-btn">➕ इस तारीख की एंट्री जोड़ें</button>`;document.getElementById('dp-add-btn').onclick=()=>{closeDatePopupDirect();document.getElementById('e-date').value=ds;setTimeout(()=>go('s-entry'),200);};}document.getElementById('date-popup-overlay').classList.add('show');}
+function openDatePopup(ds){if(!ds)return;dpCurrentDate=ds;const bikri=DB.get(K.BIKRI),entries=bikri.filter(r=>r.date===ds);const d=parseLocalDate(ds);const dateLabel=d.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const isToday=ds===TSTR;const titleEl=document.getElementById('dp-title'),subEl=document.getElementById('dp-sub');titleEl.textContent='📅 '+dateLabel;titleEl.style.color=entries.length>0?'#5dea5d':'#f0c050';document.querySelector('.date-popup-sheet').style.borderTopColor=entries.length>0?'#2dba4d':'#f0b040';subEl.textContent=isToday?'आज · '+(entries.length>0?entries.length+' एंट्री':'कोई नहीं'):(entries.length>0?entries.length+' एंट्री':'कोई एंट्री नहीं');subEl.style.color=entries.length>0?'#2a7a2a':'#8a6020';const content=document.getElementById('dp-content');content.innerHTML='';if(entries.length>0){entries.forEach(r=>{const rating=r.rating||'';let cls='dp-entry-card';let profCol,lblCol;if(rating.includes('बहुत अच्छा')){cls+=' dp-great';profCol='#5dea5d';lblCol='#3a8a3a';}else if(rating.includes('अच्छा')){cls+=' dp-ok';profCol='#f0b040';lblCol='#8a6020';}else{cls+=' dp-slow';profCol='#f06060';lblCol='#6a2020';}const profit=calcEntryProfit(r),margin=r.sales>0?Math.round((profit/r.sales)*100):0;const card=document.createElement('div');card.className=cls;card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div class="dp-rating" style="color:${profCol};">${rating}</div><div class="dp-grid"><div class="dp-item" style="color:${lblCol};">बिक्री: <span style="font-weight:800;color:${profCol};">${fmt(r.sales)}</span></div><div class="dp-item" style="color:#cc7a47;">खर्चा: <span style="font-weight:800;color:#e8c898;">${fmt(r.expense)}</span></div>${r.cash?`<div class="dp-item" style="color:#6ab070;">नकद: <span style="font-weight:800;color:#d4a850;">${fmt(r.cash)}</span></div>`:''} ${r.upi?`<div class="dp-item" style="color:#4a90d4;">UPI: <span style="font-weight:800;color:#8ab8e8;">${fmt(r.upi)}</span></div>`:''} ${r.udhaar?`<div class="dp-item" style="color:#ff8aa8;">उधार: <span style="font-weight:800;color:#ff8aa8;">${fmt(r.udhaar)}</span></div>`:''}</div>${r.notes?`<div class="dp-note">📝 ${r.notes}</div>`:''}</div><div class="dp-right"><div class="dp-profit">${fmt(profit)}</div><div class="dp-margin">${margin}%</div></div></div><div class="dp-actions"><button class="dp-edit-btn">✏️ सुधारें</button><button class="dp-del-btn">🗑️ हटाएं</button></div>`;card.querySelector('.dp-edit-btn').onclick=()=>{currentEntry={type:K.BIKRI,id:r.id,data:r};closeDatePopupDirect();setTimeout(()=>buildEditSheet(K.BIKRI,r),200);};card.querySelector('.dp-del-btn').onclick=()=>{dpDeleteId=r.id;document.getElementById('confirm-popup').classList.add('show');};content.appendChild(card);});}else{content.innerHTML=`<div class="dp-empty-box"><div class="dp-empty-icon">📋</div><div class="dp-empty-title">इस दिन कोई एंट्री नहीं</div><div class="dp-empty-sub">नई एंट्री जोड़ना चाहते हैं?</div></div><button class="dp-add-btn" id="dp-add-btn">➕ इस तारीख की एंट्री जोड़ें</button>`;document.getElementById('dp-add-btn').onclick=()=>{closeDatePopupDirect();document.getElementById('e-date').value=ds;setTimeout(()=>go('s-entry'),200);};}document.getElementById('date-popup-overlay').classList.add('show');}
 function closeDatePopup(e){if(e.target===document.getElementById('date-popup-overlay'))closeDatePopupDirect();}
 function closeDatePopupDirect(){document.getElementById('date-popup-overlay').classList.remove('show');dpCurrentDate=null;}
 let entryMode='quick';
@@ -2434,8 +2437,8 @@ let openHafta=null;
 let activeHafta=CUR_HAFTA;
 function toggleHafta(hNum){for(let i=1;i<=4;i++)document.getElementById(`hafta-panel-${i}`).classList.remove('open');document.querySelectorAll('.hafta-card-past').forEach(c=>c.classList.remove('hafta-card-selected'));if(openHafta===hNum){openHafta=null;activeHafta=CUR_HAFTA;loadMaalHome();loadKacchaHome();const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(inHafta(r.date,CUR_HAFTA-1)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);const mT=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;const kT=parseInt((document.getElementById('w-kaccha').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-mT-kT-tE));return;}else{openHafta=hNum;document.getElementById(`hafta-panel-${hNum}`).classList.add('open');if(hNum!==CUR_HAFTA){const allCards=Array.from(document.getElementById('hafta-grid').children);const clickedCard=allCards[hNum-1];if(clickedCard&&clickedCard.classList.contains('hafta-card-past'))clickedCard.classList.add('hafta-card-selected');}}activeHafta=hNum;loadMaalHome();loadKacchaHome();const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(inHafta(r.date,activeHafta-1)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);const mT=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;const kT=parseInt((document.getElementById('w-kaccha').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-mT-kT-tE));}
 function buildHaftaCards(){const bikri=DB.get(K.BIKRI),udhaar=DB.get(K.UDHAAR);const grid=document.getElementById('hafta-grid');grid.innerHTML='';for(let h=0;h<4;h++){const hNum=h+1,isCur=(hNum===CUR_HAFTA),range=HAFTA_RANGES[h];let bikriTotal=0,gallaTotal=0,udhaarTotal=0,expenseTotal=0,udhaarFromRecords=0;bikri.forEach(r=>{if(inHafta(r.date,h)){bikriTotal+=r.sales||0;gallaTotal+=calcEntryProfit(r);udhaarTotal+=r.udhaar||0;expenseTotal+=r.expense||0;}});udhaarTotal=0;document.getElementById(`hv-bikri-${hNum}`).textContent=fmt(bikriTotal);document.getElementById(`hv-galla-${hNum}`).textContent=fmt(gallaTotal);const uEl=document.getElementById(`hv-udhaar-${hNum}`);if(uEl)uEl.textContent=fmt(udhaarTotal);document.getElementById(`hv-expense-${hNum}`).textContent=fmt(expenseTotal);document.getElementById(`hpd-${hNum}`).textContent=`${range.start}–${range.end} ${HI_MONTHS[CUR_MONTH]}`;if(isCur){const daysDone=Math.min(CUR_DAY-range.start+1,range.end-range.start+1),daysTotal=range.end-range.start+1;const pct=Math.max(0,Math.round((daysDone/daysTotal)*100));document.getElementById('hpb-4').textContent=`${Math.max(1,daysDone)}/${daysTotal} दिन`;document.getElementById('hafta-pbar').style.width=pct+'%';}const card=document.createElement('div');card.className='hafta-card '+(isCur?'hafta-card-cur':'hafta-card-past');card.innerHTML=`${isCur?'<div class="chaluu-badge">● चालू</div>':''}<div class="hafta-card-name">हफ्ता-${hNum}</div><div class="hafta-card-dates">${range.start}–${range.end}</div><div class="hafta-card-divider"></div><div class="hafta-card-amt">${fmt(bikriTotal)}</div><div class="hafta-card-sublbl">बिक्री</div><div class="hafta-card-hint">▼ देखें</div>`;card.onclick=()=>toggleHafta(hNum);grid.appendChild(card);}}
-function loadUdhaar(){const el=document.getElementById('udhaar-list');el.innerHTML='';const rows=DB.get(K.UDHAAR);if(!rows.length){el.innerHTML='<div class="empty">🤝<br>कोई उधार नहीं है</div>';return;}const hint=document.createElement('div');hint.style.cssText='font-size:9px;color:#333;text-align:center;margin-bottom:8px;';hint.textContent='देर तक दबाएं — सुधारें या हटाएं';el.appendChild(hint);let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const dotColor=type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a';const dotColor2=type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${initials(r.name)}</div><div><div class="u-name">${r.name||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${dotColor};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${dotColor2};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});const summary=document.createElement('div');summary.className='u-summary';summary.innerHTML=`<div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#f06060;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#f06060;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#f0b040;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#3dca6a;">${settledCount}</div></div>`;el.appendChild(summary);}
-function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#4dca4d;">${fmt(data.profit)}</div><div style="font-size:9px;color:#f0b040;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;el.appendChild(div);});}
+function loadUdhaar(){const el=document.getElementById('udhaar-list');el.innerHTML='';const rows=DB.get(K.UDHAAR);if(!rows.length){el.innerHTML='<div class="empty">🤝<br>कोई उधार नहीं है</div>';return;}const hint=document.createElement('div');hint.style.cssText='font-size:9px;color:#333;text-align:center;margin-bottom:8px;';hint.textContent='देर तक दबाएं — सुधारें या हटाएं';el.appendChild(hint);let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const dotColor=type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a';const dotColor2=type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${initials(r.name)}</div><div><div class="u-name">${r.name||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${dotColor};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${dotColor2};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});const summary=document.createElement('div');summary.className='u-summary';summary.innerHTML=`<div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#cc7a47;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#d4a850;">${settledCount}</div></div>`;el.appendChild(summary);}
+function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#d4a850;">${fmt(data.profit)}</div><div style="font-size:9px;color:#cc7a47;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;el.appendChild(div);});}
 (function(){if(localStorage.getItem('hk_app_lock_enabled')==='true'){const s=document.getElementById('app-lock-screen');if(s)s.style.display='flex';}})();
 const LOCK_KEY='hk_app_lock_enabled';
 const LOCK_TIMEOUT=5*60*1000;

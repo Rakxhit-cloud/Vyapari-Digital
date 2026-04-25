@@ -2630,8 +2630,10 @@ function ubLoadList() {
 function ubFilter(type, el) {
   UB_FILTER = type;
   document.querySelectorAll('.ub-pill').forEach(p => {
+    p.classList.remove('active');
     p.style.background = ''; p.style.color = '';
   });
+  if (el) el.classList.add('active');
   ubLoadList();
 }
 

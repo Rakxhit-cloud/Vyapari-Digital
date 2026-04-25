@@ -2614,7 +2614,7 @@ function ubLoadList() {
           <div class="ub-amt-sub ub-amt-sub-${type[0]}">बाकी रकम</div>
         </div>
       </div>
-      ${r.dueDate ? `<div class="ub-due-row"><div class="ub-due"><div class="ub-due-dot" style="background:${dueDotColor};"></div><div class="ub-due-txt ${dueTxtClass}">${dueLabel}</div></div><div style="font-size:8px;color:#3a1a1a;">दिया: ${ubFmt(given)}</div></div>` : ''}
+     ${r.dueDate && type !== 'settled' ? `<div class="ub-due-row"><div class="ub-due"><div class="ub-due-dot" style="background:${dueDotColor};"></div><div class="ub-due-txt ${dueTxtClass}">${dueLabel}</div></div><div style="font-size:8px;color:#3a1a1a;">दिया: ${ubFmt(given)}</div></div>` : ''}
       <div class="ub-prog-meta"><span class="ub-pm-${type[0]}">चुका: ${ubFmt(returned)}</span><span class="ub-pm-${type[0]}">${pct}% चुका</span></div>
       <div class="ub-pbar"><div class="ub-pf-${type[0]}" style="width:${pct}%"></div></div>
       <div class="ub-actions">

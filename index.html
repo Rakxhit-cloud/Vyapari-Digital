@@ -234,8 +234,8 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .edit-input:focus { outline: none; border-color: #2dba4d; }
 .edit-save { width: 100%; background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 12px; }
 .edit-cancel { width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; font-size: 13px; font-weight: 700; padding: 11px; border-radius: 8px; cursor: pointer; margin-top: 6px; }
-.more-menu { display: none; position: fixed; bottom: 62px; right: 8px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 6px; z-index: 300; min-width: 150px; }
-.more-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; border-radius: 8px; font-size: 12px; color: #e0e0e0; }
+.more-menu { display: none; position: fixed; bottom: 90px; right: 8px; background: #0a1530; border: 1px solid #2a4078; border-radius: 14px; padding: 8px; z-index: 300; min-width: 180px; box-shadow: 0 8px 24px rgba(10, 21, 48, 0.6); }
+.more-item { display: flex; align-items: center; gap: 12px; padding: 12px; cursor: pointer; border-radius: 8px; font-size: 13px; color: #e8d8b8; font-weight: 500; }
 .more-item:hover { background: #222; }
 .fab { position: fixed; bottom: 86px; right: 18px; width: 54px; height: 54px; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border-radius: 50%; border: 2px solid #f0d890; color: #1a1208; font-size: 28px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 200; transition: transform .15s; box-shadow: 0 4px 12px rgba(212, 168, 80, 0.4); }
 .fab:active { transform: scale(.92); }
@@ -251,25 +251,25 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .screen.active { display: block; }
 .pad { padding: 0 14px; }
 .fw { padding: 12px; }
-.fcard { background: #161616; border: 1px solid #1e1e1e; border-radius: 10px; padding: 12px; }
-.frow { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a1a1a; }
+.fcard { background: #0a1530; border: 1px solid #1a2548; border-radius: 12px; padding: 14px; }
+.frow { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1a2548; gap: 8px; }
 .frow:last-of-type { border-bottom: none; }
-.flbl { font-size: 11px; color: #888; flex: 1; }
-.finput { background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #e0e0e0; width: 140px; text-align: right; }
-.finput:focus { outline: none; border-color: #2dba4d; background: #1a2a1a; }
+.flbl { font-size: 12px; color: #b0a0e8; flex: 1; font-weight: 500; }
+.finput { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #e8d8b8; width: 150px; text-align: right; transition: all .15s ease; }
+.finput:focus { outline: none; border-color: #d4a850; background: #1a3060; }
 .rsec { background: #0d1f0d; border: 1px solid #1a3a1a; border-radius: 9px; padding: 10px 12px; margin-top: 10px; }
-.rrow { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #122012; }
+.rrow { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #2a4078; }
 .rrow:last-child { border-bottom: none; }
-.rlbl { font-size: 11px; font-weight: 700; color: #3a7a3a; }
-.rg { font-size: 18px; font-weight: 800; color: #4dca4d; }
-.ra { font-size: 13px; font-weight: 700; color: #f0b040; }
-.rr { font-size: 12px; font-weight: 700; }
-.sbtn { width: 100%; background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 12px; }
+.rlbl { font-size: 11px; font-weight: 500; color: #b0a0e8; }
+.rg { font-size: 18px; font-weight: 500; color: #d4a850; }
+.ra { font-size: 13px; font-weight: 500; color: #cc7a47; }
+.rr { font-size: 12px; font-weight: 500; }
+.sbtn { width: 100%; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border: 2px solid #f0d890; color: #1a1208; font-size: 14px; font-weight: 500; padding: 13px; border-radius: 10px; cursor: pointer; margin-top: 14px; box-shadow: 0 2px 0 #8a6818; }
 .sbtn:disabled { opacity: .5; cursor: not-allowed; }
 .pay-toggle { display: flex; gap: 6px; margin-top: 5px; }
-.pbtn { flex: 1; border-radius: 6px; padding: 6px; text-align: center; cursor: pointer; border: 1px solid #2a2a2a; background: #1a1a1a; font-size: 9px; color: #666; font-weight: 700; }
-.pbtn.pn { background: #1a4a2a; border-color: #2d6a3a; color: #4dca4d; }
-.pbtn.pu { background: #2a1800; border-color: #4a3000; color: #f0b040; }
+.pbtn { flex: 1; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; border: 1px solid #2a4078; background: #14254a; font-size: 11px; color: #8aa0d8; font-weight: 500; }
+.pbtn.pn { background: #0a2820; border: 1.5px solid #6ab070; color: #a0e8a8; }
+.pbtn.pu { background: #2a1810; border: 1.5px solid #cc7a47; color: #e8c898; }
 .mcard { background: #161616; border: 1px solid #1e1e1e; border-radius: 9px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 .gcard { background: #161616; border: 1px solid #1e1e1e; border-radius: 9px; padding: 12px; margin-bottom: 8px; }
 .gbar-bg { background: #1a1a1a; border-radius: 4px; height: 7px; overflow: hidden; margin: 6px 0; }
@@ -1216,10 +1216,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 <div class="more-menu" id="more-menu">
-  <div class="more-item" onclick="appLockToggle();toggleMore();"><div style="width:32px;height:32px;border-radius:8px;background:#1a1a3a;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔐</div> App Lock: <span id="lock-status-lbl" style="margin-left:auto;font-size:9px;padding:2px 8px;border-radius:8px;background:#0d2a1a;color:#4dca4d;border:1px solid #1a4a2a;">बंद</span></div>
-  <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:32px;height:32px;border-radius:8px;background:#1a1500;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📅</div> महीने का हिसाब</div>
-  <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:32px;height:32px;border-radius:8px;background:#1a0808;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🎯</div> लक्ष्य</div>
-  <div class="more-item" style="border-bottom:none;" onclick="signOut();"><div style="width:32px;height:32px;border-radius:8px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🚪</div> <span style="color:#888;">लॉग आउट</span></div>
+  <div class="more-item" onclick="appLockToggle();toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:1.5px solid #7a6cf0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div> <span style="color:#e8d8b8;font-weight:500;">App Lock:</span> <span id="lock-status-lbl" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:6px;background:#0a2820;color:#a0e8a8;border:1px solid #6ab070;font-weight:500;">बंद</span></div>
+  <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4a3818 0%,#2a1808 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📅</div> <span style="color:#e8d8b8;font-weight:500;">महीने का हिसाब</span></div>
+  <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1810 0%,#1a0f08 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎯</div> <span style="color:#e8d8b8;font-weight:500;">लक्ष्य</span></div>
+  <div class="more-item" style="border-bottom:none;" onclick="signOut();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -1360,7 +1360,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
         <div style="background:#1a1000;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#f0b040;font-weight:700;margin-bottom:3px;">खर्चा</div><div id="month-detail-expense" style="font-size:13px;font-weight:800;color:#f0b040;"></div></div>
       </div>
     </div>
-    <div class="sec-head"><div class="sec-bar" style="background:#4dca4d;"></div><span class="sec-label" style="color:#4dca4d;">💰 बिक्री और गल्ला/कमाई</span><div class="sec-line" style="background:#1a3a1a;"></div></div>
+    <div class="sec-head"><div class="sec-bar" style="background:#d4a850;"></div><span class="sec-label" style="color:#d4a850;">💰 बिक्री और गल्ला/कमाई</span><div class="sec-line" style="background:#2a4078;"></div></div>
     <div class="kpi-grid">
       <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl">💰 बिक्री</div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
       <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl">📈 गल्ला/कमाई</div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
@@ -1425,8 +1425,8 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 <div id="s-entry" class="screen">
   <div class="header" style="background:#111;border-bottom:none;">
     <div class="header-left">
-      <div style="width:46px;height:46px;background:#0d2a0d;border:2px solid #2dba4d;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <span style="font-size:15px;">📝</span><span style="font-size:13px;">⚡</span>
+      <div style="width:50px;height:50px;background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border:2px solid #d4a850;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 0 0 1px #2a1808, 0 2px 8px rgba(212,168,80,0.2);">
+        <span style="font-size:18px;">📝</span><span style="font-size:14px;">⚡</span>
       </div>
       <div><div class="header-title" id="entry-header-title">⚡ तुरंत एंट्री</div><div class="header-sub" id="entry-header-sub">Quick Entry · 30 सेकंड में</div></div>
     </div>
@@ -1460,7 +1460,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
         <div style="padding:14px;">
           <div style="font-size:11px;color:#888;font-weight:700;margin-bottom:10px;">📊 आज का नतीजा · Today's Result</div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1e1e1e;">
-            <span style="font-size:12px;color:#4dca4d;font-weight:700;">आज का गल्ला/कमाई</span>
+            <span style="font-size:12px;color:#d4a850;font-weight:500;">आज का गल्ला/कमाई</span>
             <span style="font-size:22px;font-weight:800;color:#4dca4d;" id="q-profit">₹0</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1e1e1e;">
@@ -1468,7 +1468,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
             <span style="font-size:16px;font-weight:800;color:#f0b040;" id="q-margin">0%</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
-            <span style="font-size:12px;color:#a855f7;font-weight:700;">दिन कैसा रहा</span>
+            <span style="font-size:12px;color:#b0a0e8;font-weight:500;">दिन कैसा रहा</span>
             <span style="font-size:14px;font-weight:800;color:#888;" id="q-rating">—</span>
           </div>
         </div>
@@ -1504,7 +1504,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   </div>
 </div>
 <div id="s-maal" class="screen">
-  <div class="header" style="border-bottom-color:#3dca6a;"><div class="header-left"><div class="header-icon" style="background:#3dca6a;">📦</div><div><div class="header-title">माल की खरीद</div><div class="header-sub" style="color:#3dca6a;">नया माल दर्ज करें</div></div></div></div>
+  <div class="header" style="border-bottom-color:#cc7a47;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#4a2818 0%,#6a3818 50%,#2a1810 100%);border:2px solid #cc7a47;">📦</div><div><div class="header-title">माल की खरीद</div><div class="header-sub" style="color:#cc7a47;">नया माल दर्ज करें</div></div></div></div>
   <div class="fw">
     <div class="fcard">
       <div class="frow"><div class="flbl">📅 तारीख</div><input type="date" class="finput" id="m-date"></div>
@@ -1515,17 +1515,17 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <input type="hidden" id="m-pay" value="nakad">
       <div class="frow"><div class="flbl">📝 नोट</div><input type="text" class="finput" id="m-note" placeholder="कोई बात..."></div>
     </div>
-   <div style="background:#0a1a0f;border:1px solid #1a3a2a;border-left:3px solid #3dca6a;border-radius:0 9px 9px 0;padding:10px 12px;margin-top:10px;">
-      <div class="rrow" style="border-color:#0f2a1a;"><div class="rlbl" style="color:#2a8a4a;">इस हफ़्ते कुल माल</div><div style="font-size:15px;font-weight:800;color:#3dca6a;" id="mw-total">₹0</div></div>
-      <div class="rrow" style="border-color:#0f2a1a;"><div class="rlbl" style="color:#2a8a4a;">नकद दिया</div><div class="rg" id="mw-nakad">₹0</div></div>
-      <div class="rrow"><div class="rlbl" style="color:#2a8a4a;">सप्लायर को बाकी</div><div class="ra" id="mw-pending">₹0</div></div>
+   <div style="background:linear-gradient(135deg, #2a1810 0%, #1a0f08 100%);border:1px solid #4a2818;border-left:3px solid #cc7a47;border-radius:0 9px 9px 0;padding:12px;margin-top:10px;">
+      <div class="rrow" style="border-color:#3a2818;"><div class="rlbl" style="color:#d4a850;">इस हफ़्ते कुल माल</div><div style="font-size:15px;font-weight:500;color:#e8d8b8;" id="mw-total">₹0</div></div>
+      <div class="rrow" style="border-color:#3a2818;"><div class="rlbl" style="color:#6ab070;">नकद दिया</div><div style="font-size:14px;font-weight:500;color:#a0e8a8;" id="mw-nakad">₹0</div></div>
+      <div class="rrow"><div class="rlbl" style="color:#cc7a47;">सप्लायर को बाकी</div><div style="font-size:14px;font-weight:500;color:#e8c898;" id="mw-pending">₹0</div></div>
     </div>
-    <button class="sbtn" onclick="saveMaal()" style="background:#0d2a1a;border-color:#2dba4d;color:#3dca6a;">💾 माल की एंट्री सेव करें</button>
+    <button class="sbtn" onclick="saveMaal()">💾 माल की एंट्री सेव करें</button>
   </div>
 </div>
 
 <div id="s-kaccha" class="screen">
-  <div class="header" style="border-bottom-color:#50a0f0;"><div class="header-left"><div class="header-icon" style="background:#50a0f0;">🥣</div><div><div class="header-title">कच्चा माल</div><div class="header-sub" style="color:#50a0f0;">आज का सामान दर्ज करें</div></div></div></div>
+  <div class="header" style="border-bottom-color:#4a90d4;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#14254a 0%,#1a3060 50%,#0a1530 100%);border:2px solid #4a90d4;">🥣</div><div><div class="header-title">कच्चा माल</div><div class="header-sub" style="color:#4a90d4;">आज का सामान दर्ज करें</div></div></div></div>
   <div class="fw">
     <div class="fcard">
       <div class="frow"><div class="flbl">📅 तारीख</div><input type="date" class="finput" id="k-date"></div>
@@ -1536,27 +1536,27 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
       <input type="hidden" id="k-pay" value="nakad">
       <div class="frow"><div class="flbl">📝 नोट</div><input type="text" class="finput" id="k-note" placeholder="कोई बात..."></div>
     </div>
-   <div style="background:#080f1a;border:1px solid #1a2a4a;border-left:3px solid #50a0f0;border-radius:0 9px 9px 0;padding:10px 12px;margin-top:10px;">
-      <div class="rrow" style="border-color:#0f1a2a;"><div class="rlbl" style="color:#305080;">इस हफ़्ते कुल सामान</div><div style="font-size:15px;font-weight:800;color:#50a0f0;" id="kw-total">₹0</div></div>
-      <div class="rrow" style="border-color:#0f1a2a;"><div class="rlbl" style="color:#305080;">नकद चुकाया</div><div style="font-size:14px;font-weight:800;color:#50a0f0;" id="kw-nakad">₹0</div></div>
-      <div class="rrow"><div class="rlbl" style="color:#305080;">उधार बाकी</div><div class="ra" id="kw-pending">₹0</div></div>
+   <div style="background:linear-gradient(135deg, #14254a 0%, #0a1530 100%);border:1px solid #2a4078;border-left:3px solid #4a90d4;border-radius:0 9px 9px 0;padding:12px;margin-top:10px;">
+      <div class="rrow" style="border-color:#2a4078;"><div class="rlbl" style="color:#4a90d4;">इस हफ़्ते कुल सामान</div><div style="font-size:15px;font-weight:500;color:#e8d8b8;" id="kw-total">₹0</div></div>
+      <div class="rrow" style="border-color:#2a4078;"><div class="rlbl" style="color:#6ab070;">नकद चुकाया</div><div style="font-size:14px;font-weight:500;color:#a0e8a8;" id="kw-nakad">₹0</div></div>
+      <div class="rrow"><div class="rlbl" style="color:#cc7a47;">उधार बाकी</div><div style="font-size:14px;font-weight:500;color:#e8c898;" id="kw-pending">₹0</div></div>
     </div>
-    <button class="sbtn" onclick="saveKaccha()" style="background:#080f1a;border-color:#50a0f0;color:#50a0f0;">💾 कच्चा माल सेव करें</button>
+    <button class="sbtn" onclick="saveKaccha()">💾 कच्चा माल सेव करें</button>
   </div>
 </div>
 
 <div id="s-udhaar" class="screen">
-  <div class="header" style="border-bottom-color:#f06060;"><div class="header-left"><div class="header-icon" style="background:#f06060;">🤝</div><div><div class="header-title">उधार बही</div><div class="header-sub" style="color:#f06060;">किसका बाकी है</div></div></div></div>
+  <div class="header" style="border-bottom-color:#7a6cf0;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:2px solid #7a6cf0;">🤝</div><div><div class="header-title">उधार बही</div><div class="header-sub" style="color:#b0a0e8;">किसका बाकी है</div></div></div></div>
   <div class="pad" style="padding-top:12px;" id="udhaar-list"><div class="loading">⏳</div></div>
 </div>
 
 <div id="s-monthly" class="screen">
-  <div class="header"><div class="header-left"><div class="header-icon">📅</div><div><div class="header-title">महीने का हिसाब</div><div class="header-sub">मासिक सारांश</div></div></div></div>
+  <div class="header"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border:2px solid #d4a850;">📅</div><div><div class="header-title">महीने का हिसाब</div><div class="header-sub">मासिक सारांश</div></div></div></div>
   <div class="pad" style="padding-top:12px;" id="monthly-list"><div class="loading">⏳</div></div>
 </div>
 
 <div id="s-goal" class="screen">
-  <div class="header"><div class="header-left"><div class="header-icon">🎯</div><div><div class="header-title">इस महीने का लक्ष्य</div><div class="header-sub">टारगेट ट्रैकर</div></div></div></div>
+  <div class="header"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:2px solid #7a6cf0;">🎯</div><div><div class="header-title">इस महीने का लक्ष्य</div><div class="header-sub" style="color:#b0a0e8;">टारगेट ट्रैकर</div></div></div></div>
   <div class="fw">
     <div class="fcard" style="margin-bottom:12px;">
       <div class="frow"><div class="flbl">📅 महीना</div><input type="month" class="finput" id="g-month"></div>

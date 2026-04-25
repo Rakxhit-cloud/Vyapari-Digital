@@ -547,12 +547,18 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .ub-header-title { font-size: 15px; font-weight: 800; color: #fff; }
 .ub-header-sub { font-size: 9px; color: #b0a0e8; margin-top: 2px; }
 .ub-add-btn { background: #f0c040; border: 2px solid #ffd870; color: #2a1808; font-size: 12px; font-weight: 500; padding: 9px 14px; border-radius: 10px; cursor: pointer; }
-.ub-summary { background: #1a0808; display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr; border-bottom: 1px solid #2a1010; }
-.ub-sum-item { text-align: center; padding: 10px 6px; }
-.ub-sum-div { background: #2a1010; }
-.ub-sum-lbl { font-size: 8px; color: #8a3030; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; margin-bottom: 3px; }
-.ub-sum-val { font-size: 15px; font-weight: 800; }
-.ub-sv-r { color: #f06060; } .ub-sv-a { color: #f0b040; } .ub-sv-g { color: #4dca4d; }
+.ub-summary { background: #0f0f0f; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 10px 12px; border-bottom: none; }
+.ub-sum-item { text-align: center; padding: 12px 8px; border-radius: 10px; }
+.ub-sum-item.ubs-gold { background: #2a1a4a; border-top: 2px solid #f0c040; }
+.ub-sum-item.ubs-coral { background: #2a0818; border-top: 2px solid #e84878; }
+.ub-sum-item.ubs-teal { background: #082a2a; border-top: 2px solid #20c0a0; }
+.ub-sum-div { display: none; }
+.ub-sum-lbl { font-size: 9px; font-weight: 500; letter-spacing: .3px; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-bottom: 6px; }
+.ubs-gold .ub-sum-lbl { background: #4a3818; color: #ffd870; }
+.ubs-coral .ub-sum-lbl { background: #4a182a; color: #ffa0c0; }
+.ubs-teal .ub-sum-lbl { background: #184a3a; color: #88e8d0; }
+.ub-sum-val { font-size: 18px; font-weight: 500; }
+.ub-sv-r { color: #ff8aa8; } .ub-sv-a { color: #ffe090; } .ub-sv-g { color: #6ce8c8; }
 .ub-search-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #0f0f0f; border-bottom: 1px solid #1a1a1a; }
 .ub-search-inp { flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #e0e0e0; outline: none; }
 .ub-search-inp::placeholder { color: #555; }

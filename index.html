@@ -2802,7 +2802,7 @@ function ubNavGo(screenId, navId) {
       activeNav.querySelectorAll('.ub-nav-dot').forEach(d => d.remove());
      const dot = document.createElement('div');
       dot.className = 'ub-nav-dot';
-      dot.style.cssText = 'width:4px;height:4px;background:#f06060;border-radius:50%;margin-top:2px;';
+     dot.style.cssText = 'display:none;';
       activeNav.appendChild(dot);
     }
   }

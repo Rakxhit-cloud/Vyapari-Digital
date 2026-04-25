@@ -238,10 +238,12 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .fab { position: fixed; bottom: 76px; right: 18px; width: 52px; height: 52px; background: #2dba4d; border-radius: 50%; border: none; color: white; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 200; transition: transform .15s; }
 .fab:active { transform: scale(.92); }
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 1px solid #1e1e1e; display: flex; justify-content: space-around; padding: 7px 0 5px; z-index: 100; }
-.nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 3px 8px; }
-.nav-icon { font-size: 18px; }
-.nav-lbl { font-size: 9px; color: #555; }
-.nav-item.active .nav-lbl { color: #4dca4d; font-weight: 700; }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 4px 12px 8px; min-width: 60px; }
+.nav-icon { font-size: 24px; line-height: 1; opacity: 0.6; }
+.nav-lbl { font-size: 10px; color: #8878c0; font-weight: 500; }
+.nav-item.active { border-bottom: 2px solid #f0c040; padding-bottom: 6px; }
+.nav-item.active .nav-icon { opacity: 1; }
+.nav-item.active .nav-lbl { color: #ffe090; font-weight: 500; }
 .nav-dot { width: 4px; height: 4px; background: #4dca4d; border-radius: 50%; }
 .screen { display: none; padding-bottom: 90px; }
 .screen.active { display: block; }

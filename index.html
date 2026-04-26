@@ -74,11 +74,19 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .header-date { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 6px 10px; text-align: center; }
 .hd-day { font-size: 9px; color: #d4a850; font-weight: 500; }
 .hd-date { font-size: 10px; color: #e8d8b8; font-weight: 500; }
-.sec-head { display: flex; align-items: center; gap: 7px; margin: 14px 0 7px; }
-.sec-bar { width: 3px; border-radius: 2px; flex-shrink: 0; height: 16px; }
-.sec-label { font-size: 10px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; white-space: nowrap; }
-.sec-line { flex: 1; height: 1px; }
-.sec-badge { font-size: 8px; padding: 2px 8px; border-radius: 10px; font-weight: 700; white-space: nowrap; }
+.sec-head { display: flex; align-items: center; gap: 12px; margin: 18px 0 10px; padding: 4px; }
+.sec-icon { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.sec-icon-gold { background: linear-gradient(135deg, #4a3818 0%, #2a1808 100%); border: 1.5px solid #d4a850; }
+.sec-icon-copper { background: linear-gradient(135deg, #4a2818 0%, #2a1810 100%); border: 1.5px solid #cc7a47; }
+.sec-icon-sapphire { background: linear-gradient(135deg, #14254a 0%, #1a3060 100%); border: 1.5px solid #4a90d4; }
+.sec-icon-indigo { background: linear-gradient(135deg, #2a1a4a 0%, #1a1230 100%); border: 1.5px solid #7a6cf0; }
+.sec-text { flex: 1; min-width: 0; }
+.sec-title { font-size: 14px; font-weight: 500; line-height: 1.2; }
+.sec-sub { font-size: 9px; color: #b0a0e8; margin-top: 2px; letter-spacing: 0.3px; }
+.sec-bar { display: none; }
+.sec-label { font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; white-space: nowrap; }
+.sec-line { flex: 0; height: 1px; max-width: 50px; background: linear-gradient(90deg, transparent, currentColor); opacity: 0.4; align-self: stretch; margin: auto 0; min-width: 30px; }
+.sec-badge { font-size: 10px; padding: 4px 10px; border-radius: 6px; font-weight: 500; white-space: nowrap; }
 .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
 .kpi-card { border-radius: 9px; padding: 10px; cursor: pointer; transition: opacity .15s; user-select: none; }
 .kpi-card:active { opacity: .8; }
@@ -1441,11 +1449,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="qec-cta"><button class="qec-cta-btn" onclick="event.stopPropagation();quickEntryFromHome('quick')">शुरू करें →</button></div>
   </div>
 </div>
-   <div style="display:flex;align-items:center;gap:7px;margin:14px 0 8px;">
-      <div class="sec-bar" style="background:#f0b040;"></div>
-      <span class="sec-label" style="color:#cc7a47;font-size:9px;" id="month-nav-heading">📅 2026 — महीनेवार</span>
-      <div class="sec-line" style="background:#3a2a00;"></div>
-      <span class="sec-badge" style="background:#1a1200;color:#6a5020;border:1px solid #3a2000;font-size:6px;">चालू वर्ष</span>
+   <div style="display:flex;align-items:center;gap:10px;margin:14px 0 10px;padding:4px;">
+      <div class="sec-icon sec-icon-gold" style="width:36px;height:36px;font-size:18px;border-radius:9px;">📅</div>
+      <div class="sec-text"><div class="sec-title" style="color:#d4a850;font-size:13px;" id="month-nav-heading">2026 — महीनेवार</div><div class="sec-sub" style="font-size:9px;">Year Overview</div></div>
+      <span class="sec-badge" style="background:#4a3818;color:#d4a850;border:1px solid #d4a850;font-size:9px;padding:3px 8px;">चालू वर्ष</span>
     </div>
     <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
       <div onclick="monthNavSlide(-1)" id="month-nav-prev" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#cc7a47;flex-shrink:0;">◀</div>
@@ -1463,7 +1470,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
         <div style="background:#1a1000;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#cc7a47;font-weight:700;margin-bottom:3px;">खर्चा</div><div id="month-detail-expense" style="font-size:13px;font-weight:800;color:#cc7a47;"></div></div>
       </div>
     </div>
-    <div class="sec-head"><div class="sec-bar" style="background:#d4a850;"></div><span class="sec-label" style="color:#d4a850;">💰 बिक्री और गल्ला/कमाई</span><div class="sec-line" style="background:#2a4078;"></div></div>
+    <div class="sec-head"><div class="sec-icon sec-icon-gold">💰</div><div class="sec-text"><div class="sec-title" style="color:#d4a850;">बिक्री और गल्ला</div><div class="sec-sub">Sales & Cash Earnings</div></div><div class="sec-line" style="color:#d4a850;"></div></div>
     <div class="kpi-grid">
       <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl">💰 बिक्री</div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
       <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl">📈 गल्ला/कमाई</div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
@@ -1474,12 +1481,12 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
     
-    <div class="sec-head"><div class="sec-bar" style="background:#3dca6a;"></div><span class="sec-label" style="color:#d4a850;">📦 माल की खरीद / Goods Purchase</span><div class="sec-line" style="background:#1a3a2a;"></div><span class="sec-badge" style="background:#0a2a1a;color:#2dba4d;border:1px solid #1a4a2a;">महीने में</span></div>
+    <div class="sec-head"><div class="sec-icon sec-icon-copper">📦</div><div class="sec-text"><div class="sec-title" style="color:#cc7a47;">माल की खरीद</div><div class="sec-sub">Goods Purchase</div></div><span class="sec-badge" style="background:#4a2818;color:#cc7a47;border:1px solid #cc7a47;">महीने में</span></div>
     <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद दिया</span><span class="vg" id="h-maal-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार लिया</span><span class="va" id="h-maal-udhaar">₹0</span></div><div id="h-maal-pending-section" style="display:none;"><div class="ss-section-head ss-pending"><span style="color:#f0b040;">⚠</span><span style="color:#f0b040;font-weight:500;">जल्दी चुकाएं</span><span class="ss-count ss-count-amber" id="h-maal-pending-count">0</span></div><div id="h-maal-pending-list"></div></div><div id="h-maal-recent-section"><div class="ss-section-head ss-recent"><span style="color:#d4a850;">🕐</span><span style="color:#d4a850;font-weight:500;">हाल की खरीद</span><span class="ss-count ss-count-gold" id="h-maal-recent-count">0</span></div><div id="h-maal-recent-list"><div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">⏳</div></div></div><div class="ss-view-all" id="h-maal-view-all" onclick="openMaalLedger()" style="display:none;">देखें सारा · <span id="h-maal-total-count">0</span> entries →</div></div>
-    <div class="sec-head"><div class="sec-bar" style="background:#50a0f0;"></div><span class="sec-label" style="color:#4a90d4;">🥣 कच्चा माल / Raw Materials</span><div class="sec-line" style="background:#1a2a3a;"></div><span class="sec-badge" style="background:#0a1a2a;color:#3080c0;border:1px solid #1a3a5a;">महीने में</span></div>
+    <div class="sec-head"><div class="sec-icon sec-icon-sapphire">🪣</div><div class="sec-text"><div class="sec-title" style="color:#4a90d4;">कच्चा माल</div><div class="sec-sub">Raw Materials</div></div><span class="sec-badge" style="background:#14254a;color:#4a90d4;border:1px solid #4a90d4;">महीने में</span></div>
     <div class="sec-card sc-blue"><div class="mini-grid"><div class="mini-card mc-ba"><div class="mini-lbl">कुल सामान</div><div class="mini-val" id="h-kaccha-total">₹0</div></div><div class="mini-card mc-bb"><div class="mini-lbl">रोज़ औसत</div><div class="mini-val" id="h-kaccha-avg">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद चुकाया</span><span class="vb" id="h-kaccha-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार बाकी</span><span class="va" id="h-kaccha-udhaar">₹0</span></div><div id="h-kaccha-pending-section" style="display:none;"><div class="ss-section-head ss-pending"><span style="color:#f0b040;">⚠</span><span style="color:#f0b040;font-weight:500;">जल्दी चुकाएं</span><span class="ss-count ss-count-amber" id="h-kaccha-pending-count">0</span></div><div id="h-kaccha-pending-list"></div></div><div id="h-kaccha-recent-section"><div class="ss-section-head ss-recent"><span style="color:#d4a850;">🕐</span><span style="color:#d4a850;font-weight:500;">हाल का सामान</span><span class="ss-count ss-count-gold" id="h-kaccha-recent-count">0</span></div><div id="h-kaccha-recent-list"><div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">⏳</div></div></div><div class="ss-view-all" id="h-kaccha-view-all" onclick="openKacchaLedger()" style="display:none;">देखें सारा · <span id="h-kaccha-total-count">0</span> entries →</div></div>
     
-    <div class="sec-head"><div class="sec-bar" style="background:#d4a850;"></div><span class="sec-label" style="color:#d4a850;">📅 महीने की एंट्री</span><div class="sec-line" style="background:#2a4078;"></div></div>
+    <div class="sec-head"><div class="sec-icon sec-icon-indigo">📅</div><div class="sec-text"><div class="sec-title" style="color:#b0a0e8;">महीने की एंट्री</div><div class="sec-sub">Monthly Entries</div></div><div class="sec-line" style="color:#7a6cf0;"></div></div>
    <div class="mahiney-section">
       <div class="mahiney-header" onclick="toggleMahiney()">
         <div style="display:flex;align-items:center;gap:10px;">

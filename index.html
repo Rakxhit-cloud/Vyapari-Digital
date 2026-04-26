@@ -303,35 +303,35 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 
 .fab { position: fixed; bottom: 86px; right: 18px; width: 54px; height: 54px; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border-radius: 50%; border: 2px solid #f0d890; color: #1a1208; font-size: 28px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 200; transition: transform .15s; box-shadow: 0 4px 12px rgba(212, 168, 80, 0.4); }
 .fab:active { transform: scale(.92); }
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0a1530; border-top: 1px solid #2a4078; display: flex; justify-content: space-around; padding: 10px 8px 12px; z-index: 100; align-items: flex-end; gap: 4px; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0a1530; border-top: 1px solid #2a4078; display: flex; justify-content: space-around; padding: 12px 8px 14px; z-index: 100; align-items: flex-end; gap: 4px; }
 .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 4px 12px 8px; min-width: 60px; }
-.nav-icon { font-size: 24px; line-height: 1; opacity: 0.6; }
-.nav-lbl { font-size: 10px; color: #8878c0; font-weight: 500; }
+.nav-icon { font-size: 28px; line-height: 1; opacity: 0.65; }
+.nav-lbl { font-size: 11px; color: #8878c0; font-weight: 500; }
 .nav-item.active { border-bottom: 2px solid #f0c040; padding-bottom: 6px; }
 .nav-item.active .nav-icon { opacity: 1; }
-.nav-item.active .nav-lbl { color: #ffe090; font-weight: 500; }
+.nav-item.active .nav-lbl { color: #ffe090; font-weight: 500; font-size: 11px; }
 .nav-dot { display: none; }
-.screen { display: none; padding-bottom: 90px; }
+.screen { display: none; padding-bottom: 100px; }
 .screen.active { display: block; }
 .pad { padding: 0 14px; }
 .fw { padding: 12px; }
-.fcard { background: #0a1530; border: 1px solid #1a2548; border-radius: 12px; padding: 14px; }
-.frow { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1a2548; gap: 8px; }
+.fcard { background: #0a1530; border: 1px solid #1a2548; border-radius: 12px; padding: 16px; }
+.frow { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #1a2548; gap: 8px; }
 .frow:last-of-type { border-bottom: none; }
-.flbl { font-size: 12px; color: #b0a0e8; flex: 1; font-weight: 500; }
-.finput { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #e8d8b8; width: 150px; text-align: right; transition: all .15s ease; }
+.flbl { font-size: 13px; color: #b0a0e8; flex: 1; font-weight: 500; }
+.finput { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #e8d8b8; width: 160px; text-align: right; transition: all .15s ease; font-weight: 500; }
 .finput:focus { outline: none; border-color: #d4a850; background: #1a3060; }
 .rsec { background: #0d1f0d; border: 1px solid #1a3a1a; border-radius: 9px; padding: 10px 12px; margin-top: 10px; }
-.rrow { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #2a4078; }
+.rrow { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #2a4078; }
 .rrow:last-child { border-bottom: none; }
-.rlbl { font-size: 11px; font-weight: 500; color: #b0a0e8; }
-.rg { font-size: 18px; font-weight: 500; color: #d4a850; }
-.ra { font-size: 13px; font-weight: 500; color: #cc7a47; }
-.rr { font-size: 12px; font-weight: 500; }
+.rlbl { font-size: 13px; font-weight: 500; color: #b0a0e8; }
+.rg { font-size: 22px; font-weight: 500; color: #d4a850; }
+.ra { font-size: 16px; font-weight: 500; color: #cc7a47; }
+.rr { font-size: 14px; font-weight: 500; }
 .sbtn { width: 100%; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border: 2px solid #f0d890; color: #1a1208; font-size: 14px; font-weight: 500; padding: 13px; border-radius: 10px; cursor: pointer; margin-top: 14px; box-shadow: 0 2px 0 #8a6818; }
 .sbtn:disabled { opacity: .5; cursor: not-allowed; }
 .pay-toggle { display: flex; gap: 6px; margin-top: 5px; }
-.pbtn { flex: 1; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; border: 1px solid #2a4078; background: #14254a; font-size: 11px; color: #8aa0d8; font-weight: 500; }
+.pbtn { flex: 1; border-radius: 9px; padding: 12px; text-align: center; cursor: pointer; border: 1px solid #2a4078; background: #14254a; font-size: 13px; color: #8aa0d8; font-weight: 500; }
 .pbtn.pn { background: #0a2820; border: 1.5px solid #6ab070; color: #a0e8a8; }
 .pbtn.pu { background: #2a1810; border: 1.5px solid #cc7a47; color: #e8c898; }
 .mcard { background: linear-gradient(135deg, #0a1530 0%, #14254a 100%); border: 1px solid #2a4078; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
@@ -452,29 +452,29 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .date-popup-handle { width: 40px; height: 3px; background: #4a3878; border-radius: 2px; margin: 0 auto 12px; }
 .date-popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.date-popup-title { font-size: 14px; font-weight: 500; color: #e8d8b8; }
-.date-popup-sub { font-size: 9px; color: #b0a0e8; margin-top: 2px; }
+.date-popup-title { font-size: 15px; font-weight: 500; color: #e8d8b8; }
+.date-popup-sub { font-size: 11px; color: #b0a0e8; margin-top: 3px; }
 .date-popup-close { background: #2a0818; border: 1px solid #4a182a; border-radius: 7px; padding: 6px 12px; font-size: 10px; color: #ff8aa8; font-weight: 500; cursor: pointer; }
-.dp-entry-card { border-radius: 0 9px 9px 0; padding: 10px 11px; margin-bottom: 8px; }
+.dp-entry-card { border-radius: 0 10px 10px 0; padding: 13px; margin-bottom: 10px; }
 .dp-great { background: linear-gradient(135deg, #1a3060 0%, #0a1530 100%); border: 1px solid #2a4078; border-left: 3px solid #d4a850; border-radius: 10px; }
 .dp-ok    { background: linear-gradient(135deg, #2a1810 0%, #1a0f08 100%); border: 1px solid #4a2818; border-left: 3px solid #cc7a47; border-radius: 10px; }
 .dp-slow  { background: linear-gradient(135deg, #2a0818 0%, #1a0510 100%); border: 1px solid #4a182a; border-left: 3px solid #e84878; border-radius: 10px; }
-.dp-rating { font-size: 10px; font-weight: 500; margin-bottom: 6px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+.dp-rating { font-size: 12px; font-weight: 500; margin-bottom: 8px; padding: 3px 10px; border-radius: 5px; display: inline-block; }
 .dp-great .dp-rating { background: #4a3818; color: #d4a850; }
 .dp-ok .dp-rating { background: #4a2818; color: #cc7a47; }
 .dp-slow .dp-rating { background: #4a182a; color: #ff8aa8; }
-.dp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; }
-.dp-item { font-size: 10px; color: #b0a0e8; }
-.dp-note { font-size: 9px; color: #8aa0d8; margin-top: 3px; }
-.dp-right { text-align: right; padding-left: 8px; flex-shrink: 0; }
-.dp-profit { font-size: 16px; font-weight: 800; }
+.dp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+.dp-item { font-size: 12px; color: #b0a0e8; }
+.dp-note { font-size: 11px; color: #8aa0d8; margin-top: 4px; }
+.dp-right { text-align: right; padding-left: 10px; flex-shrink: 0; }
+.dp-profit { font-size: 20px; font-weight: 500; }
 .dp-great .dp-profit { color: #e8d8b8; font-weight: 500; }
 .dp-ok    .dp-profit { color: #e8c898; font-weight: 500; }
 .dp-slow  .dp-profit { color: #ff8aa8; font-weight: 500; }
-.dp-margin { font-size: 10px; color: #d4a850; font-weight: 500; margin-top: 2px; }
-.dp-actions { display: flex; gap: 5px; margin-top: 8px; }
-.dp-edit-btn { flex: 1; background: linear-gradient(135deg, #1a3060 0%, #0a1530 100%); border: 1.5px solid #d4a850; color: #d4a850; font-size: 12px; font-weight: 500; padding: 11px; border-radius: 9px; cursor: pointer; }
-.dp-del-btn  { flex: 1; background: linear-gradient(135deg, #2a0818 0%, #1a0510 100%); border: 1.5px solid #e84878; color: #ff8aa8; font-size: 12px; font-weight: 500; padding: 11px; border-radius: 9px; cursor: pointer; }
+.dp-margin { font-size: 12px; color: #d4a850; font-weight: 500; margin-top: 3px; }
+.dp-actions { display: flex; gap: 8px; margin-top: 12px; }
+.dp-edit-btn { flex: 1; background: linear-gradient(135deg, #1a3060 0%, #0a1530 100%); border: 1.5px solid #d4a850; color: #d4a850; font-size: 13px; font-weight: 500; padding: 12px; border-radius: 10px; cursor: pointer; }
+.dp-del-btn  { flex: 1; background: linear-gradient(135deg, #2a0818 0%, #1a0510 100%); border: 1.5px solid #e84878; color: #ff8aa8; font-size: 13px; font-weight: 500; padding: 12px; border-radius: 10px; cursor: pointer; }
 .dp-empty-box { background: linear-gradient(135deg, #2a1810 0%, #1a0f08 100%); border: 1.5px dashed #cc7a47; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 10px; }
 .dp-empty-icon { font-size: 32px; margin-bottom: 8px; }
 .dp-empty-title { font-size: 12px; color: #e8c898; font-weight: 500; margin-bottom: 4px; }
@@ -1309,7 +1309,7 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="ledger-handle"></div>
     <div class="ledger-header">
       <div>
-        <div class="ledger-title">🥣 कच्चा माल · सारा</div>
+        <div class="ledger-title">🪣 कच्चा माल · सारा</div>
         <div class="ledger-sub"><span id="kaccha-ledger-count">0</span> entries · इस महीने</div>
       </div>
       <div class="ledger-close" onclick="closeKacchaLedger()">✕ बंद</div>
@@ -1635,11 +1635,11 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </div>
 
 <div id="s-kaccha" class="screen">
-  <div class="header" style="border-bottom-color:#4a90d4;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#14254a 0%,#1a3060 50%,#0a1530 100%);border:2px solid #4a90d4;">🥣</div><div><div class="header-title">कच्चा माल</div><div class="header-sub" style="color:#4a90d4;">आज का सामान दर्ज करें</div></div></div></div>
+  <div class="header" style="border-bottom-color:#4a90d4;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#14254a 0%,#1a3060 50%,#0a1530 100%);border:2px solid #4a90d4;">🪣</div><div><div class="header-title">कच्चा माल</div><div class="header-sub" style="color:#4a90d4;">आज का सामान दर्ज करें</div></div></div></div>
   <div class="fw">
     <div class="fcard">
       <div class="frow"><div class="flbl">📅 तारीख</div><input type="date" class="finput" id="k-date"></div>
-      <div class="frow"><div class="flbl">🥣 सामान का नाम</div><input type="text" class="finput" id="k-name" placeholder="दूध, आटा, तेल..."></div>
+      <div class="frow"><div class="flbl">🪣 सामान का नाम</div><input type="text" class="finput" id="k-name" placeholder="दूध, आटा, तेल..."></div>
       <div class="frow"><div class="flbl">🏪 कहाँ से लिया</div><input type="text" class="finput" id="k-source" placeholder="मंडी, डेयरी..."></div>
       <div class="frow"><div class="flbl">💰 रकम ₹</div><input type="number" class="finput" id="k-amount" placeholder="0"></div>
       <div class="frow" style="border-bottom:none;flex-direction:column;align-items:flex-start;gap:5px;"><div class="flbl">💳 भुगतान का तरीका</div><div class="pay-toggle" style="width:100%;"><div class="pbtn pn" id="k-nbtn" onclick="setPay('k','nakad')">💵 नकद</div><div class="pbtn" id="k-ubtn" onclick="setPay('k','udhaar')">📋 उधार</div></div></div>
@@ -1723,12 +1723,12 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   <div class="nav-item active" id="n-home" onclick="go('s-home')"><div class="nav-icon">🏠</div><div class="nav-lbl">होम</div><div class="nav-dot"></div></div>
   <div class="nav-item" id="n-entry" onclick="go('s-entry')"><div class="nav-icon">📝</div><div class="nav-lbl">एंट्री</div></div>
   <div class="nav-item" id="n-maal" onclick="go('s-maal')"><div class="nav-icon">📦</div><div class="nav-lbl">माल</div></div>
-  <div class="nav-item" id="n-kaccha" onclick="go('s-kaccha')"><div class="nav-icon">🥣</div><div class="nav-lbl">कच्चा</div></div>
+  <div class="nav-item" id="n-kaccha" onclick="go('s-kaccha')"><div class="nav-icon">🪣</div><div class="nav-lbl">कच्चा</div></div>
   <div style="width:1px;background:#2a4078;align-self:stretch;margin:6px 4px;flex-shrink:0;"></div>
-  <div onclick="switchToUdhaarBook()" style="display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:7px 9px;background:linear-gradient(135deg, #2a1a4a 0%, #1a1230 100%);border:1.5px solid #7a6cf0;border-radius:10px;min-width:60px;gap:2px;">
-    <div style="font-size:14px;line-height:1;">🤝</div>
-    <div style="font-size:8px;color:#b0a0e8;font-weight:500;text-align:center;line-height:1.2;">उधार Book</div>
-    <div style="font-size:7px;color:#7a6cf0;font-weight:500;">Switch करें</div>
+  <div onclick="switchToUdhaarBook()" style="display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:8px 10px;background:linear-gradient(135deg, #2a1a4a 0%, #1a1230 100%);border:1.5px solid #7a6cf0;border-radius:11px;min-width:64px;gap:3px;">
+    <div style="font-size:16px;line-height:1;">🤝</div>
+    <div style="font-size:9px;color:#b0a0e8;font-weight:500;text-align:center;line-height:1.2;">उधार Book</div>
+    <div style="font-size:8px;color:#7a6cf0;font-weight:500;">Switch करें</div>
   </div>
   <div class="nav-item" id="n-more" onclick="toggleMore()"><div class="nav-icon">⋯</div><div class="nav-lbl">और</div></div>
 </div>

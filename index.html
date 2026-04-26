@@ -270,36 +270,38 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 /* Ledger Bottom Sheet */
 .ledger-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 700; display: none; align-items: flex-end; justify-content: center; }
 .ledger-overlay.show { display: flex; }
-.ledger-sheet { background: #161616; border-radius: 18px 18px 0 0; border-top: 2px solid #d4a850; padding: 14px 16px 24px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; animation: slideUp .25s ease; }
+.ledger-sheet { background: #161616; border-radius: 18px 18px 0 0; border-top: 2px solid #d4a850; padding: 0; width: 100%; max-width: 480px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; animation: slideUp .25s ease; overflow: hidden; }
+.ledger-fixed-top { padding: 14px 16px 0; flex-shrink: 0; background: #161616; }
+.ledger-scroll-area { flex: 1; overflow-y: auto; padding: 0 16px 24px; -webkit-overflow-scrolling: touch; min-height: 0; }
 .ledger-handle { width: 36px; height: 3px; background: #4a3878; border-radius: 2px; margin: 0 auto 14px; }
 .ledger-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.ledger-title { color: #ffe090; font-size: 15px; font-weight: 500; }
-.ledger-sub { color: #b0a0e8; font-size: 10px; margin-top: 2px; }
-.ledger-close { background: #2a0818; border: 1px solid #4a182a; color: #ff8aa8; padding: 6px 12px; border-radius: 7px; font-size: 11px; font-weight: 500; cursor: pointer; }
+.ledger-title { color: #ffe090; font-size: 16px; font-weight: 500; }
+.ledger-sub { color: #b0a0e8; font-size: 11px; margin-top: 3px; }
+.ledger-close { background: #2a0818; border: 1px solid #4a182a; color: #ff8aa8; padding: 7px 13px; border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; }
 .ledger-filters { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; }
-.ledger-pill { font-size: 11px; font-weight: 500; padding: 7px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; border: 1px solid transparent; }
+.ledger-pill { font-size: 12px; font-weight: 500; padding: 8px 15px; border-radius: 8px; cursor: pointer; white-space: nowrap; border: 1px solid transparent; }
 .ledger-pill.lp-all { background: #2a1a4a; color: #b0a0e8; border-color: #4a3878; }
 .ledger-pill.lp-pending { background: #2a1810; color: #f0b040; border-color: #4a3010; }
 .ledger-pill.lp-paid { background: #082a2a; color: #6ce8c8; border-color: #184a3a; }
 .ledger-pill.lp-all.active { background: #f0c040; color: #2a1808; border-color: #f0c040; }
 .ledger-pill.lp-pending.active { background: #f0b040; color: #2a1808; border-color: #f0b040; }
 .ledger-pill.lp-paid.active { background: #20c0a0; color: #082a2a; border-color: #20c0a0; }
-.ledger-search { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 9px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.ledger-search input { flex: 1; background: transparent; border: none; outline: none; color: #e8d8b8; font-size: 12px; }
+.ledger-search { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 11px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.ledger-search input { flex: 1; background: transparent; border: none; outline: none; color: #e8d8b8; font-size: 14px; }
 .ledger-search input::placeholder { color: #4a5aa8; }
-.ledger-entry { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+.ledger-entry { background: #14254a; border: 1px solid #2a4078; border-radius: 9px; padding: 12px 14px; margin-bottom: 8px; }
 .ledger-entry.lp-pending-entry { background: #2a1810; border: 1px solid #4a3010; border-left: 3px solid #f0b040; }
 .ledger-entry-row { display: flex; justify-content: space-between; align-items: center; }
-.ledger-entry-name { color: #b0a0e8; font-size: 12px; font-weight: 500; }
-.ledger-entry-meta { color: #8aa0d8; font-size: 9px; margin-top: 2px; }
-.ledger-entry-amt { color: #e8d8b8; font-size: 13px; font-weight: 500; }
+.ledger-entry-name { color: #e8d8b8; font-size: 14px; font-weight: 500; }
+.ledger-entry-meta { color: #8aa0d8; font-size: 11px; margin-top: 3px; }
+.ledger-entry-amt { color: #e8d8b8; font-size: 15px; font-weight: 500; }
 .ledger-entry-amt.lp-pending-amt { color: #ff8aa8; }
-.ledger-entry-tag { font-size: 8px; padding: 1px 6px; border-radius: 3px; display: inline-block; margin-top: 2px; }
+.ledger-entry-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; font-weight: 500; }
 .ledger-entry-tag.tag-paid { background: #1a4a3a; color: #6ab070; }
 .ledger-entry-tag.tag-udhar { background: #4a3010; color: #cc7a47; }
 .ledger-empty { text-align: center; padding: 30px 16px; color: #707080; font-size: 11px; }
 .ledger-empty-icon { font-size: 36px; margin-bottom: 10px; }
-.ledger-pay-btn { background: linear-gradient(135deg, #f0b040 0%, #e8c870 100%); color: #1a1208; font-size: 11px; font-weight: 500; padding: 7px 11px; border-radius: 6px; border: 1px solid #f0d890; cursor: pointer; margin-left: 8px; }
+.ledger-pay-btn { background: linear-gradient(135deg, #f0b040 0%, #e8c870 100%); color: #1a1208; font-size: 12px; font-weight: 500; padding: 8px 14px; border-radius: 7px; border: 1px solid #f0d890; cursor: pointer; margin-top: 6px; box-shadow: 0 1px 0 #8a6818; }
 
 .fab { position: fixed; bottom: 86px; right: 18px; width: 54px; height: 54px; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border-radius: 50%; border: 2px solid #f0d890; color: #1a1208; font-size: 28px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 200; transition: transform .15s; box-shadow: 0 4px 12px rgba(212, 168, 80, 0.4); }
 .fab:active { transform: scale(.92); }
@@ -1284,46 +1286,54 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </div>
 <div class="ledger-overlay" id="maal-ledger-overlay" onclick="if(event.target===this)closeMaalLedger()">
   <div class="ledger-sheet">
-    <div class="ledger-handle"></div>
-    <div class="ledger-header">
-      <div>
-        <div class="ledger-title">📦 माल की खरीद · सारा</div>
-        <div class="ledger-sub"><span id="maal-ledger-count">0</span> entries · इस महीने</div>
+    <div class="ledger-fixed-top">
+      <div class="ledger-handle"></div>
+      <div class="ledger-header">
+        <div>
+          <div class="ledger-title">📦 माल की खरीद · सारा</div>
+          <div class="ledger-sub"><span id="maal-ledger-count">0</span> entries · इस महीने</div>
+        </div>
+        <div class="ledger-close" onclick="closeMaalLedger()">✕ बंद</div>
       </div>
-      <div class="ledger-close" onclick="closeMaalLedger()">✕ बंद</div>
+      <div class="ledger-filters">
+        <div class="ledger-pill lp-all active" onclick="setMaalLedgerFilter('all',this)">सभी <span class="lp-all-count">0</span></div>
+        <div class="ledger-pill lp-pending" onclick="setMaalLedgerFilter('pending',this)">⚠ बाकी <span class="lp-pending-count">0</span></div>
+        <div class="ledger-pill lp-paid" onclick="setMaalLedgerFilter('paid',this)">✓ चुकाए <span class="lp-paid-count">0</span></div>
+      </div>
+      <div class="ledger-search">
+        <span style="color:#8aa0d8;font-size:14px;">🔍</span>
+        <input type="text" id="maal-ledger-search-inp" placeholder="Supplier या item खोजें..." oninput="maalLedgerSearch(this.value)">
+      </div>
     </div>
-    <div class="ledger-filters">
-      <div class="ledger-pill lp-all active" onclick="setMaalLedgerFilter('all',this)">सभी <span class="lp-all-count">0</span></div>
-      <div class="ledger-pill lp-pending" onclick="setMaalLedgerFilter('pending',this)">⚠ बाकी <span class="lp-pending-count">0</span></div>
-      <div class="ledger-pill lp-paid" onclick="setMaalLedgerFilter('paid',this)">✓ चुकाए <span class="lp-paid-count">0</span></div>
+    <div class="ledger-scroll-area">
+      <div id="maal-ledger-list"></div>
     </div>
-    <div class="ledger-search">
-      <span style="color:#8aa0d8;font-size:13px;">🔍</span>
-      <input type="text" id="maal-ledger-search-inp" placeholder="Supplier या item खोजें..." oninput="maalLedgerSearch(this.value)">
-    </div>
-    <div id="maal-ledger-list"></div>
   </div>
 </div>
 <div class="ledger-overlay" id="kaccha-ledger-overlay" onclick="if(event.target===this)closeKacchaLedger()">
   <div class="ledger-sheet">
-    <div class="ledger-handle"></div>
-    <div class="ledger-header">
-      <div>
-        <div class="ledger-title">🪣 कच्चा माल · सारा</div>
-        <div class="ledger-sub"><span id="kaccha-ledger-count">0</span> entries · इस महीने</div>
+    <div class="ledger-fixed-top">
+      <div class="ledger-handle"></div>
+      <div class="ledger-header">
+        <div>
+          <div class="ledger-title">🪣 कच्चा माल · सारा</div>
+          <div class="ledger-sub"><span id="kaccha-ledger-count">0</span> entries · इस महीने</div>
+        </div>
+        <div class="ledger-close" onclick="closeKacchaLedger()">✕ बंद</div>
       </div>
-      <div class="ledger-close" onclick="closeKacchaLedger()">✕ बंद</div>
+      <div class="ledger-filters">
+        <div class="ledger-pill lp-all active" onclick="setKacchaLedgerFilter('all',this)">सभी <span class="lp-all-count">0</span></div>
+        <div class="ledger-pill lp-pending" onclick="setKacchaLedgerFilter('pending',this)">⚠ बाकी <span class="lp-pending-count">0</span></div>
+        <div class="ledger-pill lp-paid" onclick="setKacchaLedgerFilter('paid',this)">✓ चुकाए <span class="lp-paid-count">0</span></div>
+      </div>
+      <div class="ledger-search">
+        <span style="color:#8aa0d8;font-size:14px;">🔍</span>
+        <input type="text" id="kaccha-ledger-search-inp" placeholder="Item या source खोजें..." oninput="kacchaLedgerSearch(this.value)">
+      </div>
     </div>
-    <div class="ledger-filters">
-      <div class="ledger-pill lp-all active" onclick="setKacchaLedgerFilter('all',this)">सभी <span class="lp-all-count">0</span></div>
-      <div class="ledger-pill lp-pending" onclick="setKacchaLedgerFilter('pending',this)">⚠ बाकी <span class="lp-pending-count">0</span></div>
-      <div class="ledger-pill lp-paid" onclick="setKacchaLedgerFilter('paid',this)">✓ चुकाए <span class="lp-paid-count">0</span></div>
+    <div class="ledger-scroll-area">
+      <div id="kaccha-ledger-list"></div>
     </div>
-    <div class="ledger-search">
-      <span style="color:#8aa0d8;font-size:13px;">🔍</span>
-      <input type="text" id="kaccha-ledger-search-inp" placeholder="Item या source खोजें..." oninput="kacchaLedgerSearch(this.value)">
-    </div>
-    <div id="kaccha-ledger-list"></div>
   </div>
 </div>
 <div class="more-menu" id="more-menu">

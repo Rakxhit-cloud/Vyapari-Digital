@@ -237,6 +237,62 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .more-menu { display: none; position: fixed; bottom: 90px; right: 8px; background: #0a1530; border: 1px solid #2a4078; border-radius: 14px; padding: 8px; z-index: 300; min-width: 180px; box-shadow: 0 8px 24px rgba(10, 21, 48, 0.6); }
 .more-item { display: flex; align-items: center; gap: 12px; padding: 12px; cursor: pointer; border-radius: 8px; font-size: 13px; color: #e8d8b8; font-weight: 500; }
 .more-item:hover { background: #222; }
+
+/* Smart Sectioning */
+.ss-section-head { display: flex; align-items: center; gap: 7px; margin: 12px 0 8px; font-size: 11px; }
+.ss-count { font-size: 9px; padding: 1px 7px; border-radius: 4px; font-weight: 500; }
+.ss-count-amber { background: #4a3010; color: #f0b040; }
+.ss-count-gold { background: #4a3818; color: #d4a850; }
+.ss-pending-card { background: linear-gradient(90deg, #2a1810 0%, #1a0f08 100%); border: 1px solid #4a3010; border-radius: 9px; padding: 10px 12px; margin-bottom: 8px; }
+.ss-pending-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.ss-pending-name { background: #2a1a4a; color: #b0a0e8; font-size: 10px; font-weight: 500; padding: 2px 9px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+.ss-pending-meta { color: #8aa0d8; font-size: 9px; }
+.ss-pending-amt { color: #ff8aa8; font-size: 14px; font-weight: 500; text-align: right; }
+.ss-pending-time { color: #707080; font-size: 8px; margin-top: 1px; text-align: right; }
+.ss-pay-btn { background: linear-gradient(135deg, #f0b040 0%, #e8c870 100%); color: #1a1208; font-size: 11px; font-weight: 500; padding: 9px; border-radius: 7px; text-align: center; border: 1.5px solid #f0d890; cursor: pointer; box-shadow: 0 1px 0 #8a6818; width: 100%; }
+.ss-recent-card { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 9px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+.ss-recent-card-name { background: #2a1a4a; color: #b0a0e8; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+.ss-recent-card-meta { color: #8aa0d8; font-size: 9px; margin-top: 3px; }
+.ss-recent-card-amt { color: #e8d8b8; font-size: 13px; font-weight: 500; text-align: right; }
+.ss-recent-card-tag-paid { background: #1a4a3a; color: #6ab070; font-size: 8px; padding: 1px 6px; border-radius: 3px; display: inline-block; margin-top: 2px; }
+.ss-recent-card-tag-udhar { background: #4a3010; color: #cc7a47; font-size: 8px; padding: 1px 6px; border-radius: 3px; display: inline-block; margin-top: 2px; }
+.ss-view-all { background: #14254a; border: 1px dashed #4a3878; border-radius: 8px; padding: 11px; text-align: center; color: #d4a850; font-size: 11px; font-weight: 500; cursor: pointer; margin-top: 8px; }
+.ss-view-all:active { background: #1a3060; }
+
+/* Ledger Bottom Sheet */
+.ledger-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 700; display: none; align-items: flex-end; justify-content: center; }
+.ledger-overlay.show { display: flex; }
+.ledger-sheet { background: #161616; border-radius: 18px 18px 0 0; border-top: 2px solid #d4a850; padding: 14px 16px 24px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; animation: slideUp .25s ease; }
+.ledger-handle { width: 36px; height: 3px; background: #4a3878; border-radius: 2px; margin: 0 auto 14px; }
+.ledger-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.ledger-title { color: #ffe090; font-size: 15px; font-weight: 500; }
+.ledger-sub { color: #b0a0e8; font-size: 10px; margin-top: 2px; }
+.ledger-close { background: #2a0818; border: 1px solid #4a182a; color: #ff8aa8; padding: 6px 12px; border-radius: 7px; font-size: 11px; font-weight: 500; cursor: pointer; }
+.ledger-filters { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; }
+.ledger-pill { font-size: 11px; font-weight: 500; padding: 7px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; border: 1px solid transparent; }
+.ledger-pill.lp-all { background: #2a1a4a; color: #b0a0e8; border-color: #4a3878; }
+.ledger-pill.lp-pending { background: #2a1810; color: #f0b040; border-color: #4a3010; }
+.ledger-pill.lp-paid { background: #082a2a; color: #6ce8c8; border-color: #184a3a; }
+.ledger-pill.lp-all.active { background: #f0c040; color: #2a1808; border-color: #f0c040; }
+.ledger-pill.lp-pending.active { background: #f0b040; color: #2a1808; border-color: #f0b040; }
+.ledger-pill.lp-paid.active { background: #20c0a0; color: #082a2a; border-color: #20c0a0; }
+.ledger-search { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 9px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.ledger-search input { flex: 1; background: transparent; border: none; outline: none; color: #e8d8b8; font-size: 12px; }
+.ledger-search input::placeholder { color: #4a5aa8; }
+.ledger-entry { background: #14254a; border: 1px solid #2a4078; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+.ledger-entry.lp-pending-entry { background: #2a1810; border: 1px solid #4a3010; border-left: 3px solid #f0b040; }
+.ledger-entry-row { display: flex; justify-content: space-between; align-items: center; }
+.ledger-entry-name { color: #b0a0e8; font-size: 12px; font-weight: 500; }
+.ledger-entry-meta { color: #8aa0d8; font-size: 9px; margin-top: 2px; }
+.ledger-entry-amt { color: #e8d8b8; font-size: 13px; font-weight: 500; }
+.ledger-entry-amt.lp-pending-amt { color: #ff8aa8; }
+.ledger-entry-tag { font-size: 8px; padding: 1px 6px; border-radius: 3px; display: inline-block; margin-top: 2px; }
+.ledger-entry-tag.tag-paid { background: #1a4a3a; color: #6ab070; }
+.ledger-entry-tag.tag-udhar { background: #4a3010; color: #cc7a47; }
+.ledger-empty { text-align: center; padding: 30px 16px; color: #707080; font-size: 11px; }
+.ledger-empty-icon { font-size: 36px; margin-bottom: 10px; }
+.ledger-pay-btn { background: linear-gradient(135deg, #f0b040 0%, #e8c870 100%); color: #1a1208; font-size: 11px; font-weight: 500; padding: 7px 11px; border-radius: 6px; border: 1px solid #f0d890; cursor: pointer; margin-left: 8px; }
+
 .fab { position: fixed; bottom: 86px; right: 18px; width: 54px; height: 54px; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border-radius: 50%; border: 2px solid #f0d890; color: #1a1208; font-size: 28px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 200; transition: transform .15s; box-shadow: 0 4px 12px rgba(212, 168, 80, 0.4); }
 .fab:active { transform: scale(.92); }
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0a1530; border-top: 1px solid #2a4078; display: flex; justify-content: space-around; padding: 10px 8px 12px; z-index: 100; align-items: flex-end; gap: 4px; }
@@ -1218,6 +1274,50 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div id="dp-content"></div>
   </div>
 </div>
+<div class="ledger-overlay" id="maal-ledger-overlay" onclick="if(event.target===this)closeMaalLedger()">
+  <div class="ledger-sheet">
+    <div class="ledger-handle"></div>
+    <div class="ledger-header">
+      <div>
+        <div class="ledger-title">📦 माल की खरीद · सारा</div>
+        <div class="ledger-sub"><span id="maal-ledger-count">0</span> entries · इस महीने</div>
+      </div>
+      <div class="ledger-close" onclick="closeMaalLedger()">✕ बंद</div>
+    </div>
+    <div class="ledger-filters">
+      <div class="ledger-pill lp-all active" onclick="setMaalLedgerFilter('all',this)">सभी <span class="lp-all-count">0</span></div>
+      <div class="ledger-pill lp-pending" onclick="setMaalLedgerFilter('pending',this)">⚠ बाकी <span class="lp-pending-count">0</span></div>
+      <div class="ledger-pill lp-paid" onclick="setMaalLedgerFilter('paid',this)">✓ चुकाए <span class="lp-paid-count">0</span></div>
+    </div>
+    <div class="ledger-search">
+      <span style="color:#8aa0d8;font-size:13px;">🔍</span>
+      <input type="text" id="maal-ledger-search-inp" placeholder="Supplier या item खोजें..." oninput="maalLedgerSearch(this.value)">
+    </div>
+    <div id="maal-ledger-list"></div>
+  </div>
+</div>
+<div class="ledger-overlay" id="kaccha-ledger-overlay" onclick="if(event.target===this)closeKacchaLedger()">
+  <div class="ledger-sheet">
+    <div class="ledger-handle"></div>
+    <div class="ledger-header">
+      <div>
+        <div class="ledger-title">🥣 कच्चा माल · सारा</div>
+        <div class="ledger-sub"><span id="kaccha-ledger-count">0</span> entries · इस महीने</div>
+      </div>
+      <div class="ledger-close" onclick="closeKacchaLedger()">✕ बंद</div>
+    </div>
+    <div class="ledger-filters">
+      <div class="ledger-pill lp-all active" onclick="setKacchaLedgerFilter('all',this)">सभी <span class="lp-all-count">0</span></div>
+      <div class="ledger-pill lp-pending" onclick="setKacchaLedgerFilter('pending',this)">⚠ बाकी <span class="lp-pending-count">0</span></div>
+      <div class="ledger-pill lp-paid" onclick="setKacchaLedgerFilter('paid',this)">✓ चुकाए <span class="lp-paid-count">0</span></div>
+    </div>
+    <div class="ledger-search">
+      <span style="color:#8aa0d8;font-size:13px;">🔍</span>
+      <input type="text" id="kaccha-ledger-search-inp" placeholder="Item या source खोजें..." oninput="kacchaLedgerSearch(this.value)">
+    </div>
+    <div id="kaccha-ledger-list"></div>
+  </div>
+</div>
 <div class="more-menu" id="more-menu">
   <div class="more-item" onclick="appLockToggle();toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:1.5px solid #7a6cf0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div> <span style="color:#e8d8b8;font-weight:500;">App Lock:</span> <span id="lock-status-lbl" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:6px;background:#0a2820;color:#a0e8a8;border:1px solid #6ab070;font-weight:500;">बंद</span></div>
   <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4a3818 0%,#2a1808 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📅</div> <span style="color:#e8d8b8;font-weight:500;">महीने का हिसाब</span></div>
@@ -1375,9 +1475,9 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
     <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
     
     <div class="sec-head"><div class="sec-bar" style="background:#3dca6a;"></div><span class="sec-label" style="color:#d4a850;">📦 माल की खरीद / Goods Purchase</span><div class="sec-line" style="background:#1a3a2a;"></div><span class="sec-badge" style="background:#0a2a1a;color:#2dba4d;border:1px solid #1a4a2a;">महीने में</span></div>
-    <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद दिया</span><span class="vg" id="h-maal-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार लिया</span><span class="va" id="h-maal-udhaar">₹0</span></div><div class="dealer-list" id="h-maal-list"><div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
+    <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद दिया</span><span class="vg" id="h-maal-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार लिया</span><span class="va" id="h-maal-udhaar">₹0</span></div><div id="h-maal-pending-section" style="display:none;"><div class="ss-section-head ss-pending"><span style="color:#f0b040;">⚠</span><span style="color:#f0b040;font-weight:500;">जल्दी चुकाएं</span><span class="ss-count ss-count-amber" id="h-maal-pending-count">0</span></div><div id="h-maal-pending-list"></div></div><div id="h-maal-recent-section"><div class="ss-section-head ss-recent"><span style="color:#d4a850;">🕐</span><span style="color:#d4a850;font-weight:500;">हाल की खरीद</span><span class="ss-count ss-count-gold" id="h-maal-recent-count">0</span></div><div id="h-maal-recent-list"><div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">⏳</div></div></div><div class="ss-view-all" id="h-maal-view-all" onclick="openMaalLedger()" style="display:none;">देखें सारा · <span id="h-maal-total-count">0</span> entries →</div></div>
     <div class="sec-head"><div class="sec-bar" style="background:#50a0f0;"></div><span class="sec-label" style="color:#4a90d4;">🥣 कच्चा माल / Raw Materials</span><div class="sec-line" style="background:#1a2a3a;"></div><span class="sec-badge" style="background:#0a1a2a;color:#3080c0;border:1px solid #1a3a5a;">महीने में</span></div>
-    <div class="sec-card sc-blue"><div class="mini-grid"><div class="mini-card mc-ba"><div class="mini-lbl">कुल सामान</div><div class="mini-val" id="h-kaccha-total">₹0</div></div><div class="mini-card mc-bb"><div class="mini-lbl">रोज़ औसत</div><div class="mini-val" id="h-kaccha-avg">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद चुकाया</span><span class="vb" id="h-kaccha-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार बाकी</span><span class="va" id="h-kaccha-udhaar">₹0</span></div><div class="tag-row" id="h-kaccha-tags"><span class="tag-b">⏳</span></div><div class="dealer-list" id="h-kaccha-list"><div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div><div class="empty" style="padding:8px;font-size:10px;">⏳</div></div></div>
+    <div class="sec-card sc-blue"><div class="mini-grid"><div class="mini-card mc-ba"><div class="mini-lbl">कुल सामान</div><div class="mini-val" id="h-kaccha-total">₹0</div></div><div class="mini-card mc-bb"><div class="mini-lbl">रोज़ औसत</div><div class="mini-val" id="h-kaccha-avg">₹0</div></div></div><div class="stat-row"><span class="stat-k">नकद चुकाया</span><span class="vb" id="h-kaccha-nakad">₹0</span></div><div class="stat-row"><span class="stat-k">उधार बाकी</span><span class="va" id="h-kaccha-udhaar">₹0</span></div><div id="h-kaccha-pending-section" style="display:none;"><div class="ss-section-head ss-pending"><span style="color:#f0b040;">⚠</span><span style="color:#f0b040;font-weight:500;">जल्दी चुकाएं</span><span class="ss-count ss-count-amber" id="h-kaccha-pending-count">0</span></div><div id="h-kaccha-pending-list"></div></div><div id="h-kaccha-recent-section"><div class="ss-section-head ss-recent"><span style="color:#d4a850;">🕐</span><span style="color:#d4a850;font-weight:500;">हाल का सामान</span><span class="ss-count ss-count-gold" id="h-kaccha-recent-count">0</span></div><div id="h-kaccha-recent-list"><div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">⏳</div></div></div><div class="ss-view-all" id="h-kaccha-view-all" onclick="openKacchaLedger()" style="display:none;">देखें सारा · <span id="h-kaccha-total-count">0</span> entries →</div></div>
     
     <div class="sec-head"><div class="sec-bar" style="background:#d4a850;"></div><span class="sec-label" style="color:#d4a850;">📅 महीने की एंट्री</span><div class="sec-line" style="background:#2a4078;"></div></div>
    <div class="mahiney-section">
@@ -2256,42 +2356,250 @@ function loadKPIForMonth(mi){
   renderWeeklyTable('galla-table-rows','galla-total','profit','#50a0f0','#444');
   renderWeeklyTable('kharcha-table-rows','kharcha-total','expense','#f0b040','#444');
 }
+let MAAL_LEDGER_MI=0;
+let MAAL_LEDGER_FILTER='all';
+let MAAL_LEDGER_SEARCH='';
 function loadMaalForMonth(mi){
+  MAAL_LEDGER_MI=mi;
   const rows=DB.get(K.MAAL);
-  let tot=0,nak=0,udh=0;const rec=[];
-  rows.forEach(r=>{if(inMonth(r.date,mi)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(rec.length<3)rec.push(r);}});
+  let tot=0,nak=0,udh=0;
+  const monthRows=[],pendingRows=[],paidRows=[];
+  rows.forEach(r=>{
+    if(inMonth(r.date,mi)){
+      const a=r.amount||0;tot+=a;
+      if(r.pay==='नकद')nak+=a;else udh+=a;
+      monthRows.push(r);
+      const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
+      if(isPending)pendingRows.push(r);else paidRows.push(r);
+    }
+  });
   document.getElementById('h-maal-total').textContent=fmt(tot);
   document.getElementById('h-maal-pending').textContent=fmt(udh);
   document.getElementById('h-maal-nakad').textContent=fmt(nak);
   document.getElementById('h-maal-udhaar').textContent=fmt(udh);
-  const ml=document.getElementById('h-maal-list');
-  ml.innerHTML='<div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div>';
-  if(!rec.length)ml.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';
- else rec.forEach(r=>{
+  // Sort pending: oldest first (most overdue), paid: newest first
+  pendingRows.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  paidRows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  // Pending section
+  const pSection=document.getElementById('h-maal-pending-section');
+  const pList=document.getElementById('h-maal-pending-list');
+  if(pendingRows.length){
+    pSection.style.display='block';
+    document.getElementById('h-maal-pending-count').textContent=pendingRows.length;
+    pList.innerHTML='';
+    pendingRows.slice(0,2).forEach(r=>{
+      const remaining=(r.amount||0)-(r.paid||0);
+      const days=daysSince(r.date);
+      const card=document.createElement('div');
+      card.className='ss-pending-card';
+      card.innerHTML=`<div class="ss-pending-head"><div><div class="ss-pending-name">${r.supplier||'—'}</div><div class="ss-pending-meta">${r.name||''}</div></div><div><div class="ss-pending-amt">${fmt(remaining)} बाकी</div><div class="ss-pending-time">${days===0?'आज':days+' दिन पहले'}</div></div></div><button class="ss-pay-btn" onclick="event.stopPropagation();openSupplierPayOverlay('${r.id}')">💳 चुकाएं</button>`;
+      pList.appendChild(card);
+    });
+  }else{pSection.style.display='none';}
+  // Recent section
+  const rSection=document.getElementById('h-maal-recent-section');
+  const rList=document.getElementById('h-maal-recent-list');
+  document.getElementById('h-maal-recent-count').textContent=paidRows.length;
+  if(paidRows.length){
+    rList.innerHTML='';
+    paidRows.slice(0,2).forEach(r=>{
+      const card=document.createElement('div');
+      card.className='ss-recent-card';
+      const tagCls=r.pay==='नकद'?'ss-recent-card-tag-paid':'ss-recent-card-tag-udhar';
+      const tagTxt=r.pay==='नकद'?'✓ नकद':'चुका दिया';
+      card.innerHTML=`<div><div class="ss-recent-card-name">${r.supplier||'—'}</div><div class="ss-recent-card-meta">${r.name||''}</div></div><div style="text-align:right;"><div class="ss-recent-card-amt">${fmt(r.amount)}</div><div class="${tagCls}">${tagTxt}</div></div>`;
+      // Make long-press work for delete
+      makeLPInline(card,K.MAAL,r.id,r);
+      rList.appendChild(card);
+    });
+  }else if(!pendingRows.length){
+    rList.innerHTML='<div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">कोई एंट्री नहीं</div>';
+  }else{rList.innerHTML='';rSection.style.display='none';}
+  // View all button
+  const va=document.getElementById('h-maal-view-all');
+  if(monthRows.length>2){
+    va.style.display='block';
+    document.getElementById('h-maal-total-count').textContent=monthRows.length;
+  }else{va.style.display='none';}
+}
+function makeLPInline(card,type,id,data){
+  let pressTimer=null;
+  card.addEventListener('touchstart',()=>{pressTimer=setTimeout(()=>{currentEntry={type,id,data};buildEditSheet(type,data);},600);},{passive:true});
+  card.addEventListener('touchend',()=>{if(pressTimer){clearTimeout(pressTimer);pressTimer=null;}});
+  card.addEventListener('touchmove',()=>{if(pressTimer){clearTimeout(pressTimer);pressTimer=null;}});
+}
+function openMaalLedger(){
+  MAAL_LEDGER_FILTER='all';MAAL_LEDGER_SEARCH='';
+  const inp=document.getElementById('maal-ledger-search-inp');if(inp)inp.value='';
+  document.querySelectorAll('#maal-ledger-overlay .ledger-pill').forEach(p=>p.classList.remove('active'));
+  const allPill=document.querySelector('#maal-ledger-overlay .lp-all');if(allPill)allPill.classList.add('active');
+  renderMaalLedger();
+  document.getElementById('maal-ledger-overlay').classList.add('show');
+}
+function closeMaalLedger(){document.getElementById('maal-ledger-overlay').classList.remove('show');}
+function setMaalLedgerFilter(f,el){
+  MAAL_LEDGER_FILTER=f;
+  document.querySelectorAll('#maal-ledger-overlay .ledger-pill').forEach(p=>p.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderMaalLedger();
+}
+function maalLedgerSearch(v){MAAL_LEDGER_SEARCH=(v||'').toLowerCase();renderMaalLedger();}
+function renderMaalLedger(){
+  const rows=DB.get(K.MAAL);
+  const monthRows=rows.filter(r=>inMonth(r.date,MAAL_LEDGER_MI));
+  let pending=0,paid=0,total=monthRows.length;
+  monthRows.forEach(r=>{const isP=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);if(isP)pending++;else paid++;});
+  document.getElementById('maal-ledger-count').textContent=total;
+  document.querySelector('#maal-ledger-overlay .lp-all-count').textContent=total;
+  document.querySelector('#maal-ledger-overlay .lp-pending-count').textContent=pending;
+  document.querySelector('#maal-ledger-overlay .lp-paid-count').textContent=paid;
+  // Filter
+  let filtered=monthRows;
+  if(MAAL_LEDGER_FILTER==='pending')filtered=monthRows.filter(r=>r.pay==='उधार'&&(r.paid||0)<(r.amount||0));
+  else if(MAAL_LEDGER_FILTER==='paid')filtered=monthRows.filter(r=>!(r.pay==='उधार'&&(r.paid||0)<(r.amount||0)));
+  if(MAAL_LEDGER_SEARCH){
+    filtered=filtered.filter(r=>(r.supplier||'').toLowerCase().includes(MAAL_LEDGER_SEARCH)||(r.name||'').toLowerCase().includes(MAAL_LEDGER_SEARCH));
+  }
+  // Sort by date desc
+  filtered.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const list=document.getElementById('maal-ledger-list');
+  list.innerHTML='';
+  if(!filtered.length){
+    list.innerHTML=`<div class="ledger-empty"><div class="ledger-empty-icon">📭</div>${MAAL_LEDGER_SEARCH?'खोज में कुछ नहीं मिला':'कोई एंट्री नहीं'}</div>`;
+    return;
+  }
+  filtered.forEach(r=>{
     const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
     const remaining=(r.amount||0)-(r.paid||0);
-    const html=`<div><div class="purple-name-badge">${r.supplier||'—'}</div><div class="dlr-goods" style="margin-top:3px;">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt" style="color:${r.pay==='नकद'?'#4dca4d':'#f06060'};">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openSupplierPayOverlay('${r.id}')" style="background:#0d2a1a;border:1.5px solid #2dba4d;color:#d4a850;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="${r.pay==='नकद'?'pay-badge-nakad':'pay-badge-udhar'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
-    const card=makeLPCard('dlr-row',html,K.MAAL,r.id,r);ml.appendChild(card);
+    const div=document.createElement('div');
+    div.className='ledger-entry'+(isPending?' lp-pending-entry':'');
+    const dateStr=r.date?new Date(r.date).toLocaleDateString('hi-IN',{day:'numeric',month:'short'}):'';
+    if(isPending){
+      div.innerHTML=`<div class="ledger-entry-row"><div style="flex:1;"><div class="ledger-entry-name">${r.supplier||'—'}</div><div class="ledger-entry-meta">${r.name||''} · ${dateStr}</div></div><div style="text-align:right;"><div class="ledger-entry-amt lp-pending-amt">${fmt(remaining)} बाकी</div><button class="ledger-pay-btn" onclick="closeMaalLedger();setTimeout(()=>openSupplierPayOverlay('${r.id}'),200);">💳 चुकाएं</button></div></div>`;
+    }else{
+      const tagCls=r.pay==='नकद'?'tag-paid':'tag-udhar';
+      const tagTxt=r.pay==='नकद'?'✓ नकद':'चुका दिया';
+      div.innerHTML=`<div class="ledger-entry-row"><div><div class="ledger-entry-name">${r.supplier||'—'}</div><div class="ledger-entry-meta">${r.name||''} · ${dateStr}</div></div><div style="text-align:right;"><div class="ledger-entry-amt">${fmt(r.amount)}</div><div class="ledger-entry-tag ${tagCls}">${tagTxt}</div></div></div>`;
+    }
+    makeLPInline(div,K.MAAL,r.id,r);
+    list.appendChild(div);
   });
 }
+let KACCHA_LEDGER_MI=0;
+let KACCHA_LEDGER_FILTER='all';
+let KACCHA_LEDGER_SEARCH='';
 function loadKacchaForMonth(mi){
+  KACCHA_LEDGER_MI=mi;
   const rows=DB.get(K.KACCHA);
-  let tot=0,nak=0,udh=0;const items=[],sources=[],rec=[];
-  rows.forEach(r=>{if(inMonth(r.date,mi)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(r.name&&!items.includes(r.name))items.push(r.name);if(r.source&&!sources.includes(r.source))sources.push(r.source);if(rec.length<3)rec.push(r);}});
+  let tot=0,nak=0,udh=0;
+  const monthRows=[],pendingRows=[],paidRows=[];
+  rows.forEach(r=>{
+    if(inMonth(r.date,mi)){
+      const a=r.amount||0;tot+=a;
+      if(r.pay==='नकद')nak+=a;else udh+=a;
+      monthRows.push(r);
+      const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
+      if(isPending)pendingRows.push(r);else paidRows.push(r);
+    }
+  });
   const avg=new Date(CUR_YEAR,mi+1,0).getDate();
   document.getElementById('h-kaccha-total').textContent=fmt(tot);
   document.getElementById('h-kaccha-avg').textContent=fmt(Math.round(tot/avg));
   document.getElementById('h-kaccha-nakad').textContent=fmt(nak);
   document.getElementById('h-kaccha-udhaar').textContent=fmt(udh);
-  document.getElementById('h-kaccha-tags').innerHTML=(items.length||sources.length)?items.map(i=>`<span class="tag-b">${i}</span>`).join('')+sources.map(s=>`<span class="tag-s">${s}</span>`).join(''):'<span class="tag-b">कोई एंट्री नहीं</span>';
-  const kl=document.getElementById('h-kaccha-list');
-  kl.innerHTML='<div class="dlr-lbl">ताज़ा सामान — देर तक दबाएं</div>';
-  if(!rec.length)kl.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';
-  else rec.forEach(r=>{
+  pendingRows.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  paidRows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const pSection=document.getElementById('h-kaccha-pending-section');
+  const pList=document.getElementById('h-kaccha-pending-list');
+  if(pendingRows.length){
+    pSection.style.display='block';
+    document.getElementById('h-kaccha-pending-count').textContent=pendingRows.length;
+    pList.innerHTML='';
+    pendingRows.slice(0,2).forEach(r=>{
+      const remaining=(r.amount||0)-(r.paid||0);
+      const days=daysSince(r.date);
+      const card=document.createElement('div');
+      card.className='ss-pending-card';
+      card.innerHTML=`<div class="ss-pending-head"><div><div class="ss-pending-name">${r.name||'—'}</div><div class="ss-pending-meta">${r.source||''}</div></div><div><div class="ss-pending-amt">${fmt(remaining)} बाकी</div><div class="ss-pending-time">${days===0?'आज':days+' दिन पहले'}</div></div></div><button class="ss-pay-btn" onclick="event.stopPropagation();openKacchaPayOverlay('${r.id}')">💳 चुकाएं</button>`;
+      pList.appendChild(card);
+    });
+  }else{pSection.style.display='none';}
+  const rSection=document.getElementById('h-kaccha-recent-section');
+  const rList=document.getElementById('h-kaccha-recent-list');
+  document.getElementById('h-kaccha-recent-count').textContent=paidRows.length;
+  if(paidRows.length){
+    rList.innerHTML='';
+    paidRows.slice(0,2).forEach(r=>{
+      const card=document.createElement('div');
+      card.className='ss-recent-card';
+      const tagCls=r.pay==='नकद'?'ss-recent-card-tag-paid':'ss-recent-card-tag-udhar';
+      const tagTxt=r.pay==='नकद'?'✓ नकद':'चुका दिया';
+      card.innerHTML=`<div><div class="ss-recent-card-name">${r.name||'—'}</div><div class="ss-recent-card-meta">${r.source||''}</div></div><div style="text-align:right;"><div class="ss-recent-card-amt">${fmt(r.amount)}</div><div class="${tagCls}">${tagTxt}</div></div>`;
+      makeLPInline(card,K.KACCHA,r.id,r);
+      rList.appendChild(card);
+    });
+  }else if(!pendingRows.length){
+    rList.innerHTML='<div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">कोई एंट्री नहीं</div>';
+  }else{rList.innerHTML='';rSection.style.display='none';}
+  const va=document.getElementById('h-kaccha-view-all');
+  if(monthRows.length>2){
+    va.style.display='block';
+    document.getElementById('h-kaccha-total-count').textContent=monthRows.length;
+  }else{va.style.display='none';}
+}
+function openKacchaLedger(){
+  KACCHA_LEDGER_FILTER='all';KACCHA_LEDGER_SEARCH='';
+  const inp=document.getElementById('kaccha-ledger-search-inp');if(inp)inp.value='';
+  document.querySelectorAll('#kaccha-ledger-overlay .ledger-pill').forEach(p=>p.classList.remove('active'));
+  const allPill=document.querySelector('#kaccha-ledger-overlay .lp-all');if(allPill)allPill.classList.add('active');
+  renderKacchaLedger();
+  document.getElementById('kaccha-ledger-overlay').classList.add('show');
+}
+function closeKacchaLedger(){document.getElementById('kaccha-ledger-overlay').classList.remove('show');}
+function setKacchaLedgerFilter(f,el){
+  KACCHA_LEDGER_FILTER=f;
+  document.querySelectorAll('#kaccha-ledger-overlay .ledger-pill').forEach(p=>p.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderKacchaLedger();
+}
+function kacchaLedgerSearch(v){KACCHA_LEDGER_SEARCH=(v||'').toLowerCase();renderKacchaLedger();}
+function renderKacchaLedger(){
+  const rows=DB.get(K.KACCHA);
+  const monthRows=rows.filter(r=>inMonth(r.date,KACCHA_LEDGER_MI));
+  let pending=0,paid=0,total=monthRows.length;
+  monthRows.forEach(r=>{const isP=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);if(isP)pending++;else paid++;});
+  document.getElementById('kaccha-ledger-count').textContent=total;
+  document.querySelector('#kaccha-ledger-overlay .lp-all-count').textContent=total;
+  document.querySelector('#kaccha-ledger-overlay .lp-pending-count').textContent=pending;
+  document.querySelector('#kaccha-ledger-overlay .lp-paid-count').textContent=paid;
+  let filtered=monthRows;
+  if(KACCHA_LEDGER_FILTER==='pending')filtered=monthRows.filter(r=>r.pay==='उधार'&&(r.paid||0)<(r.amount||0));
+  else if(KACCHA_LEDGER_FILTER==='paid')filtered=monthRows.filter(r=>!(r.pay==='उधार'&&(r.paid||0)<(r.amount||0)));
+  if(KACCHA_LEDGER_SEARCH){
+    filtered=filtered.filter(r=>(r.name||'').toLowerCase().includes(KACCHA_LEDGER_SEARCH)||(r.source||'').toLowerCase().includes(KACCHA_LEDGER_SEARCH));
+  }
+  filtered.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const list=document.getElementById('kaccha-ledger-list');
+  list.innerHTML='';
+  if(!filtered.length){
+    list.innerHTML=`<div class="ledger-empty"><div class="ledger-empty-icon">📭</div>${KACCHA_LEDGER_SEARCH?'खोज में कुछ नहीं मिला':'कोई एंट्री नहीं'}</div>`;
+    return;
+  }
+  filtered.forEach(r=>{
     const isPending=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);
     const remaining=(r.amount||0)-(r.paid||0);
-    const html=`<div><div class="purple-name-badge">${r.name||'—'}</div><div class="dlr-goods" style="margin-top:3px;">${r.source||''}</div></div><div style="text-align:right"><div class="dlr-amt" style="color:${r.pay==='नकद'?'#4dca4d':'#f06060'};">${fmt(r.amount)}</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${isPending?`<button onclick="openKacchaPayOverlay('${r.id}')" style="background:#080f1a;border:1.5px solid #50a0f0;color:#4a90d4;font-size:9px;font-weight:800;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">💳 चुकाएं</button>`:''}<div class="${r.pay==='नकद'?'pay-badge-nakad':'pay-badge-udhar'}">${isPending?fmt(remaining)+' बाकी':r.pay||''}</div></div></div>`;
-    const card=makeLPCard('dlr-row',html,K.KACCHA,r.id,r);kl.appendChild(card);
+    const div=document.createElement('div');
+    div.className='ledger-entry'+(isPending?' lp-pending-entry':'');
+    const dateStr=r.date?new Date(r.date).toLocaleDateString('hi-IN',{day:'numeric',month:'short'}):'';
+    if(isPending){
+      div.innerHTML=`<div class="ledger-entry-row"><div style="flex:1;"><div class="ledger-entry-name">${r.name||'—'}</div><div class="ledger-entry-meta">${r.source||''} · ${dateStr}</div></div><div style="text-align:right;"><div class="ledger-entry-amt lp-pending-amt">${fmt(remaining)} बाकी</div><button class="ledger-pay-btn" onclick="closeKacchaLedger();setTimeout(()=>openKacchaPayOverlay('${r.id}'),200);">💳 चुकाएं</button></div></div>`;
+    }else{
+      const tagCls=r.pay==='नकद'?'tag-paid':'tag-udhar';
+      const tagTxt=r.pay==='नकद'?'✓ नकद':'चुका दिया';
+      div.innerHTML=`<div class="ledger-entry-row"><div><div class="ledger-entry-name">${r.name||'—'}</div><div class="ledger-entry-meta">${r.source||''} · ${dateStr}</div></div><div style="text-align:right;"><div class="ledger-entry-amt">${fmt(r.amount)}</div><div class="ledger-entry-tag ${tagCls}">${tagTxt}</div></div></div>`;
+    }
+    makeLPInline(div,K.KACCHA,r.id,r);
+    list.appendChild(div);
   });
 }
 let mahineyOpen=false,calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calSelectedMonth=null;

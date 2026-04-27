@@ -30,8 +30,9 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 .auth-screen { position: fixed; inset: 0; background: #0f0f0f; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
 .auth-screen.hidden { display: none; }
-.auth-logo { width: 72px; height: 72px; background: linear-gradient(135deg,#0d1f0d,#1a4a1a); border: 2px solid #2dba4d; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 36px; margin-bottom: 16px; }
-.auth-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 6px; text-align: center; }
+.auth-logo { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; filter: drop-shadow(0 4px 16px rgba(212, 168, 80, 0.3)); }
+.auth-logo svg { width: 100%; height: 100%; }
+.auth-title { font-size: 24px; font-weight: 500; color: #e8d8b8; margin-bottom: 8px; text-align: center; letter-spacing: -0.3px; }
 .auth-sub { font-size: 12px; color: #4dca4d; margin-bottom: 32px; text-align: center; }
 .auth-card { background: #161616; border: 1px solid #1e1e1e; border-radius: 16px; padding: 24px; width: 100%; max-width: 360px; }
 .auth-label { font-size: 11px; color: #888; margin-bottom: 8px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
@@ -517,12 +518,19 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
   .month-grid { grid-template-columns: repeat(6,1fr); }
   .auth-screen { padding: 40px; }
 } /* ── Splash Screen ── */
-.splash-screen { position: fixed; inset: 0; background: #0f0f0f; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: opacity .3s ease; }
+.splash-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #050810 0%, #0a1530 50%, #14254a 100%); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; transition: opacity .3s ease; }
 .splash-screen.hidden { opacity: 0; pointer-events: none; }
-.splash-logo { width: 80px; height: 80px; background: linear-gradient(135deg,#0d1f0d,#1a4a1a); border: 2px solid #2dba4d; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-.splash-title { font-size: 22px; font-weight: 800; color: #fff; }
-.splash-sub { font-size: 12px; color: #4dca4d; }
-.splash-loader { width: 36px; height: 36px; border: 3px solid #1a4a2a; border-top-color: #4dca4d; border-radius: 50%; animation: spin .7s linear infinite; margin-top: 8px; }
+.splash-logo { width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 8px 24px rgba(212, 168, 80, 0.35)); animation: coinPulse 2s ease-in-out infinite; }
+.splash-logo svg { width: 100%; height: 100%; }
+.splash-title { font-size: 26px; font-weight: 500; color: #e8d8b8; margin-top: 6px; letter-spacing: -0.4px; }
+.splash-title-gold { color: #d4a850; }
+.splash-sub { font-size: 12px; color: #b0a0e8; letter-spacing: 0.5px; }
+.splash-loader-wrap { display: flex; gap: 6px; margin-top: 14px; }
+.splash-dot { width: 8px; height: 8px; background: #d4a850; border-radius: 50%; animation: dotBounce 1.2s ease-in-out infinite; }
+.splash-dot:nth-child(2) { animation-delay: 0.15s; background: #cc7a47; }
+.splash-dot:nth-child(3) { animation-delay: 0.30s; background: #7a6cf0; }
+@keyframes coinPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes dotBounce { 0%, 80%, 100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-8px); opacity: 1; } }
 /* ── Terms Screen Redesign ── */
 .terms-hero { background: #0d1f0d; padding: 24px 20px 18px; border-bottom: 1px solid #1a3a1a; display: flex; flex-direction: column; align-items: center; width: 100%; }
 .terms-hero-icon { width: 64px; height: 64px; background: #0f2a0f; border: 2px solid #2dba4d; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 12px; }
@@ -731,9 +739,10 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .ub-wa-send { width: 100%; background: #20c0a0; border: none; color: #082a2a; font-size: 14px; font-weight: 500; padding: 13px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; }
   #app-lock-screen{position:fixed;inset:0;background:#0d1f0d;z-index:999999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;}
 #app-lock-screen.active{display:flex;}
-.lock-logo{width:72px;height:72px;background:#0d2a0d;border:2px solid #2dba4d;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;}
-.lock-title{font-size:22px;font-weight:800;color:#fff;}
-.lock-sub{font-size:11px;color:#d4a850;text-align:center;line-height:1.7;}
+.lock-logo{width:80px;height:80px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 4px 16px rgba(212, 168, 80, 0.3));}
+.lock-logo svg{width:100%;height:100%;}
+.lock-title{font-size:24px;font-weight:500;color:#e8d8b8;letter-spacing:-0.3px;}
+.lock-sub{font-size:12px;color:#b0a0e8;text-align:center;line-height:1.7;}
 .lock-btn{background:#2dba4d;border:none;color:#051005;font-size:15px;font-weight:800;padding:14px 40px;border-radius:12px;cursor:pointer;margin-top:8px;}
 .name-screen{position:fixed;inset:0;background:#0f0f0f;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .name-screen.hidden{display:none;}
@@ -790,21 +799,78 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 </head>
 <body> <!-- Splash Screen -->
 <div id="app-lock-screen">
-  <div class="lock-logo">🔐</div>
-  <div class="lock-title">हिसाब-Kitaab</div>
+  <div class="lock-logo"><svg width="72" height="72" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coinOuterL" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0d890"/>
+      <stop offset="50%" style="stop-color:#d4a850"/>
+      <stop offset="100%" style="stop-color:#8a6818"/>
+    </linearGradient>
+    <linearGradient id="coinInnerL" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8c870"/>
+      <stop offset="100%" style="stop-color:#b8902f"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="46" fill="url(#coinOuterL)" stroke="#8a6818" stroke-width="1.5"/>
+  <circle cx="50" cy="50" r="38" fill="none" stroke="#8a6818" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="50" cy="50" r="34" fill="url(#coinInnerL)"/>
+  <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+</svg></div>
+  <div class="lock-title">हिसाब-<span style="color:#d4a850;">Kitaab</span></div>
   <div class="lock-sub">आपका data सुरक्षित है<br>App Lock · Privacy Protection</div>
   <button class="lock-btn" onclick="appLockUnlock()">🔓 खोलें · Unlock</button>
 </div>
   <div class="splash-screen" id="splash-screen">
-  <div class="splash-logo">📒</div>
-  <div class="splash-title">हिसाब-Kitaab</div>
-  <div class="splash-sub">रोज़ का हिसाब — रोज़ का मुनाफ़ा</div>
-  <div class="splash-loader"></div>
+  <div class="splash-logo"><svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coinOuter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0d890"/>
+      <stop offset="50%" style="stop-color:#d4a850"/>
+      <stop offset="100%" style="stop-color:#8a6818"/>
+    </linearGradient>
+    <linearGradient id="coinInner" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8c870"/>
+      <stop offset="100%" style="stop-color:#b8902f"/>
+    </linearGradient>
+    <radialGradient id="coinShine" cx="35%" cy="30%" r="40%">
+      <stop offset="0%" style="stop-color:rgba(255,250,220,0.6)"/>
+      <stop offset="100%" style="stop-color:rgba(255,250,220,0)"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="46" fill="url(#coinOuter)" stroke="#8a6818" stroke-width="1.5"/>
+  <circle cx="50" cy="50" r="38" fill="none" stroke="#8a6818" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="50" cy="50" r="34" fill="url(#coinInner)"/>
+  <circle cx="50" cy="50" r="46" fill="url(#coinShine)"/>
+  <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+</svg></div>
+  <div class="splash-title">हिसाब-<span class="splash-title-gold">Kitaab</span></div>
+  <div class="splash-sub">रोज़ का हिसाब · रोज़ का मुनाफ़ा</div>
+  <div class="splash-loader-wrap">
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+  </div>
 </div>
 
 <div class="auth-screen hidden" id="screen-phone">
-  <div class="auth-logo">📒</div>
-  <div class="auth-title">हिसाब-Kitaab</div>
+  <div class="auth-logo"><svg width="72" height="72" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coinOuterM" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0d890"/>
+      <stop offset="50%" style="stop-color:#d4a850"/>
+      <stop offset="100%" style="stop-color:#8a6818"/>
+    </linearGradient>
+    <linearGradient id="coinInnerM" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8c870"/>
+      <stop offset="100%" style="stop-color:#b8902f"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="46" fill="url(#coinOuterM)" stroke="#8a6818" stroke-width="1.5"/>
+  <circle cx="50" cy="50" r="38" fill="none" stroke="#8a6818" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="50" cy="50" r="34" fill="url(#coinInnerM)"/>
+  <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+</svg></div>
+  <div class="auth-title">हिसाब-<span style="color:#d4a850;">Kitaab</span></div>
   <div class="auth-sub">रोज़ का हिसाब — रोज़ का मुनाफ़ा</div>
   <div class="auth-card">
     <div class="auth-label">📱 अपना मोबाइल नंबर डालें</div>
@@ -1347,7 +1413,22 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 <div id="s-home" class="screen active">
   <div class="header">
     <div class="header-left">
-      <div style="width:50px;height:50px;background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border:2px solid #d4a850;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:inset 0 0 0 1px #2a1808, 0 2px 8px rgba(212,168,80,0.2);">📒</div>
+      <div style="width:52px;height:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(212,168,80,0.25));"><svg width="52" height="52" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coinOuterS" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0d890"/>
+      <stop offset="50%" style="stop-color:#d4a850"/>
+      <stop offset="100%" style="stop-color:#8a6818"/>
+    </linearGradient>
+    <linearGradient id="coinInnerS" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8c870"/>
+      <stop offset="100%" style="stop-color:#b8902f"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="46" fill="url(#coinOuterS)" stroke="#8a6818" stroke-width="1.5"/>
+  <circle cx="50" cy="50" r="34" fill="url(#coinInnerS)"/>
+  <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+</svg></div>
       <div><div style="font-size:18px;font-weight:500;color:#e8d8b8;letter-spacing:-.3px;">हिसाब-<span style="color:#d4a850;">Kitaab</span></div><div class="header-sub">रोज़ का हिसाब · रोज़ का मुनाफ़ा</div></div>
     </div>
     <div style="background:#14254a;border:1px solid #2a4078;border-radius:8px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#d4a850;font-weight:500;" id="t-day"></div><div style="font-size:10px;color:#e8d8b8;font-weight:500;" id="t-date"></div></div>

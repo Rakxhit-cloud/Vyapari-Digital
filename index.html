@@ -300,14 +300,60 @@ body.notif-modal-open { overflow: hidden; }
 .confirm-no { flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
 .edit-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 600; display: none; align-items: flex-end; justify-content: center; }
 .edit-overlay.show { display: flex; }
-.edit-sheet { background: #161616; border-radius: 16px 16px 0 0; border-top: 2px solid #2dba4d; padding: 16px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; }
-.edit-title { font-size: 13px; font-weight: 800; color: #4dca4d; margin-bottom: 14px; text-align: center; }
-.edit-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a1a1a; }
-.edit-row:last-of-type { border-bottom: none; }
-.edit-lbl { font-size: 11px; color: #888; flex: 1; }
-.edit-input { background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #e0e0e0; width: 150px; text-align: right; }
-.edit-input:focus { outline: none; border-color: #2dba4d; }
-.edit-save { width: 100%; background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 12px; }
+.edit-sheet { background: #0e1c3a; border-radius: 16px 16px 0 0; border-top: 3px solid #4a90d4; padding: 0; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+.edit-sheet[data-type="bikri"] { border-top-color: #6ab070; }
+.edit-sheet[data-type="maal"] { border-top-color: #cc7a47; }
+.edit-sheet[data-type="kaccha"] { border-top-color: #4a90d4; }
+.edit-sheet[data-type="udhaar"] { border-top-color: #e84878; }
+.edit-header { padding: 14px 16px 12px; border-bottom: 0.5px solid #1a2a48; display: flex; align-items: center; gap: 10px; }
+.edit-header-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 0.5px solid #2a4078; background: #0c2240; }
+.edit-sheet[data-type="bikri"] .edit-header-icon { background: #0a2a18; border-color: #2a6a4a; }
+.edit-sheet[data-type="maal"] .edit-header-icon { background: #2a1a10; border-color: #4a2818; }
+.edit-sheet[data-type="kaccha"] .edit-header-icon { background: #0c2240; border-color: #1a4078; }
+.edit-sheet[data-type="udhaar"] .edit-header-icon { background: #2a1018; border-color: #4a1828; }
+.edit-header-text { flex: 1; }
+.edit-title { font-size: 14px; font-weight: 500; color: #a8c8e8; margin: 0; text-align: left; }
+.edit-sheet[data-type="bikri"] .edit-title { color: #a8d8b8; }
+.edit-sheet[data-type="maal"] .edit-title { color: #e8c8a8; }
+.edit-sheet[data-type="kaccha"] .edit-title { color: #a8c8e8; }
+.edit-sheet[data-type="udhaar"] .edit-title { color: #e8a8c0; }
+.edit-subtitle { font-size: 10px; color: #5a80b0; margin-top: 1px; }
+.edit-sheet[data-type="bikri"] .edit-subtitle { color: #5a8a6a; }
+.edit-sheet[data-type="maal"] .edit-subtitle { color: #a07050; }
+.edit-sheet[data-type="kaccha"] .edit-subtitle { color: #5a80b0; }
+.edit-sheet[data-type="udhaar"] .edit-subtitle { color: #a05a70; }
+.edit-pill { font-size: 9px; font-weight: 500; padding: 3px 8px; border-radius: 10px; border: 0.5px solid #1a4078; background: #0c2240; color: #4a90d4; }
+.edit-sheet[data-type="bikri"] .edit-pill { background: #0a2a18; border-color: #2a6a4a; color: #6ab070; }
+.edit-sheet[data-type="maal"] .edit-pill { background: #1a1020; border-color: #4a2818; color: #cc7a47; }
+.edit-sheet[data-type="kaccha"] .edit-pill { background: #0c2240; border-color: #1a4078; color: #4a90d4; }
+.edit-sheet[data-type="udhaar"] .edit-pill { background: #2a1018; border-color: #4a1828; color: #e84878; }
+.edit-body { padding: 12px 16px 14px; }
+.edit-section-lbl { font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-left: 2px; color: #5a80b0; }
+.edit-sheet[data-type="bikri"] .edit-section-lbl { color: #5a8a6a; }
+.edit-sheet[data-type="maal"] .edit-section-lbl { color: #a07050; }
+.edit-sheet[data-type="kaccha"] .edit-section-lbl { color: #5a80b0; }
+.edit-sheet[data-type="udhaar"] .edit-section-lbl { color: #a05a70; }
+.edit-group { background: #0a1428; border: 0.5px solid #1a2a55; border-radius: 10px; padding: 2px 12px; margin-bottom: 10px; }
+.edit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid #1a2a55; }
+.edit-row:last-child { border-bottom: none; }
+.edit-lbl-new { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #8aa0d8; }
+.edit-lbl-icon { font-size: 13px; width: 18px; text-align: center; }
+.edit-input { background: #14254a; border: 0.5px solid #2a4078; border-radius: 6px; padding: 5px 10px; font-size: 12px; color: #e8d8b8; width: 130px; text-align: right; outline: none; }
+.edit-input:focus { border-color: #4a90d4; }
+.edit-input.edit-amt { font-size: 13px; font-weight: 500; }
+.edit-sheet[data-type="bikri"] .edit-input.edit-amt { border-color: #6ab070; color: #a8d8b8; }
+.edit-sheet[data-type="maal"] .edit-input.edit-amt { border-color: #cc7a47; color: #e8c8a8; }
+.edit-sheet[data-type="kaccha"] .edit-input.edit-amt { border-color: #4a90d4; color: #a8c8e8; }
+.edit-pay-toggle { display: flex; gap: 6px; }
+.edit-pay-pill { font-size: 11px; padding: 5px 12px; border-radius: 6px; cursor: pointer; user-select: none; border: 0.5px solid #2a2a48; background: #1a1428; color: #5a6aa8; }
+.edit-pay-pill.active { background: #1a4a3a; border-color: #2a6a4a; color: #6ab070; font-weight: 500; }
+.edit-actions { display: flex; gap: 8px; margin-top: 14px; }
+.edit-cancel { flex: 1; background: #1a1428; border: 0.5px solid #3a3050; color: #8a8aa8; font-size: 12px; font-weight: 500; padding: 11px; border-radius: 10px; cursor: pointer; }
+.edit-save { flex: 2; background: #4a90d4; border: none; color: #04122a; font-size: 13px; font-weight: 500; padding: 11px; border-radius: 10px; cursor: pointer; }
+.edit-sheet[data-type="bikri"] .edit-save { background: #6ab070; color: #04140a; }
+.edit-sheet[data-type="maal"] .edit-save { background: #cc7a47; color: #1a0a04; }
+.edit-sheet[data-type="kaccha"] .edit-save { background: #4a90d4; color: #04122a; }
+.edit-sheet[data-type="udhaar"] .edit-save { background: #e84878; color: #2a0414; }
 .edit-cancel { width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; font-size: 13px; font-weight: 700; padding: 11px; border-radius: 8px; cursor: pointer; margin-top: 6px; }
 .more-menu { display: none; position: fixed; bottom: 90px; right: 8px; background: #0a1530; border: 1px solid #2a4078; border-radius: 14px; padding: 8px; z-index: 300; min-width: 180px; box-shadow: 0 8px 24px rgba(10, 21, 48, 0.6); }
 .more-item { display: flex; align-items: center; gap: 12px; padding: 12px; cursor: pointer; border-radius: 8px; font-size: 13px; color: #e8d8b8; font-weight: 500; }
@@ -1397,11 +1443,22 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 <div class="edit-overlay" id="edit-popup">
-  <div class="edit-sheet">
-    <div class="edit-title" id="edit-title">✏️ एंट्री सुधारें</div>
-    <div id="edit-fields"></div>
-    <button class="edit-save" onclick="saveEdit()">💾 सुधार सेव करें</button>
-    <button class="edit-cancel" onclick="closeEdit()">रद्द करें</button>
+  <div class="edit-sheet" id="edit-sheet">
+    <div class="edit-header">
+      <div class="edit-header-icon" id="edit-header-icon">📦</div>
+      <div class="edit-header-text">
+        <div class="edit-title" id="edit-title">एंट्री सुधारें</div>
+        <div class="edit-subtitle" id="edit-subtitle">Edit entry</div>
+      </div>
+      <div class="edit-pill">सुधार</div>
+    </div>
+    <div class="edit-body">
+      <div id="edit-fields"></div>
+      <div class="edit-actions">
+        <button class="edit-cancel" onclick="closeEdit()">रद्द करें</button>
+        <button class="edit-save" onclick="saveEdit()">💾 सुधार सेव करें</button>
+      </div>
+    </div>
   </div>
 </div>
 <div class="date-popup-overlay" id="date-popup-overlay" onclick="closeDatePopup(event)">
@@ -2479,7 +2536,10 @@ function closeConfirm(){document.getElementById('confirm-popup').classList.remov
 function confirmDelete(){const deleteId=dpDeleteId;const savedDate=dpCurrentDate;dpDeleteId=null;document.getElementById('confirm-popup').classList.remove('show');if(deleteId){const bikri=DB.get(K.BIKRI);const deletedEntry=bikri.find(r=>r.id===deleteId);if(deletedEntry&&(deletedEntry.udhaar||0)>0){const udhaarRows=DB.get(K.UDHAAR);const toDelete=udhaarRows.filter(r=>{const isAuto=r.name&&(r.name.startsWith('उधार (')||r.name.startsWith('बाकी उधार ('));return isAuto&&r.date===deletedEntry.date;});toDelete.forEach(r=>{ if(window._fsDelete) window._fsDelete(CURRENT_UID,K.UDHAAR,r.id); });DB.set(K.UDHAAR,udhaarRows.filter(r=>!toDelete.find(d=>d.id===r.id)));}DB.remove(K.BIKRI,deleteId);toast('✅ एंट्री हट गई!');loadHome();loadUdhaarKPI();if(savedDate)setTimeout(()=>openDatePopup(savedDate),200);return;}if(!currentEntry)return;const{type,id,data}=currentEntry;if(type===K.UDHAAR){syncUdhaarToBikri(id,data.given,0,data.date,true);toast('✅ उधार हटा — बिक्री अपडेट हो गई!');}else toast('✅ एंट्री हट गई!');DB.remove(type,id);currentEntry=null;loadHome();loadUdhaar();loadUdhaarKPI();const ukpiPanel=document.getElementById('panel-udhaar-kpi');if(ukpiPanel&&ukpiPanel.classList.contains('open'))loadUdhaarInline();}
 function openEdit(){closePopup();if(!currentEntry)return;buildEditSheet(currentEntry.type,currentEntry.data);}
 function closeEdit(){document.getElementById('edit-popup').classList.remove('show');}
-function buildEditSheet(type,data){let title='✏️ एंट्री सुधारें',fields='';if(type===K.BIKRI){title='✏️ बिक्री एंट्री सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">💰 बिक्री ₹</div><input type="number" class="edit-input" id="ed-sales" value="${data.sales||''}"></div><div class="edit-row"><div class="edit-lbl">💵 नकद ₹</div><input type="number" class="edit-input" id="ed-cash" value="${data.cash||''}"></div><div class="edit-row"><div class="edit-lbl">📱 UPI ₹</div><input type="number" class="edit-input" id="ed-upi" value="${data.upi||''}"></div><div class="edit-row"><div class="edit-lbl">🧾 खर्चा ₹</div><input type="number" class="edit-input" id="ed-expense" value="${data.expense||''}"></div><div class="edit-row"><div class="edit-lbl">🤝 उधार ₹</div><input type="number" class="edit-input" id="ed-udhaar" value="${data.udhaar||''}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-notes" value="${escHTML(data.notes)}"></div>`;}else if(type===K.MAAL){title='✏️ माल सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">🏪 सप्लायर</div><input type="text" class="edit-input" id="ed-supplier" value="${escHTML(data.supplier)}"></div><div class="edit-row"><div class="edit-lbl">📦 माल</div><input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}"></div><div class="edit-row"><div class="edit-lbl">💰 रकम ₹</div><input type="number" class="edit-input" id="ed-amount" value="${data.amount||''}"></div><div class="edit-row"><div class="edit-lbl">💳 भुगतान</div><input type="text" class="edit-input" id="ed-pay" value="${escHTML(data.pay)||'नकद'}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-note" value="${escHTML(data.note)}"></div>`;}else if(type===K.KACCHA){title='✏️ कच्चा माल सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">🥣 सामान</div><input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}"></div><div class="edit-row"><div class="edit-lbl">💰 रकम ₹</div><input type="number" class="edit-input" id="ed-amount" value="${data.amount||''}"></div><div class="edit-row"><div class="edit-lbl">🏪 कहाँ से</div><input type="text" class="edit-input" id="ed-source" value="${escHTML(data.source)}"></div><div class="edit-row"><div class="edit-lbl">💳 भुगतान</div><input type="text" class="edit-input" id="ed-pay" value="${escHTML(data.pay)||'नकद'}"></div><div class="edit-row"><div class="edit-lbl">📝 नोट</div><input type="text" class="edit-input" id="ed-note" value="${escHTML(data.note)}"></div>`;}else if(type===K.UDHAAR){title='✏️ उधार सुधारें';fields=`<div class="edit-row"><div class="edit-lbl">👤 नाम</div><input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}"></div><div class="edit-row"><div class="edit-lbl">💰 उधार दिया ₹</div><input type="number" class="edit-input" id="ed-given" value="${data.given||''}"></div><div class="edit-row"><div class="edit-lbl">📅 तारीख</div><input type="date" class="edit-input" id="ed-date" value="${data.date||''}"></div><div class="edit-row"><div class="edit-lbl">✅ वापस मिला ₹</div><input type="number" class="edit-input" id="ed-returned" value="${data.returned||''}"></div>`;}document.getElementById('edit-title').textContent=title;document.getElementById('edit-fields').innerHTML=fields;document.getElementById('edit-popup').classList.add('show');}
+function _editRow(icon,label,inputHTML){return`<div class="edit-row"><div class="edit-lbl-new"><span class="edit-lbl-icon">${icon}</span><span>${label}</span></div>${inputHTML}</div>`;}
+function _editPayToggle(currentVal){const v=(currentVal||'नकद').toLowerCase();const isNakad=v.includes('नकद')||v==='नकद'||v==='cash';return`<div class="edit-pay-toggle"><div class="edit-pay-pill ${isNakad?'active':''}" onclick="_setPay(this,'नकद')">नकद</div><div class="edit-pay-pill ${!isNakad?'active':''}" onclick="_setPay(this,'उधार')">उधार</div><input type="hidden" id="ed-pay" value="${escHTML(isNakad?'नकद':'उधार')}"></div>`;}
+function _setPay(el,val){const parent=el.parentElement;parent.querySelectorAll('.edit-pay-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('ed-pay').value=val;}
+function buildEditSheet(type,data){let title='एंट्री सुधारें',subtitle='Edit entry',icon='📝',sheetType='bikri',html='';if(type===K.BIKRI){title='बिक्री सुधारें';subtitle='Edit sales entry';icon='💰';sheetType='bikri';html=`<div class="edit-section-lbl">मूल जानकारी</div><div class="edit-group">${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💰','बिक्री ₹',`<input type="number" class="edit-input edit-amt" id="ed-sales" value="${data.sales||''}">`)}${_editRow('💵','नकद ₹',`<input type="number" class="edit-input" id="ed-cash" value="${data.cash||''}">`)}${_editRow('📱','UPI ₹',`<input type="number" class="edit-input" id="ed-upi" value="${data.upi||''}">`)}${_editRow('🧾','खर्चा ₹',`<input type="number" class="edit-input" id="ed-expense" value="${data.expense||''}">`)}${_editRow('🤝','उधार ₹',`<input type="number" class="edit-input" id="ed-udhaar" value="${data.udhaar||''}">`)}</div><div class="edit-section-lbl">अतिरिक्त</div><div class="edit-group">${_editRow('📝','नोट',`<input type="text" class="edit-input" id="ed-notes" placeholder="कुछ लिखें..." value="${escHTML(data.notes)}">`)}</div>`;}else if(type===K.MAAL){title='माल सुधारें';subtitle='Edit goods purchase';icon='📦';sheetType='maal';html=`<div class="edit-section-lbl">मूल जानकारी</div><div class="edit-group">${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}${_editRow('🏪','सप्लायर',`<input type="text" class="edit-input" id="ed-supplier" value="${escHTML(data.supplier)}">`)}${_editRow('📦','माल',`<input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💰','रकम ₹',`<input type="number" class="edit-input edit-amt" id="ed-amount" value="${data.amount||''}">`)}${_editRow('💳','भुगतान',_editPayToggle(data.pay))}</div><div class="edit-section-lbl">अतिरिक्त</div><div class="edit-group">${_editRow('📝','नोट',`<input type="text" class="edit-input" id="ed-note" placeholder="कुछ लिखें..." value="${escHTML(data.note)}">`)}</div>`;}else if(type===K.KACCHA){title='कच्चा माल सुधारें';subtitle='Edit raw materials';icon='🥣';sheetType='kaccha';html=`<div class="edit-section-lbl">मूल जानकारी</div><div class="edit-group">${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}${_editRow('🥣','सामान',`<input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}">`)}${_editRow('🏪','कहाँ से',`<input type="text" class="edit-input" id="ed-source" value="${escHTML(data.source)}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💰','रकम ₹',`<input type="number" class="edit-input edit-amt" id="ed-amount" value="${data.amount||''}">`)}${_editRow('💳','भुगतान',_editPayToggle(data.pay))}</div><div class="edit-section-lbl">अतिरिक्त</div><div class="edit-group">${_editRow('📝','नोट',`<input type="text" class="edit-input" id="ed-note" placeholder="कुछ लिखें..." value="${escHTML(data.note)}">`)}</div>`;}else if(type===K.UDHAAR){title='उधार सुधारें';subtitle='Edit credit entry';icon='🤝';sheetType='udhaar';html=`<div class="edit-section-lbl">ग्राहक जानकारी</div><div class="edit-group">${_editRow('👤','नाम',`<input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}">`)}${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💰','उधार दिया ₹',`<input type="number" class="edit-input edit-amt" id="ed-given" value="${data.given||''}">`)}${_editRow('✅','वापस मिला ₹',`<input type="number" class="edit-input" id="ed-returned" value="${data.returned||''}">`)}</div>`;}document.getElementById('edit-sheet').setAttribute('data-type',sheetType);document.getElementById('edit-header-icon').textContent=icon;document.getElementById('edit-title').textContent=title;document.getElementById('edit-subtitle').textContent=subtitle;document.getElementById('edit-fields').innerHTML=html;document.getElementById('edit-popup').classList.add('show');}
 function saveEdit(){if(!currentEntry)return;const{type,id,data}=currentEntry;const g=eid=>{const el=document.getElementById(eid);return el?el.value:'';};let updates={};if(type===K.BIKRI){const s=parseFloat(g('ed-sales'))||0,x=parseFloat(g('ed-expense'))||0,u=parseFloat(g('ed-udhaar'))||0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';updates={date:g('ed-date'),sales:s,cash:parseFloat(g('ed-cash'))||0,upi:parseFloat(g('ed-upi'))||0,expense:x,udhaar:u,notes:cleanText(g('ed-notes'),500),profit:p,margin:m,rating:rt};}else if(type===K.MAAL){updates={date:g('ed-date'),supplier:cleanText(g('ed-supplier'),100),name:cleanText(g('ed-name'),200),amount:parseFloat(g('ed-amount'))||0,pay:cleanText(g('ed-pay'),20),note:cleanText(g('ed-note'),500)};}else if(type===K.KACCHA){updates={date:g('ed-date'),name:cleanText(g('ed-name'),200),amount:parseFloat(g('ed-amount'))||0,source:cleanText(g('ed-source'),100),pay:cleanText(g('ed-pay'),20),note:cleanText(g('ed-note'),500)};}else if(type===K.UDHAAR){const given=parseFloat(g('ed-given'))||0,ret=parseFloat(g('ed-returned'))||0,rem=given-ret,days=daysSince(g('ed-date'));let status='🟡 PENDING';if(rem<=0)status='🟢 SETTLED';else if(days>=7)status='🔴 OVERDUE';updates={name:cleanText(g('ed-name'),100),given,date:g('ed-date'),returned:ret,remaining:rem,days,status};syncUdhaarToBikri(id,data.given||0,given,g('ed-date')||data.date,false);toast('✅ उधार सुधर गई!');}DB.update(type,id,updates);if(type!==K.UDHAAR)toast('✅ एंट्री सुधर गई!');closeEdit();currentEntry=null;loadHome();loadUdhaar();loadUdhaarKPI();const ukpiPanel=document.getElementById('panel-udhaar-kpi');if(ukpiPanel&&ukpiPanel.classList.contains('open'))loadUdhaarInline();if(dpCurrentDate){const savedDate=dpCurrentDate;closeDatePopupDirect();setTimeout(()=>openDatePopup(savedDate),300);}}
 let monthNavOffset=Math.max(0,CUR_MONTH-2);
 let monthNavSelected=CUR_MONTH;

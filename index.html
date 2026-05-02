@@ -330,6 +330,7 @@ body.notif-modal-open { overflow: hidden; }
 .ss-recent-card-meta { color: #8aa0d8; font-size: 9px; margin-top: 3px; }
 .ss-recent-card-amt { color: #e8d8b8; font-size: 13px; font-weight: 500; text-align: right; }
 .ss-recent-card-tag-paid { background: #1a4a3a; color: #6ab070; font-size: 8px; padding: 1px 6px; border-radius: 3px; display: inline-block; margin-top: 2px; }
+.ss-recent-card-date { background: #3a2a08; color: #d4a850; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
 .ss-recent-card-tag-udhar { background: #4a3010; color: #cc7a47; font-size: 8px; padding: 1px 6px; border-radius: 3px; display: inline-block; margin-top: 2px; }
 .ss-view-all { background: #14254a; border: 1px dashed #4a3878; border-radius: 8px; padding: 11px; text-align: center; color: #d4a850; font-size: 11px; font-weight: 500; cursor: pointer; margin-top: 8px; }
 .ss-view-all:active { background: #1a3060; }
@@ -2421,6 +2422,7 @@ function fmt(n){return'₹'+(parseInt(n)||0).toLocaleString('en-IN');}
 function initials(name){if(!name)return'?';const p=name.trim().split(' ');return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():name.substring(0,2).toUpperCase();}
 function fmtDate(ds){if(!ds)return'—';try{return parseLocalDate(ds).toLocaleDateString('hi-IN',{day:'numeric',month:'long',year:'numeric'});}catch(e){return ds;}}
 function fmtDayDate(ds){if(!ds)return'—';try{const d=parseLocalDate(ds);return d.toLocaleDateString('hi-IN',{weekday:'short'})+' · '+d.toLocaleDateString('hi-IN',{day:'numeric',month:'short'});}catch(e){return ds;}}
+function fmtRelDate(ds){if(!ds)return'—';try{const d=parseLocalDate(ds);const t=new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());const diff=Math.round((t-dd)/86400000);if(diff===0)return'आज';if(diff===1)return'कल';if(diff===-1)return'कल';return d.toLocaleDateString('hi-IN',{day:'numeric',month:'short'});}catch(e){return ds;}}
 
 function initApp(uid){
   CURRENT_UID=uid||'default';
@@ -2604,7 +2606,7 @@ function loadMaalForMonth(mi){
       card.className='ss-recent-card';
       const tagCls=r.pay==='नकद'?'ss-recent-card-tag-paid':'ss-recent-card-tag-udhar';
       const tagTxt=r.pay==='नकद'?'✓ नकद':'चुका दिया';
-      card.innerHTML=`<div><div class="ss-recent-card-name">${escHTML(r.supplier)||'—'}</div><div class="ss-recent-card-meta">${escHTML(r.name)}</div></div><div style="text-align:right;"><div class="ss-recent-card-amt">${fmt(r.amount)}</div><div class="${tagCls}">${tagTxt}</div></div>`;
+      card.innerHTML=`<div><div class="ss-recent-card-name">${escHTML(r.supplier)||'—'}</div><div class="ss-recent-card-meta">${escHTML(r.name)}</div></div><div style="text-align:right;"><div class="ss-recent-card-date">${fmtRelDate(r.date)}</div><div class="ss-recent-card-amt">${fmt(r.amount)}</div><div class="${tagCls}">${tagTxt}</div></div>`;
       // Make long-press work for delete
       makeLPInline(card,K.MAAL,r.id,r);
       rList.appendChild(card);
@@ -2731,7 +2733,7 @@ function loadKacchaForMonth(mi){
       card.className='ss-recent-card';
       const tagCls=r.pay==='नकद'?'ss-recent-card-tag-paid':'ss-recent-card-tag-udhar';
       const tagTxt=r.pay==='नकद'?'✓ नकद':'चुका दिया';
-      card.innerHTML=`<div><div class="ss-recent-card-name">${escHTML(r.name)||'—'}</div><div class="ss-recent-card-meta">${escHTML(r.source)}</div></div><div style="text-align:right;"><div class="ss-recent-card-amt">${fmt(r.amount)}</div><div class="${tagCls}">${tagTxt}</div></div>`;
+      card.innerHTML=`<div><div class="ss-recent-card-name">${escHTML(r.name)||'—'}</div><div class="ss-recent-card-meta">${escHTML(r.source)}</div></div><div style="text-align:right;"><div class="ss-recent-card-date">${fmtRelDate(r.date)}</div><div class="ss-recent-card-amt">${fmt(r.amount)}</div><div class="${tagCls}">${tagTxt}</div></div>`;
       makeLPInline(card,K.KACCHA,r.id,r);
       rList.appendChild(card);
     });

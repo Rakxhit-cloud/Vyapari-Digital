@@ -1719,7 +1719,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl">💰 बिक्री</div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
       <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl">📈 गल्ला/कमाई</div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
       <div class="kpi-card kpi-amber" onclick="toggleKPI('kharcha')"><div class="kpi-lbl">🧾 खर्चा</div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card" style="background:#0a1a14;border:1px solid #1a4a3a;border-top:2px solid #3dca6a;border-radius:9px;padding:10px;"><div class="kpi-lbl" style="color:#cc7a47;">📊 मुनाफ़ा %</div><div class="kpi-val" id="k-margin-pct" style="color:#cc7a47;">0%</div><div class="kpi-sub" style="color:#1a5a3a;">इस महीने</div><div style="margin-top:5px;background:#0d2a1a;border-radius:3px;height:4px;overflow:hidden;"><div id="k-margin-bar" style="height:100%;background:#3dca6a;border-radius:3px;width:0%;transition:width .4s;"></div></div></div>
+      <div class="kpi-card" id="tulna-card" style="background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;"><div class="kpi-lbl" id="tulna-title" style="color:#ffffff;font-weight:600;">📈 आज की तुलना</div><div id="tulna-main" style="font-size:18px;font-weight:700;letter-spacing:-0.3px;color:#ffffff;margin:2px 0 1px;"><span id="tulna-arrow" style="color:#3dca6a;">▲</span> <span id="tulna-delta">₹0</span></div><div id="tulna-sub" style="font-size:10px;color:#ffffff;font-weight:500;opacity:0.85;margin-bottom:5px;">कल से ज़्यादा</div><div id="tulna-inset" style="display:flex;justify-content:space-between;align-items:center;background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:4px 7px;"><span style="color:#ffffff;font-size:10px;font-weight:500;opacity:0.75;" id="tulna-kal">कल ₹0</span><span style="color:#ffffff;font-size:11px;font-weight:600;" id="tulna-aaj">आज ₹0</span></div></div>
     </div>
     <div class="kpi-panel" id="panel-bikri"><div class="kpi-panel-inner panel-green"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;text-align:right;">बिक्री</div></div><div id="bikri-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a3a1a;"><div class="ptbl-total-cell" style="background:#0d2a1a;color:#2dba4d;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d2a1a;color:#d4a850;text-align:right;" id="bikri-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
@@ -2643,6 +2643,83 @@ function monthNavSlide(dir){
   monthNavOffset=newOff;
   buildMonthNav();
 }
+function updateTulnaCard(){
+  const bikri=DB.get(K.BIKRI);
+  const today=new Date();
+  const yesterday=new Date(today.getTime()-86400000);
+  const todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  const yesterdayStr=yesterday.getFullYear()+'-'+String(yesterday.getMonth()+1).padStart(2,'0')+'-'+String(yesterday.getDate()).padStart(2,'0');
+  const todayEntries=bikri.filter(r=>r.date===todayStr);
+  const yesterdayEntries=bikri.filter(r=>r.date===yesterdayStr);
+  const aajGalla=todayEntries.reduce((s,r)=>s+calcEntryProfit(r),0);
+  const kalGalla=yesterdayEntries.reduce((s,r)=>s+calcEntryProfit(r),0);
+  const card=document.getElementById('tulna-card');
+  const title=document.getElementById('tulna-title');
+  const main=document.getElementById('tulna-main');
+  const arrow=document.getElementById('tulna-arrow');
+  const delta=document.getElementById('tulna-delta');
+  const sub=document.getElementById('tulna-sub');
+  const inset=document.getElementById('tulna-inset');
+  const kalEl=document.getElementById('tulna-kal');
+  const aajEl=document.getElementById('tulna-aaj');
+  if(!card)return;
+  if(yesterdayEntries.length===0 && todayEntries.length===0){
+    card.style.cssText='background:#0a1530;border:1px solid #2a4078;border-top:2px solid #4a90d4;border-radius:9px;padding:10px;';
+    title.innerHTML='📊 आज की तुलना';
+    main.innerHTML='<span style="color:#ffffff;font-size:17px;font-weight:700;letter-spacing:-0.3px;">अभी ₹0</span>';
+    sub.textContent='कल भी एंट्री नहीं थी';
+    inset.style.display='none';
+    return;
+  }
+  if(yesterdayEntries.length===0){
+    card.style.cssText='background:#0a1530;border:1px solid #2a4078;border-top:2px solid #4a90d4;border-radius:9px;padding:10px;';
+    title.innerHTML='📊 आज की तुलना';
+    main.innerHTML='<span style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:-0.3px;">'+fmt(aajGalla)+'</span>';
+    sub.textContent='कल कोई एंट्री नहीं थी';
+    inset.style.display='none';
+    return;
+  }
+  if(todayEntries.length===0){
+    card.style.cssText='background:#1a1408;border:1px solid #6a4818;border-top:2px solid #d4a850;border-radius:9px;padding:10px;';
+    title.innerHTML='⏰ आज की तुलना';
+    main.innerHTML='<span style="color:#ffffff;font-size:17px;font-weight:700;letter-spacing:-0.3px;">अभी ₹0</span>';
+    sub.textContent='एंट्री बाकी';
+    inset.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#2a1f08;border:0.5px solid #4a3818;border-radius:4px;padding:4px 7px;';
+    kalEl.textContent='📌 कल';
+    aajEl.textContent=fmt(kalGalla);
+    return;
+  }
+  const diff=aajGalla-kalGalla;
+  inset.style.display='flex';
+  kalEl.textContent='कल '+fmt(kalGalla);
+  aajEl.textContent='आज '+fmt(aajGalla);
+  if(diff>0){
+    card.style.cssText='background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;';
+    title.innerHTML='📈 आज की तुलना';
+    arrow.style.color='#3dca6a';
+    arrow.textContent='▲';
+    delta.textContent=fmt(diff);
+    main.innerHTML='<span id="tulna-arrow" style="color:#3dca6a;">▲</span> <span id="tulna-delta">'+fmt(diff)+'</span>';
+    sub.textContent='कल से ज़्यादा';
+    inset.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:4px 7px;';
+  }else if(diff<0){
+    card.style.cssText='background:#1f0a14;border:1px solid #6a2a40;border-top:2px solid #e84878;border-radius:9px;padding:10px;';
+    title.innerHTML='📊 आज की तुलना';
+    main.innerHTML='<span style="color:#ff5470;">▼</span> <span>'+fmt(Math.abs(diff))+'</span>';
+    sub.textContent='कल से कम';
+    inset.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#2a0d18;border:0.5px solid #4a1a30;border-radius:4px;padding:4px 7px;';
+  }else{
+    card.style.cssText='background:#0a1530;border:1px solid #2a4078;border-top:2px solid #4a90d4;border-radius:9px;padding:10px;';
+    title.innerHTML='📊 आज की तुलना';
+    main.innerHTML='<span>━ बराबर</span>';
+    sub.textContent='कल जैसा';
+    inset.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#0d1a2a;border:0.5px solid #2a4078;border-radius:4px;padding:4px 7px;';
+  }
+  // re-set common styles for white text on main and sub
+  main.style.cssText='font-size:18px;font-weight:700;letter-spacing:-0.3px;color:#ffffff;margin:2px 0 1px;';
+  sub.style.cssText='font-size:10px;color:#ffffff;font-weight:500;opacity:0.85;margin-bottom:5px;';
+  title.style.cssText='color:#ffffff;font-weight:600;';
+}
 function loadKPIForMonth(mi){
   const bikri=DB.get(K.BIKRI);
   const entries=bikri.filter(r=>inMonth(r.date,mi));
@@ -2653,8 +2730,7 @@ function loadKPIForMonth(mi){
   document.getElementById('k-sales').textContent=fmt(tS);
   document.getElementById('k-profit').textContent=fmt(tP);
   document.getElementById('k-expense').textContent=fmt(tE);
-  document.getElementById('k-margin-pct').textContent=margin+'%';
-  document.getElementById('k-margin-bar').style.width=Math.min(margin,100)+'%';
+  updateTulnaCard();
   renderWeeklyTable('bikri-table-rows','bikri-total','sales','#4dca4d','#444');
   renderWeeklyTable('galla-table-rows','galla-total','profit','#50a0f0','#444');
   renderWeeklyTable('kharcha-table-rows','kharcha-total','expense','#f0b040','#444');

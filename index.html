@@ -662,7 +662,8 @@ body.notif-modal-open { overflow: hidden; }
 .install-sheet { background: #0a1530; border-radius: 20px 20px 0 0; border-top: 2px solid #d4a850; padding: 20px 20px 32px; width: 100%; max-width: 480px; animation: slideUp .3s ease; }
 .install-sheet-handle { width: 40px; height: 4px; background: #4a3878; border-radius: 2px; margin: 0 auto 16px; }
 .install-sheet-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-.install-sheet-appicon { width: 60px; height: 60px; background: linear-gradient(135deg, #6a4818 0%, #8a5a20 50%, #4a3010 100%); border: 2px solid #d4a850; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 30px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(212, 168, 80, 0.25); }
+.install-sheet-appicon { width: 60px; height: 60px; border: 2px solid #d4a850; border-radius: 14px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(212, 168, 80, 0.25); overflow: hidden; background: #0a1530; display: flex; align-items: center; justify-content: center; }
+.install-sheet-appicon img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .install-sheet-appname { font-size: 19px; font-weight: 500; color: #e8d8b8; letter-spacing: -0.3px; }
 .install-sheet-appsub { font-size: 11px; color: #b0a0e8; margin-top: 3px; }
 .install-sheet-divider { height: 1px; background: #2a4078; margin-bottom: 16px; }
@@ -1445,7 +1446,7 @@ body.notif-modal-open { overflow: hidden; }
   <div class="install-sheet">
     <div class="install-sheet-handle"></div>
     <div class="install-sheet-top">
-      <div class="install-sheet-appicon">📒</div>
+      <div class="install-sheet-appicon"><img src="icon-192.png" alt="हिसाब-Kitaab"></div>
       <div>
         <div class="install-sheet-appname">हिसाब-Kitaab</div>
         <div class="install-sheet-appsub">📲 होम स्क्रीन पर इंस्टॉल करें — बिल्कुल फ्री</div>

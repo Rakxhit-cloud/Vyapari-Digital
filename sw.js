@@ -1,4 +1,4 @@
-// Cache bust: 2026-04-28-v3 - fixed Devanagari shaping
+// Cache bust: 2026-05-04-v4 - manifest update + name fix
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
@@ -17,8 +17,8 @@ messaging.onBackgroundMessage(function(payload) {
   const title = payload.notification?.title || '📒 हिसाब-Kitaab';
   const options = {
     body: payload.notification?.body || 'आज की एंट्री करना न भूलें!',
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-72.png',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
     vibrate: [200, 100, 200],
     tag: 'hk-daily-reminder',
     renotify: true,
@@ -32,7 +32,7 @@ self.addEventListener('notificationclick', function(event) {
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
       for (let i = 0; i < clientList.length; i++) {
-        if (clientList[i].url.includes('hisaabkitaab') && 'focus' in clientList[i]) {
+        if (clientList[i].url.includes('hisaabkitab') && 'focus' in clientList[i]) {
           return clientList[i].focus();
         }
       }
@@ -47,8 +47,20 @@ self.addEventListener('install', function(e) {
 
 self.addEventListener('activate', function(e) {
   e.waitUntil(
-    caches.keys().then(function(names) {
-      return Promise.all(names.map(function(name) { return caches.delete(name); }));
-    }).then(function() { return self.clients.claim(); })
+    Promise.all([
+      // Clear ALL caches (more aggressive than before)
+      caches.keys().then(function(names) {
+        return Promise.all(names.map(function(name) { return caches.delete(name); }));
+      }),
+      // Take control of all open pages immediately
+      self.clients.claim()
+    ]).then(function() {
+      // Notify all open clients to reload manifest reference
+      return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+        clientList.forEach(function(client) {
+          client.postMessage({ type: 'SW_UPDATED', version: '2026-05-04-v4' });
+        });
+      });
+    })
   );
 });

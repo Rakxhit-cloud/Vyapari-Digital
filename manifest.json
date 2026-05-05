@@ -1,8 +1,9 @@
 {
+  "id": "/?source=pwa",
   "name": "हिसाब-Kitaab — आपका अपना खाता",
   "short_name": "हिसाब-Kitaab",
   "description": "आपका अपना खाता — रोज़ की डायरी, हिंदी में, मोबाइल पर। दुकान का बिक्री, खर्चा, उधार, माल — सब कुछ अपने फ़ोन में।",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0a1530",

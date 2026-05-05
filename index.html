@@ -1146,14 +1146,16 @@ body.notif-modal-open { overflow: hidden; }
 <!-- Name Screen -->
 <div class="name-screen hidden" id="screen-name">
   <div style="width:70px;height:70px;background:linear-gradient(135deg, #6a4818 0%, #8a5a20 50%, #4a3010 100%);border:2px solid #d4a850;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;box-shadow:0 4px 12px rgba(212, 168, 80, 0.25);">👤</div>
-  <div class="auth-title">आपका नाम बताएं</div>
-  <div class="auth-sub">हम आपको इसी नाम से जानेंगे</div>
+  <div class="auth-title">अपनी जानकारी दें</div>
+  <div class="auth-sub">Apna naam aur dukaan ka naam batayein</div>
   <div class="auth-card">
-    <div class="auth-label">📝 अपना नाम डालें</div>
+    <div class="auth-label">👤 आपका नाम</div>
+    <input class="auth-input" type="text" id="name-input" placeholder="जैसे: Ramesh Kumar" style="margin-bottom:14px;" maxlength="40">
+    <div class="auth-label">🏪 दुकान/Business का नाम</div>
+    <input class="auth-input" type="text" id="business-input" placeholder="जैसे: Sharma Medical Store" style="margin-bottom:6px;" maxlength="60">
+    <div style="font-size:9px;color:#5a80b0;margin-bottom:14px;">यह नाम app के top par दिखेगा</div>
     <div class="auth-error" id="name-error"></div>
-    <input class="auth-input" type="text" id="name-input" placeholder="जैसे: Ramesh Kumar" style="margin-bottom:16px;" maxlength="40">
     <button class="auth-btn" onclick="saveName()">✅ आगे बढ़ें · Continue</button>
-    <button class="auth-btn-secondary" onclick="skipName()">बाद में बताऊँगा / बताऊँगी</button>
   </div>
 </div>
 <!-- Mode Selection Screen -->
@@ -1223,13 +1225,14 @@ body.notif-modal-open { overflow: hidden; }
   <div class="ub-screen active" id="ub-home">
   <div class="ub-header">
       <div class="ub-header-left">
-        <div style="width:46px;height:46px;background:#2a1a4a;border:2px solid #7a6cf0;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">🤝</div>
-        <div>
-          <div style="font-size:18px;font-weight:800;color:#e0d8ff;letter-spacing:-.3px;">उधार <span style="color:#f0c040;">Book</span></div>
-          <div class="ub-header-sub">आपकी उधार बही · Udhaar Book</div>
+        <div style="width:50px;height:50px;background:#2a1a4a;border:2px solid #f0c040;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 0 12px rgba(240,192,64,0.2);">🤝</div>
+        <div style="min-width:0;flex:1;">
+          <div id="ub-greeting" style="font-size:13px;color:#f0c040;font-weight:700;margin-bottom:3px;display:none;"></div>
+          <div id="ub-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+          <div style="font-size:11px;color:#d8d0ff;font-weight:500;">उधार <span style="color:#f0c040;font-weight:700;">Book</span> · आपकी उधार बही</div>
         </div>
       </div>
-      <button class="ub-add-btn" onclick="openUBSheet()">+ नया उधार</button>
+      <button class="ub-add-btn" onclick="openUBSheet()" style="background:linear-gradient(135deg,#f0c040 0%,#d4a020 100%);color:#1a0a04;border:2px solid #f0c040;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0;box-shadow:0 0 10px rgba(240,192,64,0.4);letter-spacing:-0.2px;">+ नया उधार</button>
     </div>
     <div class="ub-summary" id="ub-summary-strip">
       <div class="ub-sum-item ubs-gold"><div class="ub-sum-lbl">कुल बाकी</div><div class="ub-sum-val ub-sv-a" id="ub-total-amt">₹0</div></div>
@@ -1611,11 +1614,19 @@ body.notif-modal-open { overflow: hidden; }
   <circle cx="50" cy="50" r="34" fill="url(#coinInnerS)"/>
   <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
 </svg></div>
-      <div><div style="font-size:18px;font-weight:500;color:#e8d8b8;letter-spacing:-.3px;">हिसाब-<span style="color:#d4a850;">Kitaab</span></div><div class="header-sub">आपका अपना खाता</div></div>
+      <div style="min-width:0;flex:1;"><div id="hk-greeting" style="font-size:13px;color:#d4a850;font-weight:700;margin-bottom:3px;display:none;"></div><div id="hk-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div><div id="hk-brand" style="font-size:11px;color:#e8d8b8;font-weight:500;">हिसाब-<span style="color:#d4a850;font-weight:700;">Kitaab</span> · आपका अपना खाता</div></div>
     </div>
     <div style="background:#14254a;border:1px solid #2a4078;border-radius:8px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#d4a850;font-weight:500;" id="t-day"></div><div style="font-size:10px;color:#e8d8b8;font-weight:500;" id="t-date"></div></div>
   </div>
   <div class="pad">
+    <div id="biz-name-fallback" style="display:none;background:linear-gradient(135deg,#2a1f08 0%,#1a1408 100%);border:1px solid #4a3818;border-left:3px solid #d4a850;border-radius:8px;padding:10px 12px;margin-bottom:10px;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;color:#d4a850;font-weight:700;margin-bottom:2px;">🏪 दुकान का नाम जोड़ें</div>
+        <div style="font-size:10px;color:#a07050;">App ko aur personal banayein</div>
+      </div>
+      <button onclick="openBizNamePrompt()" style="background:#d4a850;color:#1a0a04;border:none;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:700;flex-shrink:0;">+ Add</button>
+      <button onclick="dismissBizFallback()" style="background:transparent;color:#8a6020;border:1px solid #4a3818;border-radius:6px;padding:6px 8px;font-size:11px;flex-shrink:0;">✕</button>
+    </div>
     <div class="trial-banner" id="trial-banner">
       <div><div class="trial-days" id="trial-days-text">⏳ Free Trial</div><div class="trial-sub" id="trial-sub-text">लोड हो रहा है...</div></div>
       <div class="trial-badge">मुफ़्त</div>
@@ -2235,24 +2246,122 @@ window.agreeTerms = async function() {
 
 window.saveName = async function() {
   const name = document.getElementById('name-input').value.trim();
+  const businessName = document.getElementById('business-input').value.trim();
   const errEl = document.getElementById('name-error');
   errEl.classList.remove('show');
   if (!name) { errEl.textContent = '❌ नाम ज़रूर डालें'; errEl.classList.add('show'); return; }
+  if (!businessName) { errEl.textContent = '❌ दुकान/Business का नाम ज़रूर डालें'; errEl.classList.add('show'); return; }
+  // Save locally first for instant UI
+  try {
+    localStorage.setItem('hk_owner_name', name);
+    localStorage.setItem('hk_business_name', businessName);
+  } catch(e) {}
   const uid = window._currentAuthUser ? window._currentAuthUser.uid : null;
   if (uid && window._fsRegisterUser) {
     try {
       const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
       const db = window._db;
-      await setDoc(doc(db, 'users', uid, 'profile', 'info'), { name }, { merge: true });
-    } catch(e) { console.warn('Name save error:', e); }
+      await setDoc(doc(db, 'users', uid, 'profile', 'info'), { name, businessName }, { merge: true });
+    } catch(e) { console.warn('Profile save error:', e); }
   }
   document.getElementById('screen-name').classList.add('hidden');
   document.getElementById('screen-mode').classList.remove('hidden');
 };
 
 window.skipName = function() {
+  // Skip removed - both fields mandatory now. Function kept for safety.
   document.getElementById('screen-name').classList.add('hidden');
   document.getElementById('screen-mode').classList.remove('hidden');
+};
+
+// Helper: time-aware Hindi greeting
+window.getGreeting = function() {
+  const hr = new Date().getHours();
+  if (hr >= 5 && hr < 12) return '🌅 सुप्रभात';
+  if (hr >= 12 && hr < 17) return '☀️ नमस्ते';
+  if (hr >= 17 && hr < 21) return '🌆 शुभ संध्या';
+  return '🌙 शुभ रात्रि';
+};
+
+// Helper: load profile names from local + Firestore, update header
+window.loadProfileAndUpdateHeaders = async function() {
+  let name = '', businessName = '';
+  try {
+    name = localStorage.getItem('hk_owner_name') || '';
+    businessName = localStorage.getItem('hk_business_name') || '';
+  } catch(e) {}
+  // Try Firestore for fresh data
+  const uid = window._currentAuthUser ? window._currentAuthUser.uid : null;
+  if (uid && window._db) {
+    try {
+      const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const snap = await getDoc(doc(window._db, 'users', uid, 'profile', 'info'));
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data.name) { name = data.name; localStorage.setItem('hk_owner_name', name); }
+        if (data.businessName) { businessName = data.businessName; localStorage.setItem('hk_business_name', businessName); }
+      }
+    } catch(e) { console.warn('Profile fetch error:', e); }
+  }
+  updatePersonalHeaders(name, businessName);
+};
+
+window.updatePersonalHeaders = function(name, businessName) {
+  const greeting = window.getGreeting();
+  const hasName = name && name.length > 0;
+  const hasBiz = businessName && businessName.length > 0;
+  // हिसाब-Kitaab header
+  const hkGreet = document.getElementById('hk-greeting');
+  const hkBiz = document.getElementById('hk-business');
+  const hkBrand = document.getElementById('hk-brand');
+  if (hkGreet && hkBiz && hkBrand) {
+    if (hasName) { hkGreet.textContent = greeting + ', ' + name + ' जी'; hkGreet.style.display = 'block'; }
+    else { hkGreet.style.display = 'none'; }
+    if (hasBiz) { hkBiz.textContent = '🏪 ' + businessName; hkBiz.style.display = 'block'; }
+    else { hkBiz.style.display = 'none'; }
+  }
+  // उधार Book header
+  const ubGreet = document.getElementById('ub-greeting');
+  const ubBiz = document.getElementById('ub-business');
+  if (ubGreet && ubBiz) {
+    if (hasName) { ubGreet.textContent = greeting + ', ' + name + ' जी'; ubGreet.style.display = 'block'; }
+    else { ubGreet.style.display = 'none'; }
+    if (hasBiz) { ubBiz.textContent = '🏪 ' + businessName; ubBiz.style.display = 'block'; }
+    else { ubBiz.style.display = 'none'; }
+  }
+  // Existing user fallback banner — show if missing business name
+  const fallback = document.getElementById('biz-name-fallback');
+  if (fallback) {
+    const dismissed = localStorage.getItem('hk_biz_fallback_dismissed') === '1';
+    if (!hasBiz && !dismissed) { fallback.style.display = 'flex'; }
+    else { fallback.style.display = 'none'; }
+  }
+};
+
+window.dismissBizFallback = function() {
+  localStorage.setItem('hk_biz_fallback_dismissed', '1');
+  const f = document.getElementById('biz-name-fallback');
+  if (f) f.style.display = 'none';
+};
+
+window.openBizNamePrompt = function() {
+  const current = localStorage.getItem('hk_business_name') || '';
+  const newName = prompt('अपनी दुकान/Business का नाम डालें:', current);
+  if (newName && newName.trim()) {
+    const trimmed = newName.trim().slice(0, 60);
+    localStorage.setItem('hk_business_name', trimmed);
+    localStorage.removeItem('hk_biz_fallback_dismissed');
+    // Save to Firestore too
+    const uid = window._currentAuthUser ? window._currentAuthUser.uid : null;
+    if (uid && window._db) {
+      try {
+        import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m => {
+          m.setDoc(m.doc(window._db, 'users', uid, 'profile', 'info'), { businessName: trimmed }, { merge: true });
+        });
+      } catch(e) {}
+    }
+    if (window.loadProfileAndUpdateHeaders) window.loadProfileAndUpdateHeaders();
+  }
 };
 
 window.selectMode = function(mode) {
@@ -2327,6 +2436,7 @@ function launchApp(uid) {
 appLockInit();
 if(lockEnabled){ appLockActivate(); } else { appLockStart(); }
 updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
+if(window.loadProfileAndUpdateHeaders) window.loadProfileAndUpdateHeaders();
     // Re-render after short delay to catch Firestore data
     setTimeout(() => { loadHome(); loadUdhaarKPI(); }, 3500);
   
@@ -2338,6 +2448,7 @@ function launchUdhaarMode(uid) {
   document.getElementById('main-app').style.display = 'none';
   document.getElementById('ub-app').style.display = 'block';
   if(window._startHeartbeat) window._startHeartbeat(uid);
+  if(window.loadProfileAndUpdateHeaders) window.loadProfileAndUpdateHeaders();
   ubInitApp(uid);
   // Load cloud data
 if (window._fsLoadAll) window._fsLoadAll(uid).then(() => { if (typeof ubLoadList === 'function') ubLoadList(); });

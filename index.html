@@ -162,13 +162,19 @@ body.notif-modal-open { overflow: hidden; }
 .kpi-blue  { background: linear-gradient(135deg, #14254a 0%, #0a1530 100%); border: 1px solid #2a4078; border-top: 2px solid #4a90d4; }
 .kpi-amber { background: linear-gradient(135deg, #2a1810 0%, #1a0f08 100%); border: 1px solid #4a2818; border-top: 2px solid #cc7a47; }
 .kpi-red   { background: linear-gradient(135deg, #0a2820 0%, #051a14 100%); border: 1px solid #1a4a3a; border-top: 2px solid #6ab070; }
-.kpi-lbl { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
-.kpi-green .kpi-lbl { color: #d4a850; background: #4a3818; padding: 2px 6px; border-radius: 4px; display: inline-block; } .kpi-blue .kpi-lbl { color: #4a90d4; background: #14254a; padding: 2px 6px; border-radius: 4px; display: inline-block; }
-.kpi-amber .kpi-lbl { color: #cc7a47; background: #4a2818; padding: 2px 6px; border-radius: 4px; display: inline-block; } .kpi-red .kpi-lbl { color: #6ab070; background: #1a4a3a; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+.kpi-lbl { font-size: 11px; font-weight: 600; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.kpi-lbl-text { padding: 2px 7px; border-radius: 4px; }
+.kpi-period { font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 4px; border: 0.5px solid; }
+.kpi-green .kpi-lbl-text { color: #d4a850; background: #4a3818; } .kpi-blue .kpi-lbl-text { color: #a8c8e8; background: #14254a; }
+.kpi-amber .kpi-lbl-text { color: #e8c898; background: #4a2818; } .kpi-red .kpi-lbl-text { color: #a8d8b8; background: #1a4a3a; }
+.kpi-green .kpi-period { color: #d4a850; background: #2a1f08; border-color: #4a3818; }
+.kpi-blue .kpi-period { color: #a8c8e8; background: #0d1a2a; border-color: #2a4078; }
+.kpi-amber .kpi-period { color: #e8c898; background: #2a1f08; border-color: #4a3818; }
+.kpi-red .kpi-period { color: #a8d8b8; background: #0d2a1a; border-color: #1a4a30; }
 .kpi-val { font-size: 22px; font-weight: 500; color: #e8d8b8; }
-.kpi-sub { font-size: 9px; margin-top: 2px; }
-.kpi-green .kpi-sub { color: #8aa0d8; } .kpi-blue .kpi-sub { color: #8aa0d8; }
-.kpi-amber .kpi-sub { color: #b09078; } .kpi-red .kpi-sub { color: #6ab070; }
+.kpi-sub { font-size: 10px; margin-top: 4px; font-weight: 500; }
+.kpi-green .kpi-sub { color: #d4a850; } .kpi-blue .kpi-sub { color: #a8c8e8; }
+.kpi-amber .kpi-sub { color: #e8c898; } .kpi-red .kpi-sub { color: #a8d8b8; }
 .kpi-green .kpi-val { color: #e8d8b8; } .kpi-blue .kpi-val { color: #e8d8b8; }
 .kpi-amber .kpi-val { color: #e8c898; } .kpi-red .kpi-val { color: #a0e8a8; }
 .kpi-green .kpi-tap-hint { color: #d4a850; } .kpi-blue .kpi-tap-hint { color: #4a90d4; }
@@ -1716,10 +1722,10 @@ body.notif-modal-open { overflow: hidden; }
     </div>
     <div class="sec-head"><div class="sec-icon sec-icon-gold">💰</div><div class="sec-text"><div class="sec-title" style="color:#d4a850;">बिक्री और गल्ला</div><div class="sec-sub">Sales & Cash Earnings</div></div><div class="sec-line" style="color:#d4a850;"></div></div>
     <div class="kpi-grid">
-      <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl">💰 बिक्री</div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl">📈 गल्ला/कमाई</div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card kpi-amber" onclick="toggleKPI('kharcha')"><div class="kpi-lbl">🧾 खर्चा</div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">इस महीने</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card" id="tulna-card" style="background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;"><span id="tulna-label" style="color:#ffffff;font-size:10px;font-weight:600;opacity:0.85;">आज गल्ला/Revenue</span><span id="tulna-badge" style="background:#0d2a1a;color:#3dca6a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #1a4a30;">+0%</span></div><div id="tulna-amount" style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:-0.3px;margin-bottom:4px;">₹0</div><div id="tulna-delta-row" style="display:flex;align-items:center;gap:5px;margin-bottom:5px;"><span id="tulna-arrow" style="color:#3dca6a;font-size:12px;font-weight:700;">▲</span><span id="tulna-sub" style="color:#ffffff;font-size:10px;font-weight:500;opacity:0.9;">कल से ज़्यादा</span></div><div id="tulna-inset" style="background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:3px 7px;"><span id="tulna-kal-ref" style="color:#ffffff;font-size:9px;font-weight:500;opacity:0.75;">कल - ₹0</span></div></div>
+      <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl"><span class="kpi-lbl-text">💰 बिक्री</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
+      <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl"><span class="kpi-lbl-text">📈 गल्ला/कमाई</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
+      <div class="kpi-card kpi-amber" onclick="toggleKPI('kharcha')"><div class="kpi-lbl"><span class="kpi-lbl-text">🧾 खर्चा</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
+      <div class="kpi-card" id="tulna-card" style="background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;"><span id="tulna-label" style="color:#ffffff;font-size:12px;font-weight:600;opacity:1;">आज गल्ला/Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span></span><span id="tulna-badge" style="background:#0d2a1a;color:#3dca6a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #1a4a30;">+0%</span></div><div id="tulna-amount" style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:-0.3px;margin-bottom:4px;">₹0</div><div id="tulna-delta-row" style="display:flex;align-items:center;gap:5px;margin-bottom:5px;"><span id="tulna-arrow" style="color:#3dca6a;font-size:12px;font-weight:700;">▲</span><span id="tulna-sub" style="color:#ffffff;font-size:10px;font-weight:500;opacity:0.9;">कल से ज़्यादा</span></div><div id="tulna-inset" style="background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:3px 7px;"><span id="tulna-kal-ref" style="color:#ffffff;font-size:9px;font-weight:500;opacity:0.75;">कल - ₹0</span></div></div>
     </div>
     <div class="kpi-panel" id="panel-bikri"><div class="kpi-panel-inner panel-green"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;text-align:right;">बिक्री</div></div><div id="bikri-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a3a1a;"><div class="ptbl-total-cell" style="background:#0d2a1a;color:#2dba4d;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d2a1a;color:#d4a850;text-align:right;" id="bikri-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
@@ -2669,7 +2675,8 @@ function updateTulnaCard(){
   // STATE 1: Both empty (new user / both days no entry)
   if(yesterdayEntries.length===0 && todayEntries.length===0){
     card.style.cssText='background:#0a1530;border:1px solid #2a4078;border-top:2px solid #4a90d4;border-radius:9px;padding:10px;';
-    label.textContent='आज गल्ला/Revenue';
+    label.innerHTML='आज गल्ला/Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span>';
+    label.style.cssText='color:#ffffff;font-size:12px;font-weight:600;opacity:1;';
     badge.style.cssText='background:#0d1a2a;color:#a8c8e8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #2a4078;';
     badge.textContent='—';
     amount.textContent='₹0';
@@ -2682,7 +2689,8 @@ function updateTulnaCard(){
   // STATE 2: Yesterday empty, today has entry (new start)
   if(yesterdayEntries.length===0){
     card.style.cssText='background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;';
-    label.textContent='आज गल्ला/Revenue';
+    label.innerHTML='आज गल्ला/Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span>';
+    label.style.cssText='color:#ffffff;font-size:12px;font-weight:600;opacity:1;';
     badge.style.cssText='background:#0d2a1a;color:#3dca6a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #1a4a30;';
     badge.textContent='नया';
     amount.textContent=fmt(aajGalla);
@@ -2695,7 +2703,8 @@ function updateTulnaCard(){
   // STATE 3: Today empty, yesterday had entry (entry pending)
   if(todayEntries.length===0){
     card.style.cssText='background:#1a1408;border:1px solid #6a4818;border-top:2px solid #d4a850;border-radius:9px;padding:10px;';
-    label.textContent='आज गल्ला/Revenue';
+    label.innerHTML='आज गल्ला/Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span>';
+    label.style.cssText='color:#ffffff;font-size:12px;font-weight:600;opacity:1;';
     badge.style.cssText='background:#2a1f08;color:#d4a850;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;border:0.5px solid #4a3818;';
     badge.textContent='⏰ एंट्री बाकी';
     amount.textContent='₹0';
@@ -2711,7 +2720,8 @@ function updateTulnaCard(){
   if(kalGalla>0){pct=Math.round((diff/kalGalla)*100);}
   amount.textContent=fmt(aajGalla);
   amount.style.opacity='1';
-  label.textContent='आज गल्ला/Revenue';
+  label.innerHTML='आज गल्ला/Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span>';
+  label.style.cssText='color:#ffffff;font-size:12px;font-weight:600;opacity:1;';
   deltaRow.style.display='flex';
   if(diff>0){
     card.style.cssText='background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;';

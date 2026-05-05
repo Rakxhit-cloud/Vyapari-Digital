@@ -2371,13 +2371,18 @@ window.updateTrialBanner = async function updateTrialBanner(uid) {
 }
 async function requestNotificationPermission(uid) {
   if (!('Notification' in window)) return;
+  // If already denied at OS level, never show banner
   if (Notification.permission === 'denied') return;
-  
+  // If already granted, just save token and return
   if (Notification.permission === 'granted') {
     await saveFCMToken(uid);
     return;
   }
-  
+  // Check if user already acted (allowed/denied via our banner) - never show again
+  try {
+    if (localStorage.getItem('hk_notif_banner_acted') === '1') return;
+  } catch(e) {}
+  // Check 5-day snooze
   try {
     const dismissedAt = parseInt(localStorage.getItem('hk_notif_banner_dismissed_at') || '0');
     const daysSince = (Date.now() - dismissedAt) / (1000 * 60 * 60 * 24);
@@ -2385,6 +2390,13 @@ async function requestNotificationPermission(uid) {
   } catch(e) {}
   
   setTimeout(() => {
+    // CRITICAL: Re-check permission state AFTER the delay
+    // Permission could have been granted by another flow during the wait
+    if (Notification.permission !== 'default') return;
+    // Re-check acted flag too (could have been set by another instance)
+    try {
+      if (localStorage.getItem('hk_notif_banner_acted') === '1') return;
+    } catch(e) {}
     const modal = document.getElementById('notif-permission-modal');
     if (modal) {
       modal.classList.add('show');
@@ -2437,6 +2449,8 @@ async function enableNotifFromBanner() {
     if (perm === 'granted' && uid) {
       await saveFCMToken(uid);
     }
+    // Mark that user has acted on banner (granted OR denied) - never show again
+    try { localStorage.setItem('hk_notif_banner_acted', '1'); } catch(e) {}
   } catch(e) {
     console.warn('Permission error:', e);
   }
@@ -2462,6 +2476,14 @@ function dismissNotifBanner() {
 window.requestNotificationPermission = requestNotificationPermission;
 window.enableNotifFromBanner = enableNotifFromBanner;
 window.dismissNotifBanner = dismissNotifBanner;
+// Listen for service worker updates (manifest/icon refresh)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'SW_UPDATED') {
+      console.log('SW updated to version:', event.data.version);
+    }
+  });
+}
 async function saveFCMToken(uid) {
   try {
     const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');

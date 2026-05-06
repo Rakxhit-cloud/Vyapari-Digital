@@ -627,6 +627,61 @@ body.notif-modal-open { overflow: hidden; }
 .dp-great { background: linear-gradient(135deg, #1a3060 0%, #0a1530 100%); border: 1px solid #2a4078; border-left: 3px solid #d4a850; border-radius: 10px; }
 .dp-ok    { background: linear-gradient(135deg, #2a1810 0%, #1a0f08 100%); border: 1px solid #4a2818; border-left: 3px solid #cc7a47; border-radius: 10px; }
 .dp-slow  { background: linear-gradient(135deg, #2a0818 0%, #1a0510 100%); border: 1px solid #4a182a; border-left: 3px solid #e84878; border-radius: 10px; }
+/* === Date Popup Premium Redesign === */
+.date-popup-title { font-size: 17px !important; font-weight: 700 !important; color: #ffffff !important; line-height: 1.3; letter-spacing: 0.2px; }
+.dpx-bikri-card { background: radial-gradient(ellipse at top, rgba(45,186,77,0.08) 0%, transparent 60%), linear-gradient(180deg, #0d2418 0%, #051a0f 100%); border: 1px solid rgba(45, 186, 77, 0.4); border-radius: 14px; padding: 14px 12px 12px; margin-bottom: 12px; position: relative; box-shadow: 0 4px 16px rgba(45, 186, 77, 0.12), inset 0 1px 0 rgba(93, 234, 93, 0.08); }
+.dpx-bikri-card::before { content: ''; position: absolute; top: 0; left: 12px; right: 12px; height: 2.5px; background: linear-gradient(90deg, transparent, #5dea5d, #2dba4d, #5dea5d, transparent); border-radius: 2px; opacity: 0.85; }
+.dpx-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.dpx-section-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #5dea5d; background: linear-gradient(135deg, rgba(45, 186, 77, 0.18), rgba(45, 186, 77, 0.06)); border: 0.5px solid rgba(93, 234, 93, 0.5); padding: 4px 10px; border-radius: 6px; font-weight: 600; letter-spacing: 0.4px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+.dpx-bikri-hero { background: linear-gradient(135deg, rgba(45,186,77,0.08), rgba(45,186,77,0)); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 0.5px solid rgba(45, 186, 77, 0.15); }
+.dpx-hero-lbl { font-size: 11px; color: #6ab070; font-weight: 500; letter-spacing: 0.2px; }
+.dpx-hero-sublbl { font-size: 9px; color: #4a8a5a; margin-top: 1px; }
+.dpx-bikri-amt { font-size: 26px; font-weight: 700; background: linear-gradient(135deg, #7afa7a, #2dba4d); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.5px; }
+.dpx-bikri-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.dpx-mini-card { background: rgba(10, 30, 18, 0.5); border: 0.5px solid rgba(45, 186, 77, 0.18); border-radius: 7px; padding: 6px 9px; }
+.dpx-mini-lbl { font-size: 10px; color: #6ab070; font-weight: 500; margin-bottom: 1px; }
+.dpx-mini-val { font-size: 13px; font-weight: 700; color: #d4a850; }
+.dpx-mini-card.kh { border-color: rgba(204, 122, 71, 0.2); }
+.dpx-mini-card.kh .dpx-mini-lbl { color: #cc7a47; }
+.dpx-mini-card.kh .dpx-mini-val { color: #e8c898; }
+.dpx-mini-card.up { border-color: rgba(74, 144, 212, 0.2); }
+.dpx-mini-card.up .dpx-mini-lbl { color: #4a90d4; }
+.dpx-mini-card.up .dpx-mini-val { color: #8ab8e8; }
+.dpx-actions { display: flex; gap: 8px; margin-top: 10px; }
+.dpx-edit-btn, .dpx-del-btn { flex: 1; padding: 9px; border-radius: 8px; font-size: 12px; font-weight: 600; text-align: center; cursor: pointer; border: none; }
+.dpx-edit-btn { background: linear-gradient(135deg, rgba(74, 144, 212, 0.18), rgba(74, 144, 212, 0.05)); border: 1px solid rgba(74, 144, 212, 0.6); color: #8ab8e8; }
+.dpx-del-btn { background: linear-gradient(135deg, rgba(232, 72, 120, 0.18), rgba(232, 72, 120, 0.05)); border: 1px solid rgba(232, 72, 120, 0.6); color: #ff7a9c; }
+.dpx-maal-section { background: radial-gradient(ellipse at top, rgba(93, 202, 165, 0.08) 0%, transparent 60%), linear-gradient(180deg, #0d2420 0%, #051410 100%); border: 1px solid rgba(93, 202, 165, 0.4); border-radius: 14px; padding: 14px 12px 10px; margin-bottom: 10px; position: relative; box-shadow: 0 4px 16px rgba(93, 202, 165, 0.1), inset 0 1px 0 rgba(176, 232, 212, 0.06); }
+.dpx-maal-section::before { content: ''; position: absolute; top: 0; left: 12px; right: 12px; height: 2.5px; background: linear-gradient(90deg, transparent, #5dcaa5, #1d9e75, #5dcaa5, transparent); border-radius: 2px; opacity: 0.85; }
+.dpx-maal-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #5dcaa5; background: linear-gradient(135deg, rgba(93, 202, 165, 0.18), rgba(93, 202, 165, 0.06)); border: 0.5px solid rgba(93, 202, 165, 0.5); padding: 4px 10px; border-radius: 6px; font-weight: 600; }
+.dpx-entry-count { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #d4a850; background: rgba(212, 168, 80, 0.12); border: 0.5px solid rgba(212, 168, 80, 0.5); padding: 4px 9px; border-radius: 6px; font-weight: 600; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+.dpx-entry-count b { color: #f0d070; font-weight: 700; font-size: 12px; }
+.dpx-maal-total { background: linear-gradient(135deg, rgba(93, 202, 165, 0.1), rgba(93, 202, 165, 0)); border-radius: 9px; padding: 8px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; border: 0.5px solid rgba(93, 202, 165, 0.18); }
+.dpx-maal-total-lbl { font-size: 11px; color: #7ab8a8; font-weight: 500; }
+.dpx-maal-total-val { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #d0f5e0, #5dcaa5); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.3px; }
+.dpx-maal-list-wrap { position: relative; }
+.dpx-maal-list-wrap.scrollable::after { content: ''; position: absolute; bottom: 0; left: 0; right: 4px; height: 18px; background: linear-gradient(180deg, transparent, #051410); pointer-events: none; border-radius: 0 0 8px 8px; }
+.dpx-maal-list { max-height: 240px; overflow-y: auto; padding-right: 4px; margin-right: -4px; scrollbar-width: thin; scrollbar-color: rgba(93, 202, 165, 0.4) transparent; }
+.dpx-maal-list::-webkit-scrollbar { width: 4px; }
+.dpx-maal-list::-webkit-scrollbar-track { background: transparent; }
+.dpx-maal-list::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #5dcaa5, #1d9e75); border-radius: 2px; }
+.dpx-maal-item { background: rgba(10, 30, 24, 0.5); border: 0.5px solid rgba(93, 202, 165, 0.15); border-radius: 9px; padding: 9px 10px; margin-bottom: 6px; }
+.dpx-maal-item:last-child { margin-bottom: 4px; }
+.dpx-maal-row1 { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 6px; }
+.dpx-maal-icon { flex-shrink: 0; width: 30px; height: 30px; border-radius: 7px; background: linear-gradient(135deg, rgba(93, 202, 165, 0.18), rgba(93, 202, 165, 0.06)); border: 0.5px solid rgba(93, 202, 165, 0.3); display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+.dpx-maal-body { flex: 1; min-width: 0; }
+.dpx-maal-supplier { font-size: 12px; color: #f0c050; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.1px; }
+.dpx-maal-name { font-size: 10px; color: #8aa0d8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 1px; }
+.dpx-maal-right { text-align: right; flex-shrink: 0; }
+.dpx-maal-amt { font-size: 13px; font-weight: 700; color: #b0e8d4; }
+.dpx-maal-row2 { padding-left: 39px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.dpx-pay-pill { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 2.5px 7px; border-radius: 5px; letter-spacing: 0.3px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+.dpx-pay-nakad { background: linear-gradient(135deg, rgba(45, 186, 77, 0.22), rgba(45, 186, 77, 0.1)); color: #7afa7a; border: 0.5px solid #2dba4d; }
+.dpx-pay-due { background: linear-gradient(135deg, rgba(232, 72, 120, 0.22), rgba(232, 72, 120, 0.1)); color: #ff7a9c; border: 0.5px solid #e84878; }
+.dpx-pay-partial { background: linear-gradient(135deg, rgba(240, 176, 64, 0.22), rgba(240, 176, 64, 0.1)); color: #f0d070; border: 0.5px solid #f0b040; }
+.dpx-pay-settled { background: linear-gradient(135deg, rgba(45, 186, 77, 0.22), rgba(45, 186, 77, 0.1)); color: #7afa7a; border: 0.5px solid #2dba4d; }
+.dpx-pay-detail { font-size: 9.5px; color: #8aa0d8; font-weight: 500; }
+.dpx-scroll-hint { text-align: center; font-size: 9.5px; color: #5dcaa5; margin-top: 4px; opacity: 0.7; font-style: italic; }
 .dp-rating { font-size: 12px; font-weight: 500; margin-bottom: 8px; padding: 3px 10px; border-radius: 5px; display: inline-block; }
 .dp-great .dp-rating { background: #4a3818; color: #d4a850; }
 .dp-ok .dp-rating { background: #4a2818; color: #cc7a47; }
@@ -3337,7 +3392,177 @@ function renderCalendar(){document.getElementById('cal-label').textContent=HI_MO
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
 let dpCurrentDate=null,dpDeleteId=null;
-function openDatePopup(ds){if(!ds)return;dpCurrentDate=ds;const bikri=DB.get(K.BIKRI),entries=bikri.filter(r=>r.date===ds);const d=parseLocalDate(ds);const dateLabel=d.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const isToday=ds===TSTR;const titleEl=document.getElementById('dp-title'),subEl=document.getElementById('dp-sub');titleEl.textContent='📅 '+dateLabel;titleEl.style.color=entries.length>0?'#5dea5d':'#f0c050';document.querySelector('.date-popup-sheet').style.borderTopColor=entries.length>0?'#2dba4d':'#f0b040';subEl.textContent=isToday?'आज · '+(entries.length>0?entries.length+' एंट्री':'कोई नहीं'):(entries.length>0?entries.length+' एंट्री':'कोई एंट्री नहीं');subEl.style.color=entries.length>0?'#2a7a2a':'#8a6020';const content=document.getElementById('dp-content');content.innerHTML='';if(entries.length>0){entries.forEach(r=>{const rating=r.rating||'';let cls='dp-entry-card';let profCol,lblCol;if(rating.includes('बहुत अच्छा')){cls+=' dp-great';profCol='#5dea5d';lblCol='#3a8a3a';}else if(rating.includes('अच्छा')){cls+=' dp-ok';profCol='#f0b040';lblCol='#8a6020';}else{cls+=' dp-slow';profCol='#f06060';lblCol='#6a2020';}const profit=calcEntryProfit(r),margin=r.sales>0?Math.round((profit/r.sales)*100):0;const card=document.createElement('div');card.className=cls;card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div class="dp-rating" style="color:${profCol};">${escHTML(rating)}</div><div class="dp-grid"><div class="dp-item" style="color:${lblCol};">बिक्री: <span style="font-weight:800;color:${profCol};">${fmt(r.sales)}</span></div><div class="dp-item" style="color:#cc7a47;">खर्चा: <span style="font-weight:800;color:#e8c898;">${fmt(r.expense)}</span></div>${r.cash?`<div class="dp-item" style="color:#6ab070;">नकद: <span style="font-weight:800;color:#d4a850;">${fmt(r.cash)}</span></div>`:''} ${r.upi?`<div class="dp-item" style="color:#4a90d4;">UPI: <span style="font-weight:800;color:#8ab8e8;">${fmt(r.upi)}</span></div>`:''} ${r.udhaar?`<div class="dp-item" style="color:#ff8aa8;">उधार: <span style="font-weight:800;color:#ff8aa8;">${fmt(r.udhaar)}</span></div>`:''}</div>${r.notes?`<div class="dp-note">📝 ${escHTML(r.notes)}</div>`:''}</div><div class="dp-right"><div class="dp-profit">${fmt(profit)}</div><div class="dp-margin">${margin}%</div></div></div><div class="dp-actions"><button class="dp-edit-btn">✏️ सुधारें</button><button class="dp-del-btn">🗑️ हटाएं</button></div>`;card.querySelector('.dp-edit-btn').onclick=()=>{currentEntry={type:K.BIKRI,id:r.id,data:r};closeDatePopupDirect();setTimeout(()=>buildEditSheet(K.BIKRI,r),200);};card.querySelector('.dp-del-btn').onclick=()=>{dpDeleteId=r.id;document.getElementById('confirm-popup').classList.add('show');};content.appendChild(card);});}else{content.innerHTML=`<div class="dp-empty-box"><div class="dp-empty-icon">📋</div><div class="dp-empty-title">इस दिन कोई एंट्री नहीं</div><div class="dp-empty-sub">नई एंट्री जोड़ना चाहते हैं?</div></div><button class="dp-add-btn" id="dp-add-btn">➕ इस तारीख की एंट्री जोड़ें</button>`;document.getElementById('dp-add-btn').onclick=()=>{closeDatePopupDirect();window.pickedEntryDate=ds;document.getElementById('e-date').value=ds;setTimeout(()=>go('s-entry'),200);};}document.getElementById('date-popup-overlay').classList.add('show');}
+function openDatePopup(ds){
+  if(!ds) return;
+  dpCurrentDate = ds;
+
+  const bikri = DB.get(K.BIKRI);
+  const maal = DB.get(K.MAAL) || [];
+  const bikriEntries = bikri.filter(r => r.date === ds);
+  const maalEntries = maal.filter(r => r.date === ds);
+
+  const d = parseLocalDate(ds);
+  const dateLabel = d.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const isToday = ds === TSTR;
+
+  const titleEl = document.getElementById('dp-title');
+  const subEl = document.getElementById('dp-sub');
+  titleEl.innerHTML = '📆 ' + escHTML(dateLabel);
+  titleEl.style.color = '#ffffff';
+
+  const totalCount = bikriEntries.length + maalEntries.length;
+  const subParts = [];
+  if (bikriEntries.length) subParts.push(bikriEntries.length + ' बिक्री');
+  if (maalEntries.length) subParts.push(maalEntries.length + ' माल');
+  const subText = totalCount > 0 ? subParts.join(' · ') : 'कोई एंट्री नहीं';
+  subEl.textContent = isToday ? 'आज · ' + subText : subText;
+  subEl.style.color = totalCount > 0 ? '#5dcaa5' : '#8a6020';
+  document.querySelector('.date-popup-sheet').style.borderTopColor = totalCount > 0 ? '#2dba4d' : '#f0b040';
+
+  const content = document.getElementById('dp-content');
+  content.innerHTML = '';
+
+  // ====== Bikri card (premium, simplified) ======
+  if (bikriEntries.length > 0) {
+    bikriEntries.forEach(r => {
+      const profit = calcEntryProfit(r);
+      const card = document.createElement('div');
+      card.className = 'dpx-bikri-card';
+      card.innerHTML = `
+        <div class="dpx-card-header">
+          <div class="dpx-section-tag">💰 बिक्री</div>
+        </div>
+        <div class="dpx-bikri-hero">
+          <div>
+            <div class="dpx-hero-lbl">गल्ला</div>
+            <div class="dpx-hero-sublbl">Net Earnings</div>
+          </div>
+          <div class="dpx-bikri-amt">${fmt(profit)}</div>
+        </div>
+        <div class="dpx-bikri-grid">
+          <div class="dpx-mini-card">
+            <div class="dpx-mini-lbl">बिक्री</div>
+            <div class="dpx-mini-val">${fmt(r.sales||0)}</div>
+          </div>
+          <div class="dpx-mini-card kh">
+            <div class="dpx-mini-lbl">खर्चा</div>
+            <div class="dpx-mini-val">${fmt(r.expense||0)}</div>
+          </div>
+          ${r.cash ? `<div class="dpx-mini-card"><div class="dpx-mini-lbl">नकद</div><div class="dpx-mini-val">${fmt(r.cash)}</div></div>` : ''}
+          ${r.upi ? `<div class="dpx-mini-card up"><div class="dpx-mini-lbl">UPI</div><div class="dpx-mini-val">${fmt(r.upi)}</div></div>` : ''}
+        </div>
+        ${r.notes ? `<div style="margin-top:8px;padding:6px 10px;background:rgba(74,144,212,0.08);border-left:2px solid #4a90d4;border-radius:4px;font-size:11px;color:#b0c8e8;">📝 ${escHTML(r.notes)}</div>` : ''}
+        <div class="dpx-actions">
+          <button class="dpx-edit-btn">✏️ सुधारें</button>
+          <button class="dpx-del-btn">🗑️ हटाएं</button>
+        </div>
+      `;
+      card.querySelector('.dpx-edit-btn').onclick = () => {
+        currentEntry = { type: K.BIKRI, id: r.id, data: r };
+        closeDatePopupDirect();
+        setTimeout(() => buildEditSheet(K.BIKRI, r), 200);
+      };
+      card.querySelector('.dpx-del-btn').onclick = () => {
+        dpDeleteId = r.id;
+        document.getElementById('confirm-popup').classList.add('show');
+      };
+      content.appendChild(card);
+    });
+  }
+
+  // ====== Maal khareed section (with status pills + scroll) ======
+  if (maalEntries.length > 0) {
+    const totalMaal = maalEntries.reduce((sum, r) => sum + (parseFloat(r.amount)||0), 0);
+
+    const itemsHtml = maalEntries.map(r => {
+      const amount = parseFloat(r.amount) || 0;
+      const paid = parseFloat(r.paid) || 0;
+      const pay = (r.pay || '').trim();
+      const isCash = pay === 'नकद' || pay.toLowerCase() === 'nakad';
+      let pillClass, pillIcon, pillText, detailText = '';
+      if (isCash && paid >= amount) {
+        pillClass = 'dpx-pay-nakad';
+        pillIcon = '💵';
+        pillText = 'नकद';
+      } else if (paid >= amount && amount > 0) {
+        pillClass = 'dpx-pay-settled';
+        pillIcon = '✅';
+        pillText = 'SETTLED';
+        detailText = 'पूरा चुक गया';
+      } else if (paid > 0 && paid < amount) {
+        pillClass = 'dpx-pay-partial';
+        pillIcon = '🟡';
+        pillText = 'PARTIAL';
+        detailText = 'चुका ' + fmt(paid) + ' · बाकी ' + fmt(amount - paid);
+      } else {
+        pillClass = 'dpx-pay-due';
+        pillIcon = '⚠️';
+        pillText = 'DUE';
+        detailText = 'पूरा बाकी ' + fmt(amount);
+      }
+      return `
+        <div class="dpx-maal-item">
+          <div class="dpx-maal-row1">
+            <div class="dpx-maal-icon">🏪</div>
+            <div class="dpx-maal-body">
+              <div class="dpx-maal-supplier">${escHTML(r.supplier || '—')}</div>
+              ${r.name ? `<div class="dpx-maal-name">${escHTML(r.name)}</div>` : ''}
+            </div>
+            <div class="dpx-maal-right">
+              <div class="dpx-maal-amt">${fmt(amount)}</div>
+            </div>
+          </div>
+          <div class="dpx-maal-row2">
+            <span class="dpx-pay-pill ${pillClass}">${pillIcon} ${pillText}</span>
+            ${detailText ? `<span class="dpx-pay-detail">${detailText}</span>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const isScrollable = maalEntries.length > 3;
+    const wrapClass = isScrollable ? 'dpx-maal-list-wrap scrollable' : 'dpx-maal-list-wrap';
+    const scrollHint = isScrollable ? '<div class="dpx-scroll-hint">↕ scroll करें</div>' : '';
+
+    const maalCard = document.createElement('div');
+    maalCard.className = 'dpx-maal-section';
+    maalCard.innerHTML = `
+      <div class="dpx-card-header">
+        <div class="dpx-maal-tag">📦 माल खरीद</div>
+        <div class="dpx-entry-count">📋 <b>${maalEntries.length}</b> एंट्री</div>
+      </div>
+      <div class="dpx-maal-total">
+        <span class="dpx-maal-total-lbl">कुल माल आया</span>
+        <span class="dpx-maal-total-val">${fmt(totalMaal)}</span>
+      </div>
+      <div class="${wrapClass}">
+        <div class="dpx-maal-list">${itemsHtml}</div>
+      </div>
+      ${scrollHint}
+    `;
+    content.appendChild(maalCard);
+  }
+
+  // ====== Empty state ======
+  if (totalCount === 0) {
+    content.innerHTML = `
+      <div class="dp-empty-box">
+        <div class="dp-empty-icon">📋</div>
+        <div class="dp-empty-title">इस दिन कोई एंट्री नहीं</div>
+        <div class="dp-empty-sub">नई एंट्री जोड़ना चाहते हैं?</div>
+      </div>
+      <button class="dp-add-btn" id="dp-add-btn">➕ इस तारीख की एंट्री जोड़ें</button>
+    `;
+    document.getElementById('dp-add-btn').onclick = () => {
+      closeDatePopupDirect();
+      window.pickedEntryDate = ds;
+      document.getElementById('e-date').value = ds;
+      setTimeout(() => go('s-entry'), 200);
+    };
+  }
+
+  document.getElementById('date-popup-overlay').classList.add('show');
+}
 function closeDatePopup(e){if(e.target===document.getElementById('date-popup-overlay'))closeDatePopupDirect();}
 function closeDatePopupDirect(){document.getElementById('date-popup-overlay').classList.remove('show');dpCurrentDate=null;}
 let entryMode='quick';

@@ -659,6 +659,27 @@ body.notif-modal-open { overflow: hidden; }
 /* ── Install Sheet ── */
 .install-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
 .install-overlay.show { display: flex; }
+/* === Browser Block Screen (PWA enforcement) === */
+#screen-browser-block { position: fixed; inset: 0; z-index: 99999; background: #0a1530; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; }
+#screen-browser-block.active { display: flex; }
+.bb-phone { display: flex; flex-direction: column; align-items: center; max-width: 340px; width: 100%; }
+.bb-icon-wrap { position: relative; width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.bb-ring { position: absolute; border-radius: 22px; border: 1.5px solid rgba(240, 192, 64, 0.2); animation: bbBreathe 3s ease-in-out infinite; }
+.bb-ring1 { width: 96px; height: 96px; }
+.bb-ring2 { width: 84px; height: 84px; animation-delay: 0.3s; border-color: rgba(240, 192, 64, 0.35); border-radius: 18px; }
+@keyframes bbBreathe { 0%,100%{transform:scale(1);opacity:.5;} 50%{transform:scale(1.06);opacity:1;} }
+.bb-app-icon { width: 76px; height: 76px; border-radius: 16px; background: #0a1530; border: 1px solid #1a2a4a; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; animation: bbIconBreathe 3s ease-in-out infinite; }
+@keyframes bbIconBreathe { 0%,100%{transform:scale(1);} 50%{transform:scale(1.04);} }
+.bb-coin { width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f5d57a 0%, #e6b840 40%, #b8870a 100%); border: 1.5px solid #d4a020; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; color: #1a0a04; font-family: 'Noto Sans Devanagari','Mangal',serif; }
+.bb-app-title { font-size: 18px; font-weight: 500; color: #f0c040; margin-bottom: 20px; text-align: center; letter-spacing: 0.2px; }
+.bb-check-wrap { width: 64px; height: 64px; border-radius: 50%; background: #1d9e75; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 2.5px solid #5dcaa5; animation: bbCheckPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+@keyframes bbCheckPop { 0%{transform:scale(0);opacity:0;} 60%{transform:scale(1.18);opacity:1;} 100%{transform:scale(1);opacity:1;} }
+.bb-check { color: #fff; font-size: 38px; font-weight: 700; line-height: 1; }
+.bb-success { font-size: 16px; color: #ffffff; font-weight: 500; margin-bottom: 22px; text-align: center; }
+.bb-divider { width: 80%; height: 0.5px; background: #2a3a5a; margin-bottom: 18px; }
+.bb-open-label { font-size: 13px; color: #c8b880; text-align: center; margin-bottom: 16px; font-weight: 500; }
+.bb-install-btn { background: linear-gradient(135deg, #f0c040 0%, #d4a020 100%); color: #1a0a04; border: 1.5px solid #f0c040; border-radius: 12px; padding: 13px 22px; font-size: 14px; font-weight: 700; text-align: center; width: 100%; max-width: 280px; cursor: pointer; letter-spacing: 0.3px; box-shadow: 0 2px 8px rgba(240, 192, 64, 0.25); }
+.bb-install-btn:active { opacity: 0.85; transform: scale(0.98); }
 .install-sheet { background: #0a1530; border-radius: 20px 20px 0 0; border-top: 2px solid #d4a850; padding: 20px 20px 32px; width: 100%; max-width: 480px; animation: slideUp .3s ease; }
 .install-sheet-handle { width: 40px; height: 4px; background: #4a3878; border-radius: 2px; margin: 0 auto 16px; }
 .install-sheet-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
@@ -1442,6 +1463,22 @@ body.notif-modal-open { overflow: hidden; }
   </div>
   <div class="toast" id="ub-toast"></div>
 </div>
+<div id="screen-browser-block">
+  <div class="bb-phone">
+    <div class="bb-icon-wrap">
+      <div class="bb-ring bb-ring1"></div>
+      <div class="bb-ring bb-ring2"></div>
+      <div class="bb-app-icon"><div class="bb-coin">हि</div></div>
+    </div>
+    <div class="bb-app-title">हिसाब-Kitaab</div>
+    <div class="bb-check-wrap" id="bb-check-wrap"><span class="bb-check">✓</span></div>
+    <div class="bb-success" id="bb-success-text">Registration complete</div>
+    <div class="bb-divider"></div>
+    <div class="bb-open-label">बेहतर अनुभव के लिए App खोलें</div>
+    <button class="bb-install-btn" id="bb-install-btn">📥 App Install करें</button>
+  </div>
+</div>
+
 <div id="main-app" style="display:none;">
 
 <!-- Install Sheet -->
@@ -2375,6 +2412,11 @@ window.selectMode = function(mode) {
   if(window._db){try{import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>{m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{mode:mode},{merge:true});});}catch(e){}}
   document.getElementById('screen-mode').classList.add('hidden');
   launchApp(uid);
+};
+
+// Expose signOut globally for browser block screen
+window.firebaseSignOut = function() {
+  try { return fbSignOut(auth); } catch(e) { console.warn('signOut err:', e); }
 };
 
 onAuthStateChanged(auth, async user => {
@@ -3936,6 +3978,128 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     hideBanner();
   });
 })();
+
+// ============================================================
+// PWA Detection & Browser Block Screen
+// ============================================================
+(function(){
+  function isPWA() {
+    return window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true
+        || document.referrer.startsWith('android-app://');
+  }
+
+  // Play "registration complete" bell chime (only first time)
+  function playSuccessChime() {
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+      var now = ctx.currentTime;
+      var master = ctx.createGain();
+      master.gain.value = 1.0;
+      master.connect(ctx.destination);
+      [523.25, 783.99, 1046.50].forEach(function(f, i){
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = f;
+        g.gain.setValueAtTime(0.5, now + i*0.05);
+        g.gain.exponentialRampToValueAtTime(0.001, now + i*0.05 + 0.6);
+        osc.connect(g).connect(master);
+        osc.start(now + i*0.05);
+        osc.stop(now + i*0.05 + 0.65);
+      });
+    } catch(e) { console.warn('chime err:', e); }
+  }
+
+  // Show the browser block screen
+  // firstTime = true → "Registration complete" + chime
+  // firstTime = false → "Welcome back" type message, no chime
+  window.showBrowserBlockScreen = function(firstTime) {
+    var screen = document.getElementById('screen-browser-block');
+    if (!screen) return;
+
+    // Hide everything else
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-mode','main-app','ub-app','app-lock-screen','splash-screen'];
+    toHide.forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) {
+        if (id === 'main-app' || id === 'ub-app') el.style.display = 'none';
+        else el.classList.add('hidden');
+      }
+    });
+
+    // Stop heartbeat if running
+    if (window._stopHeartbeat) try { window._stopHeartbeat(); } catch(e) {}
+
+    // Update message based on firstTime
+    var successText = document.getElementById('bb-success-text');
+    var checkWrap = document.getElementById('bb-check-wrap');
+    if (firstTime) {
+      if (successText) successText.textContent = 'Registration complete';
+      if (checkWrap) checkWrap.style.display = 'flex';
+      // Play sound after a tiny delay (let DOM render first)
+      setTimeout(playSuccessChime, 200);
+      try { localStorage.setItem('hk_first_launch_done', '1'); } catch(e){}
+    } else {
+      if (successText) successText.textContent = 'वापस आने के लिए धन्यवाद';
+      if (checkWrap) checkWrap.style.display = 'flex';
+    }
+
+    screen.classList.add('active');
+
+    // Sign user out silently so browser session is destroyed
+    // (delay slightly so the screen renders smoothly first)
+    setTimeout(function(){
+      try {
+        if (window._currentAuthUser && window.firebaseSignOut) {
+          window.firebaseSignOut();
+        }
+      } catch(e) {}
+    }, 1500);
+  };
+
+  // Install button handler — reuses existing deferredPrompt mechanism
+  var bbBtn = document.getElementById('bb-install-btn');
+  if (bbBtn) {
+    bbBtn.addEventListener('click', function(){
+      // Try to fire native install prompt by clicking the existing hidden install banner button
+      var existingBtn = document.getElementById('install-banner-btn');
+      if (existingBtn) {
+        existingBtn.click();
+      } else {
+        alert('Chrome menu (⋮) से "Add to Home screen" या "Install app" चुनें');
+      }
+    });
+  }
+
+  // Check on every page load — if NOT in PWA mode, show block screen
+  // This runs after a small delay to let auth state settle
+  function pwaGate() {
+    if (isPWA()) return; // PWA mode — all good
+
+    // Browser mode — wait briefly to see if user is authenticated
+    setTimeout(function(){
+      var hasUser = !!window._currentAuthUser;
+      var firstDone = false;
+      try { firstDone = localStorage.getItem('hk_first_launch_done') === '1'; } catch(e){}
+
+      // Only show block screen if user is logged in (otherwise let normal flow handle phone/otp)
+      // For unauth users in browser → let them register, hand off after registration
+      if (hasUser) {
+        window.showBrowserBlockScreen(!firstDone);
+      }
+    }, 2500);
+  }
+
+  // Run gate when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', pwaGate);
+  } else {
+    pwaGate();
+  }
+})();
+
 </script>
 
 </body>

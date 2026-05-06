@@ -13,12 +13,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>हिसाब-Kitaab</title>
 <script>
-if(localStorage.getItem('hk_app_lock_enabled')==='true'){
-  document.addEventListener('DOMContentLoaded',function(){
-    var s=document.getElementById('app-lock-screen');
-    if(s){s.style.cssText='display:flex !important;position:fixed;inset:0;background:#0d1f0d;z-index:999999;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;';}
-  });
-}
+// Lock screen pre-show is now handled by alck.js (loaded later)
+// This empty block reserved for future startup hooks
 </script>
 <script>
 // Security helpers - HTML escaping and input sanitization
@@ -928,13 +924,55 @@ body.notif-modal-open { overflow: hidden; }
 .ub-wa-title { font-size: 15px; font-weight: 500; color: #6ce8c8; text-align: center; margin-bottom: 14px; }
 .ub-wa-msg { background: #082a2a; border: 1px solid #184a3a; border-radius: 10px; padding: 14px; margin-bottom: 12px; font-size: 12px; color: #c0fff0; line-height: 1.8; }
 .ub-wa-send { width: 100%; background: #20c0a0; border: none; color: #082a2a; font-size: 14px; font-weight: 500; padding: 13px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; }
-  #app-lock-screen{position:fixed;inset:0;background:#0d1f0d;z-index:999999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;}
+/* ============================================================ */
+/* === ADVANCED PIN LOCK SYSTEM (premium app-matching design) === */
+/* ============================================================ */
+#app-lock-screen{position:fixed;inset:0;background:linear-gradient(180deg, #050a1c 0%, #0a1530 100%);z-index:999999;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
 #app-lock-screen.active{display:flex;}
-.lock-logo{width:80px;height:80px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 4px 16px rgba(212, 168, 80, 0.3));}
-.lock-logo svg{width:100%;height:100%;}
-.lock-title{font-size:24px;font-weight:500;color:#e8d8b8;letter-spacing:-0.3px;}
-.lock-sub{font-size:12px;color:#b0a0e8;text-align:center;line-height:1.7;}
-.lock-btn{background:#2dba4d;border:none;color:#051005;font-size:15px;font-weight:800;padding:14px 40px;border-radius:12px;cursor:pointer;margin-top:8px;}
+.alck-card{width:100%;max-width:340px;background:linear-gradient(180deg, #1a1545 0%, #0f1238 100%);border-radius:18px;padding:18px 16px;position:relative;box-shadow:0 8px 32px rgba(124, 92, 255, 0.18);border:1px solid rgba(124, 92, 255, 0.25);}
+.alck-card::before{content:'';position:absolute;top:0;left:10px;right:10px;height:2px;background:linear-gradient(90deg, #ff5b8a, #f0c040, #5dcaa5, #4a90d4, #b07cff);border-radius:2px;}
+.alck-status-pill{position:absolute;top:14px;right:12px;background:rgba(240, 192, 64, 0.15);border:1px solid #d4a020;border-radius:6px;padding:3px 8px;font-size:9px;font-weight:600;color:#f0c040;letter-spacing:0.3px;}
+.alck-status-pill.danger{background:rgba(232, 72, 120, 0.15);border-color:#e84878;color:#ff5b8a;}
+.alck-app-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.alck-app-icon-sm{width:42px;height:42px;border-radius:11px;background:#050a1c;border:1px solid #2a3a5a;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.alck-coin-sm{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #f5d57a 0%, #e6b840 40%, #b8870a 100%);border:1px solid #d4a020;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#1a0a04;font-family:'Noto Sans Devanagari','Mangal',serif;}
+.alck-app-meta-name{font-size:13px;font-weight:600;color:#e8d8b8;line-height:1.2;}
+.alck-app-meta-tag{font-size:9px;color:#b0a0e8;margin-top:2px;}
+.alck-title{font-size:16px;font-weight:600;color:#fff;text-align:center;margin-bottom:4px;letter-spacing:0.2px;}
+.alck-sub{font-size:11px;color:#b0a0e8;text-align:center;margin-bottom:14px;line-height:1.5;}
+.alck-step-dots{display:flex;gap:5px;justify-content:center;margin-bottom:10px;}
+.alck-step-dot{width:22px;height:3px;border-radius:2px;background:#2a3a6a;}
+.alck-step-dot.active{background:linear-gradient(90deg, #f0c040, #d4a020);}
+.alck-dots-row{display:flex;gap:14px;justify-content:center;margin-bottom:18px;}
+.alck-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid #4a3878;background:#0a0f24;transition:all 0.2s;}
+.alck-dot.filled{background:linear-gradient(135deg, #f0c040, #d4a020);border-color:#f0c040;box-shadow:0 0 8px rgba(240, 192, 64, 0.5);}
+.alck-dot.error{background:linear-gradient(135deg, #ff5b8a, #e84878);border-color:#ff5b8a;box-shadow:0 0 8px rgba(232, 72, 120, 0.5);animation:alckShake 0.4s;}
+@keyframes alckShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+.alck-keypad{display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;width:100%;}
+.alck-key{background:linear-gradient(180deg, #1a2a5a 0%, #0f1840 100%);border-radius:11px;height:46px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#e8d8b8;border:1px solid #2a3a6a;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);transition:all 0.1s;}
+.alck-key:active{transform:scale(0.95);background:linear-gradient(180deg, #2a3a7a 0%, #1f2860 100%);}
+.alck-key.bio{color:#5dcaa5;background:linear-gradient(180deg, #0a2820 0%, #061a14 100%);border-color:#1d9e75;font-size:20px;}
+.alck-key.del{color:#b0a0e8;font-size:18px;}
+.alck-key.empty{background:transparent;border:none;box-shadow:none;cursor:default;}
+.alck-err-banner{background:linear-gradient(90deg, rgba(232, 72, 120, 0.25), rgba(232, 72, 120, 0.05));border-left:3px solid #e84878;border-radius:5px;padding:7px 10px;margin-bottom:12px;font-size:11px;color:#ff7a9c;font-weight:500;text-align:center;width:100%;}
+.alck-bio-banner{background:linear-gradient(90deg, rgba(29, 158, 117, 0.18), rgba(29, 158, 117, 0.05));border:1px solid rgba(93, 202, 165, 0.4);border-radius:7px;padding:6px 10px;margin-bottom:14px;font-size:11px;color:#5dcaa5;text-align:center;font-weight:500;width:100%;}
+.alck-recovery{font-size:11px;color:#f0c040;text-align:center;margin-top:12px;text-decoration:underline;text-decoration-color:rgba(240, 192, 64, 0.4);text-underline-offset:3px;cursor:pointer;padding:6px;}
+/* Locked Khata icon (Variant C) */
+.alck-khata-icon{width:120px;height:130px;display:flex;align-items:center;justify-content:center;margin:8px auto 14px;}
+.alck-khata-icon svg{width:100%;height:100%;}
+@keyframes alckLockWiggle{0%,90%,100%{transform:rotate(0);}30%{transform:rotate(-2deg);}60%{transform:rotate(2deg);}}
+.alck-lock-wiggle{transform-origin:50px 78px;animation:alckLockWiggle 3s ease-in-out infinite;}
+@keyframes alckLockGlow{0%,100%{filter:drop-shadow(0 0 3px rgba(240, 192, 64, 0.4));}50%{filter:drop-shadow(0 0 10px rgba(240, 192, 64, 0.9));}}
+.alck-lock-glow{animation:alckLockGlow 2s ease-in-out infinite;}
+/* Lockout countdown */
+.alck-countdown-box{background:linear-gradient(180deg, #050a1c 0%, #0a1530 100%);border:1px solid #4a3878;border-radius:11px;padding:12px;width:100%;text-align:center;margin-bottom:12px;}
+.alck-countdown{font-size:32px;font-weight:700;background:linear-gradient(135deg, #ff5b8a, #e84878);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:3px;font-family:'Courier New', monospace;margin-bottom:3px;}
+.alck-countdown-label{font-size:9px;color:#8aa0d8;letter-spacing:0.6px;}
+.alck-reset-btn{background:linear-gradient(180deg, #f0d070 0%, #d4a020 50%, #b08810 100%);color:#1a0a04;border-radius:11px;padding:12px;font-size:13px;font-weight:700;text-align:center;width:100%;border:1px solid #f0c040;box-shadow:0 2px 0 #6a4810, 0 3px 8px rgba(240, 192, 64, 0.2);margin-top:6px;cursor:pointer;}
+.alck-reset-btn:active{transform:scale(0.98);box-shadow:0 0 0 #6a4810, 0 1px 4px rgba(240, 192, 64, 0.2);}
+.alck-secondary-btn{background:transparent;border:1px solid #4a3878;color:#b0a0e8;border-radius:10px;padding:10px;font-size:12px;font-weight:500;width:100%;margin-top:8px;cursor:pointer;}
+.alck-secondary-btn:active{background:rgba(124, 92, 255, 0.1);}
+
 .name-screen{position:fixed;inset:0;background:linear-gradient(135deg, #050810 0%, #0a1530 50%, #14254a 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .name-screen.hidden{display:none;}
 /* UI POLISH v1 */
@@ -990,26 +1028,105 @@ body.notif-modal-open { overflow: hidden; }
 </head>
 <body> <!-- Splash Screen -->
 <div id="app-lock-screen">
-  <div class="lock-logo"><svg width="72" height="72" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="coinOuterL" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f0d890"/>
-      <stop offset="50%" style="stop-color:#d4a850"/>
-      <stop offset="100%" style="stop-color:#8a6818"/>
-    </linearGradient>
-    <linearGradient id="coinInnerL" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8c870"/>
-      <stop offset="100%" style="stop-color:#b8902f"/>
-    </linearGradient>
-  </defs>
-  <circle cx="50" cy="50" r="46" fill="url(#coinOuterL)" stroke="#8a6818" stroke-width="1.5"/>
-  <circle cx="50" cy="50" r="38" fill="none" stroke="#8a6818" stroke-width="0.8" opacity="0.5"/>
-  <circle cx="50" cy="50" r="34" fill="url(#coinInnerL)"/>
-  <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
-</svg></div>
-  <div class="lock-title">हिसाब-<span style="color:#d4a850;">Kitaab</span></div>
-  <div class="lock-sub">आपका data सुरक्षित है<br>App Lock · Privacy Protection</div>
-  <button class="lock-btn" onclick="appLockUnlock()">🔓 खोलें · Unlock</button>
+  <div class="alck-card" id="alck-mode-unlock">
+    <div class="alck-status-pill" id="alck-status-pill">🔐 LOCKED</div>
+    <div class="alck-app-row">
+      <div class="alck-app-icon-sm"><div class="alck-coin-sm">हि</div></div>
+      <div>
+        <div class="alck-app-meta-name">हिसाब-Kitaab</div>
+        <div class="alck-app-meta-tag" id="alck-tag-text">App locked</div>
+      </div>
+    </div>
+    <div class="alck-title" id="alck-title-text">PIN डालें</div>
+    <div class="alck-bio-banner" id="alck-bio-banner" style="display:none;">👆 Fingerprint भी use कर सकते हैं</div>
+    <div class="alck-err-banner" id="alck-err-banner" style="display:none;"></div>
+    <div class="alck-step-dots" id="alck-step-dots" style="display:none;">
+      <div class="alck-step-dot active" id="alck-step1"></div>
+      <div class="alck-step-dot" id="alck-step2"></div>
+    </div>
+    <div class="alck-dots-row" id="alck-dots-row">
+      <div class="alck-dot" data-i="0"></div>
+      <div class="alck-dot" data-i="1"></div>
+      <div class="alck-dot" data-i="2"></div>
+      <div class="alck-dot" data-i="3"></div>
+    </div>
+    <div class="alck-keypad" id="alck-keypad">
+      <div class="alck-key" data-k="1">1</div>
+      <div class="alck-key" data-k="2">2</div>
+      <div class="alck-key" data-k="3">3</div>
+      <div class="alck-key" data-k="4">4</div>
+      <div class="alck-key" data-k="5">5</div>
+      <div class="alck-key" data-k="6">6</div>
+      <div class="alck-key" data-k="7">7</div>
+      <div class="alck-key" data-k="8">8</div>
+      <div class="alck-key" data-k="9">9</div>
+      <div class="alck-key bio" id="alck-bio-key" data-k="bio" style="display:none;">👆</div>
+      <div class="alck-key empty" id="alck-empty-key"></div>
+      <div class="alck-key" data-k="0">0</div>
+      <div class="alck-key del" data-k="del">⌫</div>
+    </div>
+    <div class="alck-recovery" id="alck-recovery-link" onclick="alckStartRecovery()">PIN भूल गए?</div>
+  </div>
+
+  <div class="alck-card" id="alck-mode-lockout" style="display:none;">
+    <div class="alck-status-pill danger">🔒 LOCKED</div>
+    <div class="alck-app-row">
+      <div class="alck-app-icon-sm"><div class="alck-coin-sm">हि</div></div>
+      <div>
+        <div class="alck-app-meta-name">हिसाब-Kitaab</div>
+        <div class="alck-app-meta-tag">Temporary block</div>
+      </div>
+    </div>
+    <div class="alck-khata-icon">
+      <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="alckCv" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#3a1830"/>
+            <stop offset="0.4" stop-color="#a02850"/>
+            <stop offset="1" stop-color="#5a1838"/>
+          </linearGradient>
+          <linearGradient id="alckGold" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f0d070"/>
+            <stop offset="0.5" stop-color="#d4a020"/>
+            <stop offset="1" stop-color="#7a5810"/>
+          </linearGradient>
+          <linearGradient id="alckLockBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fae090"/>
+            <stop offset="0.5" stop-color="#d4a020"/>
+            <stop offset="1" stop-color="#5a3a08"/>
+          </linearGradient>
+        </defs>
+        <rect x="14" y="14" width="68" height="86" rx="3" fill="#f0e6d0" opacity="0.15"/>
+        <rect x="12" y="12" width="68" height="86" rx="3" fill="#f0e6d0" opacity="0.25"/>
+        <rect x="10" y="10" width="68" height="86" rx="3" fill="#1a0a14" opacity="0.5"/>
+        <rect x="12" y="12" width="68" height="86" rx="3" fill="url(#alckCv)" stroke="#3a0818" stroke-width="1.5"/>
+        <rect x="18" y="18" width="56" height="74" rx="1" fill="none" stroke="url(#alckGold)" stroke-width="1" opacity="0.6"/>
+        <g transform="translate(46, 38)">
+          <circle r="14" fill="url(#alckGold)" stroke="#7a5810" stroke-width="0.8"/>
+          <circle r="11" fill="none" stroke="#5a3a08" stroke-width="0.4" opacity="0.5"/>
+          <text y="5" text-anchor="middle" font-size="16" font-weight="700" fill="#3a2008" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+        </g>
+        <g class="alck-lock-wiggle">
+          <ellipse cx="46" cy="100" rx="20" ry="2.5" fill="#000" opacity="0.4"/>
+          <g class="alck-lock-glow">
+            <path d="M37 78 V70 a9 9 0 0 1 18 0 V78" fill="none" stroke="#b8acc8" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M37 78 V70 a9 9 0 0 1 18 0 V78" fill="none" stroke="#e8e0f0" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+            <rect x="28" y="78" width="36" height="22" rx="4" fill="url(#alckLockBody)" stroke="#3a2810" stroke-width="1"/>
+            <ellipse cx="36" cy="84" rx="6" ry="2" fill="#fff" opacity="0.35"/>
+            <circle cx="46" cy="87" r="3.5" fill="#3a2810"/>
+            <rect x="44.5" y="88.5" width="3" height="7" rx="1" fill="#3a2810"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="alck-title">App locked</div>
+    <div class="alck-sub">3 बार गलत PIN<br>थोड़ी देर इंतज़ार करें</div>
+    <div class="alck-countdown-box">
+      <div class="alck-countdown" id="alck-countdown">20:00</div>
+      <div class="alck-countdown-label">मिनट · सेकंड</div>
+    </div>
+    <button class="alck-reset-btn" onclick="alckStartRecovery()">📱 OTP से PIN reset करें</button>
+  </div>
 </div>
   <div class="splash-screen" id="splash-screen">
   <div class="splash-logo"><svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1625,7 +1742,7 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 <div class="more-menu" id="more-menu">
-  <div class="more-item" onclick="appLockToggle();toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:1.5px solid #7a6cf0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div> <span style="color:#e8d8b8;font-weight:500;">App Lock:</span> <span id="lock-status-lbl" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:6px;background:#0a2820;color:#a0e8a8;border:1px solid #6ab070;font-weight:500;">बंद</span></div>
+  <div class="more-item" onclick="alckOpenChangePinFlow();toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:1.5px solid #7a6cf0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div> <span style="color:#e8d8b8;font-weight:500;">PIN बदलें · Change PIN</span> <span style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:6px;background:rgba(240, 192, 64, 0.15);color:#f0c040;border:1px solid #d4a020;font-weight:500;">SECURE</span></div>
   <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4a3818 0%,#2a1808 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📅</div> <span style="color:#e8d8b8;font-weight:500;">महीने का हिसाब</span></div>
   <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1810 0%,#1a0f08 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎯</div> <span style="color:#e8d8b8;font-weight:500;">लक्ष्य</span></div>
   <div class="more-item" style="border-bottom:none;" onclick="signOut();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
@@ -2475,8 +2592,7 @@ function launchApp(uid) {
   } else {
   if(window._startHeartbeat) window._startHeartbeat(uid);
  initApp(uid);
-appLockInit();
-if(lockEnabled){ appLockActivate(); } else { appLockStart(); }
+alckInit(); /* PIN lock init — enforces setup if needed */
 updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
 if(window.loadProfileAndUpdateHeaders) window.loadProfileAndUpdateHeaders();
     // Re-render after short delay to catch Firestore data
@@ -3346,30 +3462,564 @@ function toggleHafta(hNum){for(let i=1;i<=4;i++)document.getElementById(`hafta-p
 function buildHaftaCards(){const bikri=DB.get(K.BIKRI),udhaar=DB.get(K.UDHAAR);const grid=document.getElementById('hafta-grid');grid.innerHTML='';for(let h=0;h<4;h++){const hNum=h+1,isCur=(hNum===CUR_HAFTA),range=HAFTA_RANGES[h];let bikriTotal=0,gallaTotal=0,udhaarTotal=0,expenseTotal=0,udhaarFromRecords=0;bikri.forEach(r=>{if(inHafta(r.date,h)){bikriTotal+=r.sales||0;gallaTotal+=calcEntryProfit(r);udhaarTotal+=r.udhaar||0;expenseTotal+=r.expense||0;}});udhaarTotal=0;document.getElementById(`hv-bikri-${hNum}`).textContent=fmt(bikriTotal);document.getElementById(`hv-galla-${hNum}`).textContent=fmt(gallaTotal);const uEl=document.getElementById(`hv-udhaar-${hNum}`);if(uEl)uEl.textContent=fmt(udhaarTotal);document.getElementById(`hv-expense-${hNum}`).textContent=fmt(expenseTotal);document.getElementById(`hpd-${hNum}`).textContent=`${range.start}–${range.end} ${HI_MONTHS[CUR_MONTH]}`;if(isCur){const daysDone=Math.min(CUR_DAY-range.start+1,range.end-range.start+1),daysTotal=range.end-range.start+1;const pct=Math.max(0,Math.round((daysDone/daysTotal)*100));document.getElementById('hpb-4').textContent=`${Math.max(1,daysDone)}/${daysTotal} दिन`;document.getElementById('hafta-pbar').style.width=pct+'%';}const card=document.createElement('div');card.className='hafta-card '+(isCur?'hafta-card-cur':'hafta-card-past');card.innerHTML=`${isCur?'<div class="chaluu-badge">● चालू</div>':''}<div class="hafta-card-name">हफ्ता-${hNum}</div><div class="hafta-card-dates">${range.start}–${range.end}</div><div class="hafta-card-divider"></div><div class="hafta-card-amt">${fmt(bikriTotal)}</div><div class="hafta-card-sublbl">बिक्री</div><div class="hafta-card-hint">▼ देखें</div>`;card.onclick=()=>toggleHafta(hNum);grid.appendChild(card);}}
 function loadUdhaar(){const el=document.getElementById('udhaar-list');el.innerHTML='';const rows=DB.get(K.UDHAAR);if(!rows.length){el.innerHTML='<div class="empty">🤝<br>कोई उधार नहीं है</div>';return;}const hint=document.createElement('div');hint.style.cssText='font-size:9px;color:#333;text-align:center;margin-bottom:8px;';hint.textContent='देर तक दबाएं — सुधारें या हटाएं';el.appendChild(hint);let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const dotColor=type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a';const dotColor2=type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${escHTML(initials(r.name))}</div><div><div class="u-name">${escHTML(r.name)||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${dotColor};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${dotColor2};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});const summary=document.createElement('div');summary.className='u-summary';summary.innerHTML=`<div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#cc7a47;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#d4a850;">${settledCount}</div></div>`;el.appendChild(summary);}
 function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#d4a850;">${fmt(data.profit)}</div><div style="font-size:9px;color:#cc7a47;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;el.appendChild(div);});}
-(function(){if(localStorage.getItem('hk_app_lock_enabled')==='true'){const s=document.getElementById('app-lock-screen');if(s)s.style.display='flex';}})();
-const LOCK_KEY='hk_app_lock_enabled';
-const LOCK_TIMEOUT=5*60*1000;
-let lockTimer=null;
-let lockEnabled=false;
-let appWasHidden=false;
-function appLockInit(){lockEnabled=localStorage.getItem(LOCK_KEY)==='true';const lbl=document.getElementById('lock-status-lbl');if(lbl)lbl.textContent=lockEnabled?'चालू':'बंद';}
-function appLockStart(){clearTimeout(lockTimer);if(!lockEnabled)return;lockTimer=setTimeout(appLockActivate,LOCK_TIMEOUT);}
-function appLockActivate(){if(!lockEnabled)return;var s=document.getElementById('app-lock-screen');s.style.cssText='display:flex!important;position:fixed;inset:0;background:#0d1f0d;z-index:999999;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;';document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(function(el){el.style.visibility='hidden';});}
-function appLockUnlock(){
-  appWasHidden=false;
-  clearTimeout(lockTimer);
-  var s=document.getElementById('app-lock-screen');
-  s.style.display='none';
-  s.classList.remove('active');
-  document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(function(el){
-    el.style.visibility='';
+// ============================================================
+// ADVANCED PIN LOCK SYSTEM (alck.js)
+// ============================================================
+(function(){
+  'use strict';
+
+  const PIN_HASH_KEY = 'hk_pin_hash';
+  const PIN_SALT_KEY = 'hk_pin_salt';
+  const ATTEMPTS_KEY = 'hk_pin_attempts';
+  const LOCKOUT_UNTIL_KEY = 'hk_pin_lockout_until';
+  const LAST_ACTIVITY_KEY = 'hk_pin_last_activity';
+  const BIO_ENABLED_KEY = 'hk_pin_bio_enabled';
+  const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+  const LOCKOUT_DURATION = 20 * 60 * 1000; // 20 minutes
+  const MAX_ATTEMPTS = 3;
+
+  let currentMode = 'unlock'; // 'unlock' | 'setup-new' | 'setup-confirm' | 'change-old' | 'change-new' | 'change-confirm' | 'recovery-otp' | 'recovery-new' | 'recovery-confirm' | 'lockout'
+  let pinBuffer = [];
+  let firstPinForConfirm = '';
+  let inactivityTimer = null;
+  let countdownInterval = null;
+  let appWasHidden = false;
+
+  // ---------- Hashing ----------
+  async function sha256(str) {
+    const enc = new TextEncoder().encode(str);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+  async function hashPin(pin, salt) {
+    return await sha256(salt + ':' + pin + ':' + salt);
+  }
+  function genSalt() {
+    const arr = new Uint8Array(16);
+    crypto.getRandomValues(arr);
+    return Array.from(arr).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  // ---------- PIN storage ----------
+  async function savePin(pin) {
+    let salt = localStorage.getItem(PIN_SALT_KEY);
+    if (!salt) { salt = genSalt(); localStorage.setItem(PIN_SALT_KEY, salt); }
+    const hash = await hashPin(pin, salt);
+    localStorage.setItem(PIN_HASH_KEY, hash);
+    localStorage.setItem(ATTEMPTS_KEY, '0');
+    localStorage.removeItem(LOCKOUT_UNTIL_KEY);
+  }
+  async function verifyPin(pin) {
+    const salt = localStorage.getItem(PIN_SALT_KEY);
+    const stored = localStorage.getItem(PIN_HASH_KEY);
+    if (!salt || !stored) return false;
+    const hash = await hashPin(pin, salt);
+    return hash === stored;
+  }
+  function pinExists() {
+    return !!localStorage.getItem(PIN_HASH_KEY);
+  }
+
+  // ---------- Lockout ----------
+  function getLockoutRemaining() {
+    const until = parseInt(localStorage.getItem(LOCKOUT_UNTIL_KEY) || '0');
+    return Math.max(0, until - Date.now());
+  }
+  function triggerLockout() {
+    const until = Date.now() + LOCKOUT_DURATION;
+    localStorage.setItem(LOCKOUT_UNTIL_KEY, until.toString());
+    localStorage.setItem(ATTEMPTS_KEY, '0');
+    showLockoutScreen();
+  }
+
+  // ---------- Biometric (WebAuthn) ----------
+  async function isBioSupported() {
+    if (!window.PublicKeyCredential) return false;
+    try {
+      return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    } catch(e) { return false; }
+  }
+  async function setupBiometric() {
+    try {
+      const challenge = new Uint8Array(32);
+      crypto.getRandomValues(challenge);
+      const userId = new TextEncoder().encode(localStorage.getItem('hk_pin_user_id') || (function(){
+        const arr = new Uint8Array(16); crypto.getRandomValues(arr);
+        const id = Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
+        localStorage.setItem('hk_pin_user_id', id);
+        return id;
+      })());
+      const cred = await navigator.credentials.create({
+        publicKey: {
+          challenge: challenge,
+          rp: { name: 'हिसाब-Kitaab', id: window.location.hostname },
+          user: { id: userId, name: 'user', displayName: 'User' },
+          pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+          authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+          timeout: 60000
+        }
+      });
+      if (cred && cred.id) {
+        localStorage.setItem('hk_pin_bio_credid', cred.id);
+        localStorage.setItem(BIO_ENABLED_KEY, '1');
+        return true;
+      }
+    } catch(e) { console.warn('bio setup err:', e); }
+    return false;
+  }
+  async function verifyBiometric() {
+    const credId = localStorage.getItem('hk_pin_bio_credid');
+    if (!credId) return false;
+    try {
+      const challenge = new Uint8Array(32);
+      crypto.getRandomValues(challenge);
+      // base64url decode credId
+      const idBytes = (function(b64){
+        const s = b64.replace(/-/g,'+').replace(/_/g,'/');
+        const pad = '==='.slice((s.length+3)%4); 
+        try { const bin = atob(s+pad.slice(0, (4-s.length%4)%4)); return Uint8Array.from(bin, c=>c.charCodeAt(0)); }
+        catch(e){ return new Uint8Array(0); }
+      })(credId);
+      const assertion = await navigator.credentials.get({
+        publicKey: {
+          challenge: challenge,
+          allowCredentials: [{ type: 'public-key', id: idBytes }],
+          userVerification: 'required',
+          timeout: 60000
+        }
+      });
+      return !!assertion;
+    } catch(e) { console.warn('bio verify err:', e); return false; }
+  }
+
+  // ---------- UI helpers ----------
+  function $(id) { return document.getElementById(id); }
+  function setTitle(t) { const el = $('alck-title-text'); if (el) el.textContent = t; }
+  function setSub(t) { /* no sub element in unlock card */ }
+  function setTag(t) { const el = $('alck-tag-text'); if (el) el.textContent = t; }
+  function setPill(t, danger) {
+    const el = $('alck-status-pill');
+    if (!el) return;
+    el.textContent = t;
+    if (danger) el.classList.add('danger'); else el.classList.remove('danger');
+  }
+  function showErr(msg) {
+    const el = $('alck-err-banner');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+  function showBio(show) {
+    const banner = $('alck-bio-banner');
+    const key = $('alck-bio-key');
+    const empty = $('alck-empty-key');
+    if (banner) banner.style.display = show ? 'block' : 'none';
+    if (key) key.style.display = show ? 'flex' : 'none';
+    if (empty) empty.style.display = show ? 'none' : 'flex';
+  }
+  function showSteps(show, step) {
+    const el = $('alck-step-dots');
+    if (!el) return;
+    el.style.display = show ? 'flex' : 'none';
+    if (show) {
+      const s1 = $('alck-step1'), s2 = $('alck-step2');
+      if (s1) s1.classList.toggle('active', step >= 1);
+      if (s2) s2.classList.toggle('active', step >= 2);
+    }
+  }
+  function showRecovery(show) {
+    const el = $('alck-recovery-link');
+    if (el) el.style.display = show ? 'block' : 'none';
+  }
+  function renderDots() {
+    const dots = document.querySelectorAll('#alck-dots-row .alck-dot');
+    dots.forEach((d, i) => {
+      d.classList.remove('filled', 'error');
+      if (i < pinBuffer.length) d.classList.add('filled');
+    });
+  }
+  function flashError() {
+    const dots = document.querySelectorAll('#alck-dots-row .alck-dot');
+    dots.forEach(d => { d.classList.remove('filled'); d.classList.add('error'); });
+    setTimeout(() => {
+      pinBuffer = [];
+      renderDots();
+    }, 500);
+  }
+
+  // ---------- Show/hide screens ----------
+  function showUnlockCard() {
+    const card = $('alck-mode-unlock');
+    const lockout = $('alck-mode-lockout');
+    if (card) card.style.display = 'block';
+    if (lockout) lockout.style.display = 'none';
+  }
+  function showLockoutScreen() {
+    const card = $('alck-mode-unlock');
+    const lockout = $('alck-mode-lockout');
+    if (card) card.style.display = 'none';
+    if (lockout) lockout.style.display = 'block';
+    currentMode = 'lockout';
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
+  }
+  function updateCountdown() {
+    const remaining = getLockoutRemaining();
+    if (remaining <= 0) {
+      if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+      localStorage.removeItem(LOCKOUT_UNTIL_KEY);
+      showUnlockCard();
+      enterUnlockMode();
+      return;
+    }
+    const min = Math.floor(remaining / 60000);
+    const sec = Math.floor((remaining % 60000) / 1000);
+    const el = $('alck-countdown');
+    if (el) el.textContent = String(min).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+  }
+
+  // ---------- Mode switchers ----------
+  async function enterSetupMode(isFirstTime) {
+    pinBuffer = [];
+    firstPinForConfirm = '';
+    currentMode = 'setup-new';
+    showUnlockCard();
+    setPill(isFirstTime ? '🔐 SETUP' : '🔐 NEW PIN', false);
+    setTag('सुरक्षा सेटअप');
+    setTitle('अपना PIN बनाएं');
+    showErr('');
+    showBio(false);
+    showSteps(true, 1);
+    showRecovery(false);
+    renderDots();
+  }
+
+  async function enterUnlockMode() {
+    pinBuffer = [];
+    currentMode = 'unlock';
+    showUnlockCard();
+    setPill('🔐 LOCKED', false);
+    setTag('App locked');
+    setTitle('PIN डालें');
+    showErr('');
+    const bioOk = (localStorage.getItem(BIO_ENABLED_KEY) === '1') && await isBioSupported();
+    showBio(bioOk);
+    showSteps(false);
+    showRecovery(true);
+    renderDots();
+    // Auto-attempt biometric on screen open (if enabled)
+    if (bioOk) {
+      setTimeout(async () => {
+        if (currentMode !== 'unlock') return;
+        const ok = await verifyBiometric();
+        if (ok && currentMode === 'unlock') {
+          await onUnlockSuccess();
+        }
+      }, 400);
+    }
+  }
+
+  async function enterChangePinMode() {
+    pinBuffer = [];
+    firstPinForConfirm = '';
+    currentMode = 'change-old';
+    showUnlockCard();
+    setPill('🔐 CHANGE', false);
+    setTag('PIN बदलें');
+    setTitle('पुराना PIN डालें');
+    showErr('');
+    showBio(false);
+    showSteps(true, 1);
+    showRecovery(false);
+    renderDots();
+  }
+
+  // ---------- Recovery (OTP) ----------
+  window.alckStartRecovery = async function() {
+    const phone = (window._currentAuthUser && window._currentAuthUser.phoneNumber) || '';
+    if (!phone) {
+      alert('Phone number नहीं मिला। कृपया support से contact करें।');
+      return;
+    }
+    const lastFour = phone.slice(-4);
+    if (!confirm('OTP आपके registered number पर भेजा जाएगा (xxxxxx' + lastFour + ').\n\nक्या आप आगे बढ़ना चाहते हैं?')) return;
+
+    // Sign user out so they go through OTP flow again
+    // After successful re-auth, mark a recovery flag so launchApp triggers PIN re-setup
+    try {
+      localStorage.setItem('hk_pin_recovery_pending', '1');
+      // Clear PIN data so re-setup will be forced
+      localStorage.removeItem(PIN_HASH_KEY);
+      localStorage.removeItem(PIN_SALT_KEY);
+      localStorage.removeItem(ATTEMPTS_KEY);
+      localStorage.removeItem(LOCKOUT_UNTIL_KEY);
+      localStorage.removeItem(BIO_ENABLED_KEY);
+      localStorage.removeItem('hk_pin_bio_credid');
+    } catch(e) {}
+    
+    // Hide lock screen and sign out — onAuthStateChanged will route to phone screen
+    const s = $('app-lock-screen');
+    if (s) s.classList.remove('active');
+    document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(el => el.style.visibility = 'visible');
+    
+    if (window.firebaseSignOut) {
+      try { await window.firebaseSignOut(); } catch(e) {}
+    }
+    if (typeof toast === 'function') toast('📱 OTP verify करके नया PIN set करें');
+  };
+
+  window.alckOpenChangePinFlow = async function() {
+    if (!pinExists()) {
+      // No PIN set yet — go to setup
+      activateLockScreen();
+      enterSetupMode(true);
+      return;
+    }
+    activateLockScreen();
+    enterChangePinMode();
+  };
+
+  // ---------- Activation ----------
+  function activateLockScreen() {
+    const s = $('app-lock-screen');
+    if (!s) return;
+    s.classList.add('active');
+    s.style.cssText = '';
+    document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(el => el.style.visibility = 'hidden');
+  }
+  function deactivateLockScreen() {
+    const s = $('app-lock-screen');
+    if (!s) return;
+    s.classList.remove('active');
+    document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(el => el.style.visibility = 'visible');
+    pinBuffer = [];
+    if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+  }
+
+  // ---------- Inactivity timer ----------
+  function resetInactivity() {
+    localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    if (!pinExists()) return; // no PIN, no auto-lock
+    const s = $('app-lock-screen');
+    if (s && s.classList.contains('active')) return; // already locked
+    inactivityTimer = setTimeout(() => {
+      activateLockScreen();
+      enterUnlockMode();
+    }, INACTIVITY_TIMEOUT);
+  }
+
+  // ---------- Successful unlock ----------
+  async function onUnlockSuccess() {
+    localStorage.setItem(ATTEMPTS_KEY, '0');
+    deactivateLockScreen();
+    // Offer biometric setup on first successful PIN unlock if not yet enabled and supported
+    if (localStorage.getItem(BIO_ENABLED_KEY) !== '1' && localStorage.getItem('hk_pin_bio_offered') !== '1') {
+      const supported = await isBioSupported();
+      if (supported) {
+        localStorage.setItem('hk_pin_bio_offered', '1');
+        setTimeout(async () => {
+          if (confirm('🔐 Fingerprint से unlock करना है?\n\nAgli baar PIN ke jagah fingerprint use kar sakte hain.')) {
+            const ok = await setupBiometric();
+            if (ok && typeof toast === 'function') toast('✅ Fingerprint enable हो गया');
+            else if (typeof toast === 'function') toast('⚠️ Fingerprint setup विफल');
+          }
+        }, 800);
+      }
+    }
+    resetInactivity();
+  }
+
+  // ---------- PIN entry handler ----------
+  async function handlePinEntry(digit) {
+    // Lockout check
+    if (getLockoutRemaining() > 0) {
+      showLockoutScreen();
+      return;
+    }
+    if (digit === 'del') {
+      pinBuffer.pop();
+      renderDots();
+      return;
+    }
+    if (digit === 'bio') {
+      const ok = await verifyBiometric();
+      if (ok) await onUnlockSuccess();
+      else {
+        if (typeof toast === 'function') toast('⚠️ Fingerprint match नहीं हुआ');
+      }
+      return;
+    }
+    if (pinBuffer.length >= 4) return;
+    pinBuffer.push(digit);
+    renderDots();
+    if (pinBuffer.length === 4) {
+      const pin = pinBuffer.join('');
+      setTimeout(() => processPinComplete(pin), 200);
+    }
+  }
+
+  async function processPinComplete(pin) {
+    if (currentMode === 'unlock') {
+      const ok = await verifyPin(pin);
+      if (ok) {
+        await onUnlockSuccess();
+      } else {
+        let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0') + 1;
+        localStorage.setItem(ATTEMPTS_KEY, attempts.toString());
+        flashError();
+        if (attempts >= MAX_ATTEMPTS) {
+          setTimeout(() => triggerLockout(), 600);
+        } else {
+          const left = MAX_ATTEMPTS - attempts;
+          setPill('⚠️ ' + attempts + '/' + MAX_ATTEMPTS, true);
+          showErr('❌ गलत PIN — ' + left + ' कोशिश बाकी');
+        }
+      }
+    } else if (currentMode === 'setup-new') {
+      firstPinForConfirm = pin;
+      pinBuffer = [];
+      renderDots();
+      currentMode = 'setup-confirm';
+      setTitle('PIN दोबारा डालें');
+      showErr('');
+      showSteps(true, 2);
+    } else if (currentMode === 'setup-confirm') {
+      if (pin === firstPinForConfirm) {
+        await savePin(pin);
+        try { localStorage.removeItem('hk_pin_recovery_pending'); } catch(e){}
+        if (typeof toast === 'function') toast('✅ PIN set हो गया');
+        // Go directly into app, then offer bio
+        await onUnlockSuccess();
+      } else {
+        flashError();
+        setTimeout(() => {
+          firstPinForConfirm = '';
+          currentMode = 'setup-new';
+          setTitle('अपना PIN बनाएं');
+          showSteps(true, 1);
+          showErr('❌ PIN match नहीं हुआ — दोबारा try करें');
+        }, 600);
+      }
+    } else if (currentMode === 'change-old') {
+      const ok = await verifyPin(pin);
+      if (ok) {
+        pinBuffer = [];
+        renderDots();
+        currentMode = 'change-new';
+        setTitle('नया PIN डालें');
+        showErr('');
+        showSteps(true, 2);
+      } else {
+        flashError();
+        showErr('❌ पुराना PIN गलत है');
+      }
+    } else if (currentMode === 'change-new') {
+      firstPinForConfirm = pin;
+      pinBuffer = [];
+      renderDots();
+      currentMode = 'change-confirm';
+      setTitle('नया PIN दोबारा डालें');
+      showErr('');
+    } else if (currentMode === 'change-confirm') {
+      if (pin === firstPinForConfirm) {
+        await savePin(pin);
+        if (typeof toast === 'function') toast('✅ PIN बदल दिया गया');
+        await onUnlockSuccess();
+      } else {
+        flashError();
+        setTimeout(() => {
+          firstPinForConfirm = '';
+          currentMode = 'change-new';
+          setTitle('नया PIN डालें');
+          showErr('❌ PIN match नहीं हुआ');
+        }, 600);
+      }
+    }
+  }
+
+  // ---------- Keypad wiring ----------
+  function wireKeypad() {
+    const keypad = $('alck-keypad');
+    if (!keypad || keypad.dataset.wired) return;
+    keypad.dataset.wired = '1';
+    keypad.addEventListener('click', function(e) {
+      const k = e.target.closest('.alck-key');
+      if (!k) return;
+      const v = k.getAttribute('data-k');
+      if (!v) return;
+      handlePinEntry(v);
+    });
+  }
+
+  // ---------- Public init ----------
+  window.alckInit = function() {
+    wireKeypad();
+    // Lockout check first
+    if (getLockoutRemaining() > 0) {
+      activateLockScreen();
+      showLockoutScreen();
+      return;
+    }
+    // First time — no PIN — force setup
+    if (!pinExists()) {
+      activateLockScreen();
+      enterSetupMode(true);
+      return;
+    }
+    // PIN exists — check inactivity
+    const lastActivity = parseInt(localStorage.getItem(LAST_ACTIVITY_KEY) || '0');
+    const elapsed = Date.now() - lastActivity;
+    if (elapsed > INACTIVITY_TIMEOUT || appWasHidden) {
+      activateLockScreen();
+      enterUnlockMode();
+      return;
+    }
+    // Recently active — skip lock, just start inactivity timer
+    resetInactivity();
+  };
+
+  // ---------- Visibility change ----------
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+      appWasHidden = true;
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+    } else {
+      if (appWasHidden && pinExists()) {
+        const lastActivity = parseInt(localStorage.getItem(LAST_ACTIVITY_KEY) || '0');
+        if (Date.now() - lastActivity > INACTIVITY_TIMEOUT) {
+          activateLockScreen();
+          enterUnlockMode();
+        }
+        appWasHidden = false;
+      }
+    }
   });
-  setTimeout(function(){appLockStart();},1000);
-}
-function appLockToggle(){lockEnabled=!lockEnabled;localStorage.setItem(LOCK_KEY,lockEnabled.toString());const lbl=document.getElementById('lock-status-lbl');if(lbl)lbl.textContent=lockEnabled?'चालू':'बंद';if(lockEnabled){appLockStart();toast('🔐 App Lock चालू — 5 मिनट बाद lock होगा');}else{clearTimeout(lockTimer);toast('🔓 App Lock बंद हो गया');}}
-document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){appWasHidden=true;clearTimeout(lockTimer);}else{if(appWasHidden&&lockEnabled){appLockActivate();appWasHidden=false;}}});
-['touchstart','click','keydown'].forEach(evt=>{document.addEventListener(evt,function(){if(lockEnabled&&!document.getElementById('app-lock-screen').classList.contains('active')){clearTimeout(lockTimer);lockTimer=setTimeout(appLockActivate,LOCK_TIMEOUT);}},{passive:true});});
-appLockInit();
+
+  // ---------- Activity tracker ----------
+  ['touchstart','click','keydown'].forEach(evt => {
+    document.addEventListener(evt, function() {
+      const s = $('app-lock-screen');
+      if (s && s.classList.contains('active')) return;
+      resetInactivity();
+    }, { passive: true });
+  });
+
+  // Wire keypad as soon as DOM is ready (safe even before alckInit is called)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireKeypad);
+  } else {
+    wireKeypad();
+  }
+})();
+
+// Backward-compat shims (so any leftover code using old names doesn't crash)
+function appLockInit() { if (window.alckInit) window.alckInit(); }
+function appLockStart() {}
+function appLockActivate() {}
+function appLockUnlock() {}
+function appLockToggle() { if (window.alckOpenChangePinFlow) window.alckOpenChangePinFlow(); }
 history.pushState(null, '', location.href);
 window.addEventListener('popstate', function() {
   if(document.getElementById('ub-app').style.display!=='none') return;

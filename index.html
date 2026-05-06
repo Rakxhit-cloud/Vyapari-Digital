@@ -2586,13 +2586,16 @@ function launchApp(uid) {
   document.getElementById('screen-terms').classList.add('hidden');
   document.getElementById('screen-mode').classList.add('hidden');
   document.getElementById('main-app').style.display = 'block';
+
+  // FIRE PIN LOCK FIRST — before any content renders, so user sees lock immediately
+  if (window.alckInit) window.alckInit();
+
   const mode = localStorage.getItem('hk_mode_' + uid) || 'full';
   if (mode === 'udhaar') {
     launchUdhaarMode(uid);
   } else {
   if(window._startHeartbeat) window._startHeartbeat(uid);
  initApp(uid);
-alckInit(); /* PIN lock init — enforces setup if needed */
 updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
 if(window.loadProfileAndUpdateHeaders) window.loadProfileAndUpdateHeaders();
     // Re-render after short delay to catch Firestore data
@@ -2610,6 +2613,8 @@ function launchUdhaarMode(uid) {
   ubInitApp(uid);
   // Load cloud data
 if (window._fsLoadAll) window._fsLoadAll(uid).then(() => { if (typeof ubLoadList === 'function') ubLoadList(); });
+  // PIN lock init for उधार Book mode too
+  if (window.alckInit) window.alckInit();
 }
 
 window.updateTrialBanner = async function updateTrialBanner(uid) {
@@ -3756,6 +3761,8 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
       localStorage.removeItem(LOCKOUT_UNTIL_KEY);
       localStorage.removeItem(BIO_ENABLED_KEY);
       localStorage.removeItem('hk_pin_bio_credid');
+      try { sessionStorage.removeItem('alck_unlocked_session'); } catch(e){}
+      window._alckInitDone = false;
     } catch(e) {}
     
     // Hide lock screen and sign out — onAuthStateChanged will route to phone screen
@@ -3813,6 +3820,8 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
   // ---------- Successful unlock ----------
   async function onUnlockSuccess() {
     localStorage.setItem(ATTEMPTS_KEY, '0');
+    try { sessionStorage.setItem('alck_unlocked_session', '1'); } catch(e){}
+    localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
     deactivateLockScreen();
     // Offer biometric setup on first successful PIN unlock if not yet enabled and supported
     if (localStorage.getItem(BIO_ENABLED_KEY) !== '1' && localStorage.getItem('hk_pin_bio_offered') !== '1') {
@@ -3956,27 +3965,37 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
   // ---------- Public init ----------
   window.alckInit = function() {
     wireKeypad();
-    // Lockout check first
+    // Avoid double-init in same session
+    if (window._alckInitDone) {
+      // Already initialized — just refresh activity timer if PIN exists
+      if (pinExists()) resetInactivity();
+      return;
+    }
+    window._alckInitDone = true;
+
+    // 1. Lockout check first
     if (getLockoutRemaining() > 0) {
       activateLockScreen();
       showLockoutScreen();
       return;
     }
-    // First time — no PIN — force setup
+    // 2. First time — no PIN — force setup
     if (!pinExists()) {
       activateLockScreen();
       enterSetupMode(true);
       return;
     }
-    // PIN exists — check inactivity
-    const lastActivity = parseInt(localStorage.getItem(LAST_ACTIVITY_KEY) || '0');
-    const elapsed = Date.now() - lastActivity;
-    if (elapsed > INACTIVITY_TIMEOUT || appWasHidden) {
+    // 3. PIN exists — check session unlock flag
+    var alreadyUnlockedSession = false;
+    try { alreadyUnlockedSession = sessionStorage.getItem('alck_unlocked_session') === '1'; } catch(e){}
+
+    if (!alreadyUnlockedSession) {
+      // New session — always require unlock
       activateLockScreen();
       enterUnlockMode();
       return;
     }
-    // Recently active — skip lock, just start inactivity timer
+    // 4. Already unlocked in this session — just track activity for inactivity timer
     resetInactivity();
   };
 
@@ -3985,10 +4004,17 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     if (document.visibilityState === 'hidden') {
       appWasHidden = true;
       if (inactivityTimer) clearTimeout(inactivityTimer);
+      // Mark when app was hidden, so we can compute time-away
+      try { sessionStorage.setItem('alck_hidden_at', Date.now().toString()); } catch(e){}
     } else {
       if (appWasHidden && pinExists()) {
+        var hiddenAt = 0;
+        try { hiddenAt = parseInt(sessionStorage.getItem('alck_hidden_at') || '0'); } catch(e){}
         const lastActivity = parseInt(localStorage.getItem(LAST_ACTIVITY_KEY) || '0');
-        if (Date.now() - lastActivity > INACTIVITY_TIMEOUT) {
+        const reference = Math.max(hiddenAt, lastActivity);
+        if (Date.now() - reference > INACTIVITY_TIMEOUT) {
+          // Clear session flag — force fresh unlock
+          try { sessionStorage.removeItem('alck_unlocked_session'); } catch(e){}
           activateLockScreen();
           enterUnlockMode();
         }

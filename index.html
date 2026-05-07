@@ -3634,8 +3634,9 @@ function saveSupplierPayment(){
   const amt=parseFloat(document.getElementById('supplier-pay-amount').value)||0;
   if(!amt){toast('❌ रकम डालें',true);return;}
   const newPaid=Math.min((r.paid||0)+amt,r.amount||0);
-  const newPay=newPaid>=(r.amount||0)?'नकद':'उधार';
-  DB.update(K.MAAL,_supplierPayId,{paid:newPaid,pay:newPay});
+  // Note: 'pay' field preserved as original — historical truth.
+  // Status (DUE/PARTIAL/SETTLED) is derived from paid vs amount in popup.
+  DB.update(K.MAAL,_supplierPayId,{paid:newPaid});
   toast('✅ Payment दर्ज हो गई!');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
@@ -3643,7 +3644,8 @@ function saveSupplierPayment(){
 function settleSupplierFull(){
   if(!_supplierPayId)return;
   const r=DB.get(K.MAAL).find(x=>x.id===_supplierPayId);if(!r)return;
-  DB.update(K.MAAL,_supplierPayId,{paid:r.amount||0,pay:'नकद'});
+  // 'pay' preserved — full settlement just zeros out the balance
+  DB.update(K.MAAL,_supplierPayId,{paid:r.amount||0});
   toast('✅ पूरा चुक गया!');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
@@ -3670,8 +3672,8 @@ function saveKacchaPayment(){
   const amt=parseFloat(document.getElementById('kaccha-pay-amount').value)||0;
   if(!amt){toast('❌ रकम डालें',true);return;}
   const newPaid=Math.min((r.paid||0)+amt,r.amount||0);
-  const newPay=newPaid>=(r.amount||0)?'नकद':'उधार';
-  DB.update(K.KACCHA,_kacchaPayId,{paid:newPaid,pay:newPay});
+  // 'pay' preserved as original — historical truth
+  DB.update(K.KACCHA,_kacchaPayId,{paid:newPaid});
   toast('✅ Payment दर्ज हो गई!');
   closeKacchaPayOverlay();
   loadKacchaForMonth(monthNavSelected);
@@ -3679,7 +3681,7 @@ function saveKacchaPayment(){
 function settleKacchaFull(){
   if(!_kacchaPayId)return;
   const r=DB.get(K.KACCHA).find(x=>x.id===_kacchaPayId);if(!r)return;
-  DB.update(K.KACCHA,_kacchaPayId,{paid:r.amount||0,pay:'नकद'});
+  DB.update(K.KACCHA,_kacchaPayId,{paid:r.amount||0});
   toast('✅ पूरा चुक गया!');
   closeKacchaPayOverlay();
   loadKacchaForMonth(monthNavSelected);

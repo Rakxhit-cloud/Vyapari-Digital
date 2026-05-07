@@ -4191,6 +4191,21 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     try { sessionStorage.setItem('alck_unlocked_session', '1'); } catch(e){}
     localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
     deactivateLockScreen();
+    
+    // CRITICAL: After PIN unlock/setup completes, check if we should show
+    // browser block screen (for fresh registrations in browser mode)
+    setTimeout(function(){
+      try {
+        var isPwaMode = window.matchMedia('(display-mode: standalone)').matches
+                     || window.navigator.standalone === true
+                     || document.referrer.startsWith('android-app://');
+        if (!isPwaMode && window._currentAuthUser && window.showBrowserBlockScreen) {
+          var firstDone = false;
+          try { firstDone = localStorage.getItem('hk_first_launch_done') === '1'; } catch(e){}
+          window.showBrowserBlockScreen(!firstDone);
+        }
+      } catch(e) { console.warn('post-unlock browser-gate err:', e); }
+    }, 600);
     // Offer biometric setup on first successful PIN unlock if not yet enabled and supported
     if (localStorage.getItem(BIO_ENABLED_KEY) !== '1' && localStorage.getItem('hk_pin_bio_offered') !== '1') {
       const supported = await isBioSupported();
@@ -4333,9 +4348,18 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
   // ---------- Public init ----------
   window.alckInit = function() {
     wireKeypad();
-    // Avoid double-init in same session
+    
+    // CRITICAL: If no PIN exists, ALWAYS force setup screen
+    // (overrides _alckInitDone flag — first-time setup is mandatory)
+    if (!pinExists()) {
+      window._alckInitDone = true;
+      activateLockScreen();
+      enterSetupMode(true);
+      return;
+    }
+    
+    // Avoid double-init in same session (only when PIN exists)
     if (window._alckInitDone) {
-      // Already initialized — just refresh activity timer if PIN exists
       if (pinExists()) resetInactivity();
       return;
     }
@@ -4345,12 +4369,6 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     if (getLockoutRemaining() > 0) {
       activateLockScreen();
       showLockoutScreen();
-      return;
-    }
-    // 2. First time — no PIN — force setup
-    if (!pinExists()) {
-      activateLockScreen();
-      enterSetupMode(true);
       return;
     }
     // 3. PIN exists — check session unlock flag

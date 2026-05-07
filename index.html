@@ -1028,6 +1028,49 @@ body.notif-modal-open { overflow: hidden; }
 .alck-secondary-btn{background:transparent;border:1px solid #4a3878;color:#b0a0e8;border-radius:10px;padding:10px;font-size:12px;font-weight:500;width:100%;margin-top:8px;cursor:pointer;}
 .alck-secondary-btn:active{background:rgba(124, 92, 255, 0.1);}
 
+/* === Udhaar Book Info Screen (between Terms & Name) === */
+.udhaar-info-screen { position: fixed; inset: 0; background: linear-gradient(180deg, #050a1c 0%, #0a1530 50%, #0f0a30 100%); z-index: 1500; display: flex; flex-direction: column; padding: 18px 14px 14px; overflow-y: auto; }
+.udhaar-info-screen.hidden { display: none; }
+.ubp-logo-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; flex-shrink: 0; }
+.ubp-logo-icon { width: 56px; height: 56px; border-radius: 13px; background: #050a1c; border: 1px solid #2a3a5a; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: 0 4px 16px rgba(176, 124, 255, 0.18); }
+.ubp-coin { width: 38px; height: 38px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f5d57a 0%, #e6b840 40%, #b8870a 100%); border: 1.5px solid #d4a020; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; color: #1a0a04; font-family: 'Noto Sans Devanagari', 'Mangal', serif; }
+.ubp-app-title { font-size: 13px; font-weight: 600; color: #f0c040; letter-spacing: 0.2px; }
+.ubp-progress { display: flex; gap: 5px; justify-content: center; margin-bottom: 16px; flex-shrink: 0; }
+.ubp-dot { width: 22px; height: 3px; border-radius: 2px; background: #2a3a6a; }
+.ubp-dot.done { background: linear-gradient(90deg, #5dcaa5, #1d9e75); }
+.ubp-dot.active { background: linear-gradient(90deg, #b07cff, #f0c040); }
+.ubp-content-area { flex: 1; }
+.ubp-hero { text-align: center; margin-bottom: 14px; }
+.ubp-hero-icon-wrap { width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #b07cff 0%, #7a5ce0 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; box-shadow: 0 4px 20px rgba(176, 124, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.15); font-size: 32px; }
+.ubp-hero-title { font-size: 22px; font-weight: 700; background: linear-gradient(135deg, #ffffff, #d8c8ff); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 3px; letter-spacing: 0.3px; }
+.ubp-hero-tag { display: inline-block; font-size: 9px; font-weight: 700; color: #1a0a04; background: linear-gradient(135deg, #f0d070, #d4a020); padding: 3px 9px; border-radius: 5px; letter-spacing: 0.5px; box-shadow: 0 1px 4px rgba(240, 192, 64, 0.3); }
+.ubp-desc { font-size: 12px; color: #c8c0e0; line-height: 1.65; text-align: center; margin-bottom: 12px; padding: 0 4px; }
+.ubp-desc b { color: #f0d070; font-weight: 600; }
+.ubp-privacy { background: linear-gradient(135deg, rgba(45, 186, 77, 0.12), rgba(29, 158, 117, 0.05)); border: 1px solid rgba(93, 234, 93, 0.4); border-radius: 11px; padding: 10px 11px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(45, 186, 77, 0.08); }
+.ubp-privacy-row { display: flex; align-items: flex-start; gap: 8px; }
+.ubp-privacy-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, #5dea5d, #2dba4d); display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 6px rgba(45, 186, 77, 0.3); }
+.ubp-privacy-body { flex: 1; }
+.ubp-privacy-title { font-size: 12px; font-weight: 700; color: #7afa7a; margin-bottom: 2px; letter-spacing: 0.2px; }
+.ubp-privacy-text { font-size: 11px; color: #b0e8b0; line-height: 1.65; }
+.ubp-privacy-text b { color: #d0ffd0; font-weight: 600; }
+.ubp-trial { background: linear-gradient(135deg, rgba(240, 192, 64, 0.12), rgba(212, 168, 80, 0.05)); border: 1px solid rgba(240, 208, 112, 0.45); border-radius: 11px; padding: 10px 11px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(240, 192, 64, 0.08); }
+.ubp-trial-row { display: flex; align-items: flex-start; gap: 8px; }
+.ubp-trial-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, #f0d070, #d4a020); display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 6px rgba(240, 192, 64, 0.3); }
+.ubp-trial-body { flex: 1; }
+.ubp-trial-title { font-size: 12px; font-weight: 700; color: #f0d070; margin-bottom: 2px; letter-spacing: 0.2px; }
+.ubp-trial-text { font-size: 11px; color: #f0e0b0; line-height: 1.65; }
+.ubp-trial-text b { color: #ffeebb; font-weight: 600; }
+.ubp-features-title { font-size: 10px; font-weight: 600; color: #b0a0e8; text-align: center; margin-bottom: 8px; letter-spacing: 0.6px; text-transform: uppercase; }
+.ubp-features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+.ubp-feature { display: flex; align-items: center; gap: 7px; background: rgba(176, 124, 255, 0.08); border: 0.5px solid rgba(176, 124, 255, 0.25); border-radius: 8px; padding: 7px 8px; }
+.ubp-feat-icon { width: 22px; height: 22px; border-radius: 5px; background: linear-gradient(135deg, rgba(176, 124, 255, 0.3), rgba(122, 92, 224, 0.15)); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.ubp-feat-text { font-size: 10px; color: #d8c8ff; font-weight: 500; line-height: 1.25; }
+.ubp-hint { text-align: center; font-size: 10px; color: #b0a0e8; margin-bottom: 12px; font-style: italic; padding: 0 12px; line-height: 1.5; }
+.ubp-hint b { color: #f0c040; font-style: normal; font-weight: 600; }
+.ubp-continue-wrap { padding-top: 8px; flex-shrink: 0; }
+.ubp-continue-btn { background: linear-gradient(180deg, #f0d070 0%, #d4a020 50%, #b08810 100%); color: #1a0a04; border-radius: 12px; padding: 14px 18px; font-size: 15px; font-weight: 700; text-align: center; width: 100%; border: 1.5px solid #f0c040; box-shadow: 0 3px 0 #6a4810, 0 5px 14px rgba(240, 192, 64, 0.3), inset 0 1px 0 rgba(255,255,255,0.25); letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+.ubp-continue-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #6a4810, 0 2px 6px rgba(240, 192, 64, 0.2), inset 0 1px 0 rgba(255,255,255,0.2); }
+.ubp-continue-arrow { font-size: 17px; font-weight: 700; }
 .name-screen{position:fixed;inset:0;background:linear-gradient(135deg, #050810 0%, #0a1530 50%, #14254a 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .name-screen.hidden{display:none;}
 /* UI POLISH v1 */
@@ -1336,6 +1379,79 @@ body.notif-modal-open { overflow: hidden; }
     <div class="terms-agree-main-btn-en">I Agree — Continue</div>
   </div>
 </div>
+<!-- Udhaar Book Info Screen -->
+<div class="udhaar-info-screen hidden" id="screen-udhaar-info">
+  <div class="ubp-logo-wrap">
+    <div class="ubp-logo-icon"><div class="ubp-coin">हि</div></div>
+    <div class="ubp-app-title">हिसाब-Kitaab</div>
+  </div>
+  <div class="ubp-progress">
+    <div class="ubp-dot done"></div>
+    <div class="ubp-dot active"></div>
+    <div class="ubp-dot"></div>
+  </div>
+  <div class="ubp-content-area">
+    <div class="ubp-hero">
+      <div class="ubp-hero-icon-wrap">🤝</div>
+      <div class="ubp-hero-title">उधार Book</div>
+      <span class="ubp-hero-tag">✨ INCLUDED IN PLAN</span>
+    </div>
+    <div class="ubp-desc">
+      आपके <b>हिसाब-Kitaab subscription</b> में <b>उधार Book</b> भी शामिल है — एक dedicated tool जो विशेष रूप से <b>party-wise pending payments</b> और reminders के लिए बनाया गया है।
+    </div>
+    <div class="ubp-privacy">
+      <div class="ubp-privacy-row">
+        <div class="ubp-privacy-icon">🔐</div>
+        <div class="ubp-privacy-body">
+          <div class="ubp-privacy-title">100% Private &amp; Secure</div>
+          <div class="ubp-privacy-text">
+            आपका data <b>encrypted</b> है और <b>किसी 3rd party से share नहीं होता</b>। सिर्फ़ आपके account में दिखता है — Google Firebase पर सुरक्षित रूप से stored।
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ubp-trial">
+      <div class="ubp-trial-row">
+        <div class="ubp-trial-icon">🎁</div>
+        <div class="ubp-trial-body">
+          <div class="ubp-trial-title">Free Trial</div>
+          <div class="ubp-trial-text">
+            <b>90 दिन का मुफ़्त trial</b>। Trial समाप्त होने पर <b>₹149/month</b> subscription।
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ubp-features-title">— मुख्य features —</div>
+    <div class="ubp-features-grid">
+      <div class="ubp-feature">
+        <div class="ubp-feat-icon">📋</div>
+        <div class="ubp-feat-text">Party-wise<br>pending</div>
+      </div>
+      <div class="ubp-feature">
+        <div class="ubp-feat-icon">⏰</div>
+        <div class="ubp-feat-text">Overdue<br>alerts</div>
+      </div>
+      <div class="ubp-feature">
+        <div class="ubp-feat-icon">💬</div>
+        <div class="ubp-feat-text">WhatsApp<br>reminders</div>
+      </div>
+      <div class="ubp-feature">
+        <div class="ubp-feat-icon">📊</div>
+        <div class="ubp-feat-text">कुल उधार<br>tracking</div>
+      </div>
+    </div>
+    <div class="ubp-hint">
+      💡 Bottom bar से <b>उधार Book</b> पर कभी भी switch कर सकते हैं
+    </div>
+  </div>
+  <div class="ubp-continue-wrap">
+    <button class="ubp-continue-btn" onclick="udhaarInfoContinue()">
+      आगे बढ़ें
+      <span class="ubp-continue-arrow">→</span>
+    </button>
+  </div>
+</div>
+
 <!-- Name Screen -->
 <div class="name-screen hidden" id="screen-name">
   <div style="width:70px;height:70px;background:linear-gradient(135deg, #6a4818 0%, #8a5a20 50%, #4a3010 100%);border:2px solid #d4a850;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;box-shadow:0 4px 12px rgba(212, 168, 80, 0.25);">👤</div>
@@ -2449,6 +2565,11 @@ window.toggleTermsCheck = function() {
 window.agreeTerms = async function() {
   if (!termsChecked) return;
   document.getElementById('screen-terms').classList.add('hidden');
+  document.getElementById('screen-udhaar-info').classList.remove('hidden');
+};
+
+window.udhaarInfoContinue = function() {
+  document.getElementById('screen-udhaar-info').classList.add('hidden');
   document.getElementById('screen-name').classList.remove('hidden');
   setTimeout(() => document.getElementById('name-input').focus(), 300);
 };
@@ -2474,13 +2595,31 @@ window.saveName = async function() {
     } catch(e) { console.warn('Profile save error:', e); }
   }
   document.getElementById('screen-name').classList.add('hidden');
-  document.getElementById('screen-mode').classList.remove('hidden');
+  // Skip mode selection — register user directly with default 'full' mode
+  if (uid) {
+    const phone = window._currentAuthUser ? (window._currentAuthUser.phoneNumber || '') : '';
+    const trialStart = Date.now();
+    try {
+      localStorage.setItem('hk_terms_agreed_' + uid, trialStart.toString());
+      localStorage.setItem('hk_trial_start_' + uid, trialStart.toString());
+      localStorage.setItem('hk_mode_' + uid, 'full');
+    } catch(e) {}
+    if (window._fsRegisterUser) {
+      try { window._fsRegisterUser(uid, phone, trialStart); } catch(e) { console.warn('register err:', e); }
+    }
+    if (window._db) {
+      try {
+        const m = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+        await m.setDoc(m.doc(window._db, 'users', uid, 'profile', 'info'), { mode: 'full' }, { merge: true });
+      } catch(e) { console.warn('mode save err:', e); }
+    }
+    launchApp(uid);
+  }
 };
 
 window.skipName = function() {
-  // Skip removed - both fields mandatory now. Function kept for safety.
+  // Skip removed - both fields mandatory. Kept for safety.
   document.getElementById('screen-name').classList.add('hidden');
-  document.getElementById('screen-mode').classList.remove('hidden');
 };
 
 // Helper: time-aware Hindi greeting
@@ -2640,6 +2779,8 @@ function launchApp(uid) {
   document.getElementById('screen-otp').classList.add('hidden');
   document.getElementById('screen-terms').classList.add('hidden');
   document.getElementById('screen-mode').classList.add('hidden');
+  const ubInfo = document.getElementById('screen-udhaar-info');
+  if (ubInfo) ubInfo.classList.add('hidden');
   document.getElementById('main-app').style.display = 'block';
 
   // FIRE PIN LOCK FIRST — before any content renders, so user sees lock immediately
@@ -4923,7 +5064,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     if (!screen) return;
 
     // Hide everything else
-    var toHide = ['screen-phone','screen-otp','screen-terms','screen-mode','main-app','ub-app','app-lock-screen','splash-screen'];
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-udhaar-info','screen-mode','main-app','ub-app','app-lock-screen','splash-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {

@@ -2951,7 +2951,7 @@ function initApp(uid){
   CURRENT_UID=uid||'default';
   document.getElementById('t-day').textContent=TODAY.toLocaleDateString('hi-IN',{weekday:'short'});
   document.getElementById('t-date').textContent=TODAY.toLocaleDateString('hi-IN',{day:'numeric',month:'long'});
-  ['e-date','m-date','k-date'].forEach(id=>document.getElementById(id).value=TSTR);
+  ['e-date','m-date'].forEach(id=>document.getElementById(id).value=TSTR);
   document.getElementById('g-month').value=MSTR;
  document.getElementById('month-nav-heading').textContent='📅 '+CUR_YEAR+' — महीनेवार';
   loadHome();

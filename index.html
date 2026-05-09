@@ -695,6 +695,34 @@ body.notif-modal-open { overflow: hidden; }
 /* ── Install Sheet ── */
 .install-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
 .install-overlay.show { display: flex; }
+
+/* ===== Already Registered Screen (browser, registered users) ===== */
+#screen-already-registered { position: fixed; inset: 0; z-index: 99998; background: #0a1530; display: none; flex-direction: column; padding: 24px 16px; overflow-y: auto; }
+#screen-already-registered.active { display: flex; }
+.ar-top { text-align: center; padding-top: 30px; }
+.ar-logo-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+.ar-logo { width: 96px; height: 96px; background: linear-gradient(135deg, #f0c878 0%, #d4a850 50%, #8a6020 100%); border: 3px solid #1a1a3a; border-radius: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 52px; font-weight: 800; color: #1a0e04; font-family: Georgia, serif; box-shadow: 0 8px 24px rgba(212,168,80,0.35); }
+.ar-title-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; }
+.ar-tick { font-size: 22px; line-height: 1; }
+.ar-title { color: #f0d090; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.2; }
+.ar-subtitle { color: #a8c0d8; font-size: 13px; font-weight: 400; letter-spacing: 0.2px; }
+.ar-profile-card { background: linear-gradient(180deg, #14254a 0%, #0a1530 100%); border: 1px solid #2a4078; border-radius: 14px; padding: 18px 16px; margin: 24px 0; }
+.ar-prof-row { display: flex; align-items: center; gap: 12px; }
+.ar-avatar { width: 44px; height: 44px; background: linear-gradient(135deg, #7a6cf0 0%, #4a3a90 100%); border: 2px solid #d4a850; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.ar-business-icon { width: 44px; height: 44px; background: linear-gradient(135deg, rgba(212,168,80,0.2), rgba(212,168,80,0.05)); border: 1px solid rgba(212,168,80,0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.ar-prof-label { color: #a0a0c8; font-size: 9.5px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 2px; }
+.ar-prof-value { color: #f0d090; font-size: 15px; font-weight: 600; }
+.ar-prof-value-2 { color: #e8d8b8; font-size: 14px; font-weight: 600; }
+.ar-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(212,168,80,0.3), transparent); margin: 12px 0; }
+.ar-promo { background: linear-gradient(135deg, rgba(212,168,80,0.15), rgba(122,108,240,0.1)); border: 1px solid rgba(212,168,80,0.4); border-radius: 12px; padding: 14px 14px; margin-bottom: 18px; display: flex; align-items: flex-start; gap: 10px; }
+.ar-promo-icon { font-size: 24px; line-height: 1; flex-shrink: 0; }
+.ar-promo-title { color: #f0d090; font-size: 12.5px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
+.ar-promo-sub { color: #a8c0d8; font-size: 10.5px; font-weight: 400; line-height: 1.4; }
+.ar-install-btn { background: linear-gradient(135deg, #f0c878 0%, #d4a850 50%, #b08830 100%); border: 2px solid #fff0c0; border-radius: 14px; padding: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 6px 20px rgba(212,168,80,0.4), inset 0 1px 0 rgba(255,255,255,0.5); width: 100%; font-family: inherit; }
+.ar-install-btn-icon { font-size: 22px; }
+.ar-install-btn-text { color: #1a0e04; font-size: 15px; font-weight: 800; letter-spacing: 0.3px; }
+.ar-footer { text-align: center; color: #7a8aa8; font-size: 10px; margin-top: 14px; letter-spacing: 0.3px; }
+
 /* === Browser Block Screen (PWA enforcement) === */
 #screen-browser-block { position: fixed; inset: 0; z-index: 99999; background: #0a1530; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; }
 #screen-browser-block.active { display: flex; }
@@ -1752,6 +1780,48 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 
+
+<!-- Already Registered Screen (browser users who completed registration earlier) -->
+<div id="screen-already-registered">
+  <div class="ar-top">
+    <div class="ar-logo-wrap"><div class="ar-logo">हि</div></div>
+    <div class="ar-title-row">
+      <span class="ar-tick">✅</span>
+      <span class="ar-title">आप Already Registered हैं</span>
+    </div>
+    <div class="ar-subtitle">Welcome back to हिसाब-Kitaab</div>
+  </div>
+  <div class="ar-profile-card">
+    <div class="ar-prof-row">
+      <div class="ar-avatar" id="ar-name-initial">R</div>
+      <div style="flex:1;">
+        <div class="ar-prof-label">मालिक · OWNER</div>
+        <div class="ar-prof-value" id="ar-name-text">—</div>
+      </div>
+    </div>
+    <div class="ar-divider"></div>
+    <div class="ar-prof-row">
+      <div class="ar-business-icon">🏪</div>
+      <div style="flex:1;">
+        <div class="ar-prof-label">दुकान · BUSINESS</div>
+        <div class="ar-prof-value-2" id="ar-business-text">—</div>
+      </div>
+    </div>
+  </div>
+  <div class="ar-promo">
+    <div class="ar-promo-icon">📲</div>
+    <div>
+      <div class="ar-promo-title">App खोलने के लिए नीचे tap करें</div>
+      <div class="ar-promo-sub">अगर पहले install किया है — सीधे खुलेगा। अगर नहीं — पहले install होगा।</div>
+    </div>
+  </div>
+  <button class="ar-install-btn" id="ar-install-btn">
+    <span class="ar-install-btn-icon">⬇️</span>
+    <span class="ar-install-btn-text">App खोलें · Install करें</span>
+  </button>
+  <div class="ar-footer">हिसाब-Kitaab · आपका अपना खाता</div>
+</div>
+
 <div id="main-app" style="display:none;">
 
 <!-- Install Sheet -->
@@ -2528,7 +2598,25 @@ window.saveName = async function() {
         await m.setDoc(m.doc(window._db, 'users', uid, 'profile', 'info'), { mode: 'full' }, { merge: true });
       } catch(e) { console.warn('mode save err:', e); }
     }
-    launchApp(uid);
+    // CRITICAL: Branch based on environment
+    // Browser → show "Registration Complete" + install prompt (no homescreen, no PIN)
+    // PWA → launchApp (which triggers PIN setup → homescreen)
+    var isPwaMode = false;
+    try {
+      isPwaMode = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+                  window.navigator.standalone === true ||
+                  document.referrer.indexOf('android-app://') === 0;
+    } catch(e) {}
+
+    if (isPwaMode) {
+      // PWA: full app launch with PIN
+      launchApp(uid);
+    } else {
+      // Browser: show registration-complete block screen, NO app launch
+      if (window.showBrowserBlockScreen) {
+        window.showBrowserBlockScreen(true);
+      }
+    }
   }
 };
 
@@ -2690,6 +2778,22 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
 });
 
 function launchApp(uid) {
+  // GUARD: launchApp must only run in PWA mode
+  // If somehow called in browser, redirect to "Already Registered" screen
+  var isPwaMode = false;
+  try {
+    isPwaMode = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+                window.navigator.standalone === true ||
+                document.referrer.indexOf('android-app://') === 0;
+  } catch(e) {}
+  if (!isPwaMode) {
+    if (window.showAlreadyRegisteredScreen) {
+      window.showAlreadyRegisteredScreen();
+    } else if (window.showBrowserBlockScreen) {
+      window.showBrowserBlockScreen(false);
+    }
+    return;
+  }
   document.getElementById('screen-phone').classList.add('hidden');
   document.getElementById('screen-otp').classList.add('hidden');
   document.getElementById('screen-terms').classList.add('hidden');
@@ -4899,22 +5003,87 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     });
   }
 
-  // Check on every page load — if NOT in PWA mode, show block screen
-  // This runs after a small delay to let auth state settle
+
+  // Show "Already Registered" screen for browser users who completed registration earlier
+  window.showAlreadyRegisteredScreen = function() {
+    var screen = document.getElementById('screen-already-registered');
+    if (!screen) return;
+
+    // Hide all other screens
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-udhaar-info','screen-mode','screen-name','screen-browser-block','main-app','ub-app','app-lock-screen','splash-screen'];
+    toHide.forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) {
+        if (id === 'main-app' || id === 'ub-app') el.style.display = 'none';
+        else el.classList.add('hidden');
+      }
+    });
+
+    // Stop heartbeat
+    if (window._stopHeartbeat) try { window._stopHeartbeat(); } catch(e) {}
+
+    // Populate name + business from localStorage (synced from Firestore earlier)
+    try {
+      var name = localStorage.getItem('hk_owner_name') || '';
+      var biz = localStorage.getItem('hk_business_name') || '';
+      var nameEl = document.getElementById('ar-name-text');
+      var bizEl = document.getElementById('ar-business-text');
+      var initEl = document.getElementById('ar-name-initial');
+      if (nameEl) nameEl.textContent = name ? (name + ' जी') : '—';
+      if (bizEl) bizEl.textContent = biz || '—';
+      if (initEl && name) initEl.textContent = name.charAt(0).toUpperCase();
+    } catch(e) {}
+
+    screen.classList.add('active');
+
+    // Sign user out silently after a moment so browser session is destroyed
+    setTimeout(function(){
+      try {
+        if (window._currentAuthUser && window.firebaseSignOut) {
+          window.firebaseSignOut();
+        }
+      } catch(e) {}
+    }, 1500);
+  };
+
+  // Wire up Already-Registered install button
+  var arBtn = document.getElementById('ar-install-btn');
+  if (arBtn) {
+    arBtn.addEventListener('click', function(){
+      var existingBtn = document.getElementById('install-banner-btn');
+      if (existingBtn) {
+        existingBtn.click();
+      } else {
+        // Fallback: open install banner overlay
+        var banner = document.getElementById('install-banner');
+        if (banner) banner.classList.add('show');
+        else alert('Chrome menu (⋮) से "Add to Home screen" या "Install app" चुनें');
+      }
+    });
+  }
+
+  // Check on every page load — handle 3 cases:
+  // 1. PWA + registered → normal flow (PIN/homescreen)
+  // 2. Browser + registered → "Already Registered" screen
+  // 3. Browser + not registered → normal registration flow (phone/otp)
   function pwaGate() {
-    if (isPWA()) return; // PWA mode — all good
+    if (isPWA()) return; // PWA mode — let normal flow handle PIN/homescreen
 
     // Browser mode — wait briefly to see if user is authenticated
     setTimeout(function(){
       var hasUser = !!window._currentAuthUser;
-      var firstDone = false;
-      try { firstDone = localStorage.getItem('hk_first_launch_done') === '1'; } catch(e){}
-
-      // Only show block screen if user is logged in (otherwise let normal flow handle phone/otp)
-      // For unauth users in browser → let them register, hand off after registration
       if (hasUser) {
-        window.showBrowserBlockScreen(!firstDone);
+        // User is logged in → they registered before → show "Already Registered" screen
+        if (window.showAlreadyRegisteredScreen) {
+          window.showAlreadyRegisteredScreen();
+        } else {
+          // Fallback to old behavior
+          var firstDone = false;
+          try { firstDone = localStorage.getItem('hk_first_launch_done') === '1'; } catch(e){}
+          window.showBrowserBlockScreen(!firstDone);
+        }
       }
+      // If not logged in → let phone/otp registration flow run normally
     }, 2500);
   }
 

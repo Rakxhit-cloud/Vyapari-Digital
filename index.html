@@ -3454,7 +3454,7 @@ function selectMonth(m){
   }
   calSelectedMonth=m;calYear=TODAY.getFullYear();calMonth=m;buildMonthGrid();document.getElementById('cal-section').style.display='block';renderCalendar();document.getElementById('mahiney-sub').textContent=HI_MONTHS[m]+' '+calYear+' — तारीख टैप करें';
 }
-function renderCalendar(){document.getElementById('cal-label').textContent=HI_MONTHS[calMonth]+' '+calYear;const bikri=DB.get(K.BIKRI);const monthPrefix=calYear+'-'+String(calMonth+1).padStart(2,'0');const entryDates=new Set(bikri.filter(r=>r.date&&r.date.startsWith(monthPrefix)).map(r=>r.date));const firstDay=new Date(calYear,calMonth,1).getDay(),startOffset=(firstDay===0)?6:firstDay-1;const daysInMonth=new Date(calYear,calMonth+1,0).getDate();const grid=document.getElementById('cal-grid');grid.innerHTML='';for(let i=0;i<startOffset;i++){const c=document.createElement('div');c.className='cal-cell empty';grid.appendChild(c);}for(let d=1;d<=daysInMonth;d++){const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');const hasEntry=entryDates.has(ds),isToday=ds===TSTR;const c=document.createElement('div');c.className='cal-cell '+(hasEntry?'has-entry':'no-entry')+(isToday?' today-cell':'');c.textContent=d;if(hasEntry){const dot=document.createElement('div');dot.className='cal-entry-dot';c.appendChild(dot);}if(isToday){const lbl=document.createElement('div');lbl.className='cal-today-lbl';lbl.textContent='आज';c.appendChild(lbl);}c.onclick=()=>openDatePopup(ds);grid.appendChild(c);}}
+function renderCalendar(){document.getElementById('cal-label').textContent=HI_MONTHS[calMonth]+' '+calYear;const bikri=DB.get(K.BIKRI);const maal=DB.get(K.MAAL)||[];const monthPrefix=calYear+'-'+String(calMonth+1).padStart(2,'0');const entryDates=new Set();bikri.forEach(r=>{if(r.date&&r.date.startsWith(monthPrefix))entryDates.add(r.date);});maal.forEach(r=>{if(r.date&&r.date.startsWith(monthPrefix))entryDates.add(r.date);});const firstDay=new Date(calYear,calMonth,1).getDay(),startOffset=(firstDay===0)?6:firstDay-1;const daysInMonth=new Date(calYear,calMonth+1,0).getDate();const grid=document.getElementById('cal-grid');grid.innerHTML='';for(let i=0;i<startOffset;i++){const c=document.createElement('div');c.className='cal-cell empty';grid.appendChild(c);}for(let d=1;d<=daysInMonth;d++){const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');const hasEntry=entryDates.has(ds),isToday=ds===TSTR;const c=document.createElement('div');c.className='cal-cell '+(hasEntry?'has-entry':'no-entry')+(isToday?' today-cell':'');c.textContent=d;if(hasEntry){const dot=document.createElement('div');dot.className='cal-entry-dot';c.appendChild(dot);}if(isToday){const lbl=document.createElement('div');lbl.className='cal-today-lbl';lbl.textContent='आज';c.appendChild(lbl);}c.onclick=()=>openDatePopup(ds);grid.appendChild(c);}}
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
 let dpCurrentDate=null,dpDeleteId=null;
@@ -3546,7 +3546,8 @@ function openDatePopup(ds){
       const pay = (r.pay || '').trim();
       const isCash = pay === 'नकद' || pay.toLowerCase() === 'nakad';
       let pillClass, pillIcon, pillText, detailText = '';
-      if (isCash && paid >= amount) {
+      if (isCash) {
+        // नकद entries are immediately settled — no paid tracking needed
         pillClass = 'dpx-pay-nakad';
         pillIcon = '💵';
         pillText = 'नकद';

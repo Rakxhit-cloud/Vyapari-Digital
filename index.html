@@ -1109,6 +1109,7 @@ body.notif-modal-open { overflow: hidden; }
 .quick-big-input:focus{border-color:#d4a850;background:linear-gradient(135deg, #1a3060 0%, #14254a 100%);box-shadow:0 0 0 2px rgba(212, 168, 80, 0.2);}
 .quick-big-input-exp{background:linear-gradient(135deg, #2a1810 0%, #1a0f08 100%);border-color:#4a2818;border-top:2px solid #cc7a47;color:#e8c898;}
 .quick-big-input-exp:focus{border-color:#cc7a47;background:linear-gradient(135deg, #2a1810 0%, #3a2818 100%);box-shadow:0 0 0 2px rgba(204, 122, 71, 0.2);}
+#q-date-strip::-webkit-scrollbar{display:none;}
 .quick-date-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:linear-gradient(90deg, #14254a 0%, #1a3060 50%, #14254a 100%);border:1px solid #2a4078;border-radius:9px;margin-bottom:14px;}
 /* ── तुरंत एंट्री Quick Entry Card ── */
 .quick-entry-card{background:linear-gradient(135deg, #1a0a30 0%, #0a1024 100%);border:1.5px solid #4a3878;border-radius:16px;overflow:hidden;cursor:pointer;margin:10px 0;transition:transform .15s;position:relative;box-shadow:0 0 0 1px rgba(212, 168, 80, 0.15), 0 4px 20px rgba(74, 56, 120, 0.3);}
@@ -2176,7 +2177,18 @@ body.notif-modal-open { overflow: hidden; }
       <div class="quick-date-bar">
         <span style="font-size:12px;">📅</span>
         <span style="font-size:12px;color:#e8d8b8;font-weight:500;" id="q-date-display">आज</span>
-        <span style="font-size:9px;color:#d4a850;background:#4a3818;padding:3px 8px;border-radius:5px;border:1px solid #d4a850;font-weight:500;">⚡ स्वतः</span>
+        <span style="font-size:9px;color:#d4a850;background:#4a3818;padding:3px 8px;border-radius:5px;border:1px solid #d4a850;font-weight:500;" id="q-date-badge">⚡ स्वतः</span>
+      </div>
+      <div style="background:linear-gradient(180deg,#0a1428 0%,#050a1a 100%);border:1px solid rgba(212,168,80,0.25);border-radius:10px;padding:8px;margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 4px;">
+          <span style="color:#d4a850;font-size:10.5px;font-weight:700;letter-spacing:0.4px;" id="q-strip-month-label">—</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span onclick="qStripMonthShift(-1)" style="color:#d4a850;font-size:14px;font-weight:700;cursor:pointer;padding:0 4px;user-select:none;">←</span>
+            <span style="color:#7a8aa8;font-size:9.5px;font-weight:500;">swipe</span>
+            <span onclick="qStripMonthShift(1)" style="color:#d4a850;font-size:14px;font-weight:700;cursor:pointer;padding:0 4px;user-select:none;">→</span>
+          </div>
+        </div>
+        <div id="q-date-strip" style="display:flex;gap:6px;overflow-x:auto;padding:2px 2px 4px;scrollbar-width:none;-ms-overflow-style:none;"></div>
       </div>
       <div style="margin-bottom:14px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:18px;">💰</span><span style="font-size:14px;color:#d4a850;font-weight:500;">आज की कुल बिक्री ₹</span></div>
@@ -3622,7 +3634,7 @@ function closeDatePopupDirect(){document.getElementById('date-popup-overlay').cl
 let entryMode='quick';
 function setEntryMode(mode){
   entryMode=mode;
-  document.getElementById('quick-entry-form').style.display=mode==='quick'?'block':'none';
+  document.getElementById('quick-entry-form').style.display=mode==='quick'?'block':'none';if(mode==='quick'&&window.qStripInit)qStripInit();
   document.getElementById('full-entry-form').style.display=mode==='full'?'block':'none';
   document.getElementById('mode-btn-quick').className='entry-mode-btn'+(mode==='quick'?' active-quick':'');
   document.getElementById('mode-btn-full').className='entry-mode-btn'+(mode==='full'?' active-full':'');
@@ -3642,6 +3654,107 @@ function quickCalc(){
   document.getElementById('q-rating').textContent=r;
   document.getElementById('q-rating').style.color=s>=5000?'#4dca4d':s>=3000?'#f0b040':'#f06060';
 }
+
+// === Quick Entry Date Strip ===
+let _qStripDisplayedMonth = null; // {year, month} — what month is currently shown in strip
+function qStripInit(){
+  const today = new Date();
+  _qStripDisplayedMonth = {year: today.getFullYear(), month: today.getMonth()};
+  // Set selected to today by default
+  window.pickedEntryDate = null; // null = today
+  qStripRender();
+}
+function qStripFormatDate(d){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+function qStripRender(){
+  const strip = document.getElementById('q-date-strip');
+  const lbl = document.getElementById('q-strip-month-label');
+  if(!strip || !_qStripDisplayedMonth) return;
+  const {year, month} = _qStripDisplayedMonth;
+  const todayObj = new Date();
+  const todayStr = qStripFormatDate(todayObj);
+  const selectedStr = window.pickedEntryDate || todayStr;
+  // Month label
+  const monthNames = ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+  if(lbl) lbl.textContent = monthNames[month] + ' ' + year;
+  // Build pills
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const dayNames = ['रवि','सोम','मंग','बुध','गुरु','शुक्र','शनि'];
+  let html = '';
+  for(let d=1; d<=daysInMonth; d++){
+    const dObj = new Date(year, month, d);
+    const dStr = qStripFormatDate(dObj);
+    const isToday = (dStr === todayStr);
+    const isSelected = (dStr === selectedStr);
+    const wd = dayNames[dObj.getDay()];
+    let style = '';
+    let labelText = isToday ? 'आज' : wd;
+    if(isSelected){
+      style = 'background:linear-gradient(135deg,rgba(212,168,80,0.35),rgba(212,168,80,0.15));border:1.5px solid #d4a850;box-shadow:0 2px 8px rgba(212,168,80,0.3);';
+    } else {
+      style = 'background:rgba(20,30,60,0.4);border:0.5px solid #2a4078;';
+    }
+    const wdColor = isSelected ? '#fff5d0' : (isToday ? '#d4a850' : '#5a6a8a');
+    const dayColor = isSelected ? '#fff5d0' : '#7a8aa8';
+    const dayWeight = isSelected ? '800' : '700';
+    html += `<div onclick="qStripSelect('${dStr}')" style="flex-shrink:0;${style}border-radius:8px;padding:7px 10px;text-align:center;min-width:42px;cursor:pointer;user-select:none;">
+      <div style="color:${wdColor};font-size:8.5px;font-weight:700;text-transform:uppercase;">${labelText}</div>
+      <div style="color:${dayColor};font-size:14px;font-weight:${dayWeight};margin-top:1px;">${d}</div>
+    </div>`;
+  }
+  strip.innerHTML = html;
+  // Auto-scroll to selected date
+  setTimeout(()=>{
+    const selEl = strip.querySelector('div[onclick*="' + selectedStr + '"]');
+    if(selEl) selEl.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  }, 50);
+}
+function qStripSelect(dStr){
+  const todayStr = qStripFormatDate(new Date());
+  if(dStr === todayStr){
+    window.pickedEntryDate = null; // null = today auto
+  } else {
+    window.pickedEntryDate = dStr;
+  }
+  // Update display + badge
+  const dispEl = document.getElementById('q-date-display');
+  const badgeEl = document.getElementById('q-date-badge');
+  if(dispEl){
+    if(dStr === todayStr){
+      dispEl.textContent = 'आज';
+    } else {
+      const d = parseLocalDate(dStr);
+      dispEl.textContent = d.toLocaleDateString('hi-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+    }
+  }
+  if(badgeEl){
+    if(dStr === todayStr){
+      badgeEl.textContent = '⚡ स्वतः';
+      badgeEl.style.color = '#d4a850';
+      badgeEl.style.background = '#4a3818';
+      badgeEl.style.borderColor = '#d4a850';
+    } else {
+      badgeEl.textContent = '✓ चुना हुआ';
+      badgeEl.style.color = '#5dea7d';
+      badgeEl.style.background = 'rgba(45,234,93,0.18)';
+      badgeEl.style.borderColor = 'rgba(45,234,93,0.4)';
+    }
+  }
+  qStripRender();
+}
+function qStripMonthShift(delta){
+  if(!_qStripDisplayedMonth) return;
+  let y = _qStripDisplayedMonth.year, m = _qStripDisplayedMonth.month + delta;
+  if(m < 0){m=11;y-=1;} else if(m>11){m=0;y+=1;}
+  _qStripDisplayedMonth = {year:y, month:m};
+  qStripRender();
+}
+window.qStripInit = qStripInit;
+window.qStripSelect = qStripSelect;
+window.qStripMonthShift = qStripMonthShift;
+
 function saveQuickEntry(){
   const cash=parseFloat(document.getElementById('q-cash').value)||0;
   const upi=parseFloat(document.getElementById('q-upi').value)||0;

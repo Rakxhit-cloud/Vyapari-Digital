@@ -491,6 +491,23 @@ body.notif-modal-open { overflow: hidden; }
 .gcard { background: #161616; border: 1px solid #1e1e1e; border-radius: 9px; padding: 12px; margin-bottom: 8px; }
 .gbar-bg { background: #1a1a1a; border-radius: 4px; height: 7px; overflow: hidden; margin: 6px 0; }
 .gbar { height: 100%; background: #2dba4d; border-radius: 4px; }
+
+/* ===== Premium Success Modal ===== */
+#success-modal-overlay { position: fixed; inset: 0; z-index: 99997; background: rgba(0,0,0,0); display: none; align-items: center; justify-content: center; padding: 24px; pointer-events: none; transition: background 0.25s ease; }
+#success-modal-overlay.show { display: flex; pointer-events: auto; background: rgba(0,0,0,0.65); }
+.success-modal-card { background: linear-gradient(180deg, #0a1430 0%, #050b20 100%); border: 1px solid rgba(127,239,123,0.45); border-radius: 14px; padding: 28px 26px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(127,239,123,0.18); position: relative; overflow: hidden; max-width: 320px; width: 100%; transform: scale(0.85); opacity: 0; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease; }
+#success-modal-overlay.show .success-modal-card { transform: scale(1); opacity: 1; }
+.success-modal-strip { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #1d9e75, #5dcaa5, #9ff5a0, #5dcaa5, #1d9e75); }
+.success-modal-icon-wrap { display: flex; justify-content: center; margin-bottom: 16px; position: relative; }
+.success-modal-icon-pulse-1 { position: absolute; width: 80px; height: 80px; border: 2px solid rgba(127,239,123,0.4); border-radius: 50%; animation: smPulse1 1.2s ease-out; }
+.success-modal-icon-pulse-2 { position: absolute; width: 96px; height: 96px; border: 1px solid rgba(127,239,123,0.2); border-radius: 50%; animation: smPulse2 1.2s ease-out; }
+@keyframes smPulse1 { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.4); opacity: 0; } }
+@keyframes smPulse2 { 0% { transform: scale(0.8); opacity: 0.8; } 100% { transform: scale(1.6); opacity: 0; } }
+.success-modal-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #5dcaa5, #1d9e75); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 34px; color: #fff; font-weight: 900; line-height: 1; box-shadow: 0 6px 18px rgba(29,158,117,0.5), inset 0 1px 2px rgba(255,255,255,0.4); position: relative; z-index: 2; }
+.success-modal-label { color: #9ff5a0; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.success-modal-title { color: #fff; font-size: 18px; font-weight: 600; letter-spacing: -0.2px; margin-bottom: 4px; }
+.success-modal-sub { color: #7a8aa8; font-size: 10.5px; margin-top: 12px; letter-spacing: 0.4px; }
+
 .toast { position: fixed; bottom: 95px; left: 50%; transform: translateX(-50%); background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; padding: 9px 20px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
 .toast.show { opacity: 1; }
 .toast.err { background: #4a1a1a; border-color: #6a2a2a; color: #f06060; }
@@ -1948,6 +1965,19 @@ body.notif-modal-open { overflow: hidden; }
   <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1810 0%,#1a0f08 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎯</div> <span style="color:#e8d8b8;font-weight:500;">लक्ष्य</span></div>
   <div class="more-item" style="border-bottom:none;" onclick="signOut();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
 </div>
+<div id="success-modal-overlay">
+  <div class="success-modal-card">
+    <div class="success-modal-strip"></div>
+    <div class="success-modal-icon-wrap">
+      <div class="success-modal-icon-pulse-1"></div>
+      <div class="success-modal-icon-pulse-2"></div>
+      <div class="success-modal-icon">✓</div>
+    </div>
+    <div class="success-modal-label">SUCCESS</div>
+    <div class="success-modal-title" id="success-modal-title">सेव हो गई</div>
+    <div class="success-modal-sub" id="success-modal-sub">⚡ 30 सेकंड · आज</div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <div id="s-home" class="screen active">
@@ -3110,6 +3140,49 @@ function switchToUdhaarBook(){
 }
   function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
 document.addEventListener('click',e=>{const m=document.getElementById('more-menu'),b=document.getElementById('n-more');if(m&&b&&!m.contains(e.target)&&!b.contains(e.target))m.style.display='none';});
+// === Premium Success Modal (with Crystal Tinkle audio) ===
+let _smAudioCtx = null;
+function _smGetAC(){
+  if(!_smAudioCtx){
+    try { _smAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
+  }
+  if(_smAudioCtx && _smAudioCtx.state === 'suspended') _smAudioCtx.resume();
+  return _smAudioCtx;
+}
+function _smTone(freq, duration, gainPeak, startOffset){
+  const ac = _smGetAC(); if(!ac) return;
+  const t0 = ac.currentTime + (startOffset || 0);
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(gainPeak, t0 + 0.005);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+  osc.connect(gain).connect(ac.destination);
+  osc.start(t0);
+  osc.stop(t0 + duration + 0.05);
+}
+function playCrystalTinkle(){
+  _smTone(1568, 0.30, 0.18, 0);
+  _smTone(2349, 0.25, 0.10, 0);
+  _smTone(1976, 0.35, 0.14, 0.05);
+  _smTone(2637, 0.30, 0.06, 0.08);
+}
+function showSuccessModal(title, sub){
+  const overlay = document.getElementById('success-modal-overlay');
+  if(!overlay) return;
+  const titleEl = document.getElementById('success-modal-title');
+  const subEl = document.getElementById('success-modal-sub');
+  if(titleEl) titleEl.textContent = title || 'सेव हो गई';
+  if(subEl) subEl.textContent = sub || '⚡ 30 सेकंड · आज';
+  overlay.classList.add('show');
+  try { playCrystalTinkle(); } catch(e){}
+  setTimeout(() => { overlay.classList.remove('show'); }, 1800);
+}
+window.showSuccessModal = showSuccessModal;
+window.playCrystalTinkle = playCrystalTinkle;
+
 function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(()=>t.className='toast',3000);}
 function toggleKPI(key){const panel=document.getElementById('panel-'+key);const isOpen=panel.classList.contains('open');document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));if(!isOpen){panel.classList.add('open');if(key==='udhaar-kpi')loadUdhaarInline();}}
 function renderWeeklyTable(containerId,totalId,field,color,dimColor){const bikri=DB.get(K.BIKRI);const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const entry=bikri.find(r=>r.date===ds);let val=null;if(entry){val=field==='profit'?calcEntryProfit(entry):(entry[field]||0);}rows.push({ds,val});}const el=document.getElementById(containerId);let total=0;el.innerHTML=rows.map(r=>{if(r.val!==null)total+=r.val;return`<div class="ptbl-row"><div class="ptbl-cell" style="color:#6090d0;">${fmtDayDate(r.ds)}</div><div class="ptbl-cell" style="color:${r.val!==null?color:dimColor};text-align:right;font-weight:${r.val!==null?700:400};font-style:${r.val!==null?'normal':'italic'};">${r.val!==null?fmt(r.val):'कोई नहीं'}</div></div>`;}).join('');document.getElementById(totalId).textContent=fmt(total);}
@@ -3767,7 +3840,7 @@ function saveQuickEntry(){
   const entryDate=window.pickedEntryDate||TSTR;
   DB.push(K.BIKRI,{date:entryDate,sales:s,cash:cash,upi:upi,expense:x,udhaar:0,notes:'',profit:p,margin:m,rating:rating});
   window.pickedEntryDate=null;
-  toast('✅ तुरंत एंट्री सेव हो गई!');
+  showSuccessModal('एंट्री सेव हो गई', '⚡ तुरंत एंट्री · ' + (window.pickedEntryDate ? window.pickedEntryDate.split('-').reverse().join('/') : 'आज'));
   document.getElementById('q-cash').value='';document.getElementById('q-upi').value='';document.getElementById('q-expense').value='';quickCalc();
   setTimeout(()=>go('s-home'),1000);
 }
@@ -3775,9 +3848,9 @@ function calcProfit(){const c=parseFloat(document.getElementById('e-cash').value
 function onUdhaarChange(){calcProfit();const val=parseFloat(document.getElementById('e-udhaar').value)||0;const sec=document.getElementById('udhaar-persons-section');if(val>0){sec.style.display='block';if(!document.querySelector('.udhaar-person-row'))addPersonRow();}else sec.style.display='none';}
 function addPersonRow(name='',amt=''){const list=document.getElementById('udhaar-persons-list');const row=document.createElement('div');row.className='udhaar-person-row';row.innerHTML=`<input type="text" class="udhaar-person-name" placeholder="ग्राहक का नाम" value="${escHTML(name)}"><input type="number" class="udhaar-person-amt" placeholder="₹0" value="${escHTML(amt)}"><button class="remove-person-btn" onclick="this.parentElement.remove()">✕</button>`;list.appendChild(row);}
 function setPay(px,type){document.getElementById(px+'-pay').value=type;document.getElementById(px+'-nbtn').className='pbtn'+(type==='nakad'?' pn':'');document.getElementById(px+'-ubtn').className='pbtn'+(type==='udhaar'?' pu':'');}
-function saveEntry(){const cash=parseFloat(document.getElementById('e-cash').value)||0;const upi=parseFloat(document.getElementById('e-upi').value)||0;const s=cash+upi;if(!s){toast('❌ नकद या UPI बिक्री ज़रूर भरें',true);return;}const date=document.getElementById('e-date').value,expense=parseFloat(document.getElementById('e-expense').value)||0;const udhaar=0,notes=cleanText(document.getElementById('e-notes').value,500);const profit=s-expense-udhaar,margin=s>0?Math.round((profit/s)*100):0;let rating='⚠️ धीमा';if(s>=5000)rating='🔥 बहुत अच्छा';else if(s>=3000)rating='👍 अच्छा';DB.push(K.BIKRI,{date,sales:s,cash,upi,expense,udhaar,notes,profit,margin,rating});let namedUdhaarTotal=0;const persons=[];document.querySelectorAll('.udhaar-person-row').forEach(row=>{const nm=cleanText(row.querySelector('.udhaar-person-name').value,100),amt=parseFloat(row.querySelector('.udhaar-person-amt').value)||0;if(nm&&amt>0){persons.push({nm,amt});namedUdhaarTotal+=amt;DB.push(K.UDHAAR,{name:nm,given:amt,date,returned:0,remaining:amt,days:0,status:'🟡 PENDING'});}});if(udhaar>0&&namedUdhaarTotal===0){DB.push(K.UDHAAR,{name:'उधार ('+date+')',given:udhaar,date,returned:0,remaining:udhaar,days:0,status:'🟡 PENDING'});}else if(udhaar>0&&namedUdhaarTotal<udhaar){const diff=udhaar-namedUdhaarTotal;DB.push(K.UDHAAR,{name:'बाकी उधार ('+date+')',given:diff,date,returned:0,remaining:diff,days:0,status:'🟡 PENDING'});}window.pickedEntryDate=null;toast('✅ एंट्री सेव हो गई!'+(persons.length>0?` + ${persons.length} उधार दर्ज`:''));['e-cash','e-upi','e-expense','e-udhaar','e-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('udhaar-persons-list').innerHTML='';document.getElementById('udhaar-persons-section').style.display='none';calcProfit();setTimeout(()=>go('s-home'),1000);}
-function saveMaal(){const amount=parseFloat(document.getElementById('m-amount').value)||0;if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}const date=document.getElementById('m-date').value,supplier=document.getElementById('m-supplier').value||'';const name=document.getElementById('m-name').value||'',pay=document.getElementById('m-pay').value==='nakad'?'नकद':'उधार';const note=document.getElementById('m-note').value||'';DB.push(K.MAAL,{date,supplier,name,amount,pay,note});toast('✅ माल की एंट्री सेव हो गई!');['m-supplier','m-name','m-amount','m-note'].forEach(id=>document.getElementById(id).value='');setPay('m','nakad');loadMaalStats();setTimeout(()=>go('s-home'),1000);}
-function saveGoal(){const month=document.getElementById('g-month').value,target=parseFloat(document.getElementById('g-target').value)||0;if(!target){toast('❌ लक्ष्य रकम ज़रूर भरें',true);return;}const note=document.getElementById('g-note').value||'';DB.push(K.GOAL,{month,target,note});toast('✅ लक्ष्य सेव हो गया!');document.getElementById('g-target').value='';document.getElementById('g-note').value='';loadGoalScreen();}
+function saveEntry(){const cash=parseFloat(document.getElementById('e-cash').value)||0;const upi=parseFloat(document.getElementById('e-upi').value)||0;const s=cash+upi;if(!s){toast('❌ नकद या UPI बिक्री ज़रूर भरें',true);return;}const date=document.getElementById('e-date').value,expense=parseFloat(document.getElementById('e-expense').value)||0;const udhaar=0,notes=cleanText(document.getElementById('e-notes').value,500);const profit=s-expense-udhaar,margin=s>0?Math.round((profit/s)*100):0;let rating='⚠️ धीमा';if(s>=5000)rating='🔥 बहुत अच्छा';else if(s>=3000)rating='👍 अच्छा';DB.push(K.BIKRI,{date,sales:s,cash,upi,expense,udhaar,notes,profit,margin,rating});let namedUdhaarTotal=0;const persons=[];document.querySelectorAll('.udhaar-person-row').forEach(row=>{const nm=cleanText(row.querySelector('.udhaar-person-name').value,100),amt=parseFloat(row.querySelector('.udhaar-person-amt').value)||0;if(nm&&amt>0){persons.push({nm,amt});namedUdhaarTotal+=amt;DB.push(K.UDHAAR,{name:nm,given:amt,date,returned:0,remaining:amt,days:0,status:'🟡 PENDING'});}});if(udhaar>0&&namedUdhaarTotal===0){DB.push(K.UDHAAR,{name:'उधार ('+date+')',given:udhaar,date,returned:0,remaining:udhaar,days:0,status:'🟡 PENDING'});}else if(udhaar>0&&namedUdhaarTotal<udhaar){const diff=udhaar-namedUdhaarTotal;DB.push(K.UDHAAR,{name:'बाकी उधार ('+date+')',given:diff,date,returned:0,remaining:diff,days:0,status:'🟡 PENDING'});}window.pickedEntryDate=null;showSuccessModal('एंट्री सेव हो गई', persons.length>0 ? ('📋 पूरी एंट्री + '+persons.length+' उधार दर्ज') : '📋 पूरी एंट्री · आज');['e-cash','e-upi','e-expense','e-udhaar','e-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('udhaar-persons-list').innerHTML='';document.getElementById('udhaar-persons-section').style.display='none';calcProfit();setTimeout(()=>go('s-home'),1000);}
+function saveMaal(){const amount=parseFloat(document.getElementById('m-amount').value)||0;if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}const date=document.getElementById('m-date').value,supplier=document.getElementById('m-supplier').value||'';const name=document.getElementById('m-name').value||'',pay=document.getElementById('m-pay').value==='nakad'?'नकद':'उधार';const note=document.getElementById('m-note').value||'';DB.push(K.MAAL,{date,supplier,name,amount,pay,note});showSuccessModal('माल एंट्री सेव हो गई', '📦 माल की खरीद · आज');['m-supplier','m-name','m-amount','m-note'].forEach(id=>document.getElementById(id).value='');setPay('m','nakad');loadMaalStats();setTimeout(()=>go('s-home'),1000);}
+function saveGoal(){const month=document.getElementById('g-month').value,target=parseFloat(document.getElementById('g-target').value)||0;if(!target){toast('❌ लक्ष्य रकम ज़रूर भरें',true);return;}const note=document.getElementById('g-note').value||'';DB.push(K.GOAL,{month,target,note});showSuccessModal('लक्ष्य सेव हो गया', '🎯 आपका लक्ष्य · दर्ज');document.getElementById('g-target').value='';document.getElementById('g-note').value='';loadGoalScreen();}
 function loadHome(){buildMonthNav();loadKPIForMonth(monthNavSelected);loadMaalForMonth(monthNavSelected);loadUdhaarKPI();if(mahineyOpen){buildMonthGrid();if(calSelectedMonth!==null)renderCalendar();}}
 function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;const rec=[];rows.forEach(r=>{if(inHafta(r.date,activeHafta-1)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(rec.length<3)rec.push(r);}});document.getElementById('h-maal-total').textContent=fmt(tot);document.getElementById('h-maal-pending').textContent=fmt(udh);document.getElementById('h-maal-nakad').textContent=fmt(nak);document.getElementById('h-maal-udhaar').textContent=fmt(udh);document.getElementById('w-maal').textContent=fmt(tot);const ml=document.getElementById('h-maal-list');ml.innerHTML='<div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div>';if(!rec.length)ml.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.supplier||'—'}</div><div class="dlr-goods">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.MAAL,r.id,r);ml.appendChild(card);});}
 function loadUdhaarKPI(){const el=document.getElementById('k-udhaar');if(!el)return;const rows=DB.get(K.UDHAAR);let tot=0;rows.forEach(r=>{if(r.status==='🟢 SETTLED')return;const remaining=(r.given||0)-(r.returned||0);if(remaining>0)tot+=remaining;});el.textContent=fmt(tot);}

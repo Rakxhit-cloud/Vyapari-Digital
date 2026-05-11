@@ -455,11 +455,27 @@ function timeSince(ts) {
   return mons + 'mo ago';
 }
 
-function classifyStage(p) {
+function classifyStage(p, u) {
   if (!p) return 'otp';
+  // GROUND TRUTH: if the user has made any entries, they MUST have
+  // installed the PWA and crossed the activation threshold. Entry counts
+  // override missing funnel timestamps (old users predate the funnel tracker).
+  if (u && (u.bikriCount > 0 || u.maalCount > 0 || u.kacchaCount > 0 || u.udhaarCount > 0)) {
+    return 'complete';
+  }
   if (p.firstEntryAt) return 'complete';
   if (p.pwaActivatedAt) return 'complete';
-  if (p.registrationCompletedAt || (p.name && p.businessName)) return 'stuck';
+  // Only flag as "stuck" if registration was completed long enough ago
+  // that they really should have installed by now (3+ days grace period).
+  if (p.registrationCompletedAt || (p.name && p.businessName)) {
+    const regTs = p.registrationCompletedAt || p.nameSavedAt;
+    if (regTs) {
+      const d = regTs.toDate ? regTs.toDate() : new Date(regTs);
+      const daysSinceReg = Math.floor((Date.now() - d.getTime()) / (1000*60*60*24));
+      if (daysSinceReg < 3) return 'partial'; // recently registered, not stuck yet
+    }
+    return 'stuck';
+  }
   if (p.termsAgreedAt) return 'partial';
   return 'otp';
 }
@@ -498,7 +514,7 @@ async function loadUsers() {
 function renderStats() {
   let total = allUsers.length, active = 0, stuck = 0, expiring = 0;
   for (const u of allUsers) {
-    const stage = classifyStage(u.profile);
+    const stage = classifyStage(u.profile, u);
     if (stage === 'complete') active++;
     if (stage === 'stuck') stuck++;
     const dl = daysLeft(u.profile.trialStart);
@@ -513,7 +529,7 @@ function renderStats() {
 function renderUserList() {
   const list = document.getElementById('user-list');
   const filtered = allUsers.filter(u => {
-    const stage = classifyStage(u.profile);
+    const stage = classifyStage(u.profile, u);
     if (currentFilter === 'activated' && stage !== 'complete') return false;
     if (currentFilter === 'stuck' && stage !== 'stuck') return false;
     if (currentFilter === 'partial' && stage !== 'partial' && stage !== 'otp') return false;
@@ -531,7 +547,7 @@ function renderUserList() {
 
   // Sort: stuck first (action needed), then expiring, then activated, then partial
   filtered.sort((a, b) => {
-    const sa = classifyStage(a.profile), sb = classifyStage(b.profile);
+    const sa = classifyStage(a.profile, a), sb = classifyStage(b.profile, b);
     const order = { stuck: 0, partial: 1, otp: 2, complete: 3 };
     if (sa !== sb) return order[sa] - order[sb];
     return daysLeft(a.profile.trialStart) - daysLeft(b.profile.trialStart);
@@ -554,7 +570,7 @@ function renderUserList() {
 
 function userRowHTML(u, num) {
   const p = u.profile || {};
-  const stage = classifyStage(p);
+  const stage = classifyStage(p, u);
   const stagePill = stagePillHTML(stage);
   // Build name HTML safely: escape the real name, but use raw HTML for empty-state placeholder
   const nameHTML = p.name
@@ -638,7 +654,7 @@ function openProfile(uid) {
   if (!u) return;
   const card = document.getElementById('profile-card');
   card.innerHTML = profileCardHTML(u);
-  card.className = 'profile-card ' + classifyStage(u.profile);
+  card.className = 'profile-card ' + classifyStage(u.profile, u);
   document.getElementById('profile-modal').classList.add('show');
   // Bind close button
   card.querySelector('.profile-close').addEventListener('click', closeProfile);
@@ -684,7 +700,7 @@ document.getElementById('profile-modal').addEventListener('click', e => {
 
 function profileCardHTML(u) {
   const p = u.profile || {};
-  const stage = classifyStage(p);
+  const stage = classifyStage(p, u);
   const initial = (p.name || '?').trim().charAt(0).toUpperCase();
   const isOnline = u.lastActive && (Date.now() - new Date(u.lastActive).getTime() < 5 * 60 * 1000);
 
@@ -739,9 +755,9 @@ function funnelSectionHTML(p) {
     return { ...s, state: 'pending' };
   });
 
-  // Special case: if otpVerifiedAt is missing AND nothing else complete, mark step 0 as stuck
-  // Compute days since registration for stuck step messaging
-  const regTs = p.registrationCompletedAt || p.nameSavedAt;
+  // Compute days since registration for stuck step messaging.
+  // Fall back through multiple timestamps so old users still get a sensible value.
+  const regTs = p.registrationCompletedAt || p.nameSavedAt || p.registeredAt;
   let daysSinceReg = 0;
   if (regTs) {
     const d = regTs.toDate ? regTs.toDate() : new Date(regTs);
@@ -766,9 +782,14 @@ function funnelSectionHTML(p) {
           `;
         }
         if (s.state === 'stuck') {
-          const sub = s.key === 'pwaActivatedAt' && daysSinceReg > 0
-            ? `Pending · ${daysSinceReg} days since registration`
-            : 'Pending';
+          let sub = 'Pending';
+          if (s.key === 'pwaActivatedAt') {
+            if (daysSinceReg >= 1) {
+              sub = `Pending · ${daysSinceReg} day${daysSinceReg === 1 ? '' : 's'} since registration`;
+            } else if (regTs) {
+              sub = 'Pending · registered today';
+            }
+          }
           return `
             <div class="funnel-step">
               <div class="funnel-dot stuck">⚠</div>
@@ -849,21 +870,43 @@ function engagementSectionHTML(u, p, stage) {
 
   let footer = '';
   if (stage === 'stuck') {
-    const regTs = p.registrationCompletedAt || p.nameSavedAt;
-    let days = 0;
+    // Try multiple timestamps in order of preference. Fall back to registeredAt
+    // for old users without funnel timestamps. If still nothing, don't show a
+    // misleading "0 days" message — instead say "not installed yet".
+    const regTs = p.registrationCompletedAt || p.nameSavedAt || p.registeredAt;
+    let days = null;
     if (regTs) {
       const d = regTs.toDate ? regTs.toDate() : new Date(regTs);
       days = Math.floor((Date.now() - d.getTime()) / (1000*60*60*24));
     }
-    footer = `<div class="priority-alert">⚠️ <span>High-priority lead · inactive for ${days} days since registration</span></div>`;
+    // Only flag as "high priority" if it's been at least 3 days. Otherwise
+    // just a gentle note — they may just be slow to install.
+    if (days !== null && days >= 3) {
+      footer = `<div class="priority-alert">⚠️ <span>High-priority lead · ${days} days since registration, not installed yet</span></div>`;
+    } else if (days !== null) {
+      footer = `<div class="priority-alert" style="background:rgba(74,144,212,0.08);border-color:rgba(74,144,212,0.3);color:#4a90d4">⏳ <span>Registered ${days === 0 ? 'today' : days + ' day' + (days === 1 ? '' : 's') + ' ago'} · waiting on install</span></div>`;
+    } else {
+      footer = `<div class="priority-alert" style="background:rgba(74,144,212,0.08);border-color:rgba(74,144,212,0.3);color:#4a90d4">⏳ <span>Registered but PWA not installed yet</span></div>`;
+    }
   } else if (u.lastActive) {
     const since = timeSince(new Date(u.lastActive));
-    footer = `
-      <div class="last-active-row">
-        <span class="last-active-label">🕓 Last active</span>
-        <span class="last-active-val">${since}</span>
-      </div>
-    `;
+    const daysSinceActive = Math.floor((Date.now() - new Date(u.lastActive).getTime()) / (1000*60*60*24));
+    // Flag re-engagement risk only if it's been 14+ days
+    if (stage === 'complete' && daysSinceActive >= 14) {
+      footer = `
+        <div class="last-active-row" style="background:rgba(240,168,104,0.08);border:1px solid rgba(240,168,104,0.25)">
+          <span style="color:#f0a868">🕓 Inactive for ${daysSinceActive} days</span>
+          <span class="last-active-val">${since}</span>
+        </div>
+      `;
+    } else {
+      footer = `
+        <div class="last-active-row">
+          <span class="last-active-label">🕓 Last active</span>
+          <span class="last-active-val">${since}</span>
+        </div>
+      `;
+    }
   } else {
     footer = `<div class="priority-alert" style="background:rgba(74,144,212,0.08);border-color:rgba(74,144,212,0.3);color:#4a90d4">⏳ <span>No activity recorded yet</span></div>`;
   }
@@ -898,7 +941,7 @@ function actionBarHTML(u) {
 // =================== SMART WHATSAPP TEMPLATES ===================
 function pickTemplate(u) {
   const p = u.profile || {};
-  const stage = classifyStage(p);
+  const stage = classifyStage(p, u);
   const dl = daysLeft(p.trialStart);
   const firstName = (p.name || '').split(' ')[0] || 'जी';
   const biz = p.businessName || '';

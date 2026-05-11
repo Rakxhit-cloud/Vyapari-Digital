@@ -3,330 +3,291 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — हिसाब-Kitaab</title>
+<title>📊 हिसाब-Kitaab — Admin</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-.auth-screen { position: fixed; inset: 0; background: #0a0a0a; display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 999; }
-.auth-screen.hidden { display: none; }
-.auth-box { background: #161616; border: 1px solid #1e1e1e; border-top: 2px solid #4dca4d; border-radius: 14px; padding: 28px; width: 100%; max-width: 340px; }
-.auth-logo { text-align: center; font-size: 32px; margin-bottom: 10px; }
-.auth-title { text-align: center; font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-.auth-sub { text-align: center; font-size: 10px; color: #444; margin-bottom: 22px; }
-.auth-label { font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
-.auth-input { width: 100%; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px; font-size: 18px; color: #fff; outline: none; text-align: center; letter-spacing: 8px; margin-bottom: 14px; }
-.auth-input:focus { border-color: #2dba4d; background: #0d1f0d; }
-.auth-btn { width: 100%; background: #1a4a2a; border: 1px solid #2dba4d; color: #4dca4d; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; }
-.auth-btn:disabled { opacity: .4; cursor: not-allowed; }
-.auth-error { background: #1a0808; border: 1px solid #3a1a1a; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #f06060; margin-bottom: 12px; display: none; text-align: center; }
-.auth-error.show { display: block; }
-.lockout-msg { background: #1a0808; border: 1px solid #3a1a1a; border-radius: 8px; padding: 14px; text-align: center; margin-bottom: 14px; display: none; }
-.lockout-msg.show { display: block; }
-.lockout-msg .lockout-icon { font-size: 28px; margin-bottom: 6px; }
-.lockout-msg .lockout-title { font-size: 13px; font-weight: 800; color: #f06060; margin-bottom: 4px; }
-.lockout-msg .lockout-timer { font-size: 11px; color: #8a3030; }
-.attempts-left { font-size: 10px; color: #555; text-align: center; margin-top: 8px; }
-.header { background: #0d1f0d; border-bottom: 2px solid #2dba4d; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-.header-left { display: flex; align-items: center; gap: 10px; }
-.header-icon { width: 34px; height: 34px; background: #2dba4d; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-.header-title { font-size: 15px; font-weight: 800; color: #fff; }
-.header-sub { font-size: 9px; color: #4dca4d; }
-.logout-btn { background: #1a0808; border: 1px solid #3a1a1a; color: #f06060; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-.stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 14px 16px; background: #0f0f0f; border-bottom: 1px solid #1a1a1a; }
-.stat-card { background: #161616; border-radius: 8px; padding: 10px 12px; border-top: 2px solid; }
-.stat-card.green { border-color: #4dca4d; } .stat-card.blue { border-color: #50a0f0; }
-.stat-card.amber { border-color: #f0b040; } .stat-card.red { border-color: #f06060; }
-.stat-lbl { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
-.stat-card.green .stat-lbl { color: #2dba4d; } .stat-card.blue .stat-lbl { color: #50a0f0; }
-.stat-card.amber .stat-lbl { color: #f0b040; } .stat-card.red .stat-lbl { color: #f06060; }
-.stat-val { font-size: 22px; font-weight: 800; color: #fff; }
-.stat-sub { font-size: 8px; color: #444; margin-top: 2px; }
-.toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; gap: 8px; border-bottom: 1px solid #1a1a1a; flex-wrap: wrap; }
-.search-input { flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 7px; padding: 8px 12px; font-size: 12px; color: #e0e0e0; outline: none; max-width: 280px; min-width: 160px; }
-.search-input:focus { border-color: #2dba4d; }
-.filter-btns { display: flex; gap: 5px; }
-.fbtn { font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; border: 1px solid #2a2a2a; background: #1a1a1a; color: #666; }
-.fbtn.active { background: #0d2a1a; border-color: #2dba4d; color: #4dca4d; }
-.refresh-btn { background: #0d2a1a; border: 1px solid #2dba4d; color: #4dca4d; font-size: 11px; font-weight: 700; padding: 7px 14px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
-.table-wrap { overflow-x: auto; padding: 12px 16px; }
-.lead-table { width: 100%; border-collapse: collapse; min-width: 700px; }
-.lead-table th { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #555; padding: 10px 12px; text-align: left; border-bottom: 1px solid #1a1a1a; white-space: nowrap; }
-.lead-table td { padding: 14px 12px; border-bottom: 1px solid #111; font-size: 12px; vertical-align: middle; }
-.lead-table tr:hover td { background: #111; }
-.phone-cell { font-size: 16px; font-weight: 800; color: #fff; white-space: nowrap; }
-.uid-cell { font-size: 9px; color: #333; font-family: monospace; margin-top: 2px; }
-.trial-badge { display: inline-block; font-size: 9px; font-weight: 800; padding: 3px 9px; border-radius: 10px; white-space: nowrap; }
-.trial-ok { background: #0d2a1a; border: 1px solid #1a4a2a; color: #4dca4d; }
-.trial-warn { background: #1a1200; border: 1px solid #3a2800; color: #f0b040; }
-.trial-critical { background: #1a0808; border: 1px solid #3a1a1a; color: #f06060; }
-.trial-expired { background: #111; border: 1px solid #222; color: #444; }
-.entries-row { display: flex; gap: 5px; flex-wrap: wrap; }
-.etag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; }
-.etag-b { background: #0d2a1a; color: #4dca4d; }
-.etag-m { background: #0a1a0f; color: #3dca6a; }
-.etag-u { background: #1a0808; color: #f06060; }
-.etag-k { background: #080f1a; color: #50a0f0; }
-.date-cell { font-size: 11px; color: #888; white-space: nowrap; }
-.date-sub { font-size: 9px; color: #333; margin-top: 2px; }
-.status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; }
-.dot-active { background: #4dca4d; } .dot-idle { background: #f0b040; } .dot-inactive { background: #f06060; }
-.dot-online { background: #4dca4d; box-shadow: 0 0 0 3px rgba(77,202,77,0.3); animation: pulse .8s ease-in-out infinite; }
-.dot-recent { background: #f0b040; }
-.online-label { font-size: 14px; font-weight: 800; }
-.online-label.green { color: #4dca4d; }
-.online-label.amber { color: #f0b040; }
-.mode-badge { display: inline-block; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; }
-.mode-full { background: #0d2a1a; border: 1px solid #2dba4d; color: #4dca4d; white-space: nowrap; }
-.mode-udhaar { background: #1a0808; border: 1px solid #f06060; color: #f06060; white-space: nowrap; }
-.call-btn { width: 36px; height: 36px; background: #0d1520; border: 1.5px solid #50a0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; text-decoration: none; }
-.name-badge { display: inline-block; font-size: 13px; font-weight: 800; color: #fff; background: #3C3489; padding: 4px 12px; border-radius: 6px; white-space: nowrap; }
-.empty-state { text-align: center; padding: 48px 20px; color: #333; }
-.empty-icon { font-size: 36px; margin-bottom: 10px; }
-.loading-state { text-align: center; padding: 48px 20px; }
-.spinner { width: 28px; height: 28px; border: 2px solid #1a3a1a; border-top-color: #4dca4d; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 12px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
-.loading-txt { font-size: 11px; color: #3a7a3a; }
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; padding: 9px 20px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 9999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
-.toast.show { opacity: 1; }
-.toast.err { background: #4a1a1a; border-color: #6a2a2a; color: #f06060; }
-@media (max-width: 600px) { .stats-bar { grid-template-columns: 1fr 1fr; } }
-.timeline-section{padding:12px 16px;border-bottom:1px solid #1a1a1a;}
-.timeline-title{font-size:9px;font-weight:800;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
-.tl-row{border-radius:0 7px 7px 0;padding:8px 12px;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.tl-red{background:#1a0808;border:1px solid #3a1a1a;border-left:3px solid #f06060;}
-.tl-amber{background:#1a1200;border:1px solid #3a2800;border-left:3px solid #f0b040;}
-.tl-green{background:#0d1f0d;border:1px solid #1a3a1a;border-left:3px solid #4dca4d;}
-.tl-phone{font-size:12px;font-weight:800;color:#fff;}
-.tl-sub-red{font-size:8px;color:#f06060;margin-top:2px;}
-.tl-sub-amber{font-size:8px;color:#f0b040;margin-top:2px;}
-.tl-sub-green{font-size:8px;color:#4dca4d;margin-top:2px;}
-.tl-actions{display:flex;gap:5px;flex-shrink:0;}
-.tl-btn-days-red{background:#2a0808;border:1px solid #f06060;color:#f06060;font-size:8px;font-weight:700;padding:4px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;}
-.tl-btn-days-amber{background:#1a1200;border:1px solid #f0b040;color:#f0b040;font-size:8px;font-weight:700;padding:4px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;}
-.tl-btn-days-green{background:#0d2a1a;border:1px solid #2dba4d;color:#4dca4d;font-size:8px;font-weight:700;padding:4px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;}
-.tl-btn-wa{background:#0d2a1a;border:1px solid #2dba4d;color:#4dca4d;font-size:8px;font-weight:700;padding:4px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
-.modal-overlay.show{display:flex;}
-.modal-box{background:#161616;border:1px solid #2dba4d;border-radius:12px;padding:20px;width:100%;max-width:320px;}
-.modal-title{font-size:13px;font-weight:800;color:#4dca4d;margin-bottom:4px;}
-.modal-sub{font-size:10px;color:#555;margin-bottom:14px;}
-.modal-days-row{display:flex;gap:6px;margin-bottom:12px;}
-.modal-day-btn{flex:1;background:#0d2a1a;border:1px solid #2dba4d;color:#4dca4d;font-size:10px;font-weight:700;padding:8px;border-radius:6px;cursor:pointer;text-align:center;}
-.modal-day-btn:hover{background:#1a4a2a;}
-.modal-confirm{width:100%;background:#1a4a2a;border:1px solid #2dba4d;color:#4dca4d;font-size:12px;font-weight:800;padding:10px;border-radius:7px;cursor:pointer;margin-bottom:6px;}
-.modal-cancel{width:100%;background:transparent;border:none;color:#555;font-size:11px;padding:7px;cursor:pointer;}
-.wa-modal-box{background:#0d1f0d;border:1px solid #2dba4d;border-radius:12px;padding:20px;width:100%;max-width:340px;}
-.wa-modal-title{font-size:13px;font-weight:800;color:#4dca4d;margin-bottom:10px;}
-.wa-msg-preview{background:#111;border:1px solid #1a3a1a;border-radius:8px;padding:12px;font-size:11px;color:#aaa;line-height:1.9;margin-bottom:12px;}
-.wa-send-btn{width:100%;background:#2dba4d;border:none;color:#051005;font-size:13px;font-weight:800;padding:11px;border-radius:8px;cursor:pointer;margin-bottom:6px;}
-.wa-cancel-btn{width:100%;background:transparent;border:none;color:#2a6a2a;font-size:11px;padding:7px;cursor:pointer;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
+.shell{max-width:1400px;margin:0 auto;padding:24px 20px}
+
+/* TOP HEADER */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;margin-bottom:22px;background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:1px solid #2a4078;border-radius:16px;position:relative;overflow:hidden}
+.topbar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#8a6818 0%,#d4a850 35%,#f0d890 50%,#d4a850 65%,#8a6818 100%)}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:22px;color:#e8d8b8}
+.brand-title{font-size:18px;font-weight:600;color:#e8d8b8;letter-spacing:-0.2px;line-height:1.2}
+.brand-sub{font-size:11px;color:#d4a850;margin-top:3px;font-weight:500}
+.logout-btn{background:rgba(204,69,69,0.1);border:1px solid #cc4545;color:#f08080;padding:9px 18px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.logout-btn:hover{background:rgba(204,69,69,0.18)}
+
+/* AUTH SCREEN */
+.auth-wrap{position:fixed;inset:0;background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.auth-card{background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:1px solid #2a4078;border-radius:18px;padding:32px 28px;max-width:380px;width:100%;text-align:center;position:relative;overflow:hidden}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#8a6818 0%,#d4a850 50%,#8a6818 100%)}
+.auth-logo{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px}
+.auth-title{font-size:20px;font-weight:500;color:#e8d8b8;margin-bottom:6px;letter-spacing:-0.3px}
+.auth-sub{font-size:12px;color:#8aa0d8;margin-bottom:22px}
+.pin-input{width:100%;background:rgba(20,37,74,0.5);border:1px solid #2a4078;color:#e8d8b8;padding:14px 16px;border-radius:12px;font-size:18px;text-align:center;letter-spacing:8px;font-family:monospace;outline:none;transition:border-color .15s}
+.pin-input:focus{border-color:#d4a850}
+.auth-btn{width:100%;margin-top:14px;padding:13px;background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%);border:1px solid #f0d890;color:#1a1208;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:transform .1s}
+.auth-btn:hover{transform:translateY(-1px)}
+.auth-btn:active{transform:translateY(0)}
+.auth-err{color:#f08080;font-size:12px;margin-top:10px;display:none}
+.auth-err.show{display:block}
+
+/* STATS BAR */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:1px solid #2a4078;border-radius:14px;padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.total::before{background:linear-gradient(90deg,#5dcaa5,#1d9e75)}
+.stat-card.active::before{background:linear-gradient(90deg,#4a90d4,#1a5fa5)}
+.stat-card.warning::before{background:linear-gradient(90deg,#f0a868,#cc7a47)}
+.stat-card.danger::before{background:linear-gradient(90deg,#f08080,#cc4545)}
+.stat-label{font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:1px;font-weight:500;margin-bottom:8px}
+.stat-value{font-size:30px;font-weight:600;color:#e8d8b8;line-height:1;letter-spacing:-1px}
+.stat-sub{font-size:11px;color:#8aa0d8;margin-top:6px}
+
+/* CONTROLS BAR */
+.controls{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.search-box{flex:1;min-width:240px;background:rgba(20,37,74,0.5);border:1px solid #2a4078;border-radius:10px;padding:10px 14px;color:#e8d8b8;font-size:13px;outline:none;transition:border-color .15s}
+.search-box:focus{border-color:#d4a850}
+.search-box::placeholder{color:#6a78b8}
+.filter-tabs{display:flex;gap:6px}
+.filter-tab{background:rgba(20,37,74,0.4);border:1px solid #2a4078;color:#8aa0d8;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.filter-tab:hover{border-color:#d4a850;color:#d4a850}
+.filter-tab.active{background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%);border-color:#f0d890;color:#1a1208}
+.refresh-btn{background:rgba(93,202,165,0.1);border:1px solid #5dcaa5;color:#5dcaa5;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.refresh-btn:hover{background:rgba(93,202,165,0.18)}
+
+/* USER TABLE */
+.table-wrap{background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:1px solid #2a4078;border-radius:14px;overflow:hidden;margin-bottom:22px}
+.table-head{display:grid;grid-template-columns:50px 1.4fr 1.4fr 0.9fr 1fr 1.1fr 1fr 90px;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(42,64,120,0.5);font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:1px;font-weight:500}
+.user-row{display:grid;grid-template-columns:50px 1.4fr 1.4fr 0.9fr 1fr 1.1fr 1fr 90px;gap:12px;padding:14px 18px;border-bottom:1px solid rgba(42,64,120,0.3);align-items:center;cursor:pointer;transition:background .15s}
+.user-row:hover{background:rgba(20,37,74,0.5)}
+.user-row:last-child{border-bottom:none}
+.row-num{font-size:12px;color:#8aa0d8;font-weight:500}
+.phone-cell{font-family:monospace;font-size:13px;color:#e8d8b8;font-weight:500;letter-spacing:0.3px}
+.uid-cell{font-family:monospace;font-size:9px;color:#6a78b8;margin-top:2px}
+.name-main{font-size:13px;color:#e8d8b8;font-weight:500;line-height:1.3}
+.name-biz{font-size:11px;color:#d4a850;margin-top:2px}
+.name-empty{font-size:12px;color:#4a5aa8;font-style:italic}
+.stage-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:500;white-space:nowrap;border:1px solid}
+.stage-pill .dot{width:5px;height:5px;border-radius:50%}
+.stage-complete{background:rgba(93,202,165,0.12);color:#5dcaa5;border-color:rgba(93,202,165,0.35)}
+.stage-complete .dot{background:#5dcaa5}
+.stage-stuck{background:rgba(204,122,71,0.12);color:#f0a868;border-color:rgba(204,122,71,0.4)}
+.stage-stuck .dot{background:#cc7a47}
+.stage-partial{background:rgba(74,144,212,0.12);color:#4a90d4;border-color:rgba(74,144,212,0.35)}
+.stage-partial .dot{background:#4a90d4}
+.stage-otp{background:rgba(176,124,255,0.12);color:#b07cff;border-color:rgba(176,124,255,0.35)}
+.stage-otp .dot{background:#b07cff}
+.trial-cell{display:flex;align-items:center;gap:8px}
+.trial-num{font-size:16px;font-weight:600;letter-spacing:-0.3px}
+.trial-num.healthy{color:#5dcaa5}
+.trial-num.warning{color:#f0a868}
+.trial-num.danger{color:#f08080}
+.trial-text{font-size:10px;color:#8aa0d8}
+.activity-text{font-size:11px;color:#e8d8b8;font-weight:500}
+.activity-sub{font-size:10px;color:#8aa0d8;margin-top:2px}
+.activity-empty{font-size:11px;color:#4a5aa8;font-style:italic}
+.entries-mini{display:flex;gap:4px;flex-wrap:wrap}
+.entry-chip{font-size:9px;padding:2px 6px;border-radius:5px;font-weight:500;font-family:monospace}
+.entry-chip.b{background:rgba(93,202,165,0.12);color:#5dcaa5;border:1px solid rgba(93,202,165,0.25)}
+.entry-chip.m{background:rgba(74,144,212,0.12);color:#4a90d4;border:1px solid rgba(74,144,212,0.25)}
+.entry-chip.k{background:rgba(176,124,255,0.12);color:#b07cff;border:1px solid rgba(176,124,255,0.25)}
+.entry-chip.u{background:rgba(204,122,71,0.12);color:#f0a868;border:1px solid rgba(204,122,71,0.25)}
+.entry-chip.zero{background:rgba(42,64,120,0.3);color:#4a5aa8;border:1px solid rgba(74,90,168,0.3)}
+.view-btn{background:rgba(212,168,80,0.08);border:1px solid #d4a850;color:#d4a850;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.view-btn:hover{background:rgba(212,168,80,0.16)}
+
+.empty-state{padding:60px 20px;text-align:center;color:#6a78b8;font-size:13px}
+
+/* PROFILE MODAL */
+.profile-backdrop{position:fixed;inset:0;background:rgba(5,10,28,0.85);backdrop-filter:blur(8px);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:30px 20px;overflow-y:auto}
+.profile-backdrop.show{display:flex}
+.profile-card{background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:1px solid #2a4078;border-radius:18px;max-width:540px;width:100%;overflow:hidden;position:relative;animation:slideUp .25s ease-out}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.profile-card.complete::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#8a6818 0%,#d4a850 35%,#f0d890 50%,#d4a850 65%,#8a6818 100%)}
+.profile-card.stuck::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6a4810 0%,#cc7a47 35%,#f0a868 50%,#cc7a47 65%,#6a4810 100%)}
+.profile-card.partial::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#1a4a78 0%,#4a90d4 35%,#7ab0e8 50%,#4a90d4 65%,#1a4a78 100%)}
+
+.profile-header{padding:20px 22px 16px}
+.profile-id-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.profile-avatar{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:20px;flex-shrink:0;border-width:1.5px;border-style:solid}
+.profile-avatar.complete{background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border-color:#d4a850;color:#e8d8b8}
+.profile-avatar.stuck{background:linear-gradient(135deg,#4a2818 0%,#2a1810 100%);border-color:#cc7a47;color:#f0a868}
+.profile-avatar.partial{background:linear-gradient(135deg,#1a3a78 0%,#0a2050 100%);border-color:#4a90d4;color:#7ab0e8}
+.profile-name-block{flex:1;min-width:0}
+.profile-name{font-size:17px;font-weight:500;color:#e8d8b8;line-height:1.3;letter-spacing:-0.2px}
+.profile-biz{font-size:12px;line-height:1.4;margin-top:2px}
+.profile-biz.complete{color:#d4a850}
+.profile-biz.stuck{color:#cc7a47}
+.profile-biz.partial{color:#7ab0e8}
+.profile-biz.empty{color:#4a5aa8;font-style:italic}
+.profile-close{background:rgba(42,64,120,0.4);border:1px solid #2a4078;color:#8aa0d8;width:32px;height:32px;border-radius:10px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.profile-close:hover{background:rgba(204,69,69,0.1);border-color:#cc4545;color:#f08080}
+.profile-meta{display:flex;flex-direction:column;gap:5px;font-size:12px}
+.profile-meta-row{display:flex;align-items:center;gap:6px}
+.profile-meta-icon{font-size:13px;color:#8aa0d8}
+.profile-meta-val{color:#e8d8b8;font-family:monospace;font-size:12px}
+.profile-meta-val.dim{color:#8aa0d8;font-size:10px}
+
+.profile-section{padding:16px 22px;border-top:1px solid rgba(42,64,120,0.5)}
+.section-label{font-size:10px;font-weight:500;color:#d4a850;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+
+/* Funnel timeline */
+.funnel-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.funnel-step:last-child{margin-bottom:0}
+.funnel-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;border-width:1.5px;border-style:solid}
+.funnel-dot.done{background:rgba(93,202,165,0.15);border-color:#5dcaa5;color:#5dcaa5}
+.funnel-dot.stuck{background:rgba(204,122,71,0.15);border-color:#cc7a47;color:#f0a868}
+.funnel-dot.pending{background:rgba(42,64,120,0.3);border-color:rgba(74,90,168,0.6);color:#4a5aa8}
+.funnel-content{flex:1;padding-top:2px;min-width:0}
+.funnel-title{font-size:13px;font-weight:500;line-height:1.3}
+.funnel-title.done{color:#e8d8b8}
+.funnel-title.stuck{color:#f0a868}
+.funnel-title.pending{color:#6a78b8}
+.funnel-meta{font-size:11px;margin-top:2px;line-height:1.4}
+.funnel-meta.done{color:#8aa0d8}
+.funnel-meta.stuck{color:#cc7a47}
+.funnel-meta.pending{color:#4a5aa8}
+
+/* Trial section */
+.trial-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.trial-row-label{font-size:10px;font-weight:500;color:#d4a850;text-transform:uppercase;letter-spacing:1px}
+.trial-row-aside{font-size:10px;color:#8aa0d8}
+.trial-big{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+.trial-big-num{font-size:36px;font-weight:600;letter-spacing:-1px;line-height:1}
+.trial-big-num.healthy{color:#5dcaa5}
+.trial-big-num.warning{color:#f0a868}
+.trial-big-num.danger{color:#f08080}
+.trial-big-text{font-size:13px;color:#b0a0e8}
+.trial-big-aside{margin-left:auto;font-size:11px;color:#8aa0d8}
+.trial-bar{height:6px;background:rgba(20,37,74,0.8);border-radius:999px;overflow:hidden;border:1px solid rgba(42,64,120,0.5)}
+.trial-bar-fill{height:100%;transition:width .3s}
+.trial-bar-fill.healthy{background:linear-gradient(90deg,#1d9e75,#5dcaa5)}
+.trial-bar-fill.warning{background:linear-gradient(90deg,#cc7a47,#f0a868)}
+.trial-bar-fill.danger{background:linear-gradient(90deg,#cc4545,#f08080)}
+.trial-buttons{display:flex;gap:8px;margin-top:14px}
+.trial-btn{flex:1;padding:9px 8px;background:rgba(212,168,80,0.08);border:1px solid #d4a850;color:#d4a850;border-radius:9px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.trial-btn:hover{background:rgba(212,168,80,0.18)}
+.trial-btn:disabled{opacity:0.4;cursor:not-allowed}
+
+/* Engagement section */
+.engagement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.engagement-card{background:rgba(20,37,74,0.6);border:1px solid rgba(42,64,120,0.6);border-radius:9px;padding:10px 6px;text-align:center}
+.engagement-card.b{border-top:1.5px solid #5dcaa5}
+.engagement-card.m{border-top:1.5px solid #4a90d4}
+.engagement-card.k{border-top:1.5px solid #b07cff}
+.engagement-card.u{border-top:1.5px solid #cc7a47}
+.engagement-card.zero{background:rgba(20,37,74,0.4);border-color:rgba(42,64,120,0.4)}
+.engagement-card.zero.b{border-top-color:rgba(93,202,165,0.3)}
+.engagement-card.zero.m{border-top-color:rgba(74,144,212,0.3)}
+.engagement-card.zero.k{border-top-color:rgba(176,124,255,0.3)}
+.engagement-card.zero.u{border-top-color:rgba(204,122,71,0.3)}
+.engagement-num{font-size:20px;font-weight:600;color:#e8d8b8;line-height:1}
+.engagement-card.zero .engagement-num{color:#4a5aa8}
+.engagement-label{font-size:10px;color:#b0a0e8;margin-top:4px;letter-spacing:0.3px}
+.engagement-card.zero .engagement-label{color:#6a78b8}
+.last-active-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(20,37,74,0.4);border-radius:9px;font-size:12px}
+.last-active-label{color:#8aa0d8}
+.last-active-val{color:#e8d8b8;font-weight:500}
+.priority-alert{display:flex;align-items:center;gap:9px;padding:10px 12px;background:rgba(204,122,71,0.08);border:1px solid rgba(204,122,71,0.3);border-radius:9px;font-size:12px;color:#f0a868;line-height:1.5;margin-top:10px}
+
+/* Action bar */
+.action-bar{padding:14px 22px;border-top:1px solid rgba(42,64,120,0.5);display:grid;grid-template-columns:1fr 1.5fr;gap:10px}
+.action-btn{font-size:13px;padding:12px 12px;border-radius:11px;cursor:pointer;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .1s}
+.action-btn:hover{transform:translateY(-1px)}
+.action-btn:active{transform:translateY(0)}
+.action-call{background:rgba(74,144,212,0.12);border:1px solid #4a90d4;color:#4a90d4}
+.action-wa{background:linear-gradient(135deg,rgba(93,202,165,0.2) 0%,rgba(93,202,165,0.08) 100%);border:1px solid #5dcaa5;color:#5dcaa5;flex-direction:column;gap:4px;text-align:center}
+.action-wa.stuck{background:linear-gradient(135deg,rgba(240,168,104,0.2) 0%,rgba(204,122,71,0.1) 100%);border-color:#f0a868;color:#f0a868}
+.action-wa.expiring{background:linear-gradient(135deg,rgba(240,128,128,0.2) 0%,rgba(204,69,69,0.1) 100%);border-color:#f08080;color:#f08080}
+.action-wa-top{display:flex;align-items:center;gap:6px;width:100%;justify-content:center}
+.action-wa-tag{font-size:9px;background:rgba(255,255,255,0.1);padding:2px 7px;border-radius:5px;letter-spacing:0.3px;font-weight:500;text-transform:uppercase}
+.wa-preview{font-size:10px;color:#8aa0d8;margin:0 22px 12px;padding-left:6px;line-height:1.45;border-left:2px solid rgba(212,168,80,0.4);padding:4px 0 4px 8px;background:rgba(20,37,74,0.3);border-radius:0 6px 6px 0;padding-right:8px}
+
+@media (max-width:900px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .table-head{display:none}
+  .user-row{grid-template-columns:1fr;gap:8px;padding:14px 16px}
+  .user-row > div{display:flex;justify-content:space-between;align-items:center}
+  .user-row > div::before{content:attr(data-label);font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:1px;font-weight:500}
+  .action-bar{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
 
-<!-- PASSWORD LOGIN SCREEN -->
-<div class="auth-screen" id="screen-password">
-  <div class="auth-box">
+<!-- AUTH SCREEN -->
+<div class="auth-wrap" id="auth-screen">
+  <div class="auth-card">
     <div class="auth-logo">🔐</div>
-    <div class="auth-title">Admin Login</div>
-    <div class="auth-sub">हिसाब-Kitaab — Secure Dashboard</div>
-    <div class="auth-error" id="pw-error"></div>
-    <div class="lockout-msg" id="lockout-box">
-      <div class="lockout-icon">🚫</div>
-      <div class="lockout-title">Too many attempts — Locked</div>
-      <div class="lockout-timer" id="lockout-timer">Please wait 10:00</div>
-    </div>
-    <div class="auth-label">🔑 Admin Password</div>
-    <input class="auth-input" type="password" id="pw-input" placeholder="••••••" inputmode="numeric" maxlength="20">
-    <button class="auth-btn" id="pw-btn" onclick="checkPassword()">🔓 Login</button>
-    <div class="attempts-left" id="attempts-info">3 attempts remaining</div>
+    <div class="auth-title">Admin Access</div>
+    <div class="auth-sub">PIN दर्ज करें</div>
+    <input type="password" class="pin-input" id="pin-input" maxlength="6" inputmode="numeric" autocomplete="off">
+    <button class="auth-btn" id="auth-btn">Login</button>
+    <div class="auth-err" id="auth-err">❌ गलत PIN</div>
   </div>
 </div>
 
 <!-- MAIN DASHBOARD -->
-<div id="dashboard" style="display:none;">
-  <div class="header">
-    <div class="header-left">
-      <div class="header-icon">📊</div>
+<div class="shell" id="dashboard" style="display:none">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">📊</div>
       <div>
-        <div class="header-title">Admin Dashboard</div>
-        <div class="header-sub" id="admin-phone-display">हिसाब-Kitaab — Lead Management</div>
+        <div class="brand-title">Admin Dashboard</div>
+        <div class="brand-sub">हिसाब-Kitaab · Authenticated</div>
       </div>
     </div>
-    <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
+    <button class="logout-btn" id="logout-btn">Logout</button>
   </div>
-  <div class="stats-bar">
-    <div class="stat-card green"><div class="stat-lbl">Total Users</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">registered</div></div>
-    <div class="stat-card blue"><div class="stat-lbl">Active Trial</div><div class="stat-val" id="s-active">—</div><div class="stat-sub">trial चल रहा है</div></div>
-    <div class="stat-card amber"><div class="stat-lbl">Expiring Soon</div><div class="stat-val" id="s-warn">—</div><div class="stat-sub">≤ 10 दिन बाकी</div></div>
-    <div class="stat-card red"><div class="stat-lbl">Expired</div><div class="stat-val" id="s-expired">—</div><div class="stat-sub">trial खत्म</div></div>
+
+  <!-- STATS -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card total"><div class="stat-label">Total Users</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">registered</div></div>
+    <div class="stat-card active"><div class="stat-label">Fully Activated</div><div class="stat-value" id="stat-active">—</div><div class="stat-sub">PWA installed</div></div>
+    <div class="stat-card warning"><div class="stat-label">Stuck at Install</div><div class="stat-value" id="stat-stuck">—</div><div class="stat-sub">need a nudge</div></div>
+    <div class="stat-card danger"><div class="stat-label">Trial Expiring</div><div class="stat-value" id="stat-expiring">—</div><div class="stat-sub">≤ 10 days</div></div>
   </div>
-  <div class="timeline-section">
-    <div class="timeline-title">Trial Expiry Timeline — sorted by urgency</div>
-    <div id="timeline-list"><div style="font-size:11px;color:#333;padding:8px 0;">Loading...</div></div>
-  </div>
-  <div class="modal-overlay" id="extend-modal">
-    <div class="modal-box">
-      <div class="modal-title">Trial बढ़ाएं</div>
-      <div class="modal-sub" id="extend-modal-sub">Loading...</div>
-      <div class="modal-days-row">
-        <div class="modal-day-btn" onclick="setExtendDays(7)">+7 दिन</div>
-        <div class="modal-day-btn" onclick="setExtendDays(15)">+15 दिन</div>
-        <div class="modal-day-btn" onclick="setExtendDays(30)">+30 दिन</div>
-      </div>
-      <button class="modal-confirm" id="extend-confirm-btn" onclick="confirmExtend()">✅ Confirm करें</button>
-      <button class="modal-cancel" onclick="closeExtendModal()">रद्द करें</button>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <input type="text" class="search-box" id="search-box" placeholder="🔍 Phone, name, business या UID से खोजें...">
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">सभी</button>
+      <button class="filter-tab" data-filter="activated">Activated</button>
+      <button class="filter-tab" data-filter="stuck">Stuck</button>
+      <button class="filter-tab" data-filter="partial">Partial</button>
+      <button class="filter-tab" data-filter="expiring">Expiring</button>
     </div>
+    <button class="refresh-btn" id="refresh-btn">🔄 Refresh</button>
   </div>
-  <div class="modal-overlay" id="wa-modal">
-    <div class="wa-modal-box">
-      <div class="wa-modal-title">📱 WhatsApp भेजें</div>
-      <div class="wa-msg-preview" id="wa-msg-preview"></div>
-      <button class="wa-send-btn" onclick="sendWhatsApp()">📱 WhatsApp पर भेजें</button>
-      <button class="wa-cancel-btn" onclick="closeWAModal()">बंद करें</button>
-    </div>
-  </div>
-  <div class="toolbar">
-    <input class="search-input" type="text" id="search-box" placeholder="🔍 Phone या UID से खोजें..." oninput="renderTable()">
-    <div class="filter-btns">
-      <div class="fbtn active" id="f-all" onclick="setFilter('all')">सभी</div>
-      <div class="fbtn" id="f-active" onclick="setFilter('active')">Active</div>
-      <div class="fbtn" id="f-warn" onclick="setFilter('warn')">⚠️ Expiring</div>
-      <div class="fbtn" id="f-expired" onclick="setFilter('expired')">Expired</div>
-    </div>
-    <button class="refresh-btn" onclick="loadUsers()">🔄 Refresh</button>
-  </div>
+
+  <!-- USER TABLE -->
   <div class="table-wrap">
-    <table class="lead-table">
-      <thead>
-        <tr>
-          <th>#</th><th>Phone / UID</th><th>Name</th><th>Mode</th><th>Trial Status</th>
-          <th>Registered</th><th>Last Active</th><th>Entries</th><th>Call</th>
-        </tr>
-      </thead>
-      <tbody id="lead-tbody"></tbody>
-    </table>
-    <div id="table-state"></div>
+    <div class="table-head">
+      <div>#</div>
+      <div>Phone / UID</div>
+      <div>Name / Business</div>
+      <div>Stage</div>
+      <div>Trial</div>
+      <div>Last Active</div>
+      <div>Entries</div>
+      <div style="text-align:right">Action</div>
+    </div>
+    <div id="user-list">
+      <div class="empty-state">📡 Loading users...</div>
+    </div>
   </div>
+
 </div>
 
-<div class="toast" id="toast"></div>
-
-<script>
-// ════════════════════════════════════════
-// PASSWORD SECURITY SYSTEM
-// ════════════════════════════════════════
-// *** CHANGE YOUR PASSWORD HERE ***
-// Replace the hash below with your own.
-// To generate: open browser console, type:
-// crypto.subtle.digest('SHA-256', new TextEncoder().encode('YOUR_NUMBER_HERE')).then(b=>console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')))
-// Then paste the result below.
-const ADMIN_HASH = 'dbff5341acad5e2a58db4efd5e72e2d9a0a843a28e02b1183c68162d0a3a3de6';
-// Default placeholder hash above = "3" (just the digit 3)
-// YOU MUST CHANGE THIS to your own password hash!
-
-const MAX_ATTEMPTS = 3;
-const LOCKOUT_MS = 10 * 60 * 1000;
-let attempts = parseInt(sessionStorage.getItem('_adm_att') || '0');
-let lockedUntil = parseInt(sessionStorage.getItem('_adm_lock') || '0');
-let lockInterval = null;
-
-async function hashPassword(pw) {
-  const data = new TextEncoder().encode(pw);
-  const buf = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2, '0')).join('');
-}
-
-function updateAttemptsUI() {
-  const left = MAX_ATTEMPTS - attempts;
-  document.getElementById('attempts-info').textContent = left + ' attempt' + (left !== 1 ? 's' : '') + ' remaining';
-  if (left <= 1) document.getElementById('attempts-info').style.color = '#f06060';
-  else document.getElementById('attempts-info').style.color = '#555';
-}
-
-function startLockoutTimer() {
-  const box = document.getElementById('lockout-box');
-  const timerEl = document.getElementById('lockout-timer');
-  const btn = document.getElementById('pw-btn');
-  const inp = document.getElementById('pw-input');
-  box.classList.add('show');
-  btn.disabled = true;
-  inp.disabled = true;
-  document.getElementById('attempts-info').style.display = 'none';
-  if (lockInterval) clearInterval(lockInterval);
-  lockInterval = setInterval(() => {
-    const remaining = lockedUntil - Date.now();
-    if (remaining <= 0) {
-      clearInterval(lockInterval);
-      box.classList.remove('show');
-      btn.disabled = false;
-      inp.disabled = false;
-      attempts = 0;
-      sessionStorage.setItem('_adm_att', '0');
-      sessionStorage.removeItem('_adm_lock');
-      document.getElementById('attempts-info').style.display = 'block';
-      updateAttemptsUI();
-      return;
-    }
-    const m = Math.floor(remaining / 60000);
-    const s = Math.floor((remaining % 60000) / 1000);
-    timerEl.textContent = 'Please wait ' + m + ':' + String(s).padStart(2, '0');
-  }, 1000);
-}
-
-window.checkPassword = async function() {
-  if (Date.now() < lockedUntil) return;
-  const pw = document.getElementById('pw-input').value;
-  const errEl = document.getElementById('pw-error');
-  errEl.classList.remove('show');
-  if (!pw) { errEl.textContent = '❌ Password डालें'; errEl.classList.add('show'); return; }
-  const hash = await hashPassword(pw);
-  if (hash === ADMIN_HASH) {
-    attempts = 0;
-    sessionStorage.setItem('_adm_att', '0');
-    sessionStorage.setItem('_adm_auth', 'true');
-    document.getElementById('screen-password').classList.add('hidden');
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('admin-phone-display').textContent = '🔐 Admin — Authenticated';
-    loadUsers();
-  } else {
-    attempts++;
-    sessionStorage.setItem('_adm_att', attempts.toString());
-    if (attempts >= MAX_ATTEMPTS) {
-      lockedUntil = Date.now() + LOCKOUT_MS;
-      sessionStorage.setItem('_adm_lock', lockedUntil.toString());
-      startLockoutTimer();
-      errEl.textContent = '🚫 3 wrong attempts — locked for 10 minutes';
-      errEl.classList.add('show');
-    } else {
-      errEl.textContent = '❌ Wrong password — ' + (MAX_ATTEMPTS - attempts) + ' attempts left';
-      errEl.classList.add('show');
-      updateAttemptsUI();
-    }
-    document.getElementById('pw-input').value = '';
-  }
-};
-
-document.getElementById('pw-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') window.checkPassword();
-});
-
-window.doLogout = function() {
-  sessionStorage.removeItem('_adm_auth');
-  location.reload();
-};
-
-(function initAuth() {
-  if (Date.now() < lockedUntil) { startLockoutTimer(); }
-  else { updateAttemptsUI(); }
-  if (sessionStorage.getItem('_adm_auth') === 'true') {
-    document.getElementById('screen-password').classList.add('hidden');
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('admin-phone-display').textContent = '🔐 Admin — Authenticated';
-  }
-})();
-</script>
+<!-- PROFILE DRILL-DOWN MODAL -->
+<div class="profile-backdrop" id="profile-modal">
+  <div class="profile-card" id="profile-card"></div>
+</div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -355,7 +316,7 @@ window._loadUsersFromFirestore = async function() {
       if (infoDoc.exists()) profile = infoDoc.data();
     } catch(e) {}
     let bikriCount = 0, maalCount = 0, kacchaCount = 0, udhaarCount = 0, lastActive = null;
-    for (const col of ['bikri', 'maal', 'kaccha', 'udhaar', 'goal']) {
+    for (const col of ['bikri', 'maal', 'kaccha', 'udhaar']) {
       try {
         const snap = await getDocs(collection(db, 'users', uid, col));
         if (col === 'bikri') bikriCount = snap.size;
@@ -376,222 +337,640 @@ window._loadUsersFromFirestore = async function() {
   return users;
 };
 
-window._getProfileDoc = async function(uid) {
-  try {
-    const snap = await getDoc(doc(db, 'users', uid, 'profile', 'info'));
-    return snap.exists() ? snap.data() : null;
-  } catch(e) { return null; }
-};
-
 window._extendTrial = async function(uid, additionalDays) {
   const profileRef = doc(db, 'users', uid, 'profile', 'info');
   const snap = await getDoc(profileRef);
   if (!snap.exists()) throw new Error('Profile not found');
   const currentTrialStart = snap.data().trialStart || Date.now();
-  const daysUsed = Math.floor((Date.now() - currentTrialStart) / (1000*60*60*24));
-  const newTrialStart = Date.now() - ((daysUsed - additionalDays) * 24*60*60*1000);
+  const newTrialStart = currentTrialStart + (additionalDays * 24*60*60*1000);
   await setDoc(profileRef, { trialStart: newTrialStart }, { merge: true });
 };
 
-if (sessionStorage.getItem('_adm_auth') === 'true') { loadUsers(); }
+if (sessionStorage.getItem('_adm_auth') === 'true') {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadUsers();
+}
 </script>
 
 <script>
-let allUsers = [], currentFilter = 'all';
+// =================== AUTH ===================
+const ADMIN_PIN = '789456';
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MIN = 15;
 
-async function loadUsers() {
-  const state = document.getElementById('table-state');
-  const tbody = document.getElementById('lead-tbody');
-  tbody.innerHTML = '';
-  state.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-txt">Firestore से data लोड हो रहा है...</div></div>`;
-  try {
-    allUsers = await window._loadUsersFromFirestore();
-    state.innerHTML = '';
-    updateStats();
-    renderTable();
-    renderTimeline();
-    toast('✅ ' + allUsers.length + ' users लोड हुए');
-  } catch(e) {
-    state.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div style="color:#f06060;font-size:12px;">Load failed: ${e.message}</div></div>`;
-  }
+function checkLockout() {
+  const until = parseInt(sessionStorage.getItem('_adm_lockout') || '0');
+  return until > Date.now() ? until : 0;
 }
 
-function updateStats() {
-  let active = 0, warn = 0, expired = 0;
-  allUsers.forEach(u => {
-    const s = getTrialStatus(u.profile.trialStart);
-    if (s.type === 'expired') expired++;
-    else if (s.type === 'warn') warn++;
-    else active++;
-  });
-  document.getElementById('s-total').textContent = allUsers.length;
-  document.getElementById('s-active').textContent = active;
-  document.getElementById('s-warn').textContent = warn;
-  document.getElementById('s-expired').textContent = expired;
-}
+document.getElementById('auth-btn').addEventListener('click', tryLogin);
+document.getElementById('pin-input').addEventListener('keypress', e => { if (e.key === 'Enter') tryLogin(); });
 
-function getTrialStatus(trialStart) {
-  if (!trialStart) return { type: 'unknown', days: 0, label: '— unknown', cls: 'trial-expired' };
-  const daysLeft = Math.max(0, 90 - Math.floor((Date.now() - trialStart) / (1000*60*60*24)));
-  if (daysLeft === 0) return { type: 'expired', days: 0, label: '❌ Expired', cls: 'trial-expired' };
-  if (daysLeft <= 10) return { type: 'warn', days: daysLeft, label: '🚨 ' + daysLeft + ' दिन बाकी', cls: 'trial-critical' };
-  if (daysLeft <= 30) return { type: 'warn', days: daysLeft, label: '⏳ ' + daysLeft + ' दिन बाकी', cls: 'trial-warn' };
-  return { type: 'active', days: daysLeft, label: '✅ ' + daysLeft + ' दिन बाकी', cls: 'trial-ok' };
-}
-
-function setFilter(f) {
-  currentFilter = f;
-  ['all','active','warn','expired'].forEach(k => document.getElementById('f-' + k).classList.toggle('active', k === f));
-  renderTable();
-}
-
-function renderTable() {
-  const q = (document.getElementById('search-box').value || '').toLowerCase();
-  const tbody = document.getElementById('lead-tbody');
-  tbody.innerHTML = '';
-  const filtered = allUsers.filter(u => {
-    const phone = (u.profile.phone || '').toLowerCase();
-    const uid = (u.uid || '').toLowerCase();
-    const matchSearch = !q || phone.includes(q) || uid.includes(q);
-    const s = getTrialStatus(u.profile.trialStart);
-    const matchFilter = currentFilter === 'all' || s.type === currentFilter;
-    return matchSearch && matchFilter;
-  });
-  if (!filtered.length) {
-    document.getElementById('table-state').innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div style="font-size:12px;color:#444;">कोई user नहीं मिला</div></div>`;
+function tryLogin() {
+  const lockoutUntil = checkLockout();
+  if (lockoutUntil) {
+    const mins = Math.ceil((lockoutUntil - Date.now()) / 60000);
+    showAuthErr(`🔒 ${mins} मिनट बाद कोशिश करें`);
     return;
   }
-  document.getElementById('table-state').innerHTML = '';
-  filtered.forEach((u, idx) => {
-    const s = getTrialStatus(u.profile.trialStart);
-    const regDate = u.profile.registeredAt
-      ? (u.profile.registeredAt.toDate ? u.profile.registeredAt.toDate() : new Date(u.profile.registeredAt))
-      : null;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="color:#333;font-size:11px;">${idx+1}</td>
-      <td><div class="phone-cell">${u.profile.phone||'—'}</div><div class="uid-cell">${u.uid}</div></td>
-     <td>${u.profile.name ? '<span class="name-badge">'+u.profile.name+'</span>' : '<span style="color:#555;font-size:13px;">—</span>'}</td>
-      <td><span class="mode-badge ${u.profile.mode==='udhaar'?'mode-udhaar':'mode-full'}">${u.profile.mode==='udhaar'?'UB':'HK'}</span></td>
-      <td><span class="trial-badge ${s.cls}">${s.label}</span></td>
-      <td><div class="date-cell">${regDate ? regDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div><div class="date-sub">${regDate ? regDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : ''}</div></td>
-      <td>${renderOnlineCell(u.profile.lastSeen)}</td>
-      <td><div class="entries-row"><span class="etag etag-b">B ${u.bikriCount}</span><span class="etag etag-m">M ${u.maalCount}</span><span class="etag etag-k">K ${u.kacchaCount}</span><span class="etag etag-u">U ${u.udhaarCount}</span></div></td>
-      <td><a class="call-btn" href="tel:${u.profile.phone||''}" title="Call ${u.profile.phone||''}">📞</a></td>
-    `;
-    tbody.appendChild(tr);
-  });
+  const pin = document.getElementById('pin-input').value.trim();
+  if (pin === ADMIN_PIN) {
+    sessionStorage.setItem('_adm_auth', 'true');
+    sessionStorage.removeItem('_adm_attempts');
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadUsers();
+  } else {
+    const attempts = parseInt(sessionStorage.getItem('_adm_attempts') || '0') + 1;
+    sessionStorage.setItem('_adm_attempts', attempts);
+    if (attempts >= MAX_ATTEMPTS) {
+      sessionStorage.setItem('_adm_lockout', (Date.now() + LOCKOUT_MIN * 60000).toString());
+      showAuthErr(`🔒 ${LOCKOUT_MIN} मिनट के लिए lock हो गया`);
+    } else {
+      showAuthErr(`❌ गलत PIN (${MAX_ATTEMPTS - attempts} कोशिशें बाकी)`);
+    }
+    document.getElementById('pin-input').value = '';
+  }
 }
 
-let extendUID = '', extendPhone = '', extendDaysSelected = 7, waPhone = '', waMsg = '';
-
-function renderTimeline() {
-  const el = document.getElementById('timeline-list');
-  if (!allUsers.length) { el.innerHTML = '<div style="font-size:11px;color:#333;padding:8px 0;">No users loaded</div>'; return; }
-  const sorted = [...allUsers].sort((a,b) => {
-    const da = getTrialStatus(a.profile.trialStart).days;
-    const db2 = getTrialStatus(b.profile.trialStart).days;
-    return da - db2;
-  });
-  el.innerHTML = '';
-  sorted.forEach(u => {
-    const s = getTrialStatus(u.profile.trialStart);
-    const phone = u.profile.phone || '—';
-    let rowCls, subCls, btnCls, subText;
-    if (s.type === 'expired') { rowCls='tl-red'; subCls='tl-sub-red'; btnCls='tl-btn-days-red'; subText='Trial खत्म — Contact NOW'; }
-    else if (s.days <= 10) { rowCls='tl-red'; subCls='tl-sub-red'; btnCls='tl-btn-days-red'; subText=s.days+' दिन बाकी — Contact NOW'; }
-    else if (s.days <= 30) { rowCls='tl-amber'; subCls='tl-sub-amber'; btnCls='tl-btn-days-amber'; subText=s.days+' दिन बाकी — Follow up soon'; }
-    else { rowCls='tl-green'; subCls='tl-sub-green'; btnCls='tl-btn-days-green'; subText=s.days+' दिन बाकी — Healthy'; }
-    const div = document.createElement('div');
-    div.className = 'tl-row ' + rowCls;
-    div.innerHTML = `
-      <div>
-        <div class="tl-phone"><span class="status-dot ${getOnlineStatus(u.profile.lastSeen).dot}" style="margin-right:5px;"></span>${phone}</div>
-        <div style="font-size:9px;color:#888;margin-bottom:2px;">${u.profile.name||''}</div>
-        <div class="${subCls}">${subText}</div>
-      </div>
-      <div class="tl-actions">
-        <div class="${btnCls}" onclick="openExtendModal('${u.uid}','${phone}',${s.days})">+Days</div>
-        <div class="tl-btn-wa" onclick="openWAModal('${phone}',${s.days})">WhatsApp</div>
-      </div>
-    `;
-    el.appendChild(div);
-  });
+function showAuthErr(msg) {
+  const el = document.getElementById('auth-err');
+  el.textContent = msg;
+  el.classList.add('show');
 }
 
-function openExtendModal(uid, phone, daysLeft) {
-  extendUID = uid; extendPhone = phone; extendDaysSelected = 7;
-  document.getElementById('extend-modal-sub').textContent = phone + ' · अभी ' + daysLeft + ' दिन बाकी';
-  document.getElementById('extend-modal').classList.add('show');
-}
-function setExtendDays(d) { extendDaysSelected = d; toast('✅ ' + d + ' दिन select हुए'); }
-function closeExtendModal() { document.getElementById('extend-modal').classList.remove('show'); }
+document.getElementById('logout-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('_adm_auth');
+  location.reload();
+});
 
-async function confirmExtend() {
-  const btn = document.getElementById('extend-confirm-btn');
-  btn.disabled = true; btn.textContent = '⏳ Saving...';
-  try {
-    await window._extendTrial(extendUID, extendDaysSelected);
-    toast('✅ Trial +' + extendDaysSelected + ' दिन बढ़ा दिया!');
-    closeExtendModal();
-    await loadUsers();
-  } catch(e) { toast('❌ Error: ' + e.message, true); }
-  btn.disabled = false; btn.textContent = '✅ Confirm करें';
-}
-
-function openWAModal(phone, daysLeft) {
-  const cleanPhone = phone.replace(/\D/g,'').slice(-10);
-  waPhone = cleanPhone;
-  const msg = `नमस्ते! 🙏\n\nआपका हिसाब-Kitaab trial सिर्फ ${daysLeft} दिनों में खत्म हो रहा है।\n\nसिर्फ ₹99/महीने में अपना पूरा हिसाब-किताब जारी रखें।\n\n📲 hisaabkitab.online\n\nधन्यवाद 🙏`;
-  waMsg = msg;
-  document.getElementById('wa-msg-preview').innerHTML = msg.replace(/\n/g,'<br>');
-  document.getElementById('wa-modal').classList.add('show');
-}
-function closeWAModal() { document.getElementById('wa-modal').classList.remove('show'); }
-function sendWhatsApp() {
-  const url = 'https://wa.me/91' + waPhone + '?text=' + encodeURIComponent(waMsg);
-  window.open(url, '_blank');
-  closeWAModal();
+// =================== UTILS ===================
+function fmtTimestamp(ts) {
+  if (!ts) return null;
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if (isNaN(d.getTime())) return null;
+  const opts = { day: '2-digit', month: 'short', year: 'numeric' };
+  const datePart = d.toLocaleDateString('en-IN', opts);
+  let hr = d.getHours(), min = d.getMinutes();
+  const ampm = hr >= 12 ? 'pm' : 'am';
+  hr = hr % 12 || 12;
+  const minStr = min < 10 ? '0' + min : min;
+  return `${datePart} · ${hr}:${minStr} ${ampm}`;
 }
 
-function renderOnlineCell(lastSeen) {
-  const s = getOnlineStatus(lastSeen);
-  const isOnline = s.dot === 'dot-online';
-  const isRecent = s.dot === 'dot-recent';
-  return `<div class="date-cell"><span class="status-dot ${s.dot}"></span><span class="online-label ${isOnline?'green':isRecent?'amber':''}">${s.label}</span></div><div class="date-sub" style="margin-left:12px;">${s.sub}</div>`;
+function fmtPhone(p) {
+  if (!p) return '—';
+  const clean = String(p).replace(/^\+91/, '').replace(/\D/g, '');
+  if (clean.length === 10) return '+91 ' + clean.slice(0,5) + ' ' + clean.slice(5);
+  return p;
 }
 
-function getOnlineStatus(lastSeen) {
-  if (!lastSeen) return { dot: 'dot-inactive', label: '—', sub: '—' };
-  const diff = Date.now() - lastSeen;
+function timeSince(ts) {
+  if (!ts) return null;
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const diff = Date.now() - d.getTime();
+  if (diff < 0) return 'just now';
   const mins = Math.floor(diff / 60000);
-  if (diff < 20000) return { dot: 'dot-online', label: 'Online', sub: 'अभी active' };
-  if (diff < 30 * 60000) return { dot: 'dot-recent', label: mins + ' min ago', sub: 'हाल में active' };
-  if (diff < 24 * 60 * 60000) {
-    const h = Math.floor(diff / 3600000);
-    return { dot: 'dot-idle', label: h + 'h ago', sub: new Date(lastSeen).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) };
-  }
-  const d = Math.floor(diff / 86400000);
-  return { dot: 'dot-inactive', label: d + 'd ago', sub: new Date(lastSeen).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) };
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  if (days < 30) return days + 'd ago';
+  const mons = Math.floor(days / 30);
+  return mons + 'mo ago';
 }
 
-setInterval(async () => {
-  if (!allUsers.length) return;
+function classifyStage(p) {
+  if (!p) return 'otp';
+  if (p.firstEntryAt) return 'complete';
+  if (p.pwaActivatedAt) return 'complete';
+  if (p.registrationCompletedAt || (p.name && p.businessName)) return 'stuck';
+  if (p.termsAgreedAt) return 'partial';
+  return 'otp';
+}
+
+function daysLeft(trialStart) {
+  if (!trialStart) return 0;
+  const used = Math.floor((Date.now() - trialStart) / (1000*60*60*24));
+  return Math.max(0, 90 - used);
+}
+
+function trialClass(days) {
+  if (days <= 10) return 'danger';
+  if (days <= 25) return 'warning';
+  return 'healthy';
+}
+
+// =================== STATE ===================
+let allUsers = [];
+let currentFilter = 'all';
+let currentSearch = '';
+let extendUID = null, extendDays = 0;
+
+// =================== LOAD ===================
+async function loadUsers() {
+  document.getElementById('user-list').innerHTML = '<div class="empty-state">📡 Loading users...</div>';
+  try {
+    allUsers = await window._loadUsersFromFirestore();
+    renderStats();
+    renderUserList();
+  } catch(e) {
+    console.error('Load error:', e);
+    document.getElementById('user-list').innerHTML = '<div class="empty-state">❌ Failed to load. Check connection.</div>';
+  }
+}
+
+function renderStats() {
+  let total = allUsers.length, active = 0, stuck = 0, expiring = 0;
   for (const u of allUsers) {
-    try {
-      const snap = await window._getProfileDoc(u.uid);
-      if (snap && snap.lastSeen) u.profile.lastSeen = snap.lastSeen;
-      if (snap && snap.mode) u.profile.mode = snap.mode;
-    } catch(e) {}
+    const stage = classifyStage(u.profile);
+    if (stage === 'complete') active++;
+    if (stage === 'stuck') stuck++;
+    const dl = daysLeft(u.profile.trialStart);
+    if (dl > 0 && dl <= 10) expiring++;
   }
-  renderTable();
-}, 10000);
-
-function toast(msg, err=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast' + (err?' err':'') + ' show';
-  setTimeout(() => t.className = 'toast', 3000);
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-active').textContent = active;
+  document.getElementById('stat-stuck').textContent = stuck;
+  document.getElementById('stat-expiring').textContent = expiring;
 }
+
+function renderUserList() {
+  const list = document.getElementById('user-list');
+  const filtered = allUsers.filter(u => {
+    const stage = classifyStage(u.profile);
+    if (currentFilter === 'activated' && stage !== 'complete') return false;
+    if (currentFilter === 'stuck' && stage !== 'stuck') return false;
+    if (currentFilter === 'partial' && stage !== 'partial' && stage !== 'otp') return false;
+    if (currentFilter === 'expiring') {
+      const dl = daysLeft(u.profile.trialStart);
+      if (dl > 10 || dl === 0) return false;
+    }
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      const hay = [u.uid, u.profile.phone || '', u.profile.name || '', u.profile.businessName || ''].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Sort: stuck first (action needed), then expiring, then activated, then partial
+  filtered.sort((a, b) => {
+    const sa = classifyStage(a.profile), sb = classifyStage(b.profile);
+    const order = { stuck: 0, partial: 1, otp: 2, complete: 3 };
+    if (sa !== sb) return order[sa] - order[sb];
+    return daysLeft(a.profile.trialStart) - daysLeft(b.profile.trialStart);
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state">कोई user नहीं मिला</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((u, idx) => userRowHTML(u, idx + 1)).join('');
+  // Bind click events
+  list.querySelectorAll('.user-row').forEach(row => {
+    row.addEventListener('click', e => {
+      const uid = row.getAttribute('data-uid');
+      if (uid) openProfile(uid);
+    });
+  });
+}
+
+function userRowHTML(u, num) {
+  const p = u.profile || {};
+  const stage = classifyStage(p);
+  const stagePill = stagePillHTML(stage);
+  const name = p.name || '<span class="name-empty">— no name —</span>';
+  const biz = p.businessName ? `<div class="name-biz">${escapeHTML(p.businessName)}</div>` : '';
+  const dl = daysLeft(p.trialStart);
+  const tCls = trialClass(dl);
+  const trialHtml = p.trialStart
+    ? `<span class="trial-num ${tCls}">${dl}</span><span class="trial-text">days</span>`
+    : '<span class="activity-empty">no trial</span>';
+  const lastActiveText = u.lastActive
+    ? `<div class="activity-text">${timeSince(new Date(u.lastActive))}</div><div class="activity-sub">${fmtTimestamp(new Date(u.lastActive)) || ''}</div>`
+    : '<span class="activity-empty">never</span>';
+
+  const entries = entriesMiniHTML(u);
+
+  return `
+    <div class="user-row" data-uid="${u.uid}">
+      <div class="row-num" data-label="#">${num}</div>
+      <div data-label="Phone">
+        <div>
+          <div class="phone-cell">${fmtPhone(p.phone)}</div>
+          <div class="uid-cell">${u.uid.slice(0, 18)}…</div>
+        </div>
+      </div>
+      <div data-label="Name">
+        <div>
+          <div class="name-main">${escapeHTML(name)}</div>
+          ${biz}
+        </div>
+      </div>
+      <div data-label="Stage">${stagePill}</div>
+      <div data-label="Trial">
+        <div class="trial-cell">${trialHtml}</div>
+      </div>
+      <div data-label="Last Active">
+        <div>${lastActiveText}</div>
+      </div>
+      <div data-label="Entries">${entries}</div>
+      <div data-label="Action" style="text-align:right">
+        <button class="view-btn">View →</button>
+      </div>
+    </div>
+  `;
+}
+
+function stagePillHTML(stage) {
+  const map = {
+    complete: { cls: 'stage-complete', text: 'Activated' },
+    stuck: { cls: 'stage-stuck', text: 'Stuck' },
+    partial: { cls: 'stage-partial', text: 'Partial' },
+    otp: { cls: 'stage-otp', text: 'OTP only' }
+  };
+  const m = map[stage] || map.otp;
+  return `<span class="stage-pill ${m.cls}"><span class="dot"></span>${m.text}</span>`;
+}
+
+function entriesMiniHTML(u) {
+  const arr = [
+    { k: 'b', n: u.bikriCount },
+    { k: 'm', n: u.maalCount },
+    { k: 'k', n: u.kacchaCount },
+    { k: 'u', n: u.udhaarCount }
+  ];
+  return '<div class="entries-mini">' + arr.map(x =>
+    `<span class="entry-chip ${x.n === 0 ? 'zero' : x.k}">${x.k.toUpperCase()} ${x.n}</span>`
+  ).join('') + '</div>';
+}
+
+function escapeHTML(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// =================== PROFILE DRILL-DOWN ===================
+function openProfile(uid) {
+  const u = allUsers.find(x => x.uid === uid);
+  if (!u) return;
+  const card = document.getElementById('profile-card');
+  card.innerHTML = profileCardHTML(u);
+  card.className = 'profile-card ' + classifyStage(u.profile);
+  document.getElementById('profile-modal').classList.add('show');
+  // Bind close button
+  card.querySelector('.profile-close').addEventListener('click', closeProfile);
+  // Bind +Days buttons
+  card.querySelectorAll('.trial-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const days = parseInt(btn.getAttribute('data-days'));
+      if (!confirm(`इस user का trial ${days} दिन और बढ़ाएँ?`)) return;
+      btn.disabled = true;
+      try {
+        await window._extendTrial(uid, days);
+        alert(`✅ ${days} दिन जोड़ दिए गए`);
+        closeProfile();
+        await loadUsers();
+      } catch(e) {
+        alert('❌ Failed: ' + e.message);
+        btn.disabled = false;
+      }
+    });
+  });
+  // Bind call button
+  card.querySelector('.action-call').addEventListener('click', () => {
+    const phone = u.profile.phone || '';
+    if (phone) window.location.href = 'tel:' + phone;
+  });
+  // Bind WhatsApp button
+  card.querySelector('.action-wa').addEventListener('click', () => {
+    const msg = buildWhatsAppMessage(u);
+    const phone = String(u.profile.phone || '').replace(/^\+/, '').replace(/\D/g, '');
+    if (phone) {
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+  });
+}
+
+function closeProfile() {
+  document.getElementById('profile-modal').classList.remove('show');
+}
+
+document.getElementById('profile-modal').addEventListener('click', e => {
+  if (e.target.id === 'profile-modal') closeProfile();
+});
+
+function profileCardHTML(u) {
+  const p = u.profile || {};
+  const stage = classifyStage(p);
+  const initial = (p.name || '?').trim().charAt(0).toUpperCase();
+  const isOnline = u.lastActive && (Date.now() - new Date(u.lastActive).getTime() < 5 * 60 * 1000);
+
+  const headerVariant = stage === 'complete' ? 'complete' : (stage === 'stuck' ? 'stuck' : 'partial');
+
+  return `
+    <div class="profile-header">
+      <div class="profile-id-row">
+        <div class="profile-avatar ${headerVariant}">${initial}</div>
+        <div class="profile-name-block">
+          <div class="profile-name">${escapeHTML(p.name || '— no name —')}</div>
+          <div class="profile-biz ${p.businessName ? headerVariant : 'empty'}">${escapeHTML(p.businessName || '— no business name —')}</div>
+        </div>
+        <button class="profile-close" aria-label="Close">✕</button>
+      </div>
+      <div class="profile-meta">
+        <div class="profile-meta-row"><span class="profile-meta-icon">📞</span><span class="profile-meta-val">${fmtPhone(p.phone)}</span></div>
+        <div class="profile-meta-row"><span class="profile-meta-icon">🆔</span><span class="profile-meta-val dim">${u.uid}</span></div>
+      </div>
+    </div>
+
+    ${funnelSectionHTML(p)}
+
+    ${trialSectionHTML(p)}
+
+    ${engagementSectionHTML(u, p, stage)}
+
+    ${actionBarHTML(u)}
+  `;
+}
+
+function funnelSectionHTML(p) {
+  const steps = [
+    { key: 'otpVerifiedAt', title: 'OTP verified', fallback: 'registeredAt' },
+    { key: 'termsAgreedAt', title: 'Terms accepted' },
+    { key: 'nameSavedAt', title: 'Name + business saved', subDone: 'Registration complete' },
+    { key: 'pwaActivatedAt', title: 'PWA installed + PIN created' },
+    { key: 'firstEntryAt', title: 'First entry made' }
+  ];
+
+  // Find stuck step (first incomplete after a complete one)
+  let foundIncomplete = false;
+  const stepStates = steps.map((s, i) => {
+    const ts = p[s.key] || (s.fallback && p[s.fallback]);
+    if (ts && !foundIncomplete) {
+      return { ...s, state: 'done', ts };
+    }
+    if (!foundIncomplete) {
+      foundIncomplete = true;
+      return { ...s, state: 'stuck' };
+    }
+    return { ...s, state: 'pending' };
+  });
+
+  // Special case: if otpVerifiedAt is missing AND nothing else complete, mark step 0 as stuck
+  // Compute days since registration for stuck step messaging
+  const regTs = p.registrationCompletedAt || p.nameSavedAt;
+  let daysSinceReg = 0;
+  if (regTs) {
+    const d = regTs.toDate ? regTs.toDate() : new Date(regTs);
+    daysSinceReg = Math.floor((Date.now() - d.getTime()) / (1000*60*60*24));
+  }
+
+  return `
+    <div class="profile-section">
+      <div class="section-label">Registration funnel</div>
+      ${stepStates.map(s => {
+        if (s.state === 'done') {
+          let meta = fmtTimestamp(s.ts) || '';
+          if (s.subDone) meta += ' · ' + s.subDone;
+          return `
+            <div class="funnel-step">
+              <div class="funnel-dot done">✓</div>
+              <div class="funnel-content">
+                <div class="funnel-title done">${s.title}</div>
+                <div class="funnel-meta done">${meta}</div>
+              </div>
+            </div>
+          `;
+        }
+        if (s.state === 'stuck') {
+          const sub = s.key === 'pwaActivatedAt' && daysSinceReg > 0
+            ? `Pending · ${daysSinceReg} days since registration`
+            : 'Pending';
+          return `
+            <div class="funnel-step">
+              <div class="funnel-dot stuck">⚠</div>
+              <div class="funnel-content">
+                <div class="funnel-title stuck">${s.title}</div>
+                <div class="funnel-meta stuck">${sub}</div>
+              </div>
+            </div>
+          `;
+        }
+        return `
+          <div class="funnel-step">
+            <div class="funnel-dot pending">○</div>
+            <div class="funnel-content">
+              <div class="funnel-title pending">${s.title}</div>
+              <div class="funnel-meta pending">Waiting on previous step</div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function trialSectionHTML(p) {
+  if (!p.trialStart) {
+    return `
+      <div class="profile-section">
+        <div class="trial-row">
+          <span class="trial-row-label">Trial status</span>
+          <span class="trial-row-aside">No trial yet</span>
+        </div>
+        <div class="activity-empty" style="font-size:13px">User has not started trial</div>
+      </div>
+    `;
+  }
+  const dl = daysLeft(p.trialStart);
+  const cls = trialClass(dl);
+  const pct = Math.min(100, Math.round((dl / 90) * 100));
+  const startDate = new Date(p.trialStart);
+  const startStr = startDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+
+  return `
+    <div class="profile-section">
+      <div class="trial-row">
+        <span class="trial-row-label">Trial status</span>
+        <span class="trial-row-aside">After trial · ₹149/mo</span>
+      </div>
+      <div class="trial-big">
+        <span class="trial-big-num ${cls}">${dl}</span>
+        <span class="trial-big-text">days left</span>
+        <span class="trial-big-aside">started ${startStr}</span>
+      </div>
+      <div class="trial-bar"><div class="trial-bar-fill ${cls}" style="width:${pct}%"></div></div>
+      <div class="trial-buttons">
+        <button class="trial-btn" data-days="7">+7 days</button>
+        <button class="trial-btn" data-days="15">+15 days</button>
+        <button class="trial-btn" data-days="30">+30 days</button>
+      </div>
+    </div>
+  `;
+}
+
+function engagementSectionHTML(u, p, stage) {
+  const zero = u.bikriCount + u.maalCount + u.kacchaCount + u.udhaarCount === 0;
+  const cells = [
+    { cls: 'b', label: 'बिक्री', n: u.bikriCount },
+    { cls: 'm', label: 'माल', n: u.maalCount },
+    { cls: 'k', label: 'कच्चा', n: u.kacchaCount },
+    { cls: 'u', label: 'उधार', n: u.udhaarCount }
+  ];
+  const cellsHTML = cells.map(c => `
+    <div class="engagement-card ${c.cls}${c.n === 0 ? ' zero' : ''}">
+      <div class="engagement-num">${c.n}</div>
+      <div class="engagement-label">${c.label}</div>
+    </div>
+  `).join('');
+
+  let footer = '';
+  if (stage === 'stuck') {
+    const regTs = p.registrationCompletedAt || p.nameSavedAt;
+    let days = 0;
+    if (regTs) {
+      const d = regTs.toDate ? regTs.toDate() : new Date(regTs);
+      days = Math.floor((Date.now() - d.getTime()) / (1000*60*60*24));
+    }
+    footer = `<div class="priority-alert">⚠️ <span>High-priority lead · inactive for ${days} days since registration</span></div>`;
+  } else if (u.lastActive) {
+    const since = timeSince(new Date(u.lastActive));
+    footer = `
+      <div class="last-active-row">
+        <span class="last-active-label">🕓 Last active</span>
+        <span class="last-active-val">${since}</span>
+      </div>
+    `;
+  } else {
+    footer = `<div class="priority-alert" style="background:rgba(74,144,212,0.08);border-color:rgba(74,144,212,0.3);color:#4a90d4">⏳ <span>No activity recorded yet</span></div>`;
+  }
+
+  return `
+    <div class="profile-section">
+      <div class="section-label">Engagement</div>
+      <div class="engagement-grid">${cellsHTML}</div>
+      ${footer}
+    </div>
+  `;
+}
+
+function actionBarHTML(u) {
+  const tmpl = pickTemplate(u);
+  const phone = String(u.profile.phone || '').replace(/^\+/, '').replace(/\D/g, '');
+  const callDisabled = !phone ? 'opacity:0.4;cursor:not-allowed' : '';
+  return `
+    <div class="wa-preview">💬 "${escapeHTML(tmpl.preview)}"</div>
+    <div class="action-bar">
+      <button class="action-btn action-call" style="${callDisabled}">📞 Call</button>
+      <button class="action-btn action-wa ${tmpl.tone}">
+        <div class="action-wa-top">
+          <span>💬 WhatsApp</span>
+          <span class="action-wa-tag">${tmpl.tag}</span>
+        </div>
+      </button>
+    </div>
+  `;
+}
+
+// =================== SMART WHATSAPP TEMPLATES ===================
+function pickTemplate(u) {
+  const p = u.profile || {};
+  const stage = classifyStage(p);
+  const dl = daysLeft(p.trialStart);
+  const firstName = (p.name || '').split(' ')[0] || 'जी';
+  const biz = p.businessName || '';
+
+  // Priority order:
+  // 1. Trial expired
+  if (p.trialStart && dl === 0) {
+    return {
+      tag: 'EXPIRED',
+      tone: 'expiring',
+      preview: `${firstName} जी, आपका free trial खत्म हो गया है। ₹149/महीने में जारी रखें।`,
+      full: `नमस्ते ${firstName} जी 🙏\n\nहिसाब-Kitaab का आपका 90 दिन का free trial अब खत्म हो गया है।\n\nApp जारी रखने के लिए बस ₹149/महीना का subscription चालू करें। आपका सारा data safe है।\n\nApp open करें: https://hisaabkitaab.online/`
+    };
+  }
+  // 2. Stuck at PWA install
+  if (stage === 'stuck') {
+    return {
+      tag: 'INSTALL',
+      tone: 'stuck',
+      preview: `${firstName} जी, app install करने में मदद चाहिए? Link: hisaabkitaab.online`,
+      full: `नमस्ते ${firstName} जी 🙏\n\nहिसाब-Kitaab में register होने के लिए धन्यवाद!${biz ? ` ${biz} ` : ' '}अब बस एक छोटा सा step बचा है — app को install करना।\n\n📲 इस link पर click करें: https://hisaabkitaab.online/\n\nफिर "Install" या "Add to Home Screen" पर tap करें। 2 मिनट का काम है।\n\nकोई दिक्कत हो तो बताइए।`
+    };
+  }
+  // 3. Trial expiring soon (≤ 7 days)
+  if (p.trialStart && dl > 0 && dl <= 7) {
+    return {
+      tag: 'RENEW',
+      tone: 'expiring',
+      preview: `${firstName} जी, सिर्फ ${dl} दिन बाकी हैं trial में। Subscribe करना है?`,
+      full: `नमस्ते ${firstName} जी 🙏\n\nआपके हिसाब-Kitaab trial में सिर्फ ${dl} दिन बाकी हैं।\n\nApp जारी रखने के लिए ₹149/महीने का subscription चालू करें — एक चाय की कीमत में पूरे महीने का हिसाब।\n\nApp open करें: https://hisaabkitaab.online/`
+    };
+  }
+  // 4. Trial reminder (≤ 15 days)
+  if (p.trialStart && dl > 7 && dl <= 15) {
+    return {
+      tag: 'REMINDER',
+      tone: 'stuck',
+      preview: `${firstName} जी, ${dl} दिन बाकी हैं free trial में। कैसा experience रहा?`,
+      full: `नमस्ते ${firstName} जी 🙏\n\nआपके हिसाब-Kitaab free trial में ${dl} दिन बाकी हैं।\n\nApp कैसा लग रहा है? कोई feedback या सुझाव हो तो जरूर बताएँ। हम और बेहतर बना सकते हैं।\n\nधन्यवाद!`
+    };
+  }
+  // 5. Inactive (no activity for 14+ days, but activated)
+  if (stage === 'complete' && u.lastActive) {
+    const daysSinceActive = Math.floor((Date.now() - new Date(u.lastActive).getTime()) / (1000*60*60*24));
+    if (daysSinceActive >= 14) {
+      return {
+        tag: 'RE-ENGAGE',
+        tone: 'stuck',
+        preview: `${firstName} जी, कुछ दिनों से app use नहीं हो रहा। सब ठीक है?`,
+        full: `नमस्ते ${firstName} जी 🙏\n\nकुछ दिनों से हिसाब-Kitaab use नहीं हो रहा। सब ठीक तो है?\n\nकोई दिक्कत हो रही है app में, या कोई feature की कमी लग रही है — बताइए, हम मदद करेंगे।\n\nApp open करें: https://hisaabkitaab.online/`
+      };
+    }
+  }
+  // 6. Default check-in
+  return {
+    tag: 'CHECK-IN',
+    tone: '',
+    preview: `नमस्ते ${firstName} जी, हिसाब-Kitaab कैसा चल रहा है?`,
+    full: `नमस्ते ${firstName} जी 🙏\n\nहिसाब-Kitaab कैसा चल रहा है? कोई feedback या सुझाव हो तो जरूर बताएँ।\n\nधन्यवाद!`
+  };
+}
+
+function buildWhatsAppMessage(u) {
+  return pickTemplate(u).full;
+}
+
+// =================== FILTERS & SEARCH ===================
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter = tab.getAttribute('data-filter');
+    renderUserList();
+  });
+});
+
+document.getElementById('search-box').addEventListener('input', e => {
+  currentSearch = e.target.value.trim();
+  renderUserList();
+});
+
+document.getElementById('refresh-btn').addEventListener('click', loadUsers);
+
+// Auto-refresh every 60 seconds (lighter than the previous 10s poll)
+setInterval(() => {
+  if (sessionStorage.getItem('_adm_auth') === 'true' && !document.getElementById('profile-modal').classList.contains('show')) {
+    loadUsers();
+  }
+}, 60000);
 </script>
+
 </body>
 </html>

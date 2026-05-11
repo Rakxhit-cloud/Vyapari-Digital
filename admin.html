@@ -243,6 +243,33 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
   </div>
 </div>
 
+<!-- OTP SCREEN — Firebase phone auth for admin UID -->
+<div class="auth-wrap" id="otp-screen" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">📱</div>
+    <div class="auth-title" id="otp-title">Admin Verification</div>
+    <div class="auth-sub" id="otp-sub">Send OTP to your admin number</div>
+
+    <!-- Phone step -->
+    <div id="otp-phone-step">
+      <input type="tel" class="pin-input" id="otp-phone-input" placeholder="+91 XXXXXXXXXX" maxlength="14" inputmode="tel" style="letter-spacing:2px;font-size:14px;">
+      <button class="auth-btn" id="otp-send-btn" style="margin-top:14px;">Send OTP</button>
+    </div>
+
+    <!-- OTP step -->
+    <div id="otp-code-step" style="display:none;">
+      <div style="font-size:11px;color:#8aa0d8;margin-bottom:10px;text-align:center;" id="otp-sent-to"></div>
+      <input type="text" class="pin-input" id="otp-code-input" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code" style="letter-spacing:8px;">
+      <button class="auth-btn" id="otp-verify-btn" style="margin-top:14px;">Verify</button>
+      <button id="otp-back-btn" style="width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid #2a4078;color:#8aa0d8;border-radius:10px;font-size:11px;cursor:pointer;">← Change number</button>
+    </div>
+
+    <div class="auth-err" id="otp-err"></div>
+    <!-- Invisible reCAPTCHA mount point (Firebase phone auth requirement) -->
+    <div id="recaptcha-container" style="margin-top:10px;"></div>
+  </div>
+</div>
+
 <!-- MAIN DASHBOARD -->
 <div class="shell" id="dashboard" style="display:none">
 
@@ -305,6 +332,8 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut, browserLocalPersistence, setPersistence }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDzhDpkkjXKWRd1EAbgr3AXe6yFHmXJ9W4",
@@ -315,8 +344,23 @@ const firebaseConfig = {
   appId: "1:143662976042:web:63b9ca1e72a1150ba50753"
 };
 
-const app = initializeApp(firebaseConfig);
+// Named app instance "admin" — this is isolated from the regular PWA's
+// Firebase app instance, so signing into admin in one tab doesn't affect
+// the PWA's auth state in another tab. Different name = different auth scope.
+const app = initializeApp(firebaseConfig, 'admin');
 const db = getFirestore(app);
+const auth = getAuth(app);
+// Persist admin auth across browser restarts (localStorage). The user will
+// only need to do OTP once per device until they explicitly log out.
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
+
+// ADMIN UID — only this Firebase user can read user profile docs (per the
+// firestore.rules file). Anyone else gets a permission-denied error.
+const ADMIN_UID = '3WGf6UQ9xcR6iovNs2uiSPEtz8i2';
+
+// Expose to window so the non-module script below can call these
+window._fb = { auth, db, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut };
+window._ADMIN_UID = ADMIN_UID;
 
 window._loadUsersFromFirestore = async function() {
   const users = [];
@@ -327,24 +371,19 @@ window._loadUsersFromFirestore = async function() {
     try {
       const infoDoc = await getDoc(doc(db, 'users', uid, 'profile', 'info'));
       if (infoDoc.exists()) profile = infoDoc.data();
-    } catch(e) {}
-    let bikriCount = 0, maalCount = 0, kacchaCount = 0, udhaarCount = 0, lastActive = null;
-    for (const col of ['bikri', 'maal', 'kaccha', 'udhaar']) {
-      try {
-        const snap = await getDocs(collection(db, 'users', uid, col));
-        if (col === 'bikri') bikriCount = snap.size;
-        else if (col === 'maal') maalCount = snap.size;
-        else if (col === 'kaccha') kacchaCount = snap.size;
-        else if (col === 'udhaar') udhaarCount = snap.size;
-        snap.forEach(d => {
-          const data = d.data();
-          if (data.date) {
-            const ts = new Date(data.date).getTime();
-            if (!lastActive || ts > lastActive) lastActive = ts;
-          }
-        });
-      } catch(e) {}
+    } catch(e) {
+      // If admin lacks read access (rules block), skip silently.
+      // This shouldn't happen since rules allow admin to read profiles,
+      // but better to fail gracefully than show a broken list.
     }
+    // Counts come from the profile doc (populated by the daily Cloud Function).
+    // We do NOT read the entry sub-collections — Firestore rules forbid admin
+    // from reading entries (privacy guarantee).
+    const bikriCount  = profile.bikriCount  || 0;
+    const maalCount   = profile.maalCount   || 0;
+    const kacchaCount = profile.kacchaCount || 0;
+    const udhaarCount = profile.udhaarCount || 0;
+    const lastActive  = profile.lastActiveAt || null;
     users.push({ uid, profile, bikriCount, maalCount, kacchaCount, udhaarCount, lastActive });
   }
   return users;
@@ -355,15 +394,30 @@ window._extendTrial = async function(uid, additionalDays) {
   const snap = await getDoc(profileRef);
   if (!snap.exists()) throw new Error('Profile not found');
   const currentTrialStart = snap.data().trialStart || Date.now();
-  const newTrialStart = currentTrialStart + (additionalDays * 24*60*60*1000);
+  // Shift trialStart BACKWARDS to extend the days remaining.
+  // (daysLeft = 90 - daysSinceTrialStart, so moving start earlier increases it.)
+  const newTrialStart = currentTrialStart - (additionalDays * 24*60*60*1000);
   await setDoc(profileRef, { trialStart: newTrialStart }, { merge: true });
 };
 
-if (sessionStorage.getItem('_adm_auth') === 'true') {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-  loadUsers();
-}
+// Watch auth state. If signed in as the admin UID, reveal the dashboard.
+// Otherwise show the auth screen. This is the ONLY gate that matters —
+// PIN is just a UX layer on top.
+onAuthStateChanged(auth, (user) => {
+  const isAdmin = user && user.uid === ADMIN_UID;
+  window._currentAdminUser = isAdmin ? user : null;
+  if (isAdmin && sessionStorage.getItem('_adm_pin_ok') === 'true') {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('otp-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    if (typeof window.loadUsers === 'function') window.loadUsers();
+  } else if (isAdmin) {
+    // Signed in as admin but PIN not yet entered this session
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('otp-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'none';
+  }
+});
 </script>
 
 <script>
@@ -389,11 +443,20 @@ function tryLogin() {
   }
   const pin = document.getElementById('pin-input').value.trim();
   if (pin === ADMIN_PIN) {
-    sessionStorage.setItem('_adm_auth', 'true');
+    sessionStorage.setItem('_adm_pin_ok', 'true');
     sessionStorage.removeItem('_adm_attempts');
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    loadUsers();
+    // PIN correct. Now decide what to show next.
+    if (window._currentAdminUser) {
+      // Already signed in as admin UID — straight to dashboard.
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadUsers();
+    } else {
+      // Need to OTP into the admin Firebase account.
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('otp-screen').style.display = 'flex';
+      setupRecaptchaOnce();
+    }
   } else {
     const attempts = parseInt(sessionStorage.getItem('_adm_attempts') || '0') + 1;
     sessionStorage.setItem('_adm_attempts', attempts);
@@ -413,9 +476,130 @@ function showAuthErr(msg) {
   el.classList.add('show');
 }
 
-document.getElementById('logout-btn').addEventListener('click', () => {
-  sessionStorage.removeItem('_adm_auth');
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  sessionStorage.removeItem('_adm_pin_ok');
+  try { if (window._fb) await window._fb.signOut(window._fb.auth); } catch(e){}
   location.reload();
+});
+
+// =================== OTP FLOW ===================
+let _otpConfirmation = null;
+let _recaptchaVerifier = null;
+let _recaptchaReady = false;
+
+function setupRecaptchaOnce() {
+  if (_recaptchaReady) return;
+  if (!window._fb) {
+    // Module hasn't loaded yet — try again shortly
+    setTimeout(setupRecaptchaOnce, 200);
+    return;
+  }
+  try {
+    _recaptchaVerifier = new window._fb.RecaptchaVerifier(
+      window._fb.auth,
+      'recaptcha-container',
+      { size: 'invisible' }
+    );
+    _recaptchaVerifier.render().then(() => { _recaptchaReady = true; }).catch(()=>{});
+  } catch(e) {
+    console.warn('reCAPTCHA setup failed:', e);
+  }
+}
+
+function showOtpErr(msg) {
+  const el = document.getElementById('otp-err');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function clearOtpErr() {
+  document.getElementById('otp-err').classList.remove('show');
+}
+
+document.getElementById('otp-send-btn').addEventListener('click', async () => {
+  clearOtpErr();
+  const phoneRaw = document.getElementById('otp-phone-input').value.trim();
+  // Normalize: accept formats like "+91XXXXXXXXXX", "91XXXXXXXXXX", "XXXXXXXXXX"
+  let phone = phoneRaw.replace(/\D/g, '');
+  if (phone.length === 10) phone = '91' + phone;
+  if (phone.length !== 12) {
+    showOtpErr('❌ Enter a valid 10-digit number');
+    return;
+  }
+  const e164 = '+' + phone;
+  const btn = document.getElementById('otp-send-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  try {
+    if (!_recaptchaVerifier) setupRecaptchaOnce();
+    // Wait briefly for recaptcha to be ready
+    let tries = 0;
+    while (!_recaptchaReady && tries < 25) {
+      await new Promise(r => setTimeout(r, 200));
+      tries++;
+    }
+    _otpConfirmation = await window._fb.signInWithPhoneNumber(window._fb.auth, e164, _recaptchaVerifier);
+    document.getElementById('otp-phone-step').style.display = 'none';
+    document.getElementById('otp-code-step').style.display = 'block';
+    document.getElementById('otp-sent-to').textContent = 'OTP sent to ' + e164;
+    document.getElementById('otp-code-input').focus();
+  } catch(e) {
+    console.error('OTP send failed:', e);
+    showOtpErr('❌ ' + (e.message || 'Failed to send OTP'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send OTP';
+  }
+});
+
+document.getElementById('otp-back-btn').addEventListener('click', () => {
+  clearOtpErr();
+  document.getElementById('otp-code-step').style.display = 'none';
+  document.getElementById('otp-phone-step').style.display = 'block';
+  document.getElementById('otp-code-input').value = '';
+  _otpConfirmation = null;
+});
+
+document.getElementById('otp-verify-btn').addEventListener('click', async () => {
+  clearOtpErr();
+  if (!_otpConfirmation) {
+    showOtpErr('❌ Please request OTP first');
+    return;
+  }
+  const code = document.getElementById('otp-code-input').value.trim();
+  if (code.length !== 6) {
+    showOtpErr('❌ Enter the 6-digit code');
+    return;
+  }
+  const btn = document.getElementById('otp-verify-btn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+  try {
+    const cred = await _otpConfirmation.confirm(code);
+    // Check if this UID matches the admin UID
+    if (cred.user.uid !== window._ADMIN_UID) {
+      // Not the admin account — sign them out and reject.
+      await window._fb.signOut(window._fb.auth);
+      showOtpErr('❌ This number is not authorized for admin access');
+      btn.disabled = false;
+      btn.textContent = 'Verify';
+      return;
+    }
+    // Success — onAuthStateChanged listener will reveal the dashboard
+  } catch(e) {
+    console.error('OTP verify failed:', e);
+    showOtpErr('❌ Invalid OTP or expired');
+    btn.disabled = false;
+    btn.textContent = 'Verify';
+  }
+});
+
+// Enter key on OTP inputs
+document.getElementById('otp-phone-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') document.getElementById('otp-send-btn').click();
+});
+document.getElementById('otp-code-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') document.getElementById('otp-verify-btn').click();
 });
 
 // =================== UTILS ===================
@@ -499,7 +683,7 @@ let currentSearch = '';
 let extendUID = null, extendDays = 0;
 
 // =================== LOAD ===================
-async function loadUsers() {
+window.loadUsers = async function loadUsers() {
   document.getElementById('user-list').innerHTML = '<div class="empty-state">📡 Loading users...</div>';
   try {
     allUsers = await window._loadUsersFromFirestore();
@@ -507,7 +691,10 @@ async function loadUsers() {
     renderUserList();
   } catch(e) {
     console.error('Load error:', e);
-    document.getElementById('user-list').innerHTML = '<div class="empty-state">❌ Failed to load. Check connection.</div>';
+    const msg = (e.code === 'permission-denied' || /permission/i.test(e.message || ''))
+      ? '🔒 Not authorized. Logout and sign in as admin.'
+      : '❌ Failed to load. Check connection.';
+    document.getElementById('user-list').innerHTML = '<div class="empty-state">' + msg + '</div>';
   }
 }
 
@@ -1027,7 +1214,7 @@ document.getElementById('refresh-btn').addEventListener('click', loadUsers);
 
 // Auto-refresh every 60 seconds (lighter than the previous 10s poll)
 setInterval(() => {
-  if (sessionStorage.getItem('_adm_auth') === 'true' && !document.getElementById('profile-modal').classList.contains('show')) {
+  if (sessionStorage.getItem('_adm_pin_ok') === 'true' && window._currentAdminUser && !document.getElementById('profile-modal').classList.contains('show')) {
     loadUsers();
   }
 }, 60000);

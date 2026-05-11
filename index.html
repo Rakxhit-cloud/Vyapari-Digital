@@ -2416,6 +2416,17 @@ window._fsWrite = async function(uid, colName, item) {
     const { ...data } = item;
     await setDoc(ref, { ...data, _syncedAt: serverTimestamp() });
     setSyncStatus('synced', '☁️ Cloud Sync ✅');
+    // Stage 5: firstEntryAt — fires only once per user, on the very
+    // first time any entry is written. Cheap localStorage flag prevents
+    // re-running the Firestore write on every entry afterward.
+    try {
+      if (!localStorage.getItem('hk_first_entry_tracked_' + uid)) {
+        localStorage.setItem('hk_first_entry_tracked_' + uid, '1');
+        if (window._fsTrackStage) {
+          window._fsTrackStage(uid, 'firstEntryAt', '');
+        }
+      }
+    } catch(stageErr) { console.warn('first entry stage track err:', stageErr); }
   } catch(e) {
     console.warn('FS write error:', e);
     setSyncStatus('error', '☁️ Sync error — data saved locally');
@@ -2501,6 +2512,8 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
         phone: phone || '',
         trialStart,
         termsAgreedAt: serverTimestamp(),
+        nameSavedAt: serverTimestamp(),
+        registrationCompletedAt: serverTimestamp(),
         registeredAt: serverTimestamp(),
         appVersion: '1.0',
         platform: 'PWA'
@@ -2509,6 +2522,40 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
     console.log('✅ User registered in Firestore');
   } catch(e) {
     console.warn('FS register error:', e);
+  }
+};
+
+// Funnel tracker: writes a single stage timestamp to user profile.
+// Stages: otpVerifiedAt, termsAgreedAt, nameSavedAt, registrationCompletedAt,
+//         pwaActivatedAt, firstEntryAt
+// Safe to call repeatedly — uses { merge: true } so it never overwrites past stages.
+window._fsTrackStage = async function(uid, stage, phone) {
+  if (!uid || uid === 'default' || !stage) return;
+  try {
+    // Ensure parent doc exists (matches _fsRegisterUser pattern)
+    await setDoc(
+      doc(db, 'users', uid),
+      { exists: true, createdAt: serverTimestamp() },
+      { merge: true }
+    );
+    const profileRef = doc(db, 'users', uid, 'profile', 'info');
+    const payload = { uid };
+    payload[stage] = serverTimestamp();
+    if (phone) payload.phone = phone;
+    // For the very first stage (otpVerifiedAt) also stamp registeredAt
+    // so the user appears in admin immediately, even before name/business saved.
+    if (stage === 'otpVerifiedAt') {
+      const existing = await getDoc(profileRef);
+      if (!existing.exists() || !existing.data().registeredAt) {
+        payload.registeredAt = serverTimestamp();
+        payload.appVersion = '1.0';
+        payload.platform = 'PWA';
+      }
+    }
+    await setDoc(profileRef, payload, { merge: true });
+    console.log('📍 Stage tracked:', stage);
+  } catch(e) {
+    console.warn('FS stage track error:', e);
   }
 };
 
@@ -2548,7 +2595,15 @@ window.verifyOTP = async function() {
   const btn = document.getElementById('verify-otp-btn');
   btn.disabled = true; btn.textContent = '⏳ जाँच रहे हैं...'; loader.classList.add('show');
   try {
-    await confirmationResult.confirm(otp);
+    const cred = await confirmationResult.confirm(otp);
+    // Stage 1: OTP verified — create skeleton profile immediately
+    // so partial registrations are still visible in admin panel
+    try {
+      const u = (cred && cred.user) || (window._currentAuthUser);
+      if (u && u.uid && window._fsTrackStage) {
+        window._fsTrackStage(u.uid, 'otpVerifiedAt', u.phoneNumber || '');
+      }
+    } catch(stageErr) { console.warn('OTP stage track err:', stageErr); }
     succEl.textContent = '✅ सत्यापन सफल!'; succEl.classList.add('show'); loader.classList.remove('show');
   } catch (err) {
     console.error(err);
@@ -2600,6 +2655,13 @@ window.toggleTermsCheck = function() {
 
 window.agreeTerms = async function() {
   if (!termsChecked) return;
+  // Stage 2: Terms accepted
+  try {
+    const u = window._currentAuthUser;
+    if (u && u.uid && window._fsTrackStage) {
+      window._fsTrackStage(u.uid, 'termsAgreedAt', u.phoneNumber || '');
+    }
+  } catch(e) { console.warn('terms stage track err:', e); }
   document.getElementById('screen-terms').classList.add('hidden');
   document.getElementById('screen-udhaar-info').classList.remove('hidden');
 };
@@ -2625,9 +2687,14 @@ window.saveName = async function() {
   const uid = window._currentAuthUser ? window._currentAuthUser.uid : null;
   if (uid && window._fsRegisterUser) {
     try {
-      const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
       const db = window._db;
-      await setDoc(doc(db, 'users', uid, 'profile', 'info'), { name, businessName }, { merge: true });
+      await setDoc(doc(db, 'users', uid, 'profile', 'info'), {
+        name,
+        businessName,
+        nameSavedAt: serverTimestamp(),
+        registrationCompletedAt: serverTimestamp()
+      }, { merge: true });
     } catch(e) { console.warn('Profile save error:', e); }
   }
   document.getElementById('screen-name').classList.add('hidden');
@@ -3944,9 +4011,22 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     let salt = localStorage.getItem(PIN_SALT_KEY);
     if (!salt) { salt = genSalt(); localStorage.setItem(PIN_SALT_KEY, salt); }
     const hash = await hashPin(pin, salt);
+    const isFirstPin = !localStorage.getItem(PIN_HASH_KEY);
     localStorage.setItem(PIN_HASH_KEY, hash);
     localStorage.setItem(ATTEMPTS_KEY, '0');
     localStorage.removeItem(LOCKOUT_UNTIL_KEY);
+    // Stage 4: PWA activated — fires only on the FIRST PIN creation
+    // ever, which only happens on the installed PWA (browser block
+    // screen prevents PIN setup in browser). This is the signal we use
+    // to distinguish "registered but never opened PWA" from "fully activated".
+    if (isFirstPin) {
+      try {
+        const u = window._currentAuthUser;
+        if (u && u.uid && window._fsTrackStage) {
+          window._fsTrackStage(u.uid, 'pwaActivatedAt', u.phoneNumber || '');
+        }
+      } catch(e) { console.warn('pwa activation track err:', e); }
+    }
   }
   async function verifyPin(pin) {
     const salt = localStorage.getItem(PIN_SALT_KEY);

@@ -58,12 +58,25 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .refresh-btn{background:rgba(93,202,165,0.1);border:1px solid #5dcaa5;color:#5dcaa5;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
 .refresh-btn:hover{background:rgba(93,202,165,0.18)}
 
-/* USER TABLE */
-.table-wrap{background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:1px solid #2a4078;border-radius:14px;overflow:hidden;margin-bottom:22px}
-.table-head{display:grid;grid-template-columns:50px 1.4fr 1.4fr 0.9fr 1fr 1.1fr 1fr 90px;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(42,64,120,0.5);font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:1px;font-weight:500}
-.user-row{display:grid;grid-template-columns:50px 1.4fr 1.4fr 0.9fr 1fr 1.1fr 1fr 90px;gap:12px;padding:14px 18px;border-bottom:1px solid rgba(42,64,120,0.3);align-items:center;cursor:pointer;transition:background .15s}
-.user-row:hover{background:rgba(20,37,74,0.5)}
-.user-row:last-child{border-bottom:none}
+/* USER LIST - card-style rows */
+.table-wrap{background:transparent;border:none;border-radius:0;overflow:visible;margin-bottom:22px}
+.table-head{display:grid;grid-template-columns:44px 1.4fr 1.4fr 0.95fr 0.9fr 1.1fr 1fr 90px;gap:12px;padding:8px 22px 12px;font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:1px;font-weight:500}
+#user-list{display:flex;flex-direction:column;gap:10px}
+.user-row{position:relative;display:grid;grid-template-columns:44px 1.4fr 1.4fr 0.95fr 0.9fr 1.1fr 1fr 90px;gap:12px;padding:16px 20px 16px 24px;align-items:center;cursor:pointer;background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:2px solid #2a4078;border-radius:14px;transition:all .18s ease;overflow:hidden}
+.user-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#2a4078;transition:background .18s ease}
+.user-row:hover{transform:translateY(-1px);border-color:#3d5a9e;box-shadow:0 6px 20px rgba(0,0,0,0.35)}
+.user-row.stage-row-complete{border-color:rgba(93,202,165,0.45)}
+.user-row.stage-row-complete::before{background:linear-gradient(180deg,#5dcaa5,#1d9e75)}
+.user-row.stage-row-complete:hover{border-color:#5dcaa5;box-shadow:0 6px 20px rgba(93,202,165,0.12)}
+.user-row.stage-row-stuck{border-color:rgba(240,168,104,0.5)}
+.user-row.stage-row-stuck::before{background:linear-gradient(180deg,#f0a868,#cc7a47)}
+.user-row.stage-row-stuck:hover{border-color:#f0a868;box-shadow:0 6px 20px rgba(240,168,104,0.15)}
+.user-row.stage-row-partial{border-color:rgba(74,144,212,0.45)}
+.user-row.stage-row-partial::before{background:linear-gradient(180deg,#7ab0e8,#4a90d4)}
+.user-row.stage-row-partial:hover{border-color:#4a90d4;box-shadow:0 6px 20px rgba(74,144,212,0.12)}
+.user-row.stage-row-otp{border-color:rgba(176,124,255,0.45)}
+.user-row.stage-row-otp::before{background:linear-gradient(180deg,#b07cff,#7c5acc)}
+.user-row.stage-row-otp:hover{border-color:#b07cff;box-shadow:0 6px 20px rgba(176,124,255,0.12)}
 .row-num{font-size:12px;color:#8aa0d8;font-weight:500}
 .phone-cell{font-family:monospace;font-size:13px;color:#e8d8b8;font-weight:500;letter-spacing:0.3px}
 .uid-cell{font-family:monospace;font-size:9px;color:#6a78b8;margin-top:2px}
@@ -543,8 +556,13 @@ function userRowHTML(u, num) {
   const p = u.profile || {};
   const stage = classifyStage(p);
   const stagePill = stagePillHTML(stage);
-  const name = p.name || '<span class="name-empty">— no name —</span>';
-  const biz = p.businessName ? `<div class="name-biz">${escapeHTML(p.businessName)}</div>` : '';
+  // Build name HTML safely: escape the real name, but use raw HTML for empty-state placeholder
+  const nameHTML = p.name
+    ? `<div class="name-main">${escapeHTML(p.name)}</div>`
+    : `<div class="name-empty">— no name —</div>`;
+  const bizHTML = p.businessName
+    ? `<div class="name-biz">${escapeHTML(p.businessName)}</div>`
+    : '';
   const dl = daysLeft(p.trialStart);
   const tCls = trialClass(dl);
   const trialHtml = p.trialStart
@@ -557,7 +575,7 @@ function userRowHTML(u, num) {
   const entries = entriesMiniHTML(u);
 
   return `
-    <div class="user-row" data-uid="${u.uid}">
+    <div class="user-row stage-row-${stage}" data-uid="${u.uid}">
       <div class="row-num" data-label="#">${num}</div>
       <div data-label="Phone">
         <div>
@@ -567,8 +585,8 @@ function userRowHTML(u, num) {
       </div>
       <div data-label="Name">
         <div>
-          <div class="name-main">${escapeHTML(name)}</div>
-          ${biz}
+          ${nameHTML}
+          ${bizHTML}
         </div>
       </div>
       <div data-label="Stage">${stagePill}</div>

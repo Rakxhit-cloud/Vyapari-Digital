@@ -2107,7 +2107,7 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
    <div style="display:flex;align-items:center;gap:10px;margin:14px 0 10px;padding:4px;">
-      <div class="sec-icon sec-icon-gold" style="width:36px;height:36px;font-size:18px;border-radius:9px;">📅</div>
+      <div class="sec-icon" style="width:36px;height:36px;font-size:18px;border-radius:9px;background:linear-gradient(135deg,#1a3a78,#0a2050);border:1px solid #4a90d4;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="filter:hue-rotate(180deg) saturate(1.4);display:inline-block;">📅</span></div>
       <div class="sec-text"><div class="sec-title" style="color:#d4a850;font-size:13px;" id="month-nav-heading">2026 — महीनेवार</div><div class="sec-sub" style="font-size:9px;">Year Overview</div></div>
       <span class="sec-badge" style="background:#4a3818;color:#d4a850;border:1px solid #d4a850;font-size:9px;padding:3px 8px;">चालू वर्ष</span>
     </div>
@@ -2127,7 +2127,7 @@ body.notif-modal-open { overflow: hidden; }
         <div style="background:#1a1000;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#cc7a47;font-weight:700;margin-bottom:3px;">खर्चा</div><div id="month-detail-expense" style="font-size:13px;font-weight:800;color:#cc7a47;"></div></div>
       </div>
     </div>
-    <div class="sec-head"><div class="sec-icon sec-icon-gold">💰</div><div class="sec-text"><div class="sec-title" style="color:#d4a850;">बिक्री और गल्ला</div><div class="sec-sub">Sales & Cash Earnings</div></div><div onclick="toggleMahineyFromBtn()" style="background:linear-gradient(135deg,#1a1545 0%,#0d0a30 100%);border:2px solid #d4a850;border-radius:12px;padding:7px 12px;display:flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 3px 10px rgba(212,168,80,0.2), 0 0 0 1px rgba(122,108,240,0.3);flex-shrink:0;"><span style="font-size:22px;line-height:1;">📆</span><div style="line-height:1.15;"><div style="color:#d4a850;font-size:11.5px;font-weight:700;">कैलेंडर</div><div style="color:#b0a0e8;font-size:9.5px;font-weight:500;">▼ खोलें</div></div></div></div>
+    <div class="sec-head"><div class="sec-icon sec-icon-gold">💰</div><div class="sec-text"><div class="sec-title" style="color:#d4a850;">बिक्री और गल्ला</div><div class="sec-sub">Sales & Cash Earnings</div></div><div onclick="toggleMahineyFromBtn()" style="background:linear-gradient(135deg,#1a1545 0%,#0d0a30 100%);border:2px solid #d4a850;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 3px 10px rgba(212,168,80,0.2), 0 0 0 1px rgba(122,108,240,0.3);flex-shrink:0;"><span style="font-size:28px;line-height:1;">📆</span><div style="line-height:1.2;"><div style="color:#d4a850;font-size:13px;font-weight:700;">कैलेंडर</div><div style="color:#b0a0e8;font-size:10.5px;font-weight:500;">▼ खोलें</div></div></div></div>
     <div class="kpi-grid">
       <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl"><span class="kpi-lbl-text">💰 बिक्री</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
       <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl"><span class="kpi-lbl-text">📈 गल्ला/कमाई</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
@@ -3174,7 +3174,7 @@ function initApp(uid){
   document.getElementById('t-date').textContent=TODAY.toLocaleDateString('hi-IN',{day:'numeric',month:'long'});
   ['e-date','m-date'].forEach(id=>document.getElementById(id).value=TSTR);
   document.getElementById('g-month').value=MSTR;
- document.getElementById('month-nav-heading').textContent='📅 '+CUR_YEAR+' — महीनेवार';
+ document.getElementById('month-nav-heading').textContent=CUR_YEAR+' — महीनेवार';
   loadHome();
 }
 

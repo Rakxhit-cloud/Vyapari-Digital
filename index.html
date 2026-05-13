@@ -1153,6 +1153,124 @@ body.notif-modal-open { overflow: hidden; }
 .qec-cta{margin-top:14px;text-align:center;}
 .qec-cta-btn{background:linear-gradient(135deg, #d4a850 0%, #e8c870 100%);color:#1a1208;font-size:15px;font-weight:600;padding:13px 42px;border-radius:9px;display:inline-block;border:1.5px solid #f0d890;cursor:pointer;box-shadow:0 2px 0 #8a6818;}
 .qec-cta-btn:active{opacity:.85;}
+
+/* ============================================================
+   Live गल्ला Feature Styles
+   ============================================================ */
+/* Slow breathing pulse — shared by all LIVE dots + home tile icon */
+@keyframes hk-breathe { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.92); } }
+.lg-dot { width:7px; height:7px; border-radius:50%; display:inline-block; animation: hk-breathe 2.4s ease-in-out infinite; }
+.lg-dot-green { background:#8aef7a; }
+.lg-dot-blue  { background:#5dcaff; animation-delay: 0.8s; }
+.lg-dot-orange{ background:#cc7a47; animation-delay: 1.6s; }
+.lg-pill { background:#0a1530; border-radius:8px; padding:2px 8px; display:inline-flex; align-items:center; gap:5px; font-size:9px; font-weight:600; letter-spacing:0.5px; }
+.lg-pill-green { border:1px solid #8aef7a; color:#8aef7a; }
+.lg-pill-blue  { border:1px solid #5dcaff; color:#5dcaff; }
+.lg-pill-orange{ border:1px solid #cc7a47; color:#cc7a47; }
+
+/* Home tile — replaces Quick Entry */
+.lg-home-tile { background:linear-gradient(135deg,#0a1530 0%,#14254a 100%); border:1.5px solid #2a4078; border-radius:16px; overflow:hidden; cursor:pointer; margin:10px 0; transition:transform .15s; position:relative; }
+.lg-home-tile:active { transform:scale(.97); }
+.lg-home-stripe { height:4px; background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%); }
+.lg-home-body { padding:16px 18px; display:flex; align-items:center; gap:14px; }
+.lg-home-icon { width:60px; height:60px; background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%); border:2px solid #d4a850; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; animation: hk-breathe 2.4s ease-in-out infinite; }
+.lg-home-text { flex:1; }
+.lg-home-title { font-size:20px; font-weight:600; color:#d4a850; line-height:1.2; }
+.lg-home-sub { font-size:11px; color:#8aa0d8; margin-top:3px; }
+.lg-home-cta { background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%); color:#1a1208; font-size:12px; font-weight:600; padding:8px 14px; border-radius:9px; border:1.5px solid #f0d890; flex-shrink:0; }
+
+/* Screen header card with totals */
+.lg-totals-card { background:linear-gradient(135deg,#0a1530 0%,#14254a 100%); border:1.5px solid #2a4078; border-radius:14px; overflow:hidden; margin-bottom:18px; }
+.lg-totals-stripe { height:3px; background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%); }
+.lg-totals-body { padding:14px; }
+.lg-totals-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; }
+.lg-totals-row + .lg-totals-row { border-top:1px solid #2a4078; }
+
+/* Category section */
+.lg-cat-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; padding-left:2px; }
+.lg-cat-head-left { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+.lg-cat-sub { font-size:10px; color:#8aa0d8; margin-bottom:8px; padding-left:2px; }
+
+/* Box grid — 8 columns; wraps to multiple rows. Scrollable after 4 rows */
+.lg-box-grid { display:grid; grid-template-columns:repeat(8,1fr); gap:6px; max-height:none; overflow-y:auto; }
+.lg-box-grid.lg-scrollable { max-height:180px; overflow-y:auto; padding-right:4px; }
+
+/* Individual box */
+.lg-box { border-radius:10px; padding:8px 2px; text-align:center; cursor:pointer; }
+.lg-box-num { font-size:9px; line-height:1; font-weight:700; opacity:0.8; }
+.lg-box-amt { font-size:12px; font-weight:700; line-height:1.1; margin-top:4px; word-break:break-all; }
+.lg-box-cash    { background:#081223; border:2px solid #8aef7a; }
+.lg-box-cash    .lg-box-num { color:#8aef7a; }
+.lg-box-cash    .lg-box-amt { color:#c4f4b8; }
+.lg-box-upi     { background:#081223; border:2px solid #5dcaff; }
+.lg-box-upi     .lg-box-num { color:#5dcaff; }
+.lg-box-upi     .lg-box-amt { color:#a8e0ff; }
+.lg-box-expense { background:#1a0e08; border:2px solid #cc7a47; }
+.lg-box-expense .lg-box-num { color:#cc7a47; }
+.lg-box-expense .lg-box-amt { color:#f0b888; }
+
+/* Add (+) button cell */
+.lg-add { background:#0a1530; border-radius:10px; padding:7px 2px; text-align:center; display:flex; align-items:center; justify-content:center; min-height:40px; cursor:pointer; font-size:22px; font-weight:600; line-height:1; }
+.lg-add-cash    { border:2px solid #8aef7a; color:#8aef7a; }
+.lg-add-upi     { border:2px solid #5dcaff; color:#5dcaff; }
+.lg-add-expense { border:2px solid #cc7a47; color:#cc7a47; }
+.lg-add:active { opacity:.7; }
+
+/* Compact modal keypad */
+.lg-modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); z-index:1500; display:none; align-items:center; justify-content:center; padding:16px; }
+.lg-modal-backdrop.show { display:flex; }
+.lg-modal-card { width:100%; max-width:300px; background:#0a1530; border:1.5px solid #2a4078; border-radius:14px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.6); }
+.lg-modal-stripe { height:3px; background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%); }
+.lg-modal-body { padding:12px; }
+.lg-modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.lg-modal-title { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; }
+.lg-modal-close { background:#081223; border:1px solid #2a4078; width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#8aa0d8; font-size:12px; cursor:pointer; }
+.lg-display { background:#081223; border:2px solid #2a4078; border-radius:10px; padding:13px 10px; margin-bottom:10px; text-align:center; }
+.lg-display.lg-display-cash { border-color:#8aef7a; }
+.lg-display.lg-display-upi { border-color:#5dcaff; }
+.lg-display.lg-display-expense { border-color:#cc7a47; }
+.lg-display-amount { font-size:30px; font-weight:700; letter-spacing:-0.5px; line-height:1; }
+.lg-display-amount.lg-amt-cash { color:#c4f4b8; }
+.lg-display-amount.lg-amt-upi { color:#a8e0ff; }
+.lg-display-amount.lg-amt-expense { color:#f0b888; }
+.lg-display-hint { font-size:9px; color:#8aa0d8; margin-top:5px; }
+.lg-keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+.lg-key { background:#081223; border:1.5px solid #2a4078; border-radius:9px; padding:11px 0; text-align:center; font-size:17px; font-weight:600; color:#e8d8b8; cursor:pointer; user-select:none; }
+.lg-key:active { background:#142544; }
+.lg-key-back { color:#cc7a47; border-color:rgba(204,122,71,0.6); font-size:14px; }
+.lg-key-tri { color:#d4a850; border-color:rgba(212,168,80,0.6); font-size:13px; }
+.lg-commit-btn { background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%); border:2px solid #f0d890; color:#1a1208; font-size:12px; font-weight:600; padding:11px; border-radius:10px; text-align:center; margin-top:9px; cursor:pointer; }
+.lg-commit-btn:active { opacity:.85; }
+
+/* Box edit/delete mini-overlay */
+.lg-box-action { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1500; display:none; align-items:center; justify-content:center; padding:20px; }
+.lg-box-action.show { display:flex; }
+.lg-box-action-card { background:#0a1530; border:1.5px solid #2a4078; border-radius:12px; padding:18px; width:100%; max-width:280px; text-align:center; }
+.lg-box-action-amt { font-size:24px; font-weight:700; color:#e8d8b8; margin-bottom:4px; }
+.lg-box-action-meta { font-size:11px; color:#8aa0d8; margin-bottom:14px; }
+.lg-box-action-btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.lg-action-btn { padding:11px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid; }
+.lg-action-edit { background:#0a2050; color:#7ab0e8; border-color:#4a90d4; }
+.lg-action-del  { background:#3a1818; color:#f08080; border-color:#cc4545; }
+.lg-action-cancel { width:100%; margin-top:10px; padding:9px; background:transparent; border:1px solid #2a4078; color:#8aa0d8; border-radius:8px; font-size:11px; cursor:pointer; }
+
+/* Save/closing button */
+.lg-save-btn { width:100%; background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%); border:2px solid #f0d890; color:#1a1208; font-size:15px; font-weight:600; padding:15px; border-radius:12px; box-shadow:0 2px 0 #8a6818; cursor:pointer; margin-top:16px; }
+.lg-save-btn:active { opacity:.85; }
+.lg-saved-banner { background:#1a3a2a; border:1.5px solid #5dcaa5; color:#8aef7a; padding:14px; border-radius:12px; text-align:center; font-size:13px; font-weight:600; margin-top:16px; }
+
+/* Unsaved-day blocker */
+.lg-blocker-banner { background:#3a1818; border:1.5px solid #cc4545; border-radius:10px; padding:11px 13px; margin-bottom:14px; display:flex; align-items:center; gap:10px; }
+.lg-blocker-icon { font-size:22px; flex-shrink:0; }
+.lg-blocker-text { flex:1; font-size:11.5px; color:#f0c8c8; line-height:1.4; }
+.lg-blocker-text strong { color:#fff; font-weight:600; }
+
+/* Date-popup saved banner (calendar drill-down) */
+.lg-dp-saved { background:#1a3a2a; border:1.5px solid #5dcaa5; border-radius:10px; padding:10px 12px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.lg-dp-saved-icon { font-size:18px; }
+.lg-dp-saved-text { font-size:11.5px; color:#8aef7a; font-weight:600; }
+.lg-dp-saved-amt { font-size:13px; font-weight:700; color:#c4f4b8; margin-left:auto; }
+
 </style>
 </head>
 <body> <!-- Splash Screen -->
@@ -2080,30 +2198,19 @@ body.notif-modal-open { overflow: hidden; }
     </div>
   </div>
 </div>
-    <!-- ── तुरंत एंट्री Quick Entry Card ── -->
-<div class="quick-entry-card" id="quick-entry-home-card" onclick="quickEntryFromHome('quick')">
-  <div class="qec-rainbow"></div>
-  <div class="qec-body">
-    <div class="qec-top">
-      <div class="qec-icons"><span class="ico-note">📝</span><span class="ico-bolt">⚡</span></div>
-      <div style="flex:1;">
-        <div class="qec-title">तुरंत एंट्री</div>
-        <div class="qec-sub">Quick Entry · <span>30 सेकंड</span> में</div>
+    <!-- ── Live गल्ला (replaces Quick Entry) ── -->
+<div class="lg-home-tile" id="lg-home-tile" onclick="lgOpen()">
+  <div class="lg-home-stripe"></div>
+  <div class="lg-home-body">
+    <div class="lg-home-icon">💰</div>
+    <div class="lg-home-text">
+      <div style="display:flex;align-items:center;gap:7px;">
+        <div class="lg-home-title">Live गल्ला</div>
+        <div class="lg-pill lg-pill-green"><span class="lg-dot lg-dot-green"></span>LIVE</div>
       </div>
-      <div class="qec-badge">⚡ QUICK</div>
+      <div class="lg-home-sub">हर बिक्री · हर खर्चा — एक tap में</div>
     </div>
-    <div class="qec-toggle">
-      <div class="qec-tog-btn qec-active" onclick="event.stopPropagation();quickEntryFromHome('quick')">⚡ तुरंत</div>
-      <div class="qec-tog-btn" onclick="event.stopPropagation();quickEntryFromHome('full')" style="color:#666;">📋 पूरा</div>
-    </div>
-    <div class="qec-flow">
-      <div class="qec-flow-item"><p class="qec-flow-ico">💰</p><p class="qec-flow-lbl" style="color:#4a90d4;">बिक्री</p></div>
-      <span class="qec-flow-arrow">→</span>
-      <div class="qec-flow-item"><p class="qec-flow-ico">🧾</p><p class="qec-flow-lbl" style="color:#b0a0e8;">खर्चा</p></div>
-      <span class="qec-flow-arrow">→</span>
-      <div class="qec-flow-item"><p class="qec-flow-ico">✅</p><p class="qec-flow-lbl" style="color:#d4a850;">सेव</p></div>
-    </div>
-    <div class="qec-cta"><button class="qec-cta-btn" onclick="event.stopPropagation();quickEntryFromHome('quick')">शुरू करें →</button></div>
+    <div class="lg-home-cta">खोलें →</div>
   </div>
 </div>
    <div style="display:flex;align-items:center;gap:10px;margin:14px 0 10px;padding:4px;">
@@ -2287,6 +2394,159 @@ body.notif-modal-open { overflow: hidden; }
     </div>
   </div>
 </div>
+
+<!-- ============================================================
+     LIVE गल्ला SCREEN
+     Replaces Quick Entry as the primary entry path.
+     Boxes (cash/upi/expense) are auto-synced to the bikri record
+     for the day. Manual save = "Closing करें / Save"
+     ============================================================ -->
+<div id="s-livegalla" class="screen">
+  <div class="header" style="border-bottom-color:#d4a850;">
+    <div class="header-left">
+      <div class="header-icon" style="background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%);border:2px solid #d4a850;">💰</div>
+      <div>
+        <div class="header-title" id="lg-screen-title">Live गल्ला</div>
+        <div class="header-sub" id="lg-screen-sub" style="color:#d4a850;">हर बिक्री · हर खर्चा</div>
+      </div>
+    </div>
+  </div>
+  <div style="height:4px;background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%);"></div>
+  <div class="fw">
+
+    <!-- Unsaved-day blocker banner (only visible when blocking older day) -->
+    <div id="lg-blocker-banner" class="lg-blocker-banner" style="display:none;">
+      <div class="lg-blocker-icon">⚠️</div>
+      <div class="lg-blocker-text" id="lg-blocker-text">
+        <strong>पिछला दिन save नहीं —</strong> पहले उसे पूरा करें, फिर आज का खुलेगा
+      </div>
+    </div>
+
+    <!-- Totals card -->
+    <div class="lg-totals-card">
+      <div class="lg-totals-stripe"></div>
+      <div class="lg-totals-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:7px;">
+            <span style="font-size:17px;">💰</span>
+            <span style="font-size:13px;color:#d4a850;font-weight:600;">आज का गल्ला · Today's Result</span>
+          </div>
+          <div style="font-size:10px;color:#8aa0d8;" id="lg-date-label">—</div>
+        </div>
+        <div class="lg-totals-row">
+          <span style="font-size:12px;color:#d4a850;font-weight:500;">आज का गल्ला/कमाई</span>
+          <span style="font-size:24px;font-weight:500;color:#e8d8b8;" id="lg-tot-profit">₹0</span>
+        </div>
+        <div class="lg-totals-row">
+          <span style="font-size:12px;color:#8aef7a;font-weight:500;">💵 कुल बिक्री</span>
+          <span style="font-size:16px;font-weight:500;color:#8aef7a;" id="lg-tot-sales">₹0</span>
+        </div>
+        <div class="lg-totals-row">
+          <span style="font-size:12px;color:#cc7a47;font-weight:500;">🧾 कुल खर्चा</span>
+          <span style="font-size:16px;font-weight:500;color:#cc7a47;" id="lg-tot-expense">₹0</span>
+        </div>
+        <div class="lg-totals-row">
+          <span style="font-size:12px;color:#b0a0e8;font-weight:500;">📝 कुल एंट्री</span>
+          <span style="font-size:14px;font-weight:500;color:#b0a0e8;" id="lg-tot-count">0 बार</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- नकद बिक्री section -->
+    <div style="margin-bottom:18px;">
+      <div class="lg-cat-head">
+        <div class="lg-cat-head-left">
+          <span style="font-size:18px;">💵</span>
+          <span style="font-size:13px;color:#8aef7a;font-weight:600;">नकद बिक्री</span>
+          <div class="lg-pill lg-pill-green"><span class="lg-dot lg-dot-green"></span>LIVE</div>
+        </div>
+        <div style="font-size:11px;color:#8aef7a;font-weight:500;" id="lg-cash-meta">₹0 · 0 एंट्री</div>
+      </div>
+      <div class="lg-cat-sub">Cash Sales · हर बिक्री एक box में</div>
+      <div class="lg-box-grid" id="lg-grid-cash"></div>
+    </div>
+
+    <!-- UPI बिक्री section -->
+    <div style="margin-bottom:18px;">
+      <div class="lg-cat-head">
+        <div class="lg-cat-head-left">
+          <span style="font-size:18px;">📱</span>
+          <span style="font-size:13px;color:#5dcaff;font-weight:600;">UPI बिक्री</span>
+          <div class="lg-pill lg-pill-blue"><span class="lg-dot lg-dot-blue"></span>LIVE</div>
+        </div>
+        <div style="font-size:11px;color:#5dcaff;font-weight:500;" id="lg-upi-meta">₹0 · 0 एंट्री</div>
+      </div>
+      <div class="lg-cat-sub">UPI Sales · PhonePe / GPay / Paytm</div>
+      <div class="lg-box-grid" id="lg-grid-upi"></div>
+    </div>
+
+    <!-- खर्चा section -->
+    <div style="margin-bottom:18px;">
+      <div class="lg-cat-head">
+        <div class="lg-cat-head-left">
+          <span style="font-size:18px;">🧾</span>
+          <span style="font-size:13px;color:#cc7a47;font-weight:600;">खर्चा</span>
+          <div class="lg-pill lg-pill-orange"><span class="lg-dot lg-dot-orange"></span>LIVE</div>
+        </div>
+        <div style="font-size:11px;color:#cc7a47;font-weight:500;" id="lg-exp-meta">₹0 · 0 एंट्री</div>
+      </div>
+      <div class="lg-cat-sub">Today's Expense</div>
+      <div class="lg-box-grid" id="lg-grid-expense"></div>
+    </div>
+
+    <!-- Manual Save / Closing button (or "saved" banner when done) -->
+    <div id="lg-save-area">
+      <button class="lg-save-btn" onclick="lgConfirmClosing()">💾 Closing करें / Save</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Compact modal keypad -->
+<div class="lg-modal-backdrop" id="lg-keypad-modal" onclick="if(event.target===this)lgCloseKeypad()">
+  <div class="lg-modal-card">
+    <div class="lg-modal-stripe"></div>
+    <div class="lg-modal-body">
+      <div class="lg-modal-head">
+        <div class="lg-modal-title" id="lg-keypad-title">💵 नकद · एंट्री 1</div>
+        <div class="lg-modal-close" onclick="lgCloseKeypad()">✕</div>
+      </div>
+      <div class="lg-display" id="lg-keypad-display">
+        <div class="lg-display-amount" id="lg-keypad-amount">₹0</div>
+        <div class="lg-display-hint">अधिकतम 5 अंक · ₹99,999 तक</div>
+      </div>
+      <div class="lg-keypad">
+        <div class="lg-key" onclick="lgKeyPress('1')">1</div>
+        <div class="lg-key" onclick="lgKeyPress('2')">2</div>
+        <div class="lg-key" onclick="lgKeyPress('3')">3</div>
+        <div class="lg-key" onclick="lgKeyPress('4')">4</div>
+        <div class="lg-key" onclick="lgKeyPress('5')">5</div>
+        <div class="lg-key" onclick="lgKeyPress('6')">6</div>
+        <div class="lg-key" onclick="lgKeyPress('7')">7</div>
+        <div class="lg-key" onclick="lgKeyPress('8')">8</div>
+        <div class="lg-key" onclick="lgKeyPress('9')">9</div>
+        <div class="lg-key lg-key-back" onclick="lgKeyBack()">⌫</div>
+        <div class="lg-key" onclick="lgKeyPress('0')">0</div>
+        <div class="lg-key lg-key-tri" onclick="lgKeyTri()">000</div>
+      </div>
+      <div class="lg-commit-btn" id="lg-keypad-commit" onclick="lgCommitBox()">💾 जोड़ें</div>
+    </div>
+  </div>
+</div>
+
+<!-- Box edit/delete mini-overlay -->
+<div class="lg-box-action" id="lg-box-action" onclick="if(event.target===this)lgCloseBoxAction()">
+  <div class="lg-box-action-card">
+    <div class="lg-box-action-amt" id="lg-box-action-amt">₹0</div>
+    <div class="lg-box-action-meta" id="lg-box-action-meta">—</div>
+    <div class="lg-box-action-btns">
+      <button class="lg-action-btn lg-action-edit" onclick="lgEditBox()">✏️ Edit</button>
+      <button class="lg-action-btn lg-action-del" onclick="lgDeleteBox()">🗑️ Delete</button>
+    </div>
+    <button class="lg-action-cancel" onclick="lgCloseBoxAction()">Cancel</button>
+  </div>
+</div>
+
 <div id="s-maal" class="screen">
   <div class="header" style="border-bottom-color:#cc7a47;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#4a2818 0%,#6a3818 50%,#2a1810 100%);border:2px solid #cc7a47;">📦</div><div><div class="header-title">माल की खरीद</div><div class="header-sub" style="color:#cc7a47;">नया माल दर्ज करें</div></div></div></div>
   <div class="fw">
@@ -2478,6 +2738,9 @@ window._fsLoadAll = async function(uid) {
       if (typeof loadHome === 'function') loadHome();
       if (typeof loadUdhaarKPI === 'function') loadUdhaarKPI();
       if (typeof updateTrialBanner === 'function') updateTrialBanner(uid);
+      // Live गल्ला blocker check after sync — catches the case where
+      // an unsaved day from one device shows up on another device
+      if (window.lgCheckAndBlock) setTimeout(() => window.lgCheckAndBlock(), 400);
     }
     if (typeof UB_UID !== 'undefined' && UB_UID !== 'default') {
       if (typeof ubLoadList === 'function') ubLoadList();
@@ -3149,6 +3412,462 @@ const DB = {
 
 const K={BIKRI:'bikri',MAAL:'maal',UDHAAR:'udhaar',GOAL:'goal'};
 const TODAY=new Date();
+
+// ============================================================
+// LIVE गल्ला Feature
+// ============================================================
+// Data model: each बिक्री record gains optional fields:
+//   lgBoxes: [{ n, type:'cash'|'upi'|'expense', amount, ts }]
+//   lgSaved: false until manual "Closing करें" tap
+//   lgSavedAt: timestamp when saved
+// Old बिक्री records (without lgBoxes) are treated as already-saved.
+// Home aggregations read sales/cash/upi/expense unchanged — they get
+// recomputed whenever a Live गल्ला box is added/edited/deleted.
+// ============================================================
+
+const LG_MAX_DIGITS = 5;           // ₹99,999 per box
+const LG_BOXES_PER_ROW = 8;        // grid columns
+const LG_ROWS_BEFORE_SCROLL = 4;   // when section becomes scrollable
+const LG_SOFT_CAP = 80;            // soft cap = 10 rows per category
+
+// State for the currently-open day on the Live गल्ला screen
+window.lgState = {
+  date: null,           // 'YYYY-MM-DD'
+  rec: null,            // the bikri record object (live reference; not stale)
+  isToday: true,
+  blocked: false,       // true if showing a previous unsaved day (blocker mode)
+  blockerNextDate: null // when blocking, the date we are forcing user to save
+};
+
+// Keypad state
+window.lgKeypad = {
+  type: null,    // 'cash' | 'upi' | 'expense'
+  editN: null,   // if editing an existing box, its number (1-indexed) within type
+  amount: ''     // current typed digits
+};
+
+// Get or create the bikri record for a date. Returns the live reference.
+function lgGetOrCreateRec(date) {
+  const list = DB.get(K.BIKRI);
+  let rec = list.find(r => r.date === date);
+  if (!rec) {
+    rec = {
+      date: date,
+      sales: 0, cash: 0, upi: 0, expense: 0, udhaar: 0,
+      profit: 0, margin: 0, rating: '⚠️ धीमा',
+      notes: '',
+      lgBoxes: [],
+      lgSaved: false,
+      lgSavedAt: null
+    };
+    // Note: we don't push to DB yet — we wait until the first box is committed
+    // to avoid creating empty bikri records every time user opens the screen.
+  } else if (!Array.isArray(rec.lgBoxes)) {
+    // Legacy record without lgBoxes — convert in-memory so the screen renders
+    // it as one big saved-day. Box list stays empty (the totals remain).
+    rec.lgBoxes = [];
+    if (rec.lgSaved === undefined) rec.lgSaved = true; // legacy = already saved
+  }
+  return rec;
+}
+
+// Persist a Live गल्ला record (after a box add/edit/delete or after save).
+// Recomputes derived totals from lgBoxes BEFORE writing.
+function lgPersistRec(rec) {
+  // Recompute totals from boxes (only if lgBoxes has any content)
+  if (Array.isArray(rec.lgBoxes) && rec.lgBoxes.length > 0) {
+    let cash = 0, upi = 0, expense = 0;
+    rec.lgBoxes.forEach(b => {
+      if (b.type === 'cash') cash += b.amount;
+      else if (b.type === 'upi') upi += b.amount;
+      else if (b.type === 'expense') expense += b.amount;
+    });
+    rec.cash = cash;
+    rec.upi = upi;
+    rec.expense = expense;
+    rec.sales = cash + upi;
+    const s = rec.sales, x = rec.expense, u = rec.udhaar || 0;
+    rec.profit = s - x - u;
+    rec.margin = s > 0 ? Math.round((rec.profit / s) * 100) : 0;
+    let rt = '⚠️ धीमा';
+    if (s >= 5000) rt = '🔥 बहुत अच्छा';
+    else if (s >= 3000) rt = '👍 अच्छा';
+    rec.rating = rt;
+  }
+  // Write — if record has no id yet, DB.push will assign one and write Firestore;
+  // otherwise DB.update will merge.
+  const list = DB.get(K.BIKRI);
+  const idx = list.findIndex(r => r.date === rec.date);
+  if (idx === -1) {
+    DB.push(K.BIKRI, rec); // assigns id, writes Firestore
+  } else {
+    // In-place update, preserving id
+    rec.id = list[idx].id;
+    DB.update(K.BIKRI, rec.id, rec);
+  }
+}
+
+// Find any past day (date < today) with lgBoxes > 0 and lgSaved !== true
+function lgFindOldestUnsavedPastDay() {
+  const list = DB.get(K.BIKRI);
+  const candidates = list.filter(r =>
+    r.date && r.date < TSTR &&
+    Array.isArray(r.lgBoxes) && r.lgBoxes.length > 0 &&
+    r.lgSaved !== true
+  );
+  if (!candidates.length) return null;
+  candidates.sort((a,b) => a.date.localeCompare(b.date));
+  return candidates[0].date;
+}
+
+// Entry point — called from home tile tap
+function lgOpen() {
+  const unsavedPast = lgFindOldestUnsavedPastDay();
+  if (unsavedPast) {
+    // Hard block: open that day's screen with the blocker banner
+    lgRenderDay(unsavedPast, /*blocked=*/true);
+  } else {
+    lgRenderDay(TSTR, /*blocked=*/false);
+  }
+  go('s-livegalla');
+}
+
+// Render the entire Live गल्ला screen for a given date
+function lgRenderDay(date, blocked) {
+  const rec = lgGetOrCreateRec(date);
+  window.lgState.date = date;
+  window.lgState.rec = rec;
+  window.lgState.isToday = (date === TSTR);
+  window.lgState.blocked = !!blocked;
+  window.lgState.blockerNextDate = blocked ? date : null;
+
+  // Blocker banner
+  const banner = document.getElementById('lg-blocker-banner');
+  const subEl = document.getElementById('lg-screen-sub');
+  const titleEl = document.getElementById('lg-screen-title');
+  if (blocked) {
+    banner.style.display = 'flex';
+    const txt = document.getElementById('lg-blocker-text');
+    txt.innerHTML = '<strong>पिछला दिन save नहीं —</strong> पहले ' + lgFormatDate(date) + ' का closing करें, फिर आज का खुलेगा';
+    titleEl.textContent = 'पिछला दिन — Closing बाकी';
+    subEl.textContent = lgFormatDate(date);
+  } else {
+    banner.style.display = 'none';
+    titleEl.textContent = 'Live गल्ला';
+    subEl.textContent = window.lgState.isToday ? 'आज · ' + lgFormatDate(date) : lgFormatDate(date);
+  }
+  document.getElementById('lg-date-label').textContent = lgFormatDate(date);
+
+  lgRenderTotals();
+  lgRenderGrid('cash');
+  lgRenderGrid('upi');
+  lgRenderGrid('expense');
+  lgRenderSaveArea();
+}
+
+function lgFormatDate(ds) {
+  if (!ds) return '—';
+  const p = ds.split('-');
+  const d = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
+  const days = ['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
+  return days[d.getDay()] + ', ' + parseInt(p[2]) + ' ' + HI_MONTHS[parseInt(p[1])-1] + ' ' + p[0];
+}
+
+function lgRenderTotals() {
+  const r = window.lgState.rec;
+  const boxes = r.lgBoxes || [];
+  let cash = 0, upi = 0, expense = 0, count = boxes.length;
+  boxes.forEach(b => {
+    if (b.type === 'cash') cash += b.amount;
+    else if (b.type === 'upi') upi += b.amount;
+    else if (b.type === 'expense') expense += b.amount;
+  });
+  const sales = cash + upi;
+  const profit = sales - expense;
+  document.getElementById('lg-tot-profit').textContent = fmt(profit);
+  document.getElementById('lg-tot-sales').textContent = fmt(sales);
+  document.getElementById('lg-tot-expense').textContent = fmt(expense);
+  document.getElementById('lg-tot-count').textContent = count + ' बार';
+}
+
+function lgRenderGrid(type) {
+  const grid = document.getElementById('lg-grid-' + type);
+  const r = window.lgState.rec;
+  const allBoxes = (r.lgBoxes || []).filter(b => b.type === type);
+  const totalAmt = allBoxes.reduce((s,b) => s + b.amount, 0);
+
+  // Update meta line
+  const metaEl = document.getElementById(type === 'cash' ? 'lg-cash-meta' : type === 'upi' ? 'lg-upi-meta' : 'lg-exp-meta');
+  metaEl.textContent = fmt(totalAmt) + ' · ' + allBoxes.length + ' एंट्री';
+
+  // Make scrollable if more than threshold rows
+  const filledRows = Math.ceil((allBoxes.length + 1) / LG_BOXES_PER_ROW);
+  if (filledRows > LG_ROWS_BEFORE_SCROLL) grid.classList.add('lg-scrollable');
+  else grid.classList.remove('lg-scrollable');
+
+  grid.innerHTML = '';
+
+  // Render existing boxes (number them sequentially 1..N within type)
+  allBoxes.forEach((box, idx) => {
+    const n = idx + 1;
+    const cell = document.createElement('div');
+    cell.className = 'lg-box lg-box-' + type;
+    cell.innerHTML = '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
+    // Only allow edit/delete if not blocked-and-readonly (we still allow edits on
+    // blocker mode since that's the whole point — fix mistakes then save)
+    cell.onclick = () => lgOpenBoxAction(type, n);
+    grid.appendChild(cell);
+  });
+
+  // Render "+" button as next cell (unless soft cap reached — still allowed, just warn)
+  const addBtn = document.createElement('div');
+  addBtn.className = 'lg-add lg-add-' + type;
+  addBtn.textContent = '+';
+  addBtn.onclick = () => lgOpenKeypad(type, null);
+  grid.appendChild(addBtn);
+
+  // If hard soft-cap exceeded, add a soft note below
+  if (allBoxes.length >= LG_SOFT_CAP) {
+    const note = document.createElement('div');
+    note.style.cssText = 'grid-column:span 8;text-align:center;font-size:9px;color:#cc7a47;padding:6px 4px 2px;';
+    note.textContent = 'बहुत सारी एंट्री हो गई — पूरी list देखें';
+    grid.appendChild(note);
+  }
+}
+
+function lgRenderSaveArea() {
+  const area = document.getElementById('lg-save-area');
+  const r = window.lgState.rec;
+  const hasBoxes = (r.lgBoxes || []).length > 0;
+  if (r.lgSaved && hasBoxes) {
+    area.innerHTML = '<div class="lg-saved-banner">✓ ' + lgFormatDate(r.date) + ' — Closing हो चुका है</div>';
+  } else if (window.lgState.blocked) {
+    area.innerHTML = '<button class="lg-save-btn" onclick="lgConfirmClosing()">💾 ' + lgFormatDate(r.date) + ' का Closing करें / Save</button>';
+  } else {
+    area.innerHTML = '<button class="lg-save-btn" onclick="lgConfirmClosing()">💾 Closing करें / Save</button>';
+  }
+}
+
+// ---------------- KEYPAD ----------------
+
+function lgOpenKeypad(type, editN) {
+  window.lgKeypad.type = type;
+  window.lgKeypad.editN = editN; // null = adding new; otherwise editing the Nth box of this type
+  // If editing, prefill with existing amount
+  if (editN !== null) {
+    const r = window.lgState.rec;
+    const boxes = (r.lgBoxes || []).filter(b => b.type === type);
+    const box = boxes[editN - 1];
+    window.lgKeypad.amount = box ? String(box.amount) : '';
+  } else {
+    window.lgKeypad.amount = '';
+  }
+  // Title — show entry number
+  const r = window.lgState.rec;
+  const existingCount = (r.lgBoxes || []).filter(b => b.type === type).length;
+  const entryNum = editN !== null ? editN : (existingCount + 1);
+  const labels = { cash: '💵 नकद', upi: '📱 UPI', expense: '🧾 खर्चा' };
+  const action = editN !== null ? 'सुधारें' : 'एंट्री';
+  document.getElementById('lg-keypad-title').textContent = labels[type] + ' · ' + action + ' ' + entryNum;
+
+  // Recolor display + commit button per category
+  const display = document.getElementById('lg-keypad-display');
+  display.className = 'lg-display lg-display-' + type;
+  const amountEl = document.getElementById('lg-keypad-amount');
+  amountEl.className = 'lg-display-amount lg-amt-' + type;
+
+  lgUpdateKeypadDisplay();
+  document.getElementById('lg-keypad-modal').classList.add('show');
+}
+
+function lgCloseKeypad() {
+  document.getElementById('lg-keypad-modal').classList.remove('show');
+}
+
+function lgKeyPress(d) {
+  if (window.lgKeypad.amount.length >= LG_MAX_DIGITS) return;
+  // Avoid leading zero stacking
+  if (window.lgKeypad.amount === '' && d === '0') return;
+  window.lgKeypad.amount += d;
+  lgUpdateKeypadDisplay();
+}
+
+function lgKeyBack() {
+  if (window.lgKeypad.amount.length === 0) return;
+  window.lgKeypad.amount = window.lgKeypad.amount.slice(0, -1);
+  lgUpdateKeypadDisplay();
+}
+
+function lgKeyTri() {
+  // Append "000" but respect max digits
+  const remain = LG_MAX_DIGITS - window.lgKeypad.amount.length;
+  if (remain <= 0) return;
+  if (window.lgKeypad.amount === '') return; // 000 alone makes no sense
+  const add = '000'.slice(0, remain);
+  window.lgKeypad.amount += add;
+  lgUpdateKeypadDisplay();
+}
+
+function lgUpdateKeypadDisplay() {
+  const amt = window.lgKeypad.amount;
+  const display = amt === '' ? '₹0' : '₹' + parseInt(amt).toLocaleString('en-IN');
+  document.getElementById('lg-keypad-amount').textContent = display;
+  // Commit button label
+  const r = window.lgState.rec;
+  const existingCount = (r.lgBoxes || []).filter(b => b.type === window.lgKeypad.type).length;
+  const n = window.lgKeypad.editN !== null ? window.lgKeypad.editN : (existingCount + 1);
+  const verb = window.lgKeypad.editN !== null ? 'सुधारें' : 'जोड़ें';
+  document.getElementById('lg-keypad-commit').textContent = '💾 Box ' + n + ' में ' + display + ' ' + verb;
+}
+
+function lgCommitBox() {
+  const amt = parseInt(window.lgKeypad.amount) || 0;
+  if (amt <= 0) {
+    toast('❌ अंक डालें', true);
+    return;
+  }
+  const r = window.lgState.rec;
+  if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
+  const type = window.lgKeypad.type;
+  const editN = window.lgKeypad.editN;
+  if (editN !== null) {
+    // Edit: find the editN-th box of this type and update its amount
+    const typeBoxes = r.lgBoxes.filter(b => b.type === type);
+    const target = typeBoxes[editN - 1];
+    if (target) target.amount = amt;
+  } else {
+    // Add new box
+    const typeBoxes = r.lgBoxes.filter(b => b.type === type);
+    const nextN = typeBoxes.length + 1;
+    r.lgBoxes.push({ n: nextN, type: type, amount: amt, ts: Date.now() });
+  }
+  // If we're editing/adding to a previously-saved day (e.g., from blocker),
+  // mark it unsaved again so the user re-commits.
+  if (window.lgState.blocked) {
+    // Stay unsaved — they must explicitly press Closing again.
+    r.lgSaved = false;
+    r.lgSavedAt = null;
+  } else if (window.lgState.isToday) {
+    // Today: any edit while live keeps it unsaved
+    r.lgSaved = false;
+    r.lgSavedAt = null;
+  }
+  lgPersistRec(r);
+  lgCloseKeypad();
+  lgRenderTotals();
+  lgRenderGrid(type);
+  lgRenderSaveArea();
+  // Keep home in sync — if user navigates back, totals reflect immediately
+  if (typeof loadHome === 'function') {
+    // Defer slightly so the screen feels snappy
+    setTimeout(loadHome, 50);
+  }
+}
+
+// ---------------- BOX EDIT/DELETE OVERLAY ----------------
+
+window.lgBoxActionCtx = { type: null, n: null };
+
+function lgOpenBoxAction(type, n) {
+  const r = window.lgState.rec;
+  const typeBoxes = (r.lgBoxes || []).filter(b => b.type === type);
+  const box = typeBoxes[n - 1];
+  if (!box) return;
+  window.lgBoxActionCtx = { type, n };
+  document.getElementById('lg-box-action-amt').textContent = '₹' + box.amount.toLocaleString('en-IN');
+  const labels = { cash: 'नकद बिक्री', upi: 'UPI बिक्री', expense: 'खर्चा' };
+  document.getElementById('lg-box-action-meta').textContent = labels[type] + ' · Box ' + n;
+  document.getElementById('lg-box-action').classList.add('show');
+}
+
+function lgCloseBoxAction() {
+  document.getElementById('lg-box-action').classList.remove('show');
+}
+
+function lgEditBox() {
+  const { type, n } = window.lgBoxActionCtx;
+  lgCloseBoxAction();
+  lgOpenKeypad(type, n);
+}
+
+function lgDeleteBox() {
+  const { type, n } = window.lgBoxActionCtx;
+  const r = window.lgState.rec;
+  if (!Array.isArray(r.lgBoxes)) return;
+  // Find the actual index of the n-th box of this type in the master array
+  let count = 0, removeIdx = -1;
+  for (let i = 0; i < r.lgBoxes.length; i++) {
+    if (r.lgBoxes[i].type === type) {
+      count++;
+      if (count === n) { removeIdx = i; break; }
+    }
+  }
+  if (removeIdx === -1) return;
+  r.lgBoxes.splice(removeIdx, 1);
+  // Re-number subsequent boxes of same type (cosmetic; numbers come from index)
+  // The render uses index-based numbering, so nothing else needed.
+  if (window.lgState.isToday || window.lgState.blocked) {
+    r.lgSaved = false;
+    r.lgSavedAt = null;
+  }
+  lgPersistRec(r);
+  lgCloseBoxAction();
+  lgRenderTotals();
+  lgRenderGrid(type);
+  lgRenderSaveArea();
+  if (typeof loadHome === 'function') setTimeout(loadHome, 50);
+}
+
+// ---------------- MANUAL SAVE ("Closing करें") ----------------
+
+function lgConfirmClosing() {
+  const r = window.lgState.rec;
+  const boxes = r.lgBoxes || [];
+  if (boxes.length === 0) {
+    toast('❌ कोई एंट्री नहीं है — पहले बिक्री या खर्चा जोड़ें', true);
+    return;
+  }
+  r.lgSaved = true;
+  r.lgSavedAt = Date.now();
+  lgPersistRec(r);
+  showSuccessModal('Closing हो गया', '💾 ' + lgFormatDate(r.date) + ' का हिसाब बंद हुआ');
+
+  // If we were blocking, check whether another unsaved past day remains
+  setTimeout(() => {
+    const stillUnsaved = lgFindOldestUnsavedPastDay();
+    if (stillUnsaved) {
+      lgRenderDay(stillUnsaved, true);
+    } else {
+      // All clear — go home (or refresh today if user was on today)
+      window.lgState.blocked = false;
+      if (typeof loadHome === 'function') loadHome();
+      if (window.lgState.date === TSTR) {
+        // Re-render today (now showing "saved" banner) — user can stay on screen
+        lgRenderDay(TSTR, false);
+      } else {
+        go('s-home');
+      }
+    }
+  }, 700);
+}
+
+// Hook into app open / home navigation: when entering home, if there's an
+// unsaved past day, force the user to Live गल्ला blocker.
+window.lgCheckAndBlock = function() {
+  if (!CURRENT_UID || CURRENT_UID === 'default') return false;
+  const unsavedPast = lgFindOldestUnsavedPastDay();
+  if (unsavedPast) {
+    lgRenderDay(unsavedPast, true);
+    go('s-livegalla');
+    return true;
+  }
+  return false;
+};
+// ============================================================
+// END Live गल्ला
+// ============================================================
+
+
 const HI_MONTHS=['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
 const CUR_MONTH=TODAY.getMonth(),CUR_YEAR=TODAY.getFullYear(),CUR_DAY=TODAY.getDate();
 const DAYS_IN_MONTH=new Date(CUR_YEAR,CUR_MONTH+1,0).getDate();
@@ -3176,6 +3895,11 @@ function initApp(uid){
   document.getElementById('g-month').value=MSTR;
  document.getElementById('month-nav-heading').textContent=CUR_YEAR+' — महीनेवार';
   loadHome();
+  // Live गल्ला: after a short delay (to let Firestore sync finish),
+  // check whether there's an unsaved past day. If yes, block.
+  setTimeout(() => {
+    if (window.lgCheckAndBlock) window.lgCheckAndBlock();
+  }, 1200);
 }
 
 const NM={'s-home':'n-home','s-entry':'n-entry','s-maal':'n-maal','s-udhaar':'n-udhaar'};
@@ -3184,6 +3908,17 @@ go('s-entry');
 setTimeout(function(){ setEntryMode(mode); },100);
 }
 function go(id){
+  // Live गल्ला hard-block: if user tries to leave the Live गल्ला screen while
+  // we're in blocker mode, force them back. The only escape is to save.
+  if (window.lgState && window.lgState.blocked && id !== 's-livegalla') {
+    toast('❌ पहले पिछले दिन का closing करें', true);
+    return;
+  }
+  // Also: when entering home (or anywhere except live galla), check whether a
+  // past day is unsaved. If yes, hijack the navigation.
+  if (id !== 's-livegalla' && window.lgCheckAndBlock && window.lgCheckAndBlock()) {
+    return; // lgCheckAndBlock already navigated to s-livegalla
+  }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>{n.classList.remove('active');const d=n.querySelector('.nav-dot');if(d)d.remove();});
@@ -3627,6 +4362,21 @@ function openDatePopup(ds){
 
   const content = document.getElementById('dp-content');
   content.innerHTML = '';
+
+  // Live गल्ला status banner (if this date has lgBoxes)
+  const lgRec = bikriEntries.find(r => Array.isArray(r.lgBoxes) && r.lgBoxes.length > 0);
+  if (lgRec) {
+    const banner = document.createElement('div');
+    if (lgRec.lgSaved) {
+      banner.className = 'lg-dp-saved';
+      banner.innerHTML = '<span class="lg-dp-saved-icon">✓</span><span class="lg-dp-saved-text">Closing हो चुका · ' + lgRec.lgBoxes.length + ' एंट्री</span><span class="lg-dp-saved-amt">' + fmt(lgRec.sales || 0) + '</span>';
+    } else {
+      banner.className = 'lg-blocker-banner';
+      banner.style.marginBottom = '10px';
+      banner.innerHTML = '<div class="lg-blocker-icon">⚠️</div><div class="lg-blocker-text"><strong>Closing बाकी —</strong> ' + lgRec.lgBoxes.length + ' एंट्री दर्ज है, save नहीं हुआ</div>';
+    }
+    content.appendChild(banner);
+  }
 
   // ====== Bikri card (premium, simplified) ======
   if (bikriEntries.length > 0) {

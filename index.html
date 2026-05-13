@@ -1163,21 +1163,21 @@ body.notif-modal-open { overflow: hidden; }
 .lg-dot-green { background:#8aef7a; }
 .lg-dot-blue  { background:#5dcaff; animation-delay: 0.8s; }
 .lg-dot-orange{ background:#cc7a47; animation-delay: 1.6s; }
-.lg-pill { background:#0a1530; border-radius:8px; padding:2px 8px; display:inline-flex; align-items:center; gap:5px; font-size:9px; font-weight:600; letter-spacing:0.5px; }
+.lg-pill { background:#0a1530; border-radius:9px; padding:3px 10px; display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:700; letter-spacing:0.5px; }
 .lg-pill-green { border:1px solid #8aef7a; color:#8aef7a; }
 .lg-pill-blue  { border:1px solid #5dcaff; color:#5dcaff; }
 .lg-pill-orange{ border:1px solid #cc7a47; color:#cc7a47; }
 
 /* Home tile — replaces Quick Entry */
-.lg-home-tile { background:linear-gradient(135deg,#0a1530 0%,#14254a 100%); border:1.5px solid #2a4078; border-radius:16px; overflow:hidden; cursor:pointer; margin:10px 0; transition:transform .15s; position:relative; }
+.lg-home-tile { background:linear-gradient(135deg,#11183d 0%,#1a1f4e 100%); border:1.5px solid #d4a850; border-radius:18px; overflow:hidden; cursor:pointer; margin:12px 0; transition:transform .15s; position:relative; box-shadow:0 4px 18px rgba(212,168,80,0.12); }
 .lg-home-tile:active { transform:scale(.97); }
-.lg-home-stripe { height:4px; background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%); }
-.lg-home-body { padding:16px 18px; display:flex; align-items:center; gap:14px; }
-.lg-home-icon { width:60px; height:60px; background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%); border:2px solid #d4a850; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; animation: hk-breathe 2.4s ease-in-out infinite; }
+.lg-home-stripe { height:5px; background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%); }
+.lg-home-body { padding:20px 18px; display:flex; align-items:center; gap:16px; }
+.lg-home-icon { width:72px; height:72px; background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%); border:2.5px solid #d4a850; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:40px; flex-shrink:0; animation: hk-breathe 2.4s ease-in-out infinite; }
 .lg-home-text { flex:1; }
-.lg-home-title { font-size:20px; font-weight:600; color:#d4a850; line-height:1.2; }
-.lg-home-sub { font-size:11px; color:#8aa0d8; margin-top:3px; }
-.lg-home-cta { background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%); color:#1a1208; font-size:12px; font-weight:600; padding:8px 14px; border-radius:9px; border:1.5px solid #f0d890; flex-shrink:0; }
+.lg-home-title { font-size:24px; font-weight:700; color:#d4a850; line-height:1.1; letter-spacing:-0.3px; }
+.lg-home-sub { font-size:12px; color:#a8b8e0; margin-top:5px; font-weight:500; }
+.lg-home-cta { background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%); color:#1a1208; font-size:13px; font-weight:700; padding:10px 16px; border-radius:10px; border:1.5px solid #f0d890; flex-shrink:0; }
 
 /* Screen header card with totals */
 .lg-totals-card { background:linear-gradient(135deg,#0a1530 0%,#14254a 100%); border:1.5px solid #2a4078; border-radius:14px; overflow:hidden; margin-bottom:18px; }
@@ -2406,7 +2406,12 @@ body.notif-modal-open { overflow: hidden; }
     <div class="header-left">
       <div class="header-icon" style="background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%);border:2px solid #d4a850;">💰</div>
       <div>
-        <div class="header-title" id="lg-screen-title">Live गल्ला</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="header-title" id="lg-screen-title">Live गल्ला</div>
+          <div class="lg-pill" style="background:#1a1208;border:1px solid #d4a850;color:#f0d890;">
+            <span class="lg-dot" style="background:#d4a850;"></span>LIVE
+          </div>
+        </div>
         <div class="header-sub" id="lg-screen-sub" style="color:#d4a850;">हर बिक्री · हर खर्चा</div>
       </div>
     </div>
@@ -2456,8 +2461,8 @@ body.notif-modal-open { overflow: hidden; }
     <div style="margin-bottom:18px;">
       <div class="lg-cat-head">
         <div class="lg-cat-head-left">
-          <span style="font-size:18px;">💵</span>
-          <span style="font-size:13px;color:#8aef7a;font-weight:600;">नकद बिक्री</span>
+          <span style="font-size:22px;">💵</span>
+          <span style="font-size:17px;color:#8aef7a;font-weight:700;">नकद बिक्री</span>
           <div class="lg-pill lg-pill-green"><span class="lg-dot lg-dot-green"></span>LIVE</div>
         </div>
         <div style="font-size:11px;color:#8aef7a;font-weight:500;" id="lg-cash-meta">₹0 · 0 एंट्री</div>
@@ -2470,8 +2475,8 @@ body.notif-modal-open { overflow: hidden; }
     <div style="margin-bottom:18px;">
       <div class="lg-cat-head">
         <div class="lg-cat-head-left">
-          <span style="font-size:18px;">📱</span>
-          <span style="font-size:13px;color:#5dcaff;font-weight:600;">UPI बिक्री</span>
+          <span style="font-size:22px;">📱</span>
+          <span style="font-size:17px;color:#5dcaff;font-weight:700;">UPI बिक्री</span>
           <div class="lg-pill lg-pill-blue"><span class="lg-dot lg-dot-blue"></span>LIVE</div>
         </div>
         <div style="font-size:11px;color:#5dcaff;font-weight:500;" id="lg-upi-meta">₹0 · 0 एंट्री</div>
@@ -2484,8 +2489,8 @@ body.notif-modal-open { overflow: hidden; }
     <div style="margin-bottom:18px;">
       <div class="lg-cat-head">
         <div class="lg-cat-head-left">
-          <span style="font-size:18px;">🧾</span>
-          <span style="font-size:13px;color:#cc7a47;font-weight:600;">खर्चा</span>
+          <span style="font-size:22px;">🧾</span>
+          <span style="font-size:17px;color:#cc7a47;font-weight:700;">खर्चा</span>
           <div class="lg-pill lg-pill-orange"><span class="lg-dot lg-dot-orange"></span>LIVE</div>
         </div>
         <div style="font-size:11px;color:#cc7a47;font-weight:500;" id="lg-exp-meta">₹0 · 0 एंट्री</div>
@@ -3474,8 +3479,10 @@ function lgGetOrCreateRec(date) {
 // Persist a Live गल्ला record (after a box add/edit/delete or after save).
 // Recomputes derived totals from lgBoxes BEFORE writing.
 function lgPersistRec(rec) {
-  // Recompute totals from boxes (only if lgBoxes has any content)
-  if (Array.isArray(rec.lgBoxes) && rec.lgBoxes.length > 0) {
+  // Recompute totals from boxes — always, even when empty (deletion case).
+  // This is critical: if user deletes the last box, we need totals to drop to 0,
+  // otherwise the home screen shows stale figures from before the deletion.
+  if (Array.isArray(rec.lgBoxes)) {
     let cash = 0, upi = 0, expense = 0;
     rec.lgBoxes.forEach(b => {
       if (b.type === 'cash') cash += b.amount;
@@ -3494,10 +3501,21 @@ function lgPersistRec(rec) {
     else if (s >= 3000) rt = '👍 अच्छा';
     rec.rating = rt;
   }
-  // Write — if record has no id yet, DB.push will assign one and write Firestore;
-  // otherwise DB.update will merge.
+  // Edge case: if the record has NO content at all (no boxes AND no udhaar AND no notes),
+  // remove it entirely so the home doesn't show a phantom ₹0 day.
+  const isEmpty = (!Array.isArray(rec.lgBoxes) || rec.lgBoxes.length === 0)
+                  && (!rec.udhaar || rec.udhaar === 0)
+                  && (!rec.notes || rec.notes === '');
   const list = DB.get(K.BIKRI);
   const idx = list.findIndex(r => r.date === rec.date);
+  if (isEmpty) {
+    if (idx !== -1 && list[idx].id) {
+      DB.remove(K.BIKRI, list[idx].id);
+    }
+    return;
+  }
+  // Write — if record has no id yet, DB.push will assign one and write Firestore;
+  // otherwise DB.update will merge.
   if (idx === -1) {
     DB.push(K.BIKRI, rec); // assigns id, writes Firestore
   } else {

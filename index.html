@@ -2864,6 +2864,12 @@ window.verifyOTP = async function() {
   btn.disabled = true; btn.textContent = '⏳ जाँच रहे हैं...'; loader.classList.add('show');
   try {
     const cred = await confirmationResult.confirm(otp);
+    // CRITICAL: Mark this as a fresh authenticated PWA session in progress.
+    // Downstream code paths (showAlreadyRegisteredScreen, showBrowserBlockScreen,
+    // pwaGate timer) check this flag and refuse to auto-sign-out the user
+    // when it's set. This prevents the OTP→PIN→OTP loop caused by flaky
+    // display-mode detection right after a fresh PWA install.
+    try { sessionStorage.setItem('hk_fresh_session', '1'); } catch(e){}
     // Stage 1: OTP verified — create skeleton profile immediately
     // so partial registrations are still visible in admin panel
     try {
@@ -3412,7 +3418,11 @@ async function saveFCMToken(uid) {
     console.warn('FCM token error:', e);
   }
 }
-window.signOut = async function() { await fbSignOut(auth); location.reload(); };
+window.signOut = async function() {
+  try { sessionStorage.removeItem('hk_fresh_session'); } catch(e){}
+  await fbSignOut(auth);
+  location.reload();
+};
 
 ['o1','o2','o3','o4','o5','o6'].forEach((id, idx, arr) => {
   const el = document.getElementById(id);
@@ -6077,9 +6087,16 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
     screen.classList.add('active');
 
-    // Sign user out silently so browser session is destroyed
-    // (delay slightly so the screen renders smoothly first)
+    // Sign user out silently so browser session is destroyed.
+    // BUT: if a fresh PWA session is in progress (user just completed OTP),
+    // we MUST NOT sign them out — that's the loop bug.
     setTimeout(function(){
+      try {
+        if (sessionStorage.getItem('hk_fresh_session') === '1') {
+          console.log('[hk] Skipping auto sign-out (browser-block) — fresh PWA session in progress');
+          return;
+        }
+      } catch(e){}
       try {
         if (window._currentAuthUser && window.firebaseSignOut) {
           window.firebaseSignOut();
@@ -6135,8 +6152,17 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
     screen.classList.add('active');
 
-    // Sign user out silently after a moment so browser session is destroyed
+    // Sign user out silently after a moment so browser session is destroyed.
+    // BUT: if a fresh PWA session is in progress (user just completed OTP),
+    // we MUST NOT sign them out — that's the loop bug. The flag is cleared
+    // naturally when the user closes the PWA.
     setTimeout(function(){
+      try {
+        if (sessionStorage.getItem('hk_fresh_session') === '1') {
+          console.log('[hk] Skipping auto sign-out — fresh PWA session in progress');
+          return;
+        }
+      } catch(e){}
       try {
         if (window._currentAuthUser && window.firebaseSignOut) {
           window.firebaseSignOut();

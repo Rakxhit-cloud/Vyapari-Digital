@@ -2993,6 +2993,17 @@ window.saveName = async function() {
                   window.navigator.standalone === true ||
                   document.referrer.indexOf('android-app://') === 0;
     } catch(e) {}
+    // Trust cached confirmation if live detection failed (boot-time race)
+    if (!isPwaMode) {
+      try {
+        var ts = parseInt(sessionStorage.getItem('hk_pwa_confirmed_at') || '0');
+        if (ts && (Date.now() - ts) < 60000) isPwaMode = true;
+      } catch(e){}
+      if (window._isPwaConfirmed) isPwaMode = true;
+    } else {
+      try { sessionStorage.setItem('hk_pwa_confirmed_at', Date.now().toString()); } catch(e){}
+      window._isPwaConfirmed = true;
+    }
 
     if (isPwaMode) {
       // PWA: full app launch with PIN
@@ -3172,21 +3183,23 @@ function launchApp(uid) {
   // the first few seconds after Chrome installs the PWA, depending on how
   // the user opened it. To prevent infinite loops (OTP → PIN → sign-out
   // → OTP), we use multiple detection signals AND cache the positive
-  // result. Once we've ever confirmed PWA mode, we trust the cache.
+  // result in sessionStorage with a 60-second TTL. The TTL bridges the
+  // boot-time race window without permanently bypassing the browser-block
+  // intent for users who later open the site in a browser tab.
   var isPwaMode = false;
   try {
     isPwaMode = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
                 window.navigator.standalone === true ||
                 document.referrer.indexOf('android-app://') === 0;
   } catch(e) {}
-  // Cache positive result so subsequent checks don't have to re-detect
   if (isPwaMode) {
-    try { sessionStorage.setItem('hk_pwa_confirmed', '1'); } catch(e){}
+    try { sessionStorage.setItem('hk_pwa_confirmed_at', Date.now().toString()); } catch(e){}
     window._isPwaConfirmed = true;
   } else {
-    // Fallback: trust prior session detection if we have it
+    // Fall back to the 60-second cache that isPWA() also uses
     try {
-      if (sessionStorage.getItem('hk_pwa_confirmed') === '1') isPwaMode = true;
+      var ts = parseInt(sessionStorage.getItem('hk_pwa_confirmed_at') || '0');
+      if (ts && (Date.now() - ts) < 60000) isPwaMode = true;
     } catch(e){}
     if (window._isPwaConfirmed) isPwaMode = true;
   }
@@ -5981,9 +5994,28 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 // ============================================================
 (function(){
   function isPWA() {
-    return window.matchMedia('(display-mode: standalone)').matches
+    // Live detection (flaky on freshly-installed PWAs — display-mode media
+    // query can return false during the first few seconds after install on
+    // some Android browsers, including Samsung Internet and Chrome WebView).
+    var live = window.matchMedia('(display-mode: standalone)').matches
         || window.navigator.standalone === true
         || document.referrer.startsWith('android-app://');
+    // If live detection succeeds — record the timestamp so other code paths
+    // (running within seconds) can trust it during the boot-time race window.
+    if (live) {
+      try { sessionStorage.setItem('hk_pwa_confirmed_at', Date.now().toString()); } catch(e){}
+      return true;
+    }
+    // Fall back to the short-lived cache. We trust it for 60 seconds after
+    // the last confirmation — long enough to bridge the boot-time delay
+    // where display-mode hasn't settled yet, but short enough that we don't
+    // permanently bypass the browser-block intent for users who later open
+    // the site in their phone's browser tab.
+    try {
+      var ts = parseInt(sessionStorage.getItem('hk_pwa_confirmed_at') || '0');
+      if (ts && (Date.now() - ts) < 60000) return true;
+    } catch(e){}
+    return false;
   }
 
   // Play "registration complete" bell chime (only first time)
@@ -6136,8 +6168,23 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
   function pwaGate() {
     if (isPWA()) return; // PWA mode — let normal flow handle PIN/homescreen
 
-    // Browser mode — wait briefly to see if user is authenticated
+    // Browser mode — wait briefly to see if user is authenticated.
+    // CRITICAL: by the time this timeout fires, isPWA() may have flipped to
+    // true (because launchApp() ran and confirmed/cached PWA mode), so we
+    // MUST re-check before deciding to sign the user out. Without this
+    // recheck, freshly-installed PWAs intermittently get an infinite loop
+    // because display-mode-standalone takes a few seconds to settle.
     setTimeout(function(){
+      // RECHECK — PWA confirmation may have arrived during the wait
+      if (isPWA()) return;
+      // Also defensive: trust the explicit memory flag set by launchApp
+      if (window._isPwaConfirmed) return;
+      // Also defensive: trust the timestamped session cache
+      try {
+        var ts = parseInt(sessionStorage.getItem('hk_pwa_confirmed_at') || '0');
+        if (ts && (Date.now() - ts) < 60000) return;
+      } catch(e){}
+
       var hasUser = !!window._currentAuthUser;
       if (hasUser) {
         // User is logged in → they registered before → show "Already Registered" screen

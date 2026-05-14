@@ -2935,7 +2935,24 @@ window.agreeTerms = async function() {
     if (u && u.uid && window._fsTrackStage) {
       window._fsTrackStage(u.uid, 'termsAgreedAt', u.phoneNumber || '');
     }
+    // Persist locally too so on next app open we can resume past terms screen.
+    // This is separate from hk_terms_agreed_<uid> (which gates the full app)
+    // — it just marks "user has tapped I-agree at some point". The full
+    // registration completion flag is set only when saveName() succeeds.
+    if (u && u.uid) {
+      try { localStorage.setItem('hk_terms_accepted_' + u.uid, Date.now().toString()); } catch(e){}
+    }
   } catch(e) { console.warn('terms stage track err:', e); }
+  // Per resume policy: skip udhaar-info intro on subsequent visits.
+  // First time: terms → udhaar-info intro → name. We mark udhaar-info as "seen"
+  // here so resume goes straight to name. Direct first-time flow still works
+  // because we show udhaar-info immediately below.
+  try {
+    const u2 = window._currentAuthUser;
+    if (u2 && u2.uid) {
+      localStorage.setItem('hk_udhaar_info_seen_' + u2.uid, '1');
+    }
+  } catch(e){}
   document.getElementById('screen-terms').classList.add('hidden');
   document.getElementById('screen-udhaar-info').classList.remove('hidden');
 };
@@ -3143,34 +3160,60 @@ onAuthStateChanged(auth, async user => {
 if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
   if (user) {
     const uid = user.uid;
- let termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);
-    
-    // Check Firestore first — if user already registered on another device, sync it to this device
+    let termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);
+    let termsAccepted = localStorage.getItem('hk_terms_accepted_' + uid);
+
+    // Check Firestore — handles two cases:
+    //   1. Fully registered on another device (has trialStart) → sync + launch
+    //   2. Only tapped "I agree" on another device (has termsAgreedAt only) → set local flag → resume on name screen
     if (!termsAgreed) {
       try {
         const { getDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
         const existingProfile = await getDoc(doc(window._db, 'users', uid, 'profile', 'info'));
-        if (existingProfile.exists() && existingProfile.data().trialStart) {
-          const cloudTrialStart = existingProfile.data().trialStart;
-          localStorage.setItem('hk_trial_start_' + uid, cloudTrialStart.toString());
-          localStorage.setItem('hk_terms_agreed_' + uid, cloudTrialStart.toString());
-          localStorage.setItem('hk_mode_' + uid, existingProfile.data().mode || 'full');
-          termsAgreed = cloudTrialStart.toString();
-          console.log('✅ Trial restored from cloud');
+        if (existingProfile.exists()) {
+          const data = existingProfile.data();
+          if (data.trialStart) {
+            // Case 1: full registration exists in cloud
+            const cloudTrialStart = data.trialStart;
+            localStorage.setItem('hk_trial_start_' + uid, cloudTrialStart.toString());
+            localStorage.setItem('hk_terms_agreed_' + uid, cloudTrialStart.toString());
+            localStorage.setItem('hk_mode_' + uid, data.mode || 'full');
+            termsAgreed = cloudTrialStart.toString();
+            console.log('✅ Trial restored from cloud');
+          } else if (data.termsAgreedAt && !termsAccepted) {
+            // Case 2: partial registration — terms accepted but never finished name
+            localStorage.setItem('hk_terms_accepted_' + uid, Date.now().toString());
+            termsAccepted = 'cloud-restored';
+            console.log('↩️ Partial registration detected — resuming on name screen');
+          }
         }
       } catch(e) { console.warn('Cloud sync error:', e); }
     }
-    
-    if (!termsAgreed) {
-      document.getElementById('screen-phone').classList.add('hidden');
-      document.getElementById('screen-otp').classList.add('hidden');
-      document.getElementById('screen-terms').classList.remove('hidden');
-    } else {
-     const phone = user.phoneNumber || '';
+
+    if (termsAgreed) {
+      // Fully registered → launch app
+      const phone = user.phoneNumber || '';
       const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
       window._fsRegisterUser(uid, phone, trialStart);
       await window._fsLoadAll(uid);
       launchApp(uid);
+    } else if (termsAccepted) {
+      // Partial registration: terms accepted, name not yet submitted.
+      // Per resume policy, skip the udhaar-info intro and go directly to name screen.
+      document.getElementById('screen-phone').classList.add('hidden');
+      document.getElementById('screen-otp').classList.add('hidden');
+      document.getElementById('screen-terms').classList.add('hidden');
+      document.getElementById('screen-udhaar-info').classList.add('hidden');
+      document.getElementById('screen-name').classList.remove('hidden');
+      setTimeout(() => {
+        const ni = document.getElementById('name-input');
+        if (ni) ni.focus();
+      }, 300);
+    } else {
+      // Brand new — show terms screen
+      document.getElementById('screen-phone').classList.add('hidden');
+      document.getElementById('screen-otp').classList.add('hidden');
+      document.getElementById('screen-terms').classList.remove('hidden');
     }
   } else {
     document.getElementById('screen-phone').classList.remove('hidden');

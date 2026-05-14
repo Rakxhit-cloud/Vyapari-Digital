@@ -3164,14 +3164,32 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
 });
 
 function launchApp(uid) {
-  // GUARD: launchApp must only run in PWA mode
-  // If somehow called in browser, redirect to "Already Registered" screen
+  // GUARD: launchApp must only run in PWA mode.
+  // If somehow called in browser, redirect to "Already Registered" screen.
+  //
+  // NOTE: PWA-mode detection on fresh installs can be flaky. The
+  // `display-mode: standalone` media query sometimes returns false during
+  // the first few seconds after Chrome installs the PWA, depending on how
+  // the user opened it. To prevent infinite loops (OTP → PIN → sign-out
+  // → OTP), we use multiple detection signals AND cache the positive
+  // result. Once we've ever confirmed PWA mode, we trust the cache.
   var isPwaMode = false;
   try {
     isPwaMode = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
                 window.navigator.standalone === true ||
                 document.referrer.indexOf('android-app://') === 0;
   } catch(e) {}
+  // Cache positive result so subsequent checks don't have to re-detect
+  if (isPwaMode) {
+    try { sessionStorage.setItem('hk_pwa_confirmed', '1'); } catch(e){}
+    window._isPwaConfirmed = true;
+  } else {
+    // Fallback: trust prior session detection if we have it
+    try {
+      if (sessionStorage.getItem('hk_pwa_confirmed') === '1') isPwaMode = true;
+    } catch(e){}
+    if (window._isPwaConfirmed) isPwaMode = true;
+  }
   if (!isPwaMode) {
     if (window.showAlreadyRegisteredScreen) {
       window.showAlreadyRegisteredScreen();
@@ -5105,21 +5123,22 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     try { sessionStorage.setItem('alck_unlocked_session', '1'); } catch(e){}
     localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
     deactivateLockScreen();
-    
-    // CRITICAL: After PIN unlock/setup completes, check if we should show
-    // browser block screen (for fresh registrations in browser mode)
-    setTimeout(function(){
-      try {
-        var isPwaMode = window.matchMedia('(display-mode: standalone)').matches
-                     || window.navigator.standalone === true
-                     || document.referrer.startsWith('android-app://');
-        if (!isPwaMode && window._currentAuthUser && window.showBrowserBlockScreen) {
-          var firstDone = false;
-          try { firstDone = localStorage.getItem('hk_first_launch_done') === '1'; } catch(e){}
-          window.showBrowserBlockScreen(!firstDone);
-        }
-      } catch(e) { console.warn('post-unlock browser-gate err:', e); }
-    }, 600);
+
+    // NOTE: There was previously a redundant PWA-mode check here that called
+    // showBrowserBlockScreen() if it detected non-PWA mode. That check was
+    // unreliable on freshly-installed PWAs (the `display-mode: standalone`
+    // media query can give false negatives for the first few seconds after
+    // a fresh install on some Android browsers / Samsung Internet). This
+    // caused an infinite OTP → PIN → OTP loop on uninstall-reinstall.
+    //
+    // The PWA-mode guard in launchApp() already runs BEFORE alckInit, so
+    // if we're inside onUnlockSuccess we know for certain we're in PWA mode.
+    // The redundant check was both unnecessary AND actively harmful.
+    //
+    // Mark "first launch done" so re-opening in browser later still goes
+    // to the proper "already registered" screen instead of phone entry.
+    try { localStorage.setItem('hk_first_launch_done', '1'); } catch(e){}
+
     // Offer biometric setup on first successful PIN unlock if not yet enabled and supported
     if (localStorage.getItem(BIO_ENABLED_KEY) !== '1' && localStorage.getItem('hk_pin_bio_offered') !== '1') {
       const supported = await isBioSupported();

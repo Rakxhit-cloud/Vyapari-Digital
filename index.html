@@ -2767,11 +2767,12 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
     const profileRef = doc(db, 'users', uid, 'profile', 'info');
     const existing = await getDoc(profileRef);
     if (existing.exists() && existing.data().trialStart) {
-      // Already registered — only update phone/platform
+      // Already registered — only update phone/platform + bump lastActiveAt
       await setDoc(profileRef, {
         phone: phone || '',
         appVersion: '1.0',
-        platform: 'PWA'
+        platform: 'PWA',
+        lastActiveAt: Date.now()
       }, { merge: true });
     } else {
       // First time — save full profile with trialStart
@@ -2784,14 +2785,65 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
         registrationCompletedAt: serverTimestamp(),
         registeredAt: serverTimestamp(),
         appVersion: '1.0',
-        platform: 'PWA'
+        platform: 'PWA',
+        lastActiveAt: Date.now()
       }, { merge: true });
     }
     console.log('✅ User registered in Firestore');
+    // Start the activity heartbeat (idempotent — safe to call repeatedly)
+    if (window._startActivityHeartbeat) window._startActivityHeartbeat(uid);
   } catch(e) {
     console.warn('FS register error:', e);
   }
 };
+
+// ============================================================
+// Activity Heartbeat
+// Writes lastActiveAt every 5 minutes while the app is in the foreground.
+// Stops when the page is hidden (saves writes) and resumes on visible.
+// This keeps the admin panel's "last active" indicator accurate in real time.
+// ============================================================
+window._activityHbInterval = null;
+window._activityHbUid = null;
+window._startActivityHeartbeat = function(uid) {
+  if (!uid || uid === 'default') return;
+  window._activityHbUid = uid;
+  // Clear any existing interval so this is safe to call multiple times
+  if (window._activityHbInterval) {
+    clearInterval(window._activityHbInterval);
+    window._activityHbInterval = null;
+  }
+  // Don't start if document is hidden
+  if (document.hidden) return;
+  window._activityHbInterval = setInterval(async () => {
+    if (document.hidden) return; // skip when backgrounded
+    try {
+      const profileRef = doc(db, 'users', uid, 'profile', 'info');
+      await setDoc(profileRef, { lastActiveAt: Date.now() }, { merge: true });
+    } catch(e) {
+      console.warn('heartbeat err:', e);
+    }
+  }, 5 * 60 * 1000); // 5 minutes
+};
+window._stopActivityHeartbeat = function() {
+  if (window._activityHbInterval) {
+    clearInterval(window._activityHbInterval);
+    window._activityHbInterval = null;
+  }
+};
+// Restart on visibility change
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    window._stopActivityHeartbeat();
+  } else if (window._activityHbUid) {
+    // Came back to foreground — write immediately and resume heartbeat
+    try {
+      const profileRef = doc(db, 'users', window._activityHbUid, 'profile', 'info');
+      setDoc(profileRef, { lastActiveAt: Date.now() }, { merge: true }).catch(()=>{});
+    } catch(e){}
+    window._startActivityHeartbeat(window._activityHbUid);
+  }
+});
 
 // Funnel tracker: writes a single stage timestamp to user profile.
 // Stages: otpVerifiedAt, termsAgreedAt, nameSavedAt, registrationCompletedAt,

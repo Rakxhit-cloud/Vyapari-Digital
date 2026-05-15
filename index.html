@@ -2732,8 +2732,29 @@ window._fsLoadAll = async function(uid) {
       const merged = [...local];
       cloudItems.forEach(ci => {
         const idx = merged.findIndex(r => r.id === ci.id);
-        if (idx > -1) merged[idx] = ci;
-        else merged.push(ci);
+        if (idx > -1) {
+          // CRITICAL: don't blindly overwrite local with cloud.
+          // If local has a more recent lgSavedAt (Live गल्ला save) than cloud,
+          // it means the user just saved on this device and the cloud version
+          // is stale — keep local. Otherwise take cloud (it's likely newer
+          // from another device or sync from before this session).
+          const localR = merged[idx];
+          const localSavedAt = localR.lgSavedAt || 0;
+          const cloudSavedAt = ci.lgSavedAt || 0;
+          if (localSavedAt > cloudSavedAt) {
+            // Local is newer — keep it. Re-trigger the write to cloud so
+            // they stay in sync going forward.
+            if (window._fsWrite) {
+              try { window._fsWrite(uid, colName, localR); } catch(e){}
+            }
+            // do NOT overwrite merged[idx]
+          } else {
+            // Cloud is newer or equal — use it
+            merged[idx] = ci;
+          }
+        } else {
+          merged.push(ci);
+        }
       });
       localStorage.setItem(lsKey, JSON.stringify(merged));
     }
@@ -3661,14 +3682,30 @@ function lgPersistRec(rec) {
   }
 }
 
-// Find any past day (date < today) with lgBoxes > 0 and lgSaved !== true
+// Find any past day (date < today) with lgBoxes > 0 and lgSaved !== true.
+// Defended by a "recently saved" localStorage marker that prevents the
+// blocker from re-triggering during the ~few seconds where a Firestore
+// sync may have clobbered local lgSaved before our cloud write lands.
 function lgFindOldestUnsavedPastDay() {
   const list = DB.get(K.BIKRI);
-  const candidates = list.filter(r =>
-    r.date && r.date < TSTR &&
-    Array.isArray(r.lgBoxes) && r.lgBoxes.length > 0 &&
-    r.lgSaved !== true
-  );
+  // Read the recently-saved marker (date → timestamp). Any date saved within
+  // the last 60 seconds is treated as definitely saved regardless of what
+  // the bikri record currently shows.
+  let recentlySaved = {};
+  try {
+    recentlySaved = JSON.parse(localStorage.getItem('hk_lg_recent_saves_' + CURRENT_UID) || '{}');
+  } catch(e){}
+  const now = Date.now();
+  const candidates = list.filter(r => {
+    if (!r.date || !(r.date < TSTR)) return false;
+    if (!Array.isArray(r.lgBoxes) || r.lgBoxes.length === 0) return false;
+    // If lgSaved is true in the record, skip
+    if (r.lgSaved === true) return false;
+    // Also skip if we have a recent-saved marker for this date
+    const ts = recentlySaved[r.date] || 0;
+    if (ts && (now - ts) < 60000) return false;
+    return true;
+  });
   if (!candidates.length) return null;
   candidates.sort((a,b) => a.date.localeCompare(b.date));
   return candidates[0].date;
@@ -3975,7 +4012,21 @@ function lgDeleteBox() {
 // ---------------- MANUAL SAVE ("Closing करें") ----------------
 
 function lgConfirmClosing() {
-  const r = window.lgState.rec;
+  // Re-fetch fresh from DB in case _fsLoadAll has overwritten the local
+  // record while we were on screen. Trusting window.lgState.rec alone
+  // can lead to stale references when sync races with the user's tap.
+  const targetDate = window.lgState.rec ? window.lgState.rec.date : TSTR;
+  let r = lgGetOrCreateRec(targetDate);
+  // Merge any in-memory changes (like newly added boxes from THIS session
+  // that haven't been re-persisted yet) from the stale ref into the fresh one
+  if (window.lgState.rec && window.lgState.rec !== r) {
+    // Prefer the in-memory boxes if they're more numerous (user just added)
+    const memBoxes = (window.lgState.rec.lgBoxes || []);
+    const freshBoxes = (r.lgBoxes || []);
+    if (memBoxes.length > freshBoxes.length) {
+      r.lgBoxes = memBoxes;
+    }
+  }
   const boxes = r.lgBoxes || [];
   if (boxes.length === 0) {
     toast('❌ कोई एंट्री नहीं है — पहले बिक्री या खर्चा जोड़ें', true);
@@ -3983,7 +4034,24 @@ function lgConfirmClosing() {
   }
   r.lgSaved = true;
   r.lgSavedAt = Date.now();
+  // Fast safety marker: localStorage flag the blocker check reads.
+  // Defends against any race where a Firestore sync clobbers lgSaved before
+  // our cloud write of lgSaved=true arrives. The marker lives for 60 seconds.
+  try {
+    const key = 'hk_lg_recent_saves_' + CURRENT_UID;
+    let recent = {};
+    try { recent = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e){}
+    recent[r.date] = Date.now();
+    // Prune entries older than 1 hour to keep the object small
+    Object.keys(recent).forEach(k => {
+      if ((Date.now() - recent[k]) > 3600000) delete recent[k];
+    });
+    localStorage.setItem(key, JSON.stringify(recent));
+  } catch(e){}
   lgPersistRec(r);
+  // Refresh state to the saved record so subsequent re-renders use the
+  // updated reference (with lgSaved=true).
+  window.lgState.rec = r;
   showSuccessModal('Closing हो गया', '💾 ' + lgFormatDate(r.date) + ' का हिसाब बंद हुआ');
 
   // If we were blocking, check whether another unsaved past day remains

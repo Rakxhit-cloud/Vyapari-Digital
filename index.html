@@ -1209,6 +1209,33 @@ body.notif-modal-open { overflow: hidden; }
 .lg-box-expense .lg-box-num { color:#cc7a47; }
 .lg-box-expense .lg-box-amt { color:#f0b888; }
 
+/* Note icon under each खर्चा box */
+.lg-note-cell { display:flex; align-items:center; justify-content:center; height:20px; cursor:pointer; user-select:none; }
+.lg-note-icon { font-size:13px; line-height:1; opacity:0.32; transition:all .2s; }
+.lg-note-icon.has-note { opacity:1; color:#8aef7a; text-shadow:0 0 5px rgba(127,239,123,0.55); }
+.lg-note-cell:active .lg-note-icon { transform:scale(0.85); }
+
+/* Notes modal */
+.lg-note-modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); z-index:1600; display:none; align-items:center; justify-content:center; padding:16px; }
+.lg-note-modal-backdrop.show { display:flex; }
+.lg-note-modal-card { width:100%; max-width:320px; background:#0a1530; border:1.5px solid #2a4078; border-radius:14px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.6); }
+.lg-note-modal-stripe { height:3px; background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%); }
+.lg-note-modal-body { padding:14px; }
+.lg-note-modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.lg-note-modal-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#f0b888; }
+.lg-note-modal-close { background:#081223; border:1px solid #2a4078; width:26px; height:26px; border-radius:7px; display:flex; align-items:center; justify-content:center; color:#8aa0d8; font-size:12px; cursor:pointer; }
+.lg-note-modal-meta { font-size:11px; color:#8aa0d8; margin-bottom:9px; padding:8px 10px; background:#081223; border-radius:8px; border:1px solid #2a4078; }
+.lg-note-modal-meta-amt { font-size:14px; font-weight:700; color:#f0b888; }
+.lg-note-textarea { width:100%; box-sizing:border-box; background:#081223; border:1.5px solid #2a4078; border-radius:9px; padding:9px 10px; color:#e8d8b8; font-size:13px; font-family:inherit; line-height:1.4; resize:none; outline:none; }
+.lg-note-textarea:focus { border-color:#cc7a47; }
+.lg-note-counter { font-size:10px; color:#8aa0d8; text-align:right; margin-top:5px; }
+.lg-note-counter.lg-note-counter-warn { color:#cc7a47; }
+.lg-note-modal-btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:11px; }
+.lg-note-btn { padding:10px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid; text-align:center; }
+.lg-note-btn-cancel { background:transparent; color:#8aa0d8; border-color:#2a4078; }
+.lg-note-btn-save { background:linear-gradient(135deg,#cc7a47 0%,#854f0b 100%); color:#fff; border-color:#f0a868; }
+.lg-note-btn-delete { background:#3a1818; color:#f08080; border:1.5px solid #cc4545; width:100%; padding:9px; border-radius:9px; font-size:11px; font-weight:500; cursor:pointer; margin-top:7px; }
+
 /* Add (+) button cell */
 .lg-add { background:#0a1530; border-radius:10px; padding:7px 2px; text-align:center; display:flex; align-items:center; justify-content:center; min-height:40px; cursor:pointer; font-size:22px; font-weight:600; line-height:1; }
 .lg-add-cash    { border:2px solid #8aef7a; color:#8aef7a; }
@@ -2248,46 +2275,35 @@ body.notif-modal-open { overflow: hidden; }
     <div class="sec-head"><div class="sec-icon sec-icon-copper">📦</div><div class="sec-text"><div class="sec-title" style="color:#cc7a47;">माल की खरीद</div><div class="sec-sub">Goods Purchase</div></div><span class="sec-badge" style="background:#4a2818;color:#cc7a47;border:1px solid #cc7a47;">महीने में</span></div>
     <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row-nakad"><span class="stat-k-new">नकद दिया</span><span class="stat-v-new" id="h-maal-nakad">₹0</span></div><div class="stat-row-udhaar"><span class="stat-k-new">उधार लिया</span><span class="stat-v-new" id="h-maal-udhaar">₹0</span></div><div id="h-maal-pending-section" style="display:none;"><div class="ss-section-head ss-pending"><span style="color:#f0b040;">⚠</span><span style="color:#f0b040;font-weight:500;">जल्दी चुकाएं</span><span class="ss-count ss-count-amber" id="h-maal-pending-count">0</span></div><div id="h-maal-pending-list"></div></div><div id="h-maal-recent-section"><div class="ss-section-head ss-recent"><span style="color:#d4a850;">🕐</span><span style="color:#d4a850;font-weight:500;">हाल की खरीद</span><span class="ss-count ss-count-gold" id="h-maal-recent-count">0</span></div><div id="h-maal-recent-list"><div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">⏳</div></div></div><div class="ss-view-all" id="h-maal-view-all" onclick="openMaalLedger()" style="display:none;">देखें सारा · <span id="h-maal-total-count">0</span> entries →</div></div>
     
-   <div class="mahiney-section">
-      <div class="mahiney-header" onclick="toggleMahiney()" style="display:none;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:42px;height:42px;background:#1a1545;border:1.5px solid #7a6cf0;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;">
-            <div style="background:#d4a850;height:11px;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;">
-              <div style="width:3px;height:5px;background:#fff;border-radius:2px;margin-top:-3px;"></div>
-              <div style="width:3px;height:5px;background:#fff;border-radius:2px;margin-top:-3px;"></div>
-            </div>
-            <div style="flex:1;padding:2px 3px;display:flex;flex-direction:column;gap:2px;justify-content:center;">
-              <div style="display:flex;gap:2px;justify-content:center;">
-                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
-              </div>
-              <div style="display:flex;gap:2px;justify-content:center;">
-                <div style="width:5px;height:5px;background:#d4a850;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#2a1a4a;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#2a1a4a;border-radius:1px;"></div>
-              </div>
-            </div>
-          </div>
-          <div><div class="mahiney-title" style="font-size:14px;">महीना चुनें</div><div class="mahiney-subtitle" id="mahiney-sub">Month Selector · तारीख देखें</div></div>
-        </div>
-        <div style="background:#2a1a4a;border:1px solid #4a3878;border-radius:8px;padding:5px 12px;font-size:10px;color:#d4a850;font-weight:500;" id="mahiney-arrow">▼ खोलें</div>
+   </div>
+  </div>
+</div>
+
+<!-- Calendar — dedicated screen, opened by one-tap from home -->
+<div id="s-calendar" class="screen">
+  <div class="header" style="border-bottom-color:#7a6cf0;">
+    <div class="header-left">
+      <button onclick="go('s-home')" style="background:#1a1545;border:1.5px solid #4a3878;width:38px;height:38px;border-radius:10px;color:#d4a850;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;">←</button>
+      <div class="header-icon" style="background:linear-gradient(135deg,#1a1545 0%,#0d0a30 100%);border:2px solid #7a6cf0;">📆</div>
+      <div>
+        <div class="header-title" style="color:#d4a850;">Calendar</div>
+        <div class="header-sub" style="color:#b0a0e8;">महीना · तारीख देखें</div>
       </div>
-      <div class="mahiney-body" id="mahiney-body">
-        <div class="month-grid" id="month-grid"></div>
-        <div id="cal-section" style="display:none;">
-          <div class="cal-wrapper">
-            <div class="cal-header"><div class="cal-month-label" id="cal-label"></div><div style="display:flex;gap:6px;"><div class="cal-nav" onclick="calPrev()">◀</div><div class="cal-nav" onclick="calNext()">▶</div></div></div>
-            <div class="cal-days-header"><div class="cal-day-name">सो</div><div class="cal-day-name">मं</div><div class="cal-day-name">बु</div><div class="cal-day-name">गु</div><div class="cal-day-name">शु</div><div class="cal-day-name">श</div><div class="cal-day-name">र</div></div>
-            <div class="cal-grid" id="cal-grid"></div>
-            <div class="cal-legend">
-              <div class="cal-leg-item"><div class="cal-leg-box" style="background:#0a2a0a;border:1.5px solid #2dba4d;"></div><span class="cal-leg-txt" style="color:#d4a850;">एंट्री है</span></div>
-              <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;outline:2px solid #2dba4d;outline-offset:1px;"></div><span class="cal-leg-txt" style="color:#70c0ff;">आज</span></div>
-              <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;"></div><span class="cal-leg-txt" style="color:#555;">खाली — टैप करें</span></div>
-            </div>
-            <div style="margin-top:8px;background:#0d1a2a;border:1px solid #1a2a3a;border-radius:6px;padding:5px 10px;text-align:center;"><div style="font-size:8px;color:#4a90d4;font-weight:700;">👆 किसी भी तारीख पर टैप करें — popup खुलेगा</div></div>
-          </div>
+    </div>
+  </div>
+  <div class="fw">
+    <div class="month-grid" id="month-grid"></div>
+    <div id="cal-section" style="display:none;">
+      <div class="cal-wrapper">
+        <div class="cal-header"><div class="cal-month-label" id="cal-label"></div><div style="display:flex;gap:6px;"><div class="cal-nav" onclick="calPrev()">◀</div><div class="cal-nav" onclick="calNext()">▶</div></div></div>
+        <div class="cal-days-header"><div class="cal-day-name">सो</div><div class="cal-day-name">मं</div><div class="cal-day-name">बु</div><div class="cal-day-name">गु</div><div class="cal-day-name">शु</div><div class="cal-day-name">श</div><div class="cal-day-name">र</div></div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend">
+          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#0a2a0a;border:1.5px solid #2dba4d;"></div><span class="cal-leg-txt" style="color:#d4a850;">एंट्री है</span></div>
+          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;outline:2px solid #2dba4d;outline-offset:1px;"></div><span class="cal-leg-txt" style="color:#70c0ff;">आज</span></div>
+          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;"></div><span class="cal-leg-txt" style="color:#555;">खाली — टैप करें</span></div>
         </div>
+        <div style="margin-top:8px;background:#0d1a2a;border:1px solid #1a2a3a;border-radius:6px;padding:5px 10px;text-align:center;"><div style="font-size:8px;color:#4a90d4;font-weight:700;">👆 किसी भी तारीख पर टैप करें — popup खुलेगा</div></div>
       </div>
     </div>
   </div>
@@ -2549,6 +2565,29 @@ body.notif-modal-open { overflow: hidden; }
       <button class="lg-action-btn lg-action-del" onclick="lgDeleteBox()">🗑️ Delete</button>
     </div>
     <button class="lg-action-cancel" onclick="lgCloseBoxAction()">Cancel</button>
+  </div>
+</div>
+
+<!-- खर्चा note edit modal -->
+<div class="lg-note-modal-backdrop" id="lg-note-modal" onclick="if(event.target===this)lgCloseNoteModal()">
+  <div class="lg-note-modal-card">
+    <div class="lg-note-modal-stripe"></div>
+    <div class="lg-note-modal-body">
+      <div class="lg-note-modal-head">
+        <div class="lg-note-modal-title">📝 खर्चा का नोट</div>
+        <div class="lg-note-modal-close" onclick="lgCloseNoteModal()">✕</div>
+      </div>
+      <div class="lg-note-modal-meta">
+        Box <span id="lg-note-modal-n">1</span> · <span class="lg-note-modal-meta-amt" id="lg-note-modal-amt">₹0</span>
+      </div>
+      <textarea class="lg-note-textarea" id="lg-note-input" rows="3" maxlength="60" placeholder="जैसे: बिजली का बिल, चाय वाले को..." oninput="lgUpdateNoteCounter()"></textarea>
+      <div class="lg-note-counter" id="lg-note-counter">0 / 60</div>
+      <div class="lg-note-modal-btns">
+        <button class="lg-note-btn lg-note-btn-cancel" onclick="lgCloseNoteModal()">रद्द करें</button>
+        <button class="lg-note-btn lg-note-btn-save" onclick="lgSaveNote()">💾 Save</button>
+      </div>
+      <button class="lg-note-btn-delete" id="lg-note-btn-delete" onclick="lgDeleteNote()" style="display:none;">🗑️ नोट हटाएं</button>
+    </div>
   </div>
 </div>
 
@@ -3798,24 +3837,112 @@ function lgRenderGrid(type) {
 
   grid.innerHTML = '';
 
-  // Render existing boxes (number them sequentially 1..N within type)
-  allBoxes.forEach((box, idx) => {
-    const n = idx + 1;
-    const cell = document.createElement('div');
-    cell.className = 'lg-box lg-box-' + type;
-    cell.innerHTML = '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
-    // Only allow edit/delete if not blocked-and-readonly (we still allow edits on
-    // blocker mode since that's the whole point — fix mistakes then save)
-    cell.onclick = () => lgOpenBoxAction(type, n);
-    grid.appendChild(cell);
-  });
-
-  // Render "+" button as next cell (unless soft cap reached — still allowed, just warn)
-  const addBtn = document.createElement('div');
-  addBtn.className = 'lg-add lg-add-' + type;
-  addBtn.textContent = '+';
-  addBtn.onclick = () => lgOpenKeypad(type, null);
-  grid.appendChild(addBtn);
+  if (type === 'expense') {
+    // Special layout for खर्चा: render in chunks of LG_BOXES_PER_ROW (8)
+    // — first a row of boxes, then a row of their note-cells directly below,
+    //   then next 8 boxes, then their notes, etc.
+    const perRow = LG_BOXES_PER_ROW;
+    const totalCount = allBoxes.length;
+    let i = 0;
+    while (i < totalCount) {
+      const chunkEnd = Math.min(i + perRow, totalCount);
+      // Render box row
+      for (let j = i; j < chunkEnd; j++) {
+        const box = allBoxes[j];
+        const n = j + 1;
+        const cell = document.createElement('div');
+        cell.className = 'lg-box lg-box-' + type;
+        cell.innerHTML = '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
+        cell.onclick = () => lgOpenBoxAction(type, n);
+        grid.appendChild(cell);
+      }
+      // If this row isn't full and it's the LAST chunk, put + button in the next available slot
+      // of THIS box row; otherwise (full row), defer the + to the dedicated last cell.
+      const isLastChunk = (chunkEnd >= totalCount);
+      const slotsInThisBoxRow = chunkEnd - i;
+      let plusInBoxRow = false;
+      if (isLastChunk && slotsInThisBoxRow < perRow) {
+        // Add + button right after the last box in this row
+        const addBtn = document.createElement('div');
+        addBtn.className = 'lg-add lg-add-' + type;
+        addBtn.textContent = '+';
+        addBtn.onclick = () => lgOpenKeypad(type, null);
+        grid.appendChild(addBtn);
+        plusInBoxRow = true;
+        // Fill remaining cells in this box row with invisible spacers so note row aligns
+        for (let s = slotsInThisBoxRow + 1; s < perRow; s++) {
+          const spacer = document.createElement('div');
+          spacer.style.cssText = 'visibility:hidden;';
+          grid.appendChild(spacer);
+        }
+      } else if (slotsInThisBoxRow < perRow) {
+        // Mid-chunks shouldn't really happen (we chunk by perRow), but be safe
+        for (let s = slotsInThisBoxRow; s < perRow; s++) {
+          const spacer = document.createElement('div');
+          spacer.style.cssText = 'visibility:hidden;';
+          grid.appendChild(spacer);
+        }
+      }
+      // Render note-cell row for this chunk (one note-cell per box in this chunk)
+      for (let j = i; j < chunkEnd; j++) {
+        const box = allBoxes[j];
+        const n = j + 1;
+        const noteCell = document.createElement('div');
+        noteCell.className = 'lg-note-cell';
+        const hasNote = !!(box.note && String(box.note).trim());
+        noteCell.innerHTML = '<span class="lg-note-icon' + (hasNote ? ' has-note' : '') + '">📝</span>';
+        noteCell.onclick = (e) => { e.stopPropagation(); lgOpenNoteModal(type, n); };
+        grid.appendChild(noteCell);
+      }
+      // Fill remaining slots in the note row with empty spacers so the grid stays neat
+      if (plusInBoxRow) {
+        // The note row is shorter than perRow — pad with invisible spacers
+        for (let s = (chunkEnd - i); s < perRow; s++) {
+          const spacer = document.createElement('div');
+          spacer.style.cssText = 'visibility:hidden;';
+          grid.appendChild(spacer);
+        }
+      } else if (slotsInThisBoxRow < perRow) {
+        for (let s = slotsInThisBoxRow; s < perRow; s++) {
+          const spacer = document.createElement('div');
+          spacer.style.cssText = 'visibility:hidden;';
+          grid.appendChild(spacer);
+        }
+      }
+      i += perRow;
+    }
+    // If the LAST chunk was a full row (or there were zero boxes), put the + button now on its own row
+    const lastChunkWasFull = (totalCount % perRow === 0);
+    if (lastChunkWasFull) {
+      const addBtn = document.createElement('div');
+      addBtn.className = 'lg-add lg-add-' + type;
+      addBtn.textContent = '+';
+      addBtn.onclick = () => lgOpenKeypad(type, null);
+      grid.appendChild(addBtn);
+      // Pad rest of row with invisible spacers
+      for (let s = 1; s < perRow; s++) {
+        const spacer = document.createElement('div');
+        spacer.style.cssText = 'visibility:hidden;';
+        grid.appendChild(spacer);
+      }
+    }
+  } else {
+    // नकद + UPI: original flat rendering, no note cells
+    allBoxes.forEach((box, idx) => {
+      const n = idx + 1;
+      const cell = document.createElement('div');
+      cell.className = 'lg-box lg-box-' + type;
+      cell.innerHTML = '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
+      cell.onclick = () => lgOpenBoxAction(type, n);
+      grid.appendChild(cell);
+    });
+    // Render "+" button as next cell
+    const addBtn = document.createElement('div');
+    addBtn.className = 'lg-add lg-add-' + type;
+    addBtn.textContent = '+';
+    addBtn.onclick = () => lgOpenKeypad(type, null);
+    grid.appendChild(addBtn);
+  }
 
   // If hard soft-cap exceeded, add a soft note below
   if (allBoxes.length >= LG_SOFT_CAP) {
@@ -3825,6 +3952,91 @@ function lgRenderGrid(type) {
     grid.appendChild(note);
   }
 }
+
+// ---------------- खर्चा NOTE MODAL ----------------
+window.lgNoteCtx = { type: null, n: null };
+
+function lgOpenNoteModal(type, n) {
+  // type should always be 'expense' (only खर्चा boxes have notes), but we keep it generic
+  const r = window.lgState.rec;
+  const allBoxes = (r.lgBoxes || []).filter(b => b.type === type);
+  const idx = n - 1;
+  if (idx < 0 || idx >= allBoxes.length) return;
+  const box = allBoxes[idx];
+  window.lgNoteCtx.type = type;
+  window.lgNoteCtx.n = n;
+  // Populate fields
+  document.getElementById('lg-note-modal-n').textContent = n;
+  document.getElementById('lg-note-modal-amt').textContent = '₹' + box.amount.toLocaleString('en-IN');
+  const input = document.getElementById('lg-note-input');
+  input.value = box.note || '';
+  // Show/hide delete button
+  document.getElementById('lg-note-btn-delete').style.display = (box.note && String(box.note).trim()) ? 'block' : 'none';
+  // Update counter
+  lgUpdateNoteCounter();
+  // Show modal
+  document.getElementById('lg-note-modal').classList.add('show');
+  // Focus textarea after a brief delay (so the modal animation can complete)
+  setTimeout(() => input.focus(), 100);
+}
+
+function lgCloseNoteModal() {
+  document.getElementById('lg-note-modal').classList.remove('show');
+  window.lgNoteCtx.type = null;
+  window.lgNoteCtx.n = null;
+}
+
+function lgUpdateNoteCounter() {
+  const input = document.getElementById('lg-note-input');
+  const counter = document.getElementById('lg-note-counter');
+  const len = input.value.length;
+  counter.textContent = len + ' / 60';
+  counter.classList.toggle('lg-note-counter-warn', len > 50);
+}
+
+function lgSaveNote() {
+  const ctx = window.lgNoteCtx;
+  if (!ctx.type || !ctx.n) { lgCloseNoteModal(); return; }
+  const r = window.lgState.rec;
+  if (!r) { lgCloseNoteModal(); return; }
+  // Find the box (within type) by n
+  const allBoxes = (r.lgBoxes || []);
+  const sameTypeBoxes = allBoxes.filter(b => b.type === ctx.type);
+  const targetBox = sameTypeBoxes[ctx.n - 1];
+  if (!targetBox) { lgCloseNoteModal(); return; }
+  const noteText = String(document.getElementById('lg-note-input').value || '').trim().slice(0, 60);
+  // Find this box in the actual r.lgBoxes array and update in place
+  const realIdx = r.lgBoxes.indexOf(targetBox);
+  if (realIdx < 0) { lgCloseNoteModal(); return; }
+  if (noteText) {
+    r.lgBoxes[realIdx].note = noteText;
+  } else {
+    // Empty save = delete
+    delete r.lgBoxes[realIdx].note;
+  }
+  // If the day is currently saved (lgSaved=true), keep it saved (note editing doesn't unsave it)
+  // — but if user is on today's live screen, that's also fine; lgPersistRec just writes.
+  lgPersistRec(r);
+  lgRenderGrid(ctx.type);
+  // Optional: brief toast
+  if (typeof toast === 'function') {
+    toast(noteText ? '✓ नोट जोड़ा गया' : '✓ नोट हटाया गया');
+  }
+  lgCloseNoteModal();
+}
+
+function lgDeleteNote() {
+  // Clear the textarea and immediately save (which triggers the empty-save = delete path)
+  document.getElementById('lg-note-input').value = '';
+  lgSaveNote();
+}
+
+// Expose for inline onclick handlers
+window.lgOpenNoteModal = lgOpenNoteModal;
+window.lgCloseNoteModal = lgCloseNoteModal;
+window.lgUpdateNoteCounter = lgUpdateNoteCounter;
+window.lgSaveNote = lgSaveNote;
+window.lgDeleteNote = lgDeleteNote;
 
 function lgRenderSaveArea() {
   const area = document.getElementById('lg-save-area');
@@ -3967,7 +4179,11 @@ function lgOpenBoxAction(type, n) {
   window.lgBoxActionCtx = { type, n };
   document.getElementById('lg-box-action-amt').textContent = '₹' + box.amount.toLocaleString('en-IN');
   const labels = { cash: 'नकद बिक्री', upi: 'UPI बिक्री', expense: 'खर्चा' };
-  document.getElementById('lg-box-action-meta').textContent = labels[type] + ' · Box ' + n;
+  let metaText = labels[type] + ' · Box ' + n;
+  if (type === 'expense' && box.note && String(box.note).trim()) {
+    metaText += ' · 📝 ' + box.note;
+  }
+  document.getElementById('lg-box-action-meta').textContent = metaText;
   document.getElementById('lg-box-action').classList.add('show');
 }
 
@@ -4536,8 +4752,15 @@ function renderMaalLedger(){
   });
 }
 let mahineyOpen=false,calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calSelectedMonth=null;
-function toggleMahiney(){mahineyOpen=!mahineyOpen;document.getElementById('mahiney-body').classList.toggle('open',mahineyOpen);document.getElementById('mahiney-arrow').classList.toggle('open',mahineyOpen);if(mahineyOpen)buildMonthGrid();}
-function toggleMahineyFromBtn(){toggleMahiney();if(mahineyOpen){setTimeout(()=>{const el=document.getElementById('mahiney-body');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},100);}}
+function toggleMahiney(){
+  // Stub kept for any external references — actual calendar now lives on s-calendar screen.
+  // Calling this is a no-op; use toggleMahineyFromBtn() (which navigates) instead.
+}
+function toggleMahineyFromBtn(){
+  // One-tap open: navigate to the dedicated calendar screen and build the month grid.
+  if (typeof go === 'function') go('s-calendar');
+  if (typeof buildMonthGrid === 'function') buildMonthGrid();
+}
 window.toggleMahineyFromBtn=toggleMahineyFromBtn;
 
 function buildMonthGrid(){const bikri=DB.get(K.BIKRI),countByMonth={};bikri.forEach(r=>{if(r.date){const m=parseInt(r.date.split('-')[1])-1;countByMonth[m]=(countByMonth[m]||0)+1;}});const grid=document.getElementById('month-grid');grid.innerHTML='';for(let m=0;m<12;m++){const count=countByMonth[m]||0,isSelected=calSelectedMonth===m;const div=document.createElement('div');div.className='month-pill'+(count>0?' has-data':'')+(isSelected?' selected':'');if(isSelected){const badge=document.createElement('div');badge.className='month-sel-badge';badge.textContent='● चुना';div.appendChild(badge);}const nameEl=document.createElement('div');nameEl.className='month-pill-name';nameEl.textContent=HI_MONTHS[m];div.appendChild(nameEl);const cntEl=document.createElement('div');cntEl.className='month-pill-count';cntEl.textContent=count>0?count+' एंट्री':'खाली';div.appendChild(cntEl);div.onclick=()=>selectMonth(m);grid.appendChild(div);}}
@@ -5554,9 +5777,8 @@ function appLockToggle() { if (window.alckOpenChangePinFlow) window.alckOpenChan
 history.pushState(null, '', location.href);
 window.addEventListener('popstate', function() {
   if(document.getElementById('ub-app').style.display!=='none') return;
-  const overlays=['supplier-pay-overlay','action-popup','confirm-popup','edit-popup','date-popup-overlay','install-banner'];
+  const overlays=['supplier-pay-overlay','action-popup','confirm-popup','edit-popup','date-popup-overlay','install-banner','lg-note-modal'];
   for(const id of overlays){const el=document.getElementById(id);if(el&&(el.classList.contains('show')||el.style.display==='flex')){el.classList.remove('show');el.style.display='';history.pushState(null,'',location.href);return;}}
-  if(document.getElementById('mahiney-body').classList.contains('open')){toggleMahiney();history.pushState(null,'',location.href);return;}
   const active=document.querySelector('.screen.active');
   if(active&&active.id!=='s-home'){go('s-home');history.pushState(null,'',location.href);return;}
 });  

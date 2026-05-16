@@ -2248,46 +2248,35 @@ body.notif-modal-open { overflow: hidden; }
     <div class="sec-head"><div class="sec-icon sec-icon-copper">📦</div><div class="sec-text"><div class="sec-title" style="color:#cc7a47;">माल की खरीद</div><div class="sec-sub">Goods Purchase</div></div><span class="sec-badge" style="background:#4a2818;color:#cc7a47;border:1px solid #cc7a47;">महीने में</span></div>
     <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row-nakad"><span class="stat-k-new">नकद दिया</span><span class="stat-v-new" id="h-maal-nakad">₹0</span></div><div class="stat-row-udhaar"><span class="stat-k-new">उधार लिया</span><span class="stat-v-new" id="h-maal-udhaar">₹0</span></div><div id="h-maal-pending-section" style="display:none;"><div class="ss-section-head ss-pending"><span style="color:#f0b040;">⚠</span><span style="color:#f0b040;font-weight:500;">जल्दी चुकाएं</span><span class="ss-count ss-count-amber" id="h-maal-pending-count">0</span></div><div id="h-maal-pending-list"></div></div><div id="h-maal-recent-section"><div class="ss-section-head ss-recent"><span style="color:#d4a850;">🕐</span><span style="color:#d4a850;font-weight:500;">हाल की खरीद</span><span class="ss-count ss-count-gold" id="h-maal-recent-count">0</span></div><div id="h-maal-recent-list"><div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">⏳</div></div></div><div class="ss-view-all" id="h-maal-view-all" onclick="openMaalLedger()" style="display:none;">देखें सारा · <span id="h-maal-total-count">0</span> entries →</div></div>
     
-   <div class="mahiney-section">
-      <div class="mahiney-header" onclick="toggleMahiney()" style="display:none;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:42px;height:42px;background:#1a1545;border:1.5px solid #7a6cf0;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;">
-            <div style="background:#d4a850;height:11px;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;">
-              <div style="width:3px;height:5px;background:#fff;border-radius:2px;margin-top:-3px;"></div>
-              <div style="width:3px;height:5px;background:#fff;border-radius:2px;margin-top:-3px;"></div>
-            </div>
-            <div style="flex:1;padding:2px 3px;display:flex;flex-direction:column;gap:2px;justify-content:center;">
-              <div style="display:flex;gap:2px;justify-content:center;">
-                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#7a6cf0;border-radius:1px;"></div>
-              </div>
-              <div style="display:flex;gap:2px;justify-content:center;">
-                <div style="width:5px;height:5px;background:#d4a850;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#2a1a4a;border-radius:1px;"></div>
-                <div style="width:5px;height:5px;background:#2a1a4a;border-radius:1px;"></div>
-              </div>
-            </div>
-          </div>
-          <div><div class="mahiney-title" style="font-size:14px;">महीना चुनें</div><div class="mahiney-subtitle" id="mahiney-sub">Month Selector · तारीख देखें</div></div>
-        </div>
-        <div style="background:#2a1a4a;border:1px solid #4a3878;border-radius:8px;padding:5px 12px;font-size:10px;color:#d4a850;font-weight:500;" id="mahiney-arrow">▼ खोलें</div>
+   </div>
+  </div>
+</div>
+
+<!-- Calendar — dedicated screen, opened by one-tap from home -->
+<div id="s-calendar" class="screen">
+  <div class="header" style="border-bottom-color:#7a6cf0;">
+    <div class="header-left">
+      <button onclick="go('s-home')" style="background:#1a1545;border:1.5px solid #4a3878;width:38px;height:38px;border-radius:10px;color:#d4a850;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;">←</button>
+      <div class="header-icon" style="background:linear-gradient(135deg,#1a1545 0%,#0d0a30 100%);border:2px solid #7a6cf0;">📆</div>
+      <div>
+        <div class="header-title" style="color:#d4a850;">Calendar</div>
+        <div class="header-sub" style="color:#b0a0e8;">महीना · तारीख देखें</div>
       </div>
-      <div class="mahiney-body" id="mahiney-body">
-        <div class="month-grid" id="month-grid"></div>
-        <div id="cal-section" style="display:none;">
-          <div class="cal-wrapper">
-            <div class="cal-header"><div class="cal-month-label" id="cal-label"></div><div style="display:flex;gap:6px;"><div class="cal-nav" onclick="calPrev()">◀</div><div class="cal-nav" onclick="calNext()">▶</div></div></div>
-            <div class="cal-days-header"><div class="cal-day-name">सो</div><div class="cal-day-name">मं</div><div class="cal-day-name">बु</div><div class="cal-day-name">गु</div><div class="cal-day-name">शु</div><div class="cal-day-name">श</div><div class="cal-day-name">र</div></div>
-            <div class="cal-grid" id="cal-grid"></div>
-            <div class="cal-legend">
-              <div class="cal-leg-item"><div class="cal-leg-box" style="background:#0a2a0a;border:1.5px solid #2dba4d;"></div><span class="cal-leg-txt" style="color:#d4a850;">एंट्री है</span></div>
-              <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;outline:2px solid #2dba4d;outline-offset:1px;"></div><span class="cal-leg-txt" style="color:#70c0ff;">आज</span></div>
-              <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;"></div><span class="cal-leg-txt" style="color:#555;">खाली — टैप करें</span></div>
-            </div>
-            <div style="margin-top:8px;background:#0d1a2a;border:1px solid #1a2a3a;border-radius:6px;padding:5px 10px;text-align:center;"><div style="font-size:8px;color:#4a90d4;font-weight:700;">👆 किसी भी तारीख पर टैप करें — popup खुलेगा</div></div>
-          </div>
+    </div>
+  </div>
+  <div class="fw">
+    <div class="month-grid" id="month-grid"></div>
+    <div id="cal-section" style="display:none;">
+      <div class="cal-wrapper">
+        <div class="cal-header"><div class="cal-month-label" id="cal-label"></div><div style="display:flex;gap:6px;"><div class="cal-nav" onclick="calPrev()">◀</div><div class="cal-nav" onclick="calNext()">▶</div></div></div>
+        <div class="cal-days-header"><div class="cal-day-name">सो</div><div class="cal-day-name">मं</div><div class="cal-day-name">बु</div><div class="cal-day-name">गु</div><div class="cal-day-name">शु</div><div class="cal-day-name">श</div><div class="cal-day-name">र</div></div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend">
+          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#0a2a0a;border:1.5px solid #2dba4d;"></div><span class="cal-leg-txt" style="color:#d4a850;">एंट्री है</span></div>
+          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;outline:2px solid #2dba4d;outline-offset:1px;"></div><span class="cal-leg-txt" style="color:#70c0ff;">आज</span></div>
+          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;"></div><span class="cal-leg-txt" style="color:#555;">खाली — टैप करें</span></div>
         </div>
+        <div style="margin-top:8px;background:#0d1a2a;border:1px solid #1a2a3a;border-radius:6px;padding:5px 10px;text-align:center;"><div style="font-size:8px;color:#4a90d4;font-weight:700;">👆 किसी भी तारीख पर टैप करें — popup खुलेगा</div></div>
       </div>
     </div>
   </div>
@@ -4556,8 +4545,15 @@ function renderMaalLedger(){
   });
 }
 let mahineyOpen=false,calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calSelectedMonth=null;
-function toggleMahiney(){mahineyOpen=!mahineyOpen;document.getElementById('mahiney-body').classList.toggle('open',mahineyOpen);document.getElementById('mahiney-arrow').classList.toggle('open',mahineyOpen);if(mahineyOpen)buildMonthGrid();}
-function toggleMahineyFromBtn(){toggleMahiney();if(mahineyOpen){setTimeout(()=>{const el=document.getElementById('mahiney-body');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},100);}}
+function toggleMahiney(){
+  // Stub kept for backwards compatibility. Actual calendar now lives on the
+  // s-calendar dedicated screen. Use toggleMahineyFromBtn() to navigate.
+}
+function toggleMahineyFromBtn(){
+  // One-tap open: navigate to the dedicated calendar screen and build the grid.
+  if (typeof go === 'function') go('s-calendar');
+  if (typeof buildMonthGrid === 'function') buildMonthGrid();
+}
 window.toggleMahineyFromBtn=toggleMahineyFromBtn;
 
 function buildMonthGrid(){const bikri=DB.get(K.BIKRI),countByMonth={};bikri.forEach(r=>{if(r.date){const m=parseInt(r.date.split('-')[1])-1;countByMonth[m]=(countByMonth[m]||0)+1;}});const grid=document.getElementById('month-grid');grid.innerHTML='';for(let m=0;m<12;m++){const count=countByMonth[m]||0,isSelected=calSelectedMonth===m;const div=document.createElement('div');div.className='month-pill'+(count>0?' has-data':'')+(isSelected?' selected':'');if(isSelected){const badge=document.createElement('div');badge.className='month-sel-badge';badge.textContent='● चुना';div.appendChild(badge);}const nameEl=document.createElement('div');nameEl.className='month-pill-name';nameEl.textContent=HI_MONTHS[m];div.appendChild(nameEl);const cntEl=document.createElement('div');cntEl.className='month-pill-count';cntEl.textContent=count>0?count+' एंट्री':'खाली';div.appendChild(cntEl);div.onclick=()=>selectMonth(m);grid.appendChild(div);}}
@@ -5574,9 +5570,8 @@ function appLockToggle() { if (window.alckOpenChangePinFlow) window.alckOpenChan
 history.pushState(null, '', location.href);
 window.addEventListener('popstate', function() {
   if(document.getElementById('ub-app').style.display!=='none') return;
-  const overlays=['supplier-pay-overlay','action-popup','confirm-popup','edit-popup','date-popup-overlay','install-banner'];
+  const overlays=['supplier-pay-overlay','action-popup','confirm-popup','edit-popup','date-popup-overlay','install-banner','lg-note-modal'];
   for(const id of overlays){const el=document.getElementById(id);if(el&&(el.classList.contains('show')||el.style.display==='flex')){el.classList.remove('show');el.style.display='';history.pushState(null,'',location.href);return;}}
-  if(document.getElementById('mahiney-body').classList.contains('open')){toggleMahiney();history.pushState(null,'',location.href);return;}
   const active=document.querySelector('.screen.active');
   if(active&&active.id!=='s-home'){go('s-home');history.pushState(null,'',location.href);return;}
 });  

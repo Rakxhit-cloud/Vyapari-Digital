@@ -1126,68 +1126,131 @@ function actionBarHTML(u) {
 }
 
 // =================== SMART WHATSAPP TEMPLATES ===================
+//
+// Professional brand-voice templates. No first-person ("मैं"/"हम"), no
+// name personalization. Each message is structured: greeting → brand
+// header → body bullets → CTA link → italic brand footer.
+//
+// WhatsApp markdown used:
+//   *bold*  for the header/section titles
+//   _italic_ for the brand footer
+//
+// Stage detection priority (highest → lowest):
+//   1. Trial expired                  → "TRIAL OVER"
+//   2. Trial ending soon (≤7 days)    → "TRIAL ENDING"
+//   3. Trial reminder (8-15 days)     → "TRIAL REMINDER"
+//   4. Stuck at OTP (6+ hr no terms)  → "OTP STUCK"
+//   5. Stuck at Terms (12+ hr no name)→ "TERMS STUCK"
+//   6. Stuck at PWA install (3+ days) → "INSTALL"
+//   7. PWA installed but no entry     → "FIRST ENTRY"
+//   8. Inactive 14+ days              → "RE-ENGAGE"
+//   9. Default check-in               → "CHECK-IN"
 function pickTemplate(u) {
   const p = u.profile || {};
   const stage = classifyStage(p, u);
   const dl = daysLeft(p.trialStart);
-  const firstName = (p.name || '').split(' ')[0] || 'जी';
-  const biz = p.businessName || '';
 
-  // Priority order:
-  // 1. Trial expired
+  // Helper: hours since a Firestore timestamp / number
+  function hoursSince(ts) {
+    if (!ts) return Infinity;
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return (Date.now() - d.getTime()) / (1000 * 60 * 60);
+  }
+  function daysSince(ts) {
+    return hoursSince(ts) / 24;
+  }
+
+  // 1. Trial expired (still has data, but trial is over)
   if (p.trialStart && dl === 0) {
     return {
-      tag: 'EXPIRED',
+      tag: 'TRIAL OVER',
       tone: 'expiring',
-      preview: `${firstName} जी, आपका free trial खत्म हो गया है। ₹149/महीने में जारी रखें।`,
-      full: `नमस्ते ${firstName} जी 🙏\n\nहिसाब-Kitaab का आपका 90 दिन का free trial अब खत्म हो गया है।\n\nApp जारी रखने के लिए बस ₹149/महीना का subscription चालू करें। आपका सारा data safe है।\n\nApp open करें: https://hisaabkitaab.online/`
+      preview: 'Trial खत्म हो गया है — ₹149/महीने में जारी रखें।',
+      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Trial पूरा हुआ*\n\nआपका 90-दिन Free Trial खत्म हो गया है। आपका सारा data safe है।\n\nContinue करने के लिए:\n• ₹149 / महीना\n• सभी features unlimited\n\n👉 https://hisaabkitaab.online\n\n_हिसाब-Kitaab_`
     };
   }
-  // 2. Stuck at PWA install
+
+  // 2. Trial ending soon (1-7 days left)
+  if (p.trialStart && dl > 0 && dl <= 7) {
+    return {
+      tag: 'TRIAL ENDING',
+      tone: 'expiring',
+      preview: `Trial में सिर्फ ${dl} दिन बाकी हैं।`,
+      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Trial ${dl} दिन में पूरा*\n\nआपका 90-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹149 / महीना\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_हिसाब-Kitaab_`
+    };
+  }
+
+  // 3. Trial reminder (8-15 days left)
+  if (p.trialStart && dl > 7 && dl <= 15) {
+    return {
+      tag: 'TRIAL REMINDER',
+      tone: 'stuck',
+      preview: `Trial में ${dl} दिन बाकी हैं।`,
+      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Trial ${dl} दिन में पूरा*\n\nआपका 90-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹149 / महीना\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_हिसाब-Kitaab_`
+    };
+  }
+
+  // 4. Stuck at OTP — verified but no terms acceptance after 6+ hours
+  if (stage === 'otp' && p.otpVerifiedAt && hoursSince(p.otpVerifiedAt) >= 6) {
+    return {
+      tag: 'OTP STUCK',
+      tone: 'stuck',
+      preview: 'Registration अधूरी है — 2 step बाकी।',
+      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Registration अधूरी है*\n\nOTP verify हो चुका है। पूरा करने के लिए 2 step बाकी:\n\n• Terms accept करें\n• नाम + दुकान का नाम भरें\n\nFree Trial: 90 दिन\n\n👉 https://hisaabkitaab.online\n\n_हिसाब-Kitaab_`
+    };
+  }
+
+  // 5. Stuck at Terms — terms accepted but no name saved after 12+ hours
+  if (stage === 'partial' && p.termsAgreedAt && hoursSince(p.termsAgreedAt) >= 12 && !p.name) {
+    return {
+      tag: 'TERMS STUCK',
+      tone: 'stuck',
+      preview: 'एक step बाकी — नाम और दुकान का नाम भरें।',
+      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — एक Step बाकी*\n\nTerms accept हो गए हैं। Registration complete करने के लिए सिर्फ एक काम:\n\n• नाम और दुकान का नाम भरें (30 सेकंड)\n\n90 दिन का Free Trial activate हो जाएगा।\n\n👉 https://hisaabkitaab.online\n\n_हिसाब-Kitaab_`
+    };
+  }
+
+  // 6. Stuck at PWA install — registered but no PWA activation
   if (stage === 'stuck') {
     return {
       tag: 'INSTALL',
       tone: 'stuck',
-      preview: `${firstName} जी, app install करने में मदद चाहिए? Link: hisaabkitaab.online`,
-      full: `नमस्ते ${firstName} जी 🙏\n\nहिसाब-Kitaab में register होने के लिए धन्यवाद!${biz ? ` ${biz} ` : ' '}अब बस एक छोटा सा step बचा है — app को install करना।\n\n📲 इस link पर click करें: https://hisaabkitaab.online/\n\nफिर "Install" या "Add to Home Screen" पर tap करें। 2 मिनट का काम है।\n\nकोई दिक्कत हो तो बताइए।`
+      preview: 'App install करना बाकी है।',
+      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — App Install करें*\n\nRegistration complete है। अब App install करना बाकी।\n\n*Steps:*\n1. Chrome में link खोलें\n2. "App install करें" button tap करें\n3. Home screen पर icon दिखेगा\n4. PIN set करें — done\n\n👉 https://hisaabkitaab.online\n\nInstall में दिक्कत? Reply करें।\n\n_हिसाब-Kitaab_`
     };
   }
-  // 3. Trial expiring soon (≤ 7 days)
-  if (p.trialStart && dl > 0 && dl <= 7) {
+
+  // 7. PWA installed but no first entry yet (1+ day since pwaActivatedAt)
+  if (p.pwaActivatedAt && !p.firstEntryAt &&
+      !(u.bikriCount > 0 || u.maalCount > 0 || u.kacchaCount > 0 || u.udhaarCount > 0) &&
+      daysSince(p.pwaActivatedAt) >= 1) {
     return {
-      tag: 'RENEW',
-      tone: 'expiring',
-      preview: `${firstName} जी, सिर्फ ${dl} दिन बाकी हैं trial में। Subscribe करना है?`,
-      full: `नमस्ते ${firstName} जी 🙏\n\nआपके हिसाब-Kitaab trial में सिर्फ ${dl} दिन बाकी हैं।\n\nApp जारी रखने के लिए ₹149/महीने का subscription चालू करें — एक चाय की कीमत में पूरे महीने का हिसाब।\n\nApp open करें: https://hisaabkitaab.online/`
-    };
-  }
-  // 4. Trial reminder (≤ 15 days)
-  if (p.trialStart && dl > 7 && dl <= 15) {
-    return {
-      tag: 'REMINDER',
+      tag: 'FIRST ENTRY',
       tone: 'stuck',
-      preview: `${firstName} जी, ${dl} दिन बाकी हैं free trial में। कैसा experience रहा?`,
-      full: `नमस्ते ${firstName} जी 🙏\n\nआपके हिसाब-Kitaab free trial में ${dl} दिन बाकी हैं।\n\nApp कैसा लग रहा है? कोई feedback या सुझाव हो तो जरूर बताएँ। हम और बेहतर बना सकते हैं।\n\nधन्यवाद!`
+      preview: 'App ready है — पहली entry डालें।',
+      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — पहली Entry डालें*\n\nApp ready है। एक quick entry से शुरू करें:\n\n• आज की कोई बिक्री\n• कोई एक खर्चा\n• या माल की खरीद\n\nLive खाता में 10 सेकंड में entry हो जाती है।\n\n90 दिन Free Trial — आज ही शुरू करें।\n\n_हिसाब-Kitaab_`
     };
   }
-  // 5. Inactive (no activity for 14+ days, but activated)
+
+  // 8. Inactive (no activity for 14+ days, but activated)
   if (stage === 'complete' && u.lastActive) {
     const daysSinceActive = Math.floor((Date.now() - new Date(u.lastActive).getTime()) / (1000*60*60*24));
     if (daysSinceActive >= 14) {
       return {
         tag: 'RE-ENGAGE',
         tone: 'stuck',
-        preview: `${firstName} जी, कुछ दिनों से app use नहीं हो रहा। सब ठीक है?`,
-        full: `नमस्ते ${firstName} जी 🙏\n\nकुछ दिनों से हिसाब-Kitaab use नहीं हो रहा। सब ठीक तो है?\n\nकोई दिक्कत हो रही है app में, या कोई feature की कमी लग रही है — बताइए, हम मदद करेंगे।\n\nApp open करें: https://hisaabkitaab.online/`
+        preview: 'कुछ दिनों से app use नहीं हो रहा।',
+        full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — सब ठीक है?*\n\nकुछ दिनों से app use नहीं हो रहा। कोई दिक्कत आ रही है?\n\n• कोई problem हो\n• कोई feature की कमी हो\n• कोई suggestion हो\n\nReply करें — हम मदद करेंगे।\n\n👉 https://hisaabkitaab.online\n\n_हिसाब-Kitaab_`
       };
     }
   }
-  // 6. Default check-in
+
+  // 9. Default check-in (active user, ask for feedback)
   return {
     tag: 'CHECK-IN',
     tone: '',
-    preview: `नमस्ते ${firstName} जी, हिसाब-Kitaab कैसा चल रहा है?`,
-    full: `नमस्ते ${firstName} जी 🙏\n\nहिसाब-Kitaab कैसा चल रहा है? कोई feedback या सुझाव हो तो जरूर बताएँ।\n\nधन्यवाद!`
+    preview: 'App कैसा experience दे रही है?',
+    full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Feedback*\n\nApp कैसा experience दे रही है?\n\n• कोई दिक्कत\n• कोई suggestion\n• कोई feature request\n\nReply करें — हर message पढ़ा जाता है।\n\n_हिसाब-Kitaab_`
   };
 }
 

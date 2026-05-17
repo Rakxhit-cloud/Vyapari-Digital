@@ -1528,378 +1528,6 @@ body.notif-modal-open { overflow: hidden; }
     <div class="terms-agree-main-btn-en">I Agree — Continue</div>
   </div>
 </div>
-<!-- Udhaar Book Info Screen -->
-<div class="udhaar-info-screen hidden" id="screen-udhaar-info">
-  <div class="ubp-logo-wrap">
-    <div class="ubp-logo-icon"><div class="ubp-coin">हि</div></div>
-    <div class="ubp-app-title">हिसाब-Kitaab</div>
-  </div>
-  <div class="ubp-progress">
-    <div class="ubp-dot done"></div>
-    <div class="ubp-dot active"></div>
-    <div class="ubp-dot"></div>
-  </div>
-  <div class="ubp-content-area">
-    <div class="ubp-hero">
-      <div class="ubp-hero-icon-wrap">🤝</div>
-      <div class="ubp-hero-title">उधार Book</div>
-      <span class="ubp-hero-tag">✨ INCLUDED IN PLAN</span>
-    </div>
-    <div class="ubp-desc">
-      आपके <b>हिसाब-Kitaab subscription</b> में <b>उधार Book</b> भी शामिल है — एक dedicated tool जो विशेष रूप से <b>party-wise pending payments</b> और reminders के लिए बनाया गया है।
-    </div>
-    <div class="ubp-privacy">
-      <div class="ubp-privacy-row">
-        <div class="ubp-privacy-icon">🔐</div>
-        <div class="ubp-privacy-body">
-          <div class="ubp-privacy-title">100% Private &amp; Secure</div>
-          <div class="ubp-privacy-text">
-            आपका data <b>encrypted</b> है और <b>किसी 3rd party से share नहीं होता</b>। सिर्फ़ आपके account में दिखता है — Google Firebase पर सुरक्षित रूप से stored।
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="ubp-trial">
-      <div class="ubp-trial-row">
-        <div class="ubp-trial-icon">🎁</div>
-        <div class="ubp-trial-body">
-          <div class="ubp-trial-title">Free Trial</div>
-          <div class="ubp-trial-text">
-            <b>90 दिन का मुफ़्त trial</b>। Trial समाप्त होने पर <b>₹149/month</b> subscription।
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="ubp-features-title">— मुख्य features —</div>
-    <div class="ubp-features-grid">
-      <div class="ubp-feature">
-        <div class="ubp-feat-icon">📋</div>
-        <div class="ubp-feat-text">Party-wise<br>pending</div>
-      </div>
-      <div class="ubp-feature">
-        <div class="ubp-feat-icon">⏰</div>
-        <div class="ubp-feat-text">Overdue<br>alerts</div>
-      </div>
-      <div class="ubp-feature">
-        <div class="ubp-feat-icon">💬</div>
-        <div class="ubp-feat-text">WhatsApp<br>reminders</div>
-      </div>
-      <div class="ubp-feature">
-        <div class="ubp-feat-icon">📊</div>
-        <div class="ubp-feat-text">कुल उधार<br>tracking</div>
-      </div>
-    </div>
-    <div class="ubp-hint">
-      💡 Bottom bar से <b>उधार Book</b> पर कभी भी switch कर सकते हैं
-    </div>
-  </div>
-  <div class="ubp-continue-wrap">
-    <button class="ubp-continue-btn" onclick="udhaarInfoContinue()">
-      आगे बढ़ें
-      <span class="ubp-continue-arrow">→</span>
-    </button>
-  </div>
-</div>
-
-<!-- Name Screen -->
-<div class="name-screen hidden" id="screen-name">
-  <div style="width:70px;height:70px;background:linear-gradient(135deg, #6a4818 0%, #8a5a20 50%, #4a3010 100%);border:2px solid #d4a850;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;box-shadow:0 4px 12px rgba(212, 168, 80, 0.25);">👤</div>
-  <div class="auth-title">अपनी जानकारी दें</div>
-  <div class="auth-sub">Apna naam aur dukaan ka naam batayein</div>
-  <div class="auth-card">
-    <div class="auth-label">👤 आपका नाम</div>
-    <input class="auth-input" type="text" id="name-input" placeholder="जैसे: Ramesh Kumar" style="margin-bottom:14px;" maxlength="40">
-    <div class="auth-label">🏪 दुकान/Business का नाम</div>
-    <input class="auth-input" type="text" id="business-input" placeholder="जैसे: Sharma Medical Store" style="margin-bottom:6px;" maxlength="60">
-    <div style="font-size:9px;color:#5a80b0;margin-bottom:14px;">यह नाम app के top par दिखेगा</div>
-    <div class="auth-error" id="name-error"></div>
-    <button class="auth-btn" onclick="saveName()">✅ आगे बढ़ें · Continue</button>
-  </div>
-</div>
-<!-- Mode Selection Screen -->
-<div class="mode-screen hidden" id="screen-mode">
-  <div class="mode-welcome-badge">✦ स्वागत है हिसाब-Kitaab में</div>
-  <div class="mode-main-title">आप क्या चाहते हैं?</div>
-  <div class="mode-main-title-en">What would you like to do?</div>
-  <div class="mode-cards-wrap">
-    <div class="mode-card-u">
-      <div class="mode-card-top">
-        <div class="mode-card-icon mc-icon-u">🤝</div>
-        <div>
-          <div class="mode-card-title">उधार Book</div>
-          <div class="mode-card-tag mc-tag-u">हमेशा FREE · Always Free</div>
-        </div>
-      </div>
-      <div class="mode-card-feats">
-        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-u"></div><div class="mc-feat-txt">किसने कितना उधार लिया</div></div>
-        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-u"></div><div class="mc-feat-txt">WhatsApp से reminder भेजें</div></div>
-        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-u"></div><div class="mc-feat-txt">100% private — सिर्फ आप देखें</div></div>
-      </div>
-      <div class="mode-card-divider-u"></div>
-      <button class="mc-btn-u" onclick="selectMode('udhaar')">🤝 उधार Book शुरू करें</button>
-      <div class="mc-btn-sub mc-btn-sub-u">Start Udhaar Book · No charges ever</div>
-    </div>
-    <div class="mode-or-divider">
-      <div class="mode-or-line"></div>
-      <div class="mode-or-txt">या / or</div>
-      <div class="mode-or-line"></div>
-    </div>
-    <div class="mode-card-f">
-      <div class="mode-card-top">
-        <div class="mode-card-icon mc-icon-f">📊</div>
-        <div>
-          <div class="mode-card-title">हिसाब-Kitaab</div>
-          <div class="mode-card-tag mc-tag-f">90 दिन FREE · 90 Days Free Trial</div>
-        </div>
-      </div>
-      <div class="mode-card-feats">
-        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-f"></div><div class="mc-feat-txt">बिक्री + खर्चा + माल + उधार</div></div>
-        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-f"></div><div class="mc-feat-txt">असली कमाई — हर हफ्ते</div></div>
-        <div class="mc-feat"><div class="mc-feat-dot mc-feat-dot-f"></div><div class="mc-feat-txt">Cloud backup — कभी नहीं खोएगा</div></div>
-      </div>
-      <div class="mode-card-divider-f"></div>
-      <button class="mc-btn-f" onclick="selectMode('full')">📊 हिसाब-Kitaab शुरू करें</button>
-      <div class="mc-btn-sub mc-btn-sub-f">Start Full App · ₹99/month after trial</div>
-    </div>
-  </div>
-  <div class="mode-privacy-strip">
-    <div class="mps-icon">🔒</div>
-    <div>
-      <div class="mps-txt">आपका data — सिर्फ आपका</div>
-      <div class="mps-txt-en">Your data belongs only to you · Fully secure</div>
-    </div>
-  </div>
-</div>
-<!-- ══════════════════════════════════════
-     उधार Book — Standalone Mode Screens
-     ══════════════════════════════════════ -->
-<div id="ub-app" style="display:none;">
-  <div class="sync-status-bar">
-    <span class="sync-dot synced" id="ub-sync-dot"></span>
-    <span class="sync-status-txt" id="ub-sync-txt">☁️ Cloud Sync चालू है</span>
-  </div>
-
-  <!-- Main उधार List Screen -->
-  <div class="ub-screen active" id="ub-home">
-  <div class="ub-header">
-      <div class="ub-header-left">
-        <div style="width:50px;height:50px;background:#2a1a4a;border:2px solid #f0c040;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 0 12px rgba(240,192,64,0.2);">🤝</div>
-        <div style="min-width:0;flex:1;">
-          <div id="ub-greeting" style="font-size:13px;color:#f0c040;font-weight:700;margin-bottom:3px;display:none;"></div>
-          <div id="ub-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-          <div style="font-size:11px;color:#d8d0ff;font-weight:500;">उधार <span style="color:#f0c040;font-weight:700;">Book</span> · आपकी उधार बही</div>
-        </div>
-      </div>
-      <button class="ub-add-btn" onclick="openUBSheet()" style="background:linear-gradient(135deg,#f0c040 0%,#d4a020 100%);color:#1a0a04;border:2px solid #f0c040;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0;box-shadow:0 0 10px rgba(240,192,64,0.4);letter-spacing:-0.2px;">+ नया उधार</button>
-    </div>
-    <div class="ub-summary" id="ub-summary-strip">
-      <div class="ub-sum-item ubs-gold"><div class="ub-sum-lbl">कुल बाकी</div><div class="ub-sum-val ub-sv-a" id="ub-total-amt">₹0</div></div>
-      <div class="ub-sum-item ubs-coral"><div class="ub-sum-lbl">OVERDUE</div><div class="ub-sum-val ub-sv-r" id="ub-overdue-count">0</div></div>
-      <div class="ub-sum-item ubs-teal"><div class="ub-sum-lbl">कुल लोग</div><div class="ub-sum-val ub-sv-g" id="ub-total-count">0</div></div>
-    </div>
-    <div class="ub-search-row">
-      <input class="ub-search-inp" id="ub-search" placeholder="🔍 नाम से खोजें · Search by name" oninput="ubSearch()">
-    </div>
-    <div class="ub-filter-row">
-      <div class="ub-pill ub-pill-all active" onclick="ubFilter('all',this)">सभी · All</div>
-      <div class="ub-pill ub-pill-over" onclick="ubFilter('overdue',this)">⚠ Overdue</div>
-      <div class="ub-pill ub-pill-pend" onclick="ubFilter('pending',this)">⏳ Pending</div>
-      <div class="ub-pill ub-pill-done" onclick="ubFilter('settled',this)">✓ Settled</div>
-    </div>
-    <div class="ub-list" id="ub-list"><div class="ub-empty">⏳<br>लोड हो रहा है...</div></div>
-  </div>
-
-  <!-- New Udhaar Overlay -->
-  <div class="ub-overlay" id="ub-add-overlay">
-    <div class="ub-sheet">
-      <div class="ub-sheet-handle"></div>
-      <div class="ub-sheet-title">🤝 नया उधार दर्ज करें</div>
-      <div class="ub-sheet-title-en">Add New Udhaar Entry</div>
-      <div class="ub-sheet-row">
-        <div class="ub-sheet-lbl">👤 नाम / Name</div>
-        <input class="ub-sheet-inp" id="ub-name" placeholder="ग्राहक का नाम">
-      </div>
-      <div class="ub-sheet-row">
-        <div class="ub-sheet-lbl">📱 नंबर / Phone</div>
-        <div class="ub-phone-wrap">
-          <input class="ub-phone-inp" id="ub-phone" placeholder="+91" type="tel" inputmode="numeric">
-          <div class="ub-contact-btn" onclick="ubPickContact()">👤 Contacts</div>
-        </div>
-      </div>
-      <div class="ub-sheet-row">
-        <div class="ub-sheet-lbl">💰 रकम / Amount</div>
-        <input class="ub-sheet-inp" id="ub-amount" placeholder="₹0" type="number" inputmode="numeric">
-      </div>
-      <div class="ub-sheet-row">
-        <div class="ub-sheet-lbl">📅 Due Date</div>
-        <input class="ub-sheet-inp" id="ub-due-date" type="date">
-      </div>
-      <div class="ub-sheet-row">
-        <div class="ub-sheet-lbl">🗓️ उधार लिया</div>
-        <div class="ub-auto-date" id="ub-auto-date">⚡ Auto: आज</div>
-      </div>
-      <div class="ub-sheet-row">
-        <div class="ub-sheet-lbl" style="color:#b0a0e8;font-size:12px;">📅 पुरानी तारीख डालें<br><span style="font-size:9px;color:#707080;">Past date (optional)</span></div>
-        <input type="date" class="ub-sheet-inp" id="ub-manual-date" style="color:#fff;font-size:12px;font-weight:700;background:#1e1e1e;border:1px solid #f06060;border-radius:6px;padding:7px 10px;width:150px;outline:none;">
-      </div>
-      <div class="ub-sheet-row" style="border-bottom:none;">
-        <div class="ub-sheet-lbl">🔔 Auto Reminder</div>
-        <div class="ub-reminder-row">
-          <div class="ub-rem-btn active" id="ubr-3" onclick="ubSetReminder(3)">3 दिन</div>
-          <div class="ub-rem-btn" id="ubr-7" onclick="ubSetReminder(7)">7 दिन</div>
-          <div class="ub-rem-btn" id="ubr-15" onclick="ubSetReminder(15)">15 दिन</div>
-        </div>
-      </div>
-      <button class="ub-sheet-save" onclick="ubSaveEntry()">💾 उधार दर्ज करें · Save Udhaar</button>
-      <button style="width:100%;background:#2a0818;border:1px solid #4a182a;color:#ff8aa8;font-size:13px;font-weight:500;padding:12px;cursor:pointer;margin-top:10px;border-radius:10px;" onclick="closeUBSheet()">रद्द करें · Cancel</button>
-    </div>
-  </div>
-
-  <!-- Partial Payment Overlay -->
-  <div class="ub-overlay" id="ub-pay-overlay">
-    <div class="ub-pay-sheet">
-      <div class="ub-sheet-handle"></div>
-      <div class="ub-pay-title">💰 रकम आई — दर्ज करें</div>
-      <div class="ub-pay-sub" id="ub-pay-sub">Partial Payment</div>
-      <div class="ub-pay-total-box">
-        <div class="ub-pay-total-lbl">कुल बाकी है</div>
-        <div class="ub-pay-total-val" id="ub-pay-remaining">₹0</div>
-      </div>
-      <div style="font-size:12px;color:#b0a0e8;margin-bottom:10px;text-align:center;">कितना मिला? · How much received?</div>
-      <input class="ub-pay-inp" id="ub-pay-amount" placeholder="₹ 0" type="number" inputmode="numeric" oninput="ubCalcPayment()">
-      <div class="ub-pay-calc-row">
-        <div class="ub-pay-calc-box" style="background:#2a0818;border:1px solid #4a182a;">
-          <div class="ub-pay-calc-lbl" style="color:#ff8aa8;font-weight:500;">बाकी रहेगा</div>
-          <div class="ub-pay-calc-val" style="color:#ff8aa8;font-weight:500;" id="ub-pay-left">₹0</div>
-        </div>
-        <div class="ub-pay-calc-box" style="background:#082a2a;border:1px solid #184a3a;">
-          <div class="ub-pay-calc-lbl" style="color:#6ce8c8;font-weight:500;">मिल जाएगा</div>
-          <div class="ub-pay-calc-val" style="color:#6ce8c8;font-weight:500;" id="ub-pay-receive">₹0</div>
-        </div>
-      </div>
-      <div style="background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:8px 10px;margin-bottom:10px;">
-        <div style="font-size:10px;color:#6ce8c8;font-weight:500;margin-bottom:5px;">Progress</div>
-        <div class="ub-pbar2"><div id="ub-pay-bar" style="height:100%;background:#f0b040;border-radius:3px;width:0%;transition:width .3s;"></div></div>
-        <div style="display:flex;justify-content:space-between;font-size:8px;color:#555;margin-top:3px;">
-          <span id="ub-pay-bar-paid">चुका: ₹0</span><span id="ub-pay-bar-left">बाकी: ₹0</span>
-        </div>
-      </div>
-      <button class="ub-pay-save" onclick="ubSavePayment()">✅ Payment दर्ज करें · Save</button>
-      <button class="ub-pay-settle" onclick="ubSettleFull()">पूरा चुक गया · Mark as Fully Settled</button>
-      <button style="width:100%;background:#2a0818;border:1px solid #4a182a;color:#ff8aa8;font-size:13px;font-weight:500;padding:12px;cursor:pointer;border-radius:10px;" onclick="closeUBPaySheet()">रद्द करें · Cancel</button>
-    </div>
-  </div>
-
-  <!-- WhatsApp Preview Overlay -->
-  <div class="ub-overlay" id="ub-wa-overlay">
-    <div class="ub-wa-sheet">
-      <div class="ub-sheet-handle"></div>
-      <div class="ub-wa-title">📱 WhatsApp Reminder</div>
-      <div class="ub-wa-msg" id="ub-wa-msg-preview"></div>
-      <button class="ub-wa-send" onclick="ubSendWhatsApp()">📱 WhatsApp पर भेजें · Send</button>
-      <button style="width:100%;background:#2a1a4a;border:1px solid #4a3878;color:#b0a0e8;font-size:13px;font-weight:500;padding:12px;cursor:pointer;border-radius:10px;" onclick="closeUBWASheet()">✕ बंद करें</button>
-    </div>
-  </div>
-<!-- Calendar Screen -->
-  <div class="ub-screen" id="ub-cal" style="padding-bottom:90px;">
-    <div class="ub-header">
-      <div class="ub-header-left">
-        <div class="ub-header-icon">📅</div>
-        <div>
-          <div class="ub-header-title">Calendar</div>
-          <div class="ub-header-sub">उधार की तारीखें</div>
-        </div>
-      </div>
-    </div>
-    <div style="padding:12px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div style="background:#2a1a4a;border:1px solid #4a3878;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;color:#b0a0e8;font-weight:500;" onclick="ubCalPrev()">◀</div>
-        <div style="font-size:14px;font-weight:800;color:#fff;" id="ub-cal-label">अप्रैल 2026</div>
-        <div style="background:#2a1a4a;border:1px solid #4a3878;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;color:#b0a0e8;font-weight:500;" onclick="ubCalNext()">▶</div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
-        <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">सो</div>
-        <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">मं</div>
-        <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">बु</div>
-        <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">गु</div>
-        <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">शु</div>
-        <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">श</div>
-        <div style="text-align:center;font-size:10px;font-weight:500;color:#8878c0;padding:4px 0;">र</div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;" id="ub-cal-grid"></div>
-      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:3px;background:#2a1a4a;border:1.5px solid #7a6cf0;"></div><span style="font-size:10px;color:#b0a0e8;font-weight:500;">उधार है</span></div>
-        <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:3px;background:#f0c040;"></div><span style="font-size:10px;color:#b0a0e8;font-weight:500;">आज</span></div>
-        <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:3px;background:#1a1530;"></div><span style="font-size:10px;color:#555;font-weight:500;">खाली</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Calendar Date Popup -->
-  <div id="ub-date-popup-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:600;display:none;align-items:flex-end;justify-content:center;">
-    <div style="background:#161616;border-radius:18px 18px 0 0;border-top:2px solid #f0c040;padding:16px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;animation:slideUp .25s ease;">
-      <div style="width:36px;height:3px;background:#2a2a2a;border-radius:2px;margin:0 auto 12px;"></div>
-      <div style="font-size:14px;font-weight:500;color:#ffe090;margin-bottom:4px;" id="ub-dp-title"></div>
-      <div style="font-size:10px;color:#b0a0e8;margin-bottom:14px;" id="ub-dp-sub"></div>
-      <div id="ub-dp-content"></div>
-      <button onclick="ubCloseDatePopup()" style="width:100%;background:#2a1a4a;border:1px solid #4a3878;color:#b0a0e8;font-size:13px;font-weight:500;padding:12px;border-radius:8px;cursor:pointer;margin-top:10px;">✕ बंद करें</button>
-    </div>
-  </div>
- <!-- Settings Sheet -->
-  <div class="ub-settings-overlay" id="ub-settings-overlay">
-    <div class="ub-settings-sheet">
-      <div class="ub-settings-handle"></div>
-      <div class="ub-settings-user-row">
-        <div class="ub-settings-avatar">🤝</div>
-        <div>
-          <div class="ub-settings-name" id="ub-settings-name">उधार Book</div>
-          <div class="ub-settings-phone" id="ub-settings-phone">लोड हो रहा है...</div>
-          <div class="ub-settings-mode-badge">उधार Book · Free</div>
-        </div>
-      </div>
-      <div class="ub-settings-item" onclick="ubSwitchToHisaab()">
-        <div class="ub-settings-item-ico ub-settings-item-ico-g">📊</div>
-        <div class="ub-settings-item-txt">
-          <div class="ub-settings-item-title" style="color:#6ce8c8;">हिसाब-Kitaab पर जाएं</div>
-          <div class="ub-settings-item-sub" style="color:#4aa890;">बिक्री · माल · कमाई · 90 दिन Free Trial</div>
-        </div>
-        <div class="ub-settings-item-arr">›</div>
-      </div>
-      <div class="ub-settings-item" onclick="ubSignOut()">
-        <div class="ub-settings-item-ico ub-settings-item-ico-r">🚪</div>
-        <div class="ub-settings-item-txt">
-          <div class="ub-settings-item-title" style="color:#ff8aa8;">लॉग आउट</div>
-          <div class="ub-settings-item-sub">Sign out from this device</div>
-        </div>
-      </div>
-      <button onclick="ubCloseSettings()" style="width:100%;background:#2a1a4a;border:1px solid #4a3878;color:#b0a0e8;font-size:13px;font-weight:500;padding:12px;cursor:pointer;margin-top:10px;border-radius:10px;">✕ बंद करें</button>
-    </div>
-  </div>
-
-  <!-- उधार Book Bottom Nav -->
-  <div class="ub-nav">
-    <div class="nav-item active" id="ubn-home" onclick="ubNavGo('ub-home','ubn-home')">
-      <div class="nav-icon">🤝</div>
-      <div class="nav-lbl" style="color:#ff8aa8;font-weight:700;">उधार</div>
-      <div class="ub-nav-dot" style="width:4px;height:4px;background:#f06060;border-radius:50%;"></div>
-    </div>
-    <div class="nav-item" id="ubn-cal" onclick="ubNavGo('ub-cal','ubn-cal')">
-      <div class="nav-icon">📅</div>
-      <div class="nav-lbl">Calendar</div>
-    </div>
-    <div class="nav-item" id="ubn-settings" onclick="ubOpenSettings()">
-      <div class="nav-icon">⚙️</div>
-      <div class="nav-lbl">Settings</div>
-    </div>
-    
-    <div class="ub-hisaab-btn" onclick="ubSwitchToHisaab()">
-      <div class="ub-hisaab-btn-icon">📒</div>
-      <div class="ub-hisaab-btn-lbl">हिसाब-Kitaab</div>
-      <div class="ub-hisaab-btn-sub">Switch करें</div>
-    </div>
-  </div>
-  <div class="toast" id="ub-toast"></div>
-</div>
 <div id="screen-browser-block">
   <div class="bb-phone">
     <div class="bb-icon-wrap">
@@ -2563,11 +2191,6 @@ body.notif-modal-open { overflow: hidden; }
 </div>
 
 
-<div id="s-udhaar" class="screen">
-  <div class="header" style="border-bottom-color:#7a6cf0;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:2px solid #7a6cf0;">🤝</div><div><div class="header-title">उधार बही</div><div class="header-sub" style="color:#b0a0e8;">किसका बाकी है</div></div></div></div>
-  <div class="pad" style="padding-top:12px;" id="udhaar-list"><div class="loading">⏳</div></div>
-</div>
-
 <div id="s-monthly" class="screen">
   <div class="header"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border:2px solid #d4a850;">📅</div><div><div class="header-title">महीने का हिसाब</div><div class="header-sub">मासिक सारांश</div></div></div></div>
   <div class="pad" style="padding-top:12px;" id="monthly-list"><div class="loading">⏳</div></div>
@@ -2611,12 +2234,6 @@ body.notif-modal-open { overflow: hidden; }
   <div class="nav-item active" id="n-home" onclick="go('s-home')"><div class="nav-icon">🏠</div><div class="nav-lbl">होम</div><div class="nav-dot"></div></div>
   <div class="nav-item" id="n-entry" onclick="go('s-entry')"><div class="nav-icon">📝</div><div class="nav-lbl">एंट्री</div></div>
   <div class="nav-item" id="n-maal" onclick="go('s-maal')"><div class="nav-icon">📦</div><div class="nav-lbl">माल</div></div>
-  <div style="width:1px;background:#2a4078;align-self:stretch;margin:6px 2px;flex-shrink:0;"></div>
-  <div class="ub-switch-btn" onclick="switchToUdhaarBook()" style="display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:6px 6px;background:linear-gradient(135deg, #2a1a4a 0%, #1a1230 100%);border:1.5px solid #7a6cf0;border-radius:10px;flex-shrink:1;flex-grow:0;gap:2px;">
-    <div style="font-size:15px;line-height:1;">🤝</div>
-    <div style="font-size:9px;color:#b0a0e8;font-weight:500;text-align:center;line-height:1.2;white-space:nowrap;">उधार Book</div>
-    <div style="font-size:8px;color:#7a6cf0;font-weight:500;white-space:nowrap;">Switch करें</div>
-  </div>
   <div class="nav-item" id="n-more" onclick="toggleMore()"><div class="nav-icon">⋯</div><div class="nav-lbl">और</div></div>
 </div>
 </div>
@@ -2642,8 +2259,7 @@ function startHeartbeat(uid) {
   if (!uid || uid === 'default') return;
  const updateSeen = () => {
     try {
-      const mode = localStorage.getItem('hk_mode_' + uid) || 'full';
-      setDoc(doc(db, 'users', uid, 'profile', 'info'), { lastSeen: Date.now(), mode: mode }, { merge: true });
+      setDoc(doc(db, 'users', uid, 'profile', 'info'), { lastSeen: Date.now(), mode: 'full' }, { merge: true });
     } catch(e) {}
   };
   updateSeen();
@@ -2705,7 +2321,7 @@ window._fsLoadAll = async function(uid) {
   if (!uid || uid === 'default') return;
   setSyncStatus('syncing', '☁️ Cloud से data लोड हो रहा है...');
   try {
-    const cols = ['bikri', 'maal', 'udhaar', 'goal'];
+    const cols = ['bikri', 'maal', 'goal'];
     for (const colName of cols) {
       const snap = await getDocs(collection(db, 'users', uid, colName));
       if (snap.empty) continue;
@@ -2751,14 +2367,10 @@ window._fsLoadAll = async function(uid) {
     // ── Refresh UI after cloud data is in localStorage ──
     if (typeof CURRENT_UID !== 'undefined' && CURRENT_UID !== 'default') {
       if (typeof loadHome === 'function') loadHome();
-      if (typeof loadUdhaarKPI === 'function') loadUdhaarKPI();
       if (typeof updateTrialBanner === 'function') updateTrialBanner(uid);
       // Live गल्ला blocker check after sync — catches the case where
       // an unsaved day from one device shows up on another device
       if (window.lgCheckAndBlock) setTimeout(() => window.lgCheckAndBlock(), 400);
-    }
-    if (typeof UB_UID !== 'undefined' && UB_UID !== 'default') {
-      if (typeof ubLoadList === 'function') ubLoadList();
     }
   } catch(e) {
     console.warn('FS load error:', e);
@@ -3005,22 +2617,8 @@ window.agreeTerms = async function() {
       try { localStorage.setItem('hk_terms_accepted_' + u.uid, Date.now().toString()); } catch(e){}
     }
   } catch(e) { console.warn('terms stage track err:', e); }
-  // Per resume policy: skip udhaar-info intro on subsequent visits.
-  // First time: terms → udhaar-info intro → name. We mark udhaar-info as "seen"
-  // here so resume goes straight to name. Direct first-time flow still works
-  // because we show udhaar-info immediately below.
-  try {
-    const u2 = window._currentAuthUser;
-    if (u2 && u2.uid) {
-      localStorage.setItem('hk_udhaar_info_seen_' + u2.uid, '1');
-    }
-  } catch(e){}
+  // Terms accepted → straight to name entry (no intermediate intro screen)
   document.getElementById('screen-terms').classList.add('hidden');
-  document.getElementById('screen-udhaar-info').classList.remove('hidden');
-};
-
-window.udhaarInfoContinue = function() {
-  document.getElementById('screen-udhaar-info').classList.add('hidden');
   document.getElementById('screen-name').classList.remove('hidden');
   setTimeout(() => document.getElementById('name-input').focus(), 300);
 };
@@ -3198,15 +2796,16 @@ window.openBizNamePrompt = function() {
 };
 
 window.selectMode = function(mode) {
+  // Mode picker removed — function kept as no-op stub for backward compat.
+  // Forces 'full' mode regardless of input.
   const uid = auth.currentUser ? auth.currentUser.uid : 'unknown';
   const phone = auth.currentUser ? (auth.currentUser.phoneNumber || '') : '';
   const trialStart = Date.now();
   localStorage.setItem('hk_terms_agreed_' + uid, trialStart.toString());
   localStorage.setItem('hk_trial_start_' + uid, trialStart.toString());
-  localStorage.setItem('hk_mode_' + uid, mode);
+  localStorage.setItem('hk_mode_' + uid, 'full');
   window._fsRegisterUser(uid, phone, trialStart);
-  if(window._db){try{import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>{m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{mode:mode},{merge:true});});}catch(e){}}
-  document.getElementById('screen-mode').classList.add('hidden');
+  if(window._db){try{import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>{m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{mode:'full'},{merge:true});});}catch(e){}}
   launchApp(uid);
 };
 
@@ -3261,11 +2860,10 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
       launchApp(uid);
     } else if (termsAccepted) {
       // Partial registration: terms accepted, name not yet submitted.
-      // Per resume policy, skip the udhaar-info intro and go directly to name screen.
+      // Resume directly on name screen.
       document.getElementById('screen-phone').classList.add('hidden');
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.add('hidden');
-      document.getElementById('screen-udhaar-info').classList.add('hidden');
       document.getElementById('screen-name').classList.remove('hidden');
       setTimeout(() => {
         const ni = document.getElementById('name-input');
@@ -3282,8 +2880,6 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
     document.getElementById('screen-otp').classList.add('hidden');
     document.getElementById('screen-terms').classList.add('hidden');
     document.getElementById('main-app').style.display = 'none';
-    const ubAppEl = document.getElementById('ub-app');
-    if (ubAppEl) ubAppEl.style.display = 'none';
   }
 });
 
@@ -3327,58 +2923,20 @@ function launchApp(uid) {
   document.getElementById('screen-phone').classList.add('hidden');
   document.getElementById('screen-otp').classList.add('hidden');
   document.getElementById('screen-terms').classList.add('hidden');
-  document.getElementById('screen-mode').classList.add('hidden');
-  const ubInfo = document.getElementById('screen-udhaar-info');
-  if (ubInfo) ubInfo.classList.add('hidden');
 
   // FIRE PIN LOCK FIRST — before any content renders, so user sees lock immediately
   if (window.alckInit) window.alckInit();
 
-  const mode = localStorage.getItem('hk_mode_' + uid) || 'full';
-  if (mode === 'udhaar') {
-    // Atomic switch: hide main-app, show ub-app. Single source of truth.
-    showAppVariant('ub');
-    launchUdhaarMode(uid);
-  } else {
-    // Atomic switch: hide ub-app, show main-app. Single source of truth.
-    showAppVariant('main');
+  // Always show main app — Udhaar Book variant removed
+  document.getElementById('main-app').style.display = 'block';
   if(window._startHeartbeat) window._startHeartbeat(uid);
- initApp(uid);
-updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
-if(window.loadProfileAndUpdateHeaders) window.loadProfileAndUpdateHeaders();
-    // Re-render after short delay to catch Firestore data
-    setTimeout(() => { loadHome(); loadUdhaarKPI(); }, 3500);
-  
-requestNotificationPermission(uid);
-  }
-}
-
-// CRITICAL: Single source of truth for which app variant is visible.
-// Always call this function — never set style.display directly on
-// #main-app or #ub-app. Guarantees only ONE variant is ever visible.
-window.showAppVariant = function(variant) {
-  const main = document.getElementById('main-app');
-  const ub = document.getElementById('ub-app');
-  if (!main || !ub) return;
-  if (variant === 'ub') {
-    main.style.display = 'none';
-    ub.style.display = 'block';
-  } else {
-    // default to main
-    ub.style.display = 'none';
-    main.style.display = 'block';
-  }
-};
-
-function launchUdhaarMode(uid) {
-  showAppVariant('ub');
-  if(window._startHeartbeat) window._startHeartbeat(uid);
+  initApp(uid);
+  updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
   if(window.loadProfileAndUpdateHeaders) window.loadProfileAndUpdateHeaders();
-  ubInitApp(uid);
-  // Load cloud data
-if (window._fsLoadAll) window._fsLoadAll(uid).then(() => { if (typeof ubLoadList === 'function') ubLoadList(); });
-  // PIN lock init for उधार Book mode too
-  if (window.alckInit) window.alckInit();
+  // Re-render after short delay to catch Firestore data
+  setTimeout(() => { loadHome(); }, 3500);
+
+  requestNotificationPermission(uid);
 }
 
 window.updateTrialBanner = async function updateTrialBanner(uid) {
@@ -4134,7 +3692,7 @@ function initApp(uid){
   }, 1200);
 }
 
-const NM={'s-home':'n-home','s-entry':'n-entry','s-maal':'n-maal','s-udhaar':'n-udhaar'};
+const NM={'s-home':'n-home','s-entry':'n-entry','s-maal':'n-maal'};
 function quickEntryFromHome(mode){
 go('s-entry');
 setTimeout(function(){ setEntryMode(mode); },100);
@@ -4157,19 +3715,10 @@ function go(id){
   const nid=NM[id];
   if(nid){const n=document.getElementById(nid);n.classList.add('active');const d=document.createElement('div');d.className='nav-dot';n.appendChild(d);}
   if(id==='s-home')loadHome();
-  if(id==='s-udhaar')loadUdhaar();
   if(id==='s-monthly')loadMonthly();
   if(id==='s-goal')loadGoalScreen();
   if(id==='s-maal')loadMaalStats();
   
-}
-function switchToUdhaarBook(){
-  if(!CURRENT_UID||CURRENT_UID==='default')return;
-  localStorage.setItem('hk_mode_'+CURRENT_UID,'udhaar');
-  if(window._db){try{import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>{m.setDoc(m.doc(window._db,'users',CURRENT_UID,'profile','info'),{mode:'udhaar'},{merge:true});});}catch(e){}}
-  showAppVariant('ub');
-  if(typeof ubInitApp==='function')ubInitApp(CURRENT_UID);
-  if(typeof ubLoadList==='function')ubLoadList();
 }
   function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
 document.addEventListener('click',e=>{const m=document.getElementById('more-menu'),b=document.getElementById('n-more');if(m&&b&&!m.contains(e.target)&&!b.contains(e.target))m.style.display='none';});
@@ -4217,19 +3766,35 @@ window.showSuccessModal = showSuccessModal;
 window.playCrystalTinkle = playCrystalTinkle;
 
 function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(()=>t.className='toast',3000);}
-function toggleKPI(key){const panel=document.getElementById('panel-'+key);const isOpen=panel.classList.contains('open');document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));if(!isOpen){panel.classList.add('open');if(key==='udhaar-kpi')loadUdhaarInline();}}
+function toggleKPI(key){const panel=document.getElementById('panel-'+key);const isOpen=panel.classList.contains('open');document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));if(!isOpen){panel.classList.add('open');}}
 function renderWeeklyTable(containerId,totalId,field,color,dimColor){const bikri=DB.get(K.BIKRI);const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const entry=bikri.find(r=>r.date===ds);let val=null;if(entry){val=field==='profit'?calcEntryProfit(entry):(entry[field]||0);}rows.push({ds,val});}const el=document.getElementById(containerId);let total=0;el.innerHTML=rows.map(r=>{if(r.val!==null)total+=r.val;return`<div class="ptbl-row"><div class="ptbl-cell" style="color:#6090d0;">${fmtDayDate(r.ds)}</div><div class="ptbl-cell" style="color:${r.val!==null?color:dimColor};text-align:right;font-weight:${r.val!==null?700:400};font-style:${r.val!==null?'normal':'italic'};">${r.val!==null?fmt(r.val):'कोई नहीं'}</div></div>`;}).join('');document.getElementById(totalId).textContent=fmt(total);}
-function loadUdhaarInline(){const el=document.getElementById('udhaar-inline-list'),sel=document.getElementById('udhaar-inline-summary');const rows=DB.get(K.UDHAAR);el.innerHTML='';sel.innerHTML='';if(!rows.length){el.innerHTML='<div class="empty" style="padding:12px;">कोई उधार नहीं है</div>';return;}let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${escHTML(initials(r.name))}</div><div><div class="u-name">${escHTML(r.name)||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a'};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a'};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});sel.innerHTML=`<div class="u-summary"><div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#cc7a47;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#d4a850;">${settledCount}</div></div></div>`;}
-function syncUdhaarToBikri(udhaarId,oldGiven,newGiven,udhaarDate,isDelete){const bikri=DB.get(K.BIKRI),idx=bikri.findIndex(r=>r.date===udhaarDate&&(r.udhaar||0)>0);if(idx===-1)return;const entry=bikri[idx],diff=isDelete?-(oldGiven||0):(newGiven||0)-(oldGiven||0);if(diff===0)return;const newUdhaar=Math.max(0,(entry.udhaar||0)+diff),s=entry.sales||0,x=entry.expense||0;const p=s-x-newUdhaar,m=s>0?Math.round((p/s)*100):0;let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';bikri[idx]={...entry,udhaar:newUdhaar,profit:p,margin:m,rating:rt};DB.set(K.BIKRI,bikri);if(window._fsWrite) window._fsWrite(CURRENT_UID, K.BIKRI, bikri[idx]);}
 let pressTimer=null,currentEntry=null;
 function startPress(el,type,id,data){el.classList.add('pressing');pressTimer=setTimeout(()=>{el.classList.remove('pressing');currentEntry={type,id,data};showActionPopup(type,data);},600);}
 function endPress(el){clearTimeout(pressTimer);el.classList.remove('pressing');}
 function makeLPCard(cls,html,type,id,data){const div=document.createElement('div');div.className=cls;div.innerHTML=html;div.addEventListener('touchstart',()=>startPress(div,type,id,data),{passive:true});div.addEventListener('touchend',()=>endPress(div),{passive:true});div.addEventListener('touchcancel',()=>endPress(div),{passive:true});div.addEventListener('mousedown',()=>startPress(div,type,id,data));div.addEventListener('mouseup',()=>endPress(div));div.addEventListener('mouseleave',()=>endPress(div));return div;}
-function showActionPopup(type,data){let info='';if(type===K.BIKRI)info=`तारीख: <span>${escHTML(data.date)||'—'}</span><br>बिक्री: <span>${fmt(data.sales)}</span><br>गल्ला/कमाई: <span>${fmt(calcEntryProfit(data))}</span>`;else if(type===K.MAAL)info=`तारीख: <span>${escHTML(data.date)||'—'}</span><br>सप्लायर: <span>${escHTML(data.supplier)||'—'}</span><br>रकम: <span>${fmt(data.amount)}</span>`;else if(type===K.UDHAAR){const rem=(data.given||0)-(data.returned||0);info=`ग्राहक: <span>${escHTML(data.name)||'—'}</span><br>बाकी: <span>${fmt(rem)}</span>`;}document.getElementById('popup-info').innerHTML=info;document.getElementById('action-popup').classList.add('show');}
+function showActionPopup(type,data){let info='';if(type===K.BIKRI)info=`तारीख: <span>${escHTML(data.date)||'—'}</span><br>बिक्री: <span>${fmt(data.sales)}</span><br>गल्ला/कमाई: <span>${fmt(calcEntryProfit(data))}</span>`;else if(type===K.MAAL)info=`तारीख: <span>${escHTML(data.date)||'—'}</span><br>सप्लायर: <span>${escHTML(data.supplier)||'—'}</span><br>रकम: <span>${fmt(data.amount)}</span>`;document.getElementById('popup-info').innerHTML=info;document.getElementById('action-popup').classList.add('show');}
 function closePopup(){document.getElementById('action-popup').classList.remove('show');}
 function openConfirm(){closePopup();document.getElementById('confirm-popup').classList.add('show');}
 function closeConfirm(){document.getElementById('confirm-popup').classList.remove('show');}
-function confirmDelete(){const deleteId=dpDeleteId;const savedDate=dpCurrentDate;dpDeleteId=null;document.getElementById('confirm-popup').classList.remove('show');if(deleteId){const bikri=DB.get(K.BIKRI);const deletedEntry=bikri.find(r=>r.id===deleteId);if(deletedEntry&&(deletedEntry.udhaar||0)>0){const udhaarRows=DB.get(K.UDHAAR);const toDelete=udhaarRows.filter(r=>{const isAuto=r.name&&(r.name.startsWith('उधार (')||r.name.startsWith('बाकी उधार ('));return isAuto&&r.date===deletedEntry.date;});toDelete.forEach(r=>{ if(window._fsDelete) window._fsDelete(CURRENT_UID,K.UDHAAR,r.id); });DB.set(K.UDHAAR,udhaarRows.filter(r=>!toDelete.find(d=>d.id===r.id)));}DB.remove(K.BIKRI,deleteId);showSuccessModal('एंट्री हट गई', '🗑️ Entry deleted');loadHome();loadUdhaarKPI();if(savedDate)setTimeout(()=>openDatePopup(savedDate),200);return;}if(!currentEntry)return;const{type,id,data}=currentEntry;if(type===K.UDHAAR){syncUdhaarToBikri(id,data.given,0,data.date,true);showSuccessModal('उधार हट गई', '✏️ बिक्री अपडेट हो गई');}else showSuccessModal('एंट्री हट गई', '🗑️ Entry deleted');DB.remove(type,id);currentEntry=null;loadHome();loadUdhaar();loadUdhaarKPI();const ukpiPanel=document.getElementById('panel-udhaar-kpi');if(ukpiPanel&&ukpiPanel.classList.contains('open'))loadUdhaarInline();}
+function confirmDelete(){
+  const deleteId=dpDeleteId;
+  const savedDate=dpCurrentDate;
+  dpDeleteId=null;
+  document.getElementById('confirm-popup').classList.remove('show');
+  if(deleteId){
+    DB.remove(K.BIKRI,deleteId);
+    showSuccessModal('एंट्री हट गई', '🗑️ Entry deleted');
+    loadHome();
+    if(savedDate)setTimeout(()=>openDatePopup(savedDate),200);
+    return;
+  }
+  if(!currentEntry)return;
+  const{type,id}=currentEntry;
+  DB.remove(type,id);
+  showSuccessModal('एंट्री हट गई', '🗑️ Entry deleted');
+  currentEntry=null;
+  loadHome();
+}
 function openEdit(){closePopup();if(!currentEntry)return;buildEditSheet(currentEntry.type,currentEntry.data);}
 function closeEdit(){const ov=document.getElementById('edit-popup');ov.classList.remove('show');ov.classList.remove('compact');ov.classList.remove('kbd-open');}
 document.addEventListener('focusin',function(e){if(e.target.matches('.edit-input')){const ov=document.getElementById('edit-popup');if(ov.classList.contains('compact')){ov.classList.add('kbd-open');}}});
@@ -4237,9 +3802,47 @@ document.addEventListener('focusout',function(e){if(e.target.matches('.edit-inpu
 function _editRow(icon,label,inputHTML){return`<div class="edit-row"><div class="edit-lbl-new"><span class="edit-lbl-icon">${icon}</span><span>${label}</span></div>${inputHTML}</div>`;}
 function _editPayToggle(currentVal){const v=(currentVal||'नकद').toLowerCase();const isNakad=v.includes('नकद')||v==='नकद'||v==='cash';return`<div class="edit-pay-toggle"><div class="edit-pay-pill ${isNakad?'active':''}" onclick="_setPay(this,'नकद')">नकद</div><div class="edit-pay-pill ${!isNakad?'active':''}" onclick="_setPay(this,'उधार')">उधार</div><input type="hidden" id="ed-pay" value="${escHTML(isNakad?'नकद':'उधार')}"></div>`;}
 function _setPay(el,val){const parent=el.parentElement;parent.querySelectorAll('.edit-pay-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('ed-pay').value=val;}
-function buildEditSheet(type,data){let title='एंट्री सुधारें',subtitle='Edit entry',icon='📝',sheetType='bikri',html='';if(type===K.BIKRI){title='बिक्री सुधारें';subtitle='Edit sales entry';icon='💰';sheetType='bikri';html=`<div class="edit-section-lbl">मूल जानकारी</div><div class="edit-group">${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💵','नकद ₹',`<input type="number" class="edit-input edit-amt" id="ed-cash" value="${data.cash||''}">`)}${_editRow('📱','UPI ₹',`<input type="number" class="edit-input edit-amt" id="ed-upi" value="${data.upi||''}">`)}${_editRow('🧾','खर्चा ₹',`<input type="number" class="edit-input" id="ed-expense" value="${data.expense||''}">`)}${_editRow('🤝','उधार ₹',`<input type="number" class="edit-input" id="ed-udhaar" value="${data.udhaar||''}">`)}</div><div class="edit-section-lbl">अतिरिक्त</div><div class="edit-group">${_editRow('📝','नोट',`<input type="text" class="edit-input" id="ed-notes" placeholder="कुछ लिखें..." value="${escHTML(data.notes)}">`)}</div>`;}else if(type===K.MAAL){title='माल सुधारें';subtitle='Edit goods purchase';icon='📦';sheetType='maal';html=`<div class="edit-section-lbl">मूल जानकारी</div><div class="edit-group">${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}${_editRow('🏪','सप्लायर',`<input type="text" class="edit-input" id="ed-supplier" value="${escHTML(data.supplier)}">`)}${_editRow('📦','माल',`<input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💰','रकम ₹',`<input type="number" class="edit-input edit-amt" id="ed-amount" value="${data.amount||''}">`)}${_editRow('💳','भुगतान',_editPayToggle(data.pay))}</div><div class="edit-section-lbl">अतिरिक्त</div><div class="edit-group">${_editRow('📝','नोट',`<input type="text" class="edit-input" id="ed-note" placeholder="कुछ लिखें..." value="${escHTML(data.note)}">`)}</div>`;}else if(type===K.UDHAAR){title='उधार सुधारें';subtitle='Edit credit entry';icon='🤝';sheetType='udhaar';html=`<div class="edit-section-lbl">ग्राहक जानकारी</div><div class="edit-group">${_editRow('👤','नाम',`<input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}">`)}${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💰','उधार दिया ₹',`<input type="number" class="edit-input edit-amt" id="ed-given" value="${data.given||''}">`)}${_editRow('✅','वापस मिला ₹',`<input type="number" class="edit-input" id="ed-returned" value="${data.returned||''}">`)}</div>`;}document.getElementById('edit-sheet').setAttribute('data-type',sheetType);document.getElementById('edit-header-icon').textContent=icon;document.getElementById('edit-title').textContent=title;document.getElementById('edit-subtitle').textContent=subtitle;document.getElementById('edit-fields').innerHTML=html;const overlay=document.getElementById('edit-popup');const ledgerOpen=document.querySelector('.maal-ledger-overlay.show, .ledger-overlay.show, [class*="ledger"][class*="show"]');if(ledgerOpen){overlay.classList.add('compact');}else{overlay.classList.remove('compact');}overlay.classList.add('show');}
+function buildEditSheet(type,data){
+  let title='एंट्री सुधारें',subtitle='Edit entry',icon='📝',sheetType='bikri',html='';
+  if(type===K.BIKRI){
+    title='बिक्री सुधारें';subtitle='Edit sales entry';icon='💰';sheetType='bikri';
+    html=`<div class="edit-section-lbl">मूल जानकारी</div><div class="edit-group">${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💵','नकद ₹',`<input type="number" class="edit-input edit-amt" id="ed-cash" value="${data.cash||''}">`)}${_editRow('📱','UPI ₹',`<input type="number" class="edit-input edit-amt" id="ed-upi" value="${data.upi||''}">`)}${_editRow('🧾','खर्चा ₹',`<input type="number" class="edit-input" id="ed-expense" value="${data.expense||''}">`)}</div><div class="edit-section-lbl">अतिरिक्त</div><div class="edit-group">${_editRow('📝','नोट',`<input type="text" class="edit-input" id="ed-notes" placeholder="कुछ लिखें..." value="${escHTML(data.notes)}">`)}</div>`;
+  } else if(type===K.MAAL){
+    title='माल सुधारें';subtitle='Edit goods purchase';icon='📦';sheetType='maal';
+    html=`<div class="edit-section-lbl">मूल जानकारी</div><div class="edit-group">${_editRow('📅','तारीख',`<input type="date" class="edit-input" id="ed-date" value="${data.date||''}">`)}${_editRow('🏪','सप्लायर',`<input type="text" class="edit-input" id="ed-supplier" value="${escHTML(data.supplier)}">`)}${_editRow('📦','माल',`<input type="text" class="edit-input" id="ed-name" value="${escHTML(data.name)}">`)}</div><div class="edit-section-lbl">पैसे की डिटेल</div><div class="edit-group">${_editRow('💰','रकम ₹',`<input type="number" class="edit-input edit-amt" id="ed-amount" value="${data.amount||''}">`)}${_editRow('💳','भुगतान',_editPayToggle(data.pay))}</div><div class="edit-section-lbl">अतिरिक्त</div><div class="edit-group">${_editRow('📝','नोट',`<input type="text" class="edit-input" id="ed-note" placeholder="कुछ लिखें..." value="${escHTML(data.note)}">`)}</div>`;
+  }
+  document.getElementById('edit-sheet').setAttribute('data-type',sheetType);
+  document.getElementById('edit-header-icon').textContent=icon;
+  document.getElementById('edit-title').textContent=title;
+  document.getElementById('edit-subtitle').textContent=subtitle;
+  document.getElementById('edit-fields').innerHTML=html;
+  const overlay=document.getElementById('edit-popup');
+  const ledgerOpen=document.querySelector('.maal-ledger-overlay.show, .ledger-overlay.show, [class*="ledger"][class*="show"]');
+  if(ledgerOpen){overlay.classList.add('compact');}else{overlay.classList.remove('compact');}
+  overlay.classList.add('show');
+}
 function closeEditOnBackdrop(e){if(e.target.id==='edit-popup')closeEdit();}
-function saveEdit(){if(!currentEntry)return;const{type,id,data}=currentEntry;const g=eid=>{const el=document.getElementById(eid);return el?el.value:'';};let updates={};if(type===K.BIKRI){const cash=parseFloat(g('ed-cash'))||0,upi=parseFloat(g('ed-upi'))||0,s=cash+upi,x=parseFloat(g('ed-expense'))||0,u=parseFloat(g('ed-udhaar'))||0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';updates={date:g('ed-date'),sales:s,cash:cash,upi:upi,expense:x,udhaar:u,notes:cleanText(g('ed-notes'),500),profit:p,margin:m,rating:rt};}else if(type===K.MAAL){updates={date:g('ed-date'),supplier:cleanText(g('ed-supplier'),100),name:cleanText(g('ed-name'),200),amount:parseFloat(g('ed-amount'))||0,pay:cleanText(g('ed-pay'),20),note:cleanText(g('ed-note'),500)};}else if(type===K.UDHAAR){const given=parseFloat(g('ed-given'))||0,ret=parseFloat(g('ed-returned'))||0,rem=given-ret,days=daysSince(g('ed-date'));let status='🟡 PENDING';if(rem<=0)status='🟢 SETTLED';else if(days>=7)status='🔴 OVERDUE';updates={name:cleanText(g('ed-name'),100),given,date:g('ed-date'),returned:ret,remaining:rem,days,status};syncUdhaarToBikri(id,data.given||0,given,g('ed-date')||data.date,false);showSuccessModal('उधार सुधर गई', '✏️ उधार अपडेट');}DB.update(type,id,updates);if(type!==K.UDHAAR)showSuccessModal('एंट्री सुधर गई', '✏️ Entry updated');closeEdit();currentEntry=null;loadHome();loadUdhaar();loadUdhaarKPI();const ukpiPanel=document.getElementById('panel-udhaar-kpi');if(ukpiPanel&&ukpiPanel.classList.contains('open'))loadUdhaarInline();if(dpCurrentDate){const savedDate=dpCurrentDate;closeDatePopupDirect();setTimeout(()=>openDatePopup(savedDate),300);}}
+function saveEdit(){
+  if(!currentEntry)return;
+  const{type,id}=currentEntry;
+  const g=eid=>{const el=document.getElementById(eid);return el?el.value:'';};
+  let updates={};
+  if(type===K.BIKRI){
+    const cash=parseFloat(g('ed-cash'))||0,upi=parseFloat(g('ed-upi'))||0,s=cash+upi;
+    const x=parseFloat(g('ed-expense'))||0;
+    const p=s-x,m=s>0?Math.round((p/s)*100):0;
+    let rt='⚠️ धीमा';if(s>=5000)rt='🔥 बहुत अच्छा';else if(s>=3000)rt='👍 अच्छा';
+    updates={date:g('ed-date'),sales:s,cash,upi,expense:x,udhaar:0,notes:cleanText(g('ed-notes'),500),profit:p,margin:m,rating:rt};
+  } else if(type===K.MAAL){
+    updates={date:g('ed-date'),supplier:cleanText(g('ed-supplier'),100),name:cleanText(g('ed-name'),200),amount:parseFloat(g('ed-amount'))||0,pay:cleanText(g('ed-pay'),20),note:cleanText(g('ed-note'),500)};
+  }
+  DB.update(type,id,updates);
+  showSuccessModal('एंट्री सुधर गई', '✏️ Entry updated');
+  closeEdit();
+  currentEntry=null;
+  loadHome();
+  if(dpCurrentDate){const savedDate=dpCurrentDate;closeDatePopupDirect();setTimeout(()=>openDatePopup(savedDate),300);}
+}
 let monthNavOffset=Math.max(0,CUR_MONTH-2);
 let monthNavSelected=CUR_MONTH;
 function inMonth(ds,mIdx){if(!ds)return false;const p=ds.split('-');return parseInt(p[0])===CUR_YEAR&&parseInt(p[1])-1===mIdx;}
@@ -4900,15 +4503,12 @@ function saveQuickEntry(){
   setTimeout(()=>go('s-home'),1000);
 }
 function calcProfit(){const c=parseFloat(document.getElementById('e-cash').value)||0,upi=parseFloat(document.getElementById('e-upi').value)||0,s=c+upi,x=parseFloat(document.getElementById('e-expense').value)||0,u=0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;document.getElementById('r-profit').textContent='₹'+p.toLocaleString('en-IN');document.getElementById('r-margin').textContent=m+'%';let r='—';if(s>=5000)r='🔥 बहुत अच्छा';else if(s>=3000)r='👍 अच्छा';else if(s>0)r='⚠️ धीमा';document.getElementById('r-rating').textContent=r;}
-function onUdhaarChange(){calcProfit();const val=parseFloat(document.getElementById('e-udhaar').value)||0;const sec=document.getElementById('udhaar-persons-section');if(val>0){sec.style.display='block';if(!document.querySelector('.udhaar-person-row'))addPersonRow();}else sec.style.display='none';}
-function addPersonRow(name='',amt=''){const list=document.getElementById('udhaar-persons-list');const row=document.createElement('div');row.className='udhaar-person-row';row.innerHTML=`<input type="text" class="udhaar-person-name" placeholder="ग्राहक का नाम" value="${escHTML(name)}"><input type="number" class="udhaar-person-amt" placeholder="₹0" value="${escHTML(amt)}"><button class="remove-person-btn" onclick="this.parentElement.remove()">✕</button>`;list.appendChild(row);}
 function setPay(px,type){document.getElementById(px+'-pay').value=type;document.getElementById(px+'-nbtn').className='pbtn'+(type==='nakad'?' pn':'');document.getElementById(px+'-ubtn').className='pbtn'+(type==='udhaar'?' pu':'');}
-function saveEntry(){const cash=parseFloat(document.getElementById('e-cash').value)||0;const upi=parseFloat(document.getElementById('e-upi').value)||0;const s=cash+upi;if(!s){toast('❌ नकद या UPI बिक्री ज़रूर भरें',true);return;}const date=document.getElementById('e-date').value,expense=parseFloat(document.getElementById('e-expense').value)||0;const udhaar=0,notes=cleanText(document.getElementById('e-notes').value,500);const profit=s-expense-udhaar,margin=s>0?Math.round((profit/s)*100):0;let rating='⚠️ धीमा';if(s>=5000)rating='🔥 बहुत अच्छा';else if(s>=3000)rating='👍 अच्छा';DB.push(K.BIKRI,{date,sales:s,cash,upi,expense,udhaar,notes,profit,margin,rating});let namedUdhaarTotal=0;const persons=[];document.querySelectorAll('.udhaar-person-row').forEach(row=>{const nm=cleanText(row.querySelector('.udhaar-person-name').value,100),amt=parseFloat(row.querySelector('.udhaar-person-amt').value)||0;if(nm&&amt>0){persons.push({nm,amt});namedUdhaarTotal+=amt;DB.push(K.UDHAAR,{name:nm,given:amt,date,returned:0,remaining:amt,days:0,status:'🟡 PENDING'});}});if(udhaar>0&&namedUdhaarTotal===0){DB.push(K.UDHAAR,{name:'उधार ('+date+')',given:udhaar,date,returned:0,remaining:udhaar,days:0,status:'🟡 PENDING'});}else if(udhaar>0&&namedUdhaarTotal<udhaar){const diff=udhaar-namedUdhaarTotal;DB.push(K.UDHAAR,{name:'बाकी उधार ('+date+')',given:diff,date,returned:0,remaining:diff,days:0,status:'🟡 PENDING'});}window.pickedEntryDate=null;showSuccessModal('एंट्री सेव हो गई', persons.length>0 ? ('📋 पूरी एंट्री + '+persons.length+' उधार दर्ज') : '📋 पूरी एंट्री · आज');['e-cash','e-upi','e-expense','e-udhaar','e-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('udhaar-persons-list').innerHTML='';document.getElementById('udhaar-persons-section').style.display='none';calcProfit();setTimeout(()=>go('s-home'),1000);}
+function saveEntry(){const cash=parseFloat(document.getElementById('e-cash').value)||0;const upi=parseFloat(document.getElementById('e-upi').value)||0;const s=cash+upi;if(!s){toast('❌ नकद या UPI बिक्री ज़रूर भरें',true);return;}const date=document.getElementById('e-date').value,expense=parseFloat(document.getElementById('e-expense').value)||0;const notes=cleanText(document.getElementById('e-notes').value,500);const profit=s-expense,margin=s>0?Math.round((profit/s)*100):0;let rating='⚠️ धीमा';if(s>=5000)rating='🔥 बहुत अच्छा';else if(s>=3000)rating='👍 अच्छा';DB.push(K.BIKRI,{date,sales:s,cash,upi,expense,udhaar:0,notes,profit,margin,rating});window.pickedEntryDate=null;showSuccessModal('एंट्री सेव हो गई', '📋 पूरी एंट्री · आज');['e-cash','e-upi','e-expense','e-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});calcProfit();setTimeout(()=>go('s-home'),1000);}
 function saveMaal(){const amount=parseFloat(document.getElementById('m-amount').value)||0;if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}const date=document.getElementById('m-date').value,supplier=document.getElementById('m-supplier').value||'';const name=document.getElementById('m-name').value||'',pay=document.getElementById('m-pay').value==='nakad'?'नकद':'उधार';const note=document.getElementById('m-note').value||'';DB.push(K.MAAL,{date,supplier,name,amount,pay,note});showSuccessModal('माल एंट्री सेव हो गई', '📦 माल की खरीद · आज');['m-supplier','m-name','m-amount','m-note'].forEach(id=>document.getElementById(id).value='');setPay('m','nakad');loadMaalStats();setTimeout(()=>go('s-home'),1000);}
 function saveGoal(){const month=document.getElementById('g-month').value,target=parseFloat(document.getElementById('g-target').value)||0;if(!target){toast('❌ लक्ष्य रकम ज़रूर भरें',true);return;}const note=document.getElementById('g-note').value||'';DB.push(K.GOAL,{month,target,note});showSuccessModal('लक्ष्य सेव हो गया', '🎯 आपका लक्ष्य · दर्ज');document.getElementById('g-target').value='';document.getElementById('g-note').value='';loadGoalScreen();}
-function loadHome(){buildMonthNav();loadKPIForMonth(monthNavSelected);loadMaalForMonth(monthNavSelected);loadUdhaarKPI();if(mahineyOpen){buildMonthGrid();if(calSelectedMonth!==null)renderCalendar();}}
+function loadHome(){buildMonthNav();loadKPIForMonth(monthNavSelected);loadMaalForMonth(monthNavSelected);if(mahineyOpen){buildMonthGrid();if(calSelectedMonth!==null)renderCalendar();}}
 function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;const rec=[];rows.forEach(r=>{if(inHafta(r.date,activeHafta-1)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(rec.length<3)rec.push(r);}});document.getElementById('h-maal-total').textContent=fmt(tot);document.getElementById('h-maal-pending').textContent=fmt(udh);document.getElementById('h-maal-nakad').textContent=fmt(nak);document.getElementById('h-maal-udhaar').textContent=fmt(udh);document.getElementById('w-maal').textContent=fmt(tot);const ml=document.getElementById('h-maal-list');ml.innerHTML='<div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div>';if(!rec.length)ml.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.supplier||'—'}</div><div class="dlr-goods">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.MAAL,r.id,r);ml.appendChild(card);});}
-function loadUdhaarKPI(){const el=document.getElementById('k-udhaar');if(!el)return;const rows=DB.get(K.UDHAAR);let tot=0;rows.forEach(r=>{if(r.status==='🟢 SETTLED')return;const remaining=(r.given||0)-(r.returned||0);if(remaining>0)tot+=remaining;});el.textContent=fmt(tot);}
 let _supplierPayId=null;
 
 function openSupplierPayOverlay(id){
@@ -4953,8 +4553,7 @@ function loadMaalStats(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;rows.fo
 let openHafta=null;
 let activeHafta=CUR_HAFTA;
 function toggleHafta(hNum){for(let i=1;i<=4;i++)document.getElementById(`hafta-panel-${i}`).classList.remove('open');document.querySelectorAll('.hafta-card-past').forEach(c=>c.classList.remove('hafta-card-selected'));if(openHafta===hNum){openHafta=null;activeHafta=CUR_HAFTA;loadMaalHome();const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(inHafta(r.date,CUR_HAFTA-1)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);const mT=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-mT-tE));return;}else{openHafta=hNum;document.getElementById(`hafta-panel-${hNum}`).classList.add('open');if(hNum!==CUR_HAFTA){const allCards=Array.from(document.getElementById('hafta-grid').children);const clickedCard=allCards[hNum-1];if(clickedCard&&clickedCard.classList.contains('hafta-card-past'))clickedCard.classList.add('hafta-card-selected');}}activeHafta=hNum;loadMaalHome();const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(inHafta(r.date,activeHafta-1)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);const mT=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-mT-tE));}
-function buildHaftaCards(){const bikri=DB.get(K.BIKRI),udhaar=DB.get(K.UDHAAR);const grid=document.getElementById('hafta-grid');grid.innerHTML='';for(let h=0;h<4;h++){const hNum=h+1,isCur=(hNum===CUR_HAFTA),range=HAFTA_RANGES[h];let bikriTotal=0,gallaTotal=0,udhaarTotal=0,expenseTotal=0,udhaarFromRecords=0;bikri.forEach(r=>{if(inHafta(r.date,h)){bikriTotal+=r.sales||0;gallaTotal+=calcEntryProfit(r);udhaarTotal+=r.udhaar||0;expenseTotal+=r.expense||0;}});udhaarTotal=0;document.getElementById(`hv-bikri-${hNum}`).textContent=fmt(bikriTotal);document.getElementById(`hv-galla-${hNum}`).textContent=fmt(gallaTotal);const uEl=document.getElementById(`hv-udhaar-${hNum}`);if(uEl)uEl.textContent=fmt(udhaarTotal);document.getElementById(`hv-expense-${hNum}`).textContent=fmt(expenseTotal);document.getElementById(`hpd-${hNum}`).textContent=`${range.start}–${range.end} ${HI_MONTHS[CUR_MONTH]}`;if(isCur){const daysDone=Math.min(CUR_DAY-range.start+1,range.end-range.start+1),daysTotal=range.end-range.start+1;const pct=Math.max(0,Math.round((daysDone/daysTotal)*100));document.getElementById('hpb-4').textContent=`${Math.max(1,daysDone)}/${daysTotal} दिन`;document.getElementById('hafta-pbar').style.width=pct+'%';}const card=document.createElement('div');card.className='hafta-card '+(isCur?'hafta-card-cur':'hafta-card-past');card.innerHTML=`${isCur?'<div class="chaluu-badge">● चालू</div>':''}<div class="hafta-card-name">हफ्ता-${hNum}</div><div class="hafta-card-dates">${range.start}–${range.end}</div><div class="hafta-card-divider"></div><div class="hafta-card-amt">${fmt(bikriTotal)}</div><div class="hafta-card-sublbl">बिक्री</div><div class="hafta-card-hint">▼ देखें</div>`;card.onclick=()=>toggleHafta(hNum);grid.appendChild(card);}}
-function loadUdhaar(){const el=document.getElementById('udhaar-list');el.innerHTML='';const rows=DB.get(K.UDHAAR);if(!rows.length){el.innerHTML='<div class="empty">🤝<br>कोई उधार नहीं है</div>';return;}const hint=document.createElement('div');hint.style.cssText='font-size:9px;color:#333;text-align:center;margin-bottom:8px;';hint.textContent='देर तक दबाएं — सुधारें या हटाएं';el.appendChild(hint);let totalAmt=0,overdueCount=0,pendingCount=0,settledCount=0;rows.forEach(r=>{const given=r.given||0,returned=r.returned||0,remaining=given-returned,days=daysSince(r.date);let type='pending';if(r.status==='🟢 SETTLED'||remaining<=0)type='settled';else if(r.status==='🔴 OVERDUE'||days>=7)type='overdue';if(type==='overdue'){overdueCount++;totalAmt+=Math.max(0,remaining);}else if(type==='pending'){pendingCount++;totalAmt+=Math.max(0,remaining);}else settledCount++;const statusLabel=type==='overdue'?'🔴 OVERDUE':type==='pending'?'🟡 PENDING':'🟢 SETTLED';const dotColor=type==='overdue'?'#f06060':type==='pending'?'#f0b040':'#3dca6a';const dotColor2=type==='overdue'?'#8a3030':type==='pending'?'#8a6020':'#2a6a3a';const card=makeLPCard(`ucard ucard-${type}`,`<div class="u-top"><div class="u-left"><div class="u-avatar u-avatar-${type}">${escHTML(initials(r.name))}</div><div><div class="u-name">${escHTML(r.name)||'—'}</div><div class="u-status-${type}">${statusLabel}</div></div></div><div style="text-align:right"><div class="u-amt-${type}">${fmt(Math.max(0,remaining))}</div><div class="u-sub-${type}">बाकी रकम</div></div></div><div class="u-bottom u-bottom-${type}"><div class="u-date-block"><div class="u-days-row"><div class="u-dot" style="background:${dotColor};"></div><span class="u-days-${type}">${days} दिन पहले</span></div><div class="u-days-row"><div class="u-dot" style="background:${dotColor2};"></div><span class="u-date-${type}">📅 ${fmtDate(r.date)}</span></div></div><div class="u-mini-box u-mini-${type}"><div class="u-mini-lbl-${type}">${type==='settled'?'चुका दिया':'उधार दिया'}</div><div class="u-mini-val-${type}">${type==='settled'?fmt(returned):fmt(given)}</div></div></div>`,K.UDHAAR,r.id,r);el.appendChild(card);});const summary=document.createElement('div');summary.className='u-summary';summary.innerHTML=`<div class="u-sum-item"><div class="u-sum-lbl">कुल उधार</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${fmt(totalAmt)}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">OVERDUE</div><div style="font-size:13px;font-weight:800;color:#ff8aa8;">${overdueCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">PENDING</div><div style="font-size:13px;font-weight:800;color:#cc7a47;">${pendingCount}</div></div><div class="u-sum-divider"></div><div class="u-sum-item"><div class="u-sum-lbl">SETTLED</div><div style="font-size:13px;font-weight:800;color:#d4a850;">${settledCount}</div></div>`;el.appendChild(summary);}
+function buildHaftaCards(){const bikri=DB.get(K.BIKRI);const grid=document.getElementById('hafta-grid');grid.innerHTML='';for(let h=0;h<4;h++){const hNum=h+1,isCur=(hNum===CUR_HAFTA),range=HAFTA_RANGES[h];let bikriTotal=0,gallaTotal=0,expenseTotal=0;bikri.forEach(r=>{if(inHafta(r.date,h)){bikriTotal+=r.sales||0;gallaTotal+=calcEntryProfit(r);expenseTotal+=r.expense||0;}});document.getElementById(`hv-bikri-${hNum}`).textContent=fmt(bikriTotal);document.getElementById(`hv-galla-${hNum}`).textContent=fmt(gallaTotal);document.getElementById(`hv-expense-${hNum}`).textContent=fmt(expenseTotal);document.getElementById(`hpd-${hNum}`).textContent=`${range.start}–${range.end} ${HI_MONTHS[CUR_MONTH]}`;if(isCur){const daysDone=Math.min(CUR_DAY-range.start+1,range.end-range.start+1),daysTotal=range.end-range.start+1;const pct=Math.max(0,Math.round((daysDone/daysTotal)*100));document.getElementById('hpb-4').textContent=`${Math.max(1,daysDone)}/${daysTotal} दिन`;document.getElementById('hafta-pbar').style.width=pct+'%';}const card=document.createElement('div');card.className='hafta-card '+(isCur?'hafta-card-cur':'hafta-card-past');card.innerHTML=`${isCur?'<div class="chaluu-badge">● चालू</div>':''}<div class="hafta-card-name">हफ्ता-${hNum}</div><div class="hafta-card-dates">${range.start}–${range.end}</div><div class="hafta-card-divider"></div><div class="hafta-card-amt">${fmt(bikriTotal)}</div><div class="hafta-card-sublbl">बिक्री</div><div class="hafta-card-hint">▼ देखें</div>`;card.onclick=()=>toggleHafta(hNum);grid.appendChild(card);}}
 function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#d4a850;">${fmt(data.profit)}</div><div style="font-size:9px;color:#cc7a47;margin-top:2px;">कुल गल्ला/कमाई</div></div>`;el.appendChild(div);});}
 // ============================================================
 // ADVANCED PIN LOCK SYSTEM (alck.js)
@@ -5569,7 +5168,6 @@ function appLockUnlock() {}
 function appLockToggle() { if (window.alckOpenChangePinFlow) window.alckOpenChangePinFlow(); }
 history.pushState(null, '', location.href);
 window.addEventListener('popstate', function() {
-  if(document.getElementById('ub-app').style.display!=='none') return;
   const overlays=['supplier-pay-overlay','action-popup','confirm-popup','edit-popup','date-popup-overlay','install-banner','lg-note-modal'];
   for(const id of overlays){const el=document.getElementById(id);if(el&&(el.classList.contains('show')||el.style.display==='flex')){el.classList.remove('show');el.style.display='';history.pushState(null,'',location.href);return;}}
   const active=document.querySelector('.screen.active');
@@ -5579,499 +5177,6 @@ function loadGoalScreen(){const el=document.getElementById('goal-list');el.inner
 </script>
 
 <script>
-// ══════════════════════════════════════
-// उधार Book — Complete Logic
-// ══════════════════════════════════════
-let UB_UID = 'default';
-let UB_FILTER = 'all';
-let UB_CURRENT_PAY_ID = null;
-let UB_CURRENT_WA_PHONE = '';
-let UB_CURRENT_WA_MSG = '';
-let UB_REMINDER_DAYS = 3;
-
-const UB_DB = {
-  _k() { return 'hk_' + UB_UID + '_udhaar'; },
-  get() { try { return JSON.parse(localStorage.getItem(this._k()) || '[]'); } catch(e) { return []; } },
-  set(v) { localStorage.setItem(this._k(), JSON.stringify(v)); },
-  push(item) {
-    item.id = Date.now() + '_' + Math.random().toString(36).substr(2,5);
-    const a = this.get(); a.push(item); this.set(a);
-    if (window._fsWrite) window._fsWrite(UB_UID, 'udhaar', item);
-    return item;
-  },
-  update(id, u) {
-    const a = this.get(), i = a.findIndex(r => r.id === id);
-    if (i > -1) { a[i] = { ...a[i], ...u }; this.set(a); if (window._fsWrite) window._fsWrite(UB_UID, 'udhaar', a[i]); }
-  },
-  remove(id) {
-    this.set(this.get().filter(r => r.id !== id));
-    if (window._fsDelete) window._fsDelete(UB_UID, 'udhaar', id);
-  }
-};
-
-function ubInitApp(uid) {
-  UB_UID = uid;
-  // Update auto date display
-  const today = new Date();
-  const dateStr = today.toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('ub-auto-date').textContent = '⚡ Auto: ' + dateStr;
-  // Set default due date to 7 days from now
-  const due = new Date(); due.setDate(due.getDate() + 7);
-  document.getElementById('ub-due-date').value = due.toISOString().split('T')[0];
-  ubLoadList();
-}
-
-function ubToast(msg, err = false) {
-  const t = document.getElementById('ub-toast');
-  t.textContent = msg;
-  t.className = 'toast' + (err ? ' err' : '') + ' show';
-  setTimeout(() => t.className = 'toast', 3000);
-}
-
-function ubDaysSince(ds) {
-  if (!ds) return 0;
-  const p = ds.split('-');
-  const d = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
-  return Math.floor((new Date() - d) / (1000 * 60 * 60 * 24));
-}
-
-function ubFmtDate(ds) {
-  if (!ds) return '—';
-  try {
-    const p = ds.split('-');
-    return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]))
-      .toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-  } catch(e) { return ds; }
-}
-
-function ubFmt(n) { return '₹' + (parseInt(n) || 0).toLocaleString('en-IN'); }
-
-function ubInitials(name) {
-  if (!name) return '?';
-  const p = name.trim().split(' ');
-  return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
-}
-
-function ubLoadList() {
-  const rows = UB_DB.get();
-  const search = (document.getElementById('ub-search')?.value || '').toLowerCase();
-  let totalAmt = 0, overdueCount = 0, totalPeople = 0;
-
-  const filtered = rows.filter(r => {
-    const given = r.given || 0, returned = r.returned || 0, remaining = given - returned;
-    const days = ubDaysSince(r.date);
-    let type = 'pending';
-    if (r.status === '🟢 SETTLED' || remaining <= 0) type = 'settled';
-    else if (r.status === '🔴 OVERDUE' || days >= 7) type = 'overdue';
-    r._type = type;
-    r._remaining = Math.max(0, remaining);
-    if (type !== 'settled') { totalAmt += r._remaining; totalPeople++; }
-    if (type === 'overdue') overdueCount++;
-    if (search && !(r.name || '').toLowerCase().includes(search)) return false;
-    if (UB_FILTER === 'all') return true;
-    return r._type === UB_FILTER;
-  });
-
-  document.getElementById('ub-total-amt').textContent = ubFmt(totalAmt);
-  document.getElementById('ub-overdue-count').textContent = overdueCount;
-  document.getElementById('ub-total-count').textContent = totalPeople;
-
-  const el = document.getElementById('ub-list');
-  if (!filtered.length) {
-    el.innerHTML = '<div class="ub-empty">🤝<br>कोई उधार नहीं है<br><span style="font-size:11px;color:#333;">ऊपर "+ नया उधार" दबाएं</span></div>';
-    return;
-  }
-
-  el.innerHTML = '';
-  filtered.forEach(r => {
-    const type = r._type;
-    const remaining = r._remaining;
-    const given = r.given || 0, returned = r.returned || 0;
-    const days = ubDaysSince(r.date);
-    const pct = given > 0 ? Math.round((returned / given) * 100) : 0;
-    const dueStr = r.dueDate ? ubFmtDate(r.dueDate) : '—';
-    const daysToDue = r.dueDate ? -ubDaysSince(r.dueDate) : null;
-    let dueLabel = '', dueDotColor = '#555', dueTxtClass = '';
-    if (r.dueDate) {
-      if (daysToDue < 0) { dueLabel = 'Due: ' + dueStr + ' — ' + Math.abs(daysToDue) + ' दिन late'; dueDotColor = '#f06060'; dueTxtClass = 'ub-dt-r'; }
-      else if (daysToDue === 0) { dueLabel = 'Due: आज!'; dueDotColor = '#f06060'; dueTxtClass = 'ub-dt-r'; }
-      else if (daysToDue <= 3) { dueLabel = 'Due: ' + dueStr + ' — ' + daysToDue + ' दिन बाकी'; dueDotColor = '#f0b040'; dueTxtClass = 'ub-dt-a'; }
-      else { dueLabel = 'Due: ' + dueStr + ' — ' + daysToDue + ' दिन बाकी'; dueDotColor = '#5dea8a'; dueTxtClass = 'ub-dt-g'; }
-    }
-
-    const takenDate = r.date ? '📅 उधार लिया: ' + ubFmtDate(r.date) : '';
-    const actionBtn = type === 'settled'
-      ? `<div class="ub-btn ub-btn-done">✅ Done</div>`
-      : `<div class="ub-btn ub-btn-pay" onclick="openUBPaySheet('${escJS(r.id)}')">💰 आया</div>`;
-
-    const hasPhone = r.phone && r.phone.length >= 10;
-
-    const card = document.createElement('div');
-    card.className = `ub-card ub-card-${type[0]}`;
-    card.innerHTML = `
-      <div class="ub-card-top">
-        <div class="ub-card-left">
-          <div class="ub-av ub-av-${type[0]}">${escHTML(ubInitials(r.name))}</div>
-          <div>
-            <div class="ub-name">${escHTML(r.name) || '—'}</div>
-            <div class="ub-taken-date">${escHTML(takenDate)}</div>
-            <div class="ub-status-${type[0]}">${type === 'overdue' ? '🔴 OVERDUE' : type === 'pending' ? '🟡 PENDING' : '🟢 SETTLED'} · ${days} दिन पहले</div>
-          </div>
-        </div>
-        <div style="text-align:right;">
-          <div class="ub-amt-${type[0]}">${ubFmt(remaining)}</div>
-          <div class="ub-amt-sub ub-amt-sub-${type[0]}">बाकी रकम</div>
-        </div>
-      </div>
-      ${r.dueDate && type !== 'settled' ? `<div class="ub-due-row"><div class="ub-due"><div class="ub-due-dot" style="background:${dueDotColor};"></div><div class="ub-due-txt ${dueTxtClass}">${dueLabel}</div></div><div style="font-size:8px;color:#3a1a1a;">दिया: ${ubFmt(given)}</div></div>` : ''}
-      <div class="ub-prog-meta"><span class="ub-pm-${type[0]}">चुका: ${ubFmt(returned)}</span><span class="ub-pm-${type[0]}">${pct}% चुका</span></div>
-      <div class="ub-pbar"><div class="ub-pf-${type[0]}" style="width:${pct}%"></div></div>
-      <div class="ub-actions">
-        <div class="ub-btn ub-btn-wa" onclick="openUBWA('${escJS(r.id)}')" ${!hasPhone ? 'style="opacity:.4;cursor:not-allowed;"' : ''}>📱 WhatsApp</div>
-        <div class="ub-btn ub-btn-call" onclick="ubCall('${escJS(r.phone || '')}')" ${!hasPhone ? 'style="opacity:.4;cursor:not-allowed;"' : ''}>📞 Call</div>
-        ${actionBtn}
-      </div>
-    `;
-    el.appendChild(card);
-  });
-}
-
-function ubFilter(type, el) {
-  UB_FILTER = type;
-  document.querySelectorAll('.ub-pill').forEach(p => {
-    p.classList.remove('active');
-    p.style.background = ''; p.style.color = '';
-  });
-  if (el) el.classList.add('active');
-  ubLoadList();
-}
-
-function ubSearch() { ubLoadList(); }
-
-function ubGo(screenId) {
-  document.querySelectorAll('.ub-screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
-}
-
-function openUBSheet() {
-  const today = new Date();
-  const dateStr = today.toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('ub-auto-date').textContent = '⚡ Auto: ' + dateStr;
-  const due = new Date(); due.setDate(due.getDate() + 7);
-  document.getElementById('ub-due-date').value = due.toISOString().split('T')[0];
-  document.getElementById('ub-name').value = '';
-  document.getElementById('ub-phone').value = '';
-  document.getElementById('ub-amount').value = '';
-  document.getElementById('ub-manual-date').value = '';
-  document.getElementById('ub-add-overlay').classList.add('show');
-}
-
-function closeUBSheet() { document.getElementById('ub-add-overlay').classList.remove('show'); }
-
-function ubSetReminder(days) {
-  UB_REMINDER_DAYS = days;
-  [3, 7, 15].forEach(d => {
-    const btn = document.getElementById('ubr-' + d);
-    if (btn) btn.className = 'ub-rem-btn' + (d === days ? ' active' : '');
-  });
-}
-
-async function ubPickContact() {
-  if ('contacts' in navigator && 'ContactsManager' in window) {
-    try {
-      const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
-      if (contacts.length > 0) {
-        const cName = contacts[0].name?.[0] || '';
-        const cTel = contacts[0].tel?.[0] || '';
-        if (cName) document.getElementById('ub-name').value = cName;
-        const digits = cTel.replace(/\D/g, '');
-        const phone10 = digits.length >= 10 ? digits.slice(-10) : digits;
-        if (phone10) document.getElementById('ub-phone').value = phone10;
-      }
-    } catch(e) { ubToast('❌ Contact नहीं चुना', true); }
-  } else { ubToast('यह browser Contact Picker support नहीं करता — नंबर manually डालें', true); }
-}
-
-function ubSaveEntry() {
-  const name = cleanText(document.getElementById('ub-name').value,100);
-  const phone = document.getElementById('ub-phone').value.trim().replace(/\D/g, '').slice(-10);
-  const amount = parseFloat(document.getElementById('ub-amount').value) || 0;
-  const dueDate = document.getElementById('ub-due-date').value;
-  if (!name) { ubToast('❌ नाम ज़रूर भरें', true); return; }
-  if (!amount) { ubToast('❌ रकम ज़रूर भरें', true); return; }
- const manualDate = document.getElementById('ub-manual-date').value;
-  const today = new Date();
-  const dateStr = manualDate || today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-  UB_DB.push({ name, phone, given: amount, returned: 0, remaining: amount, date: dateStr, dueDate, reminderDays: UB_REMINDER_DAYS, status: '🟡 PENDING' });
-  ubToast('✅ उधार दर्ज हो गया!');
-  closeUBSheet();
-  ubLoadList();
-}
-
-function openUBPaySheet(id) {
-  const rows = UB_DB.get();
-  const r = rows.find(x => x.id === id);
-  if (!r) return;
-  UB_CURRENT_PAY_ID = id;
-  const remaining = Math.max(0, (r.given || 0) - (r.returned || 0));
-  document.getElementById('ub-pay-sub').textContent = r.name + ' · Partial Payment';
-  document.getElementById('ub-pay-remaining').textContent = ubFmt(remaining);
-  document.getElementById('ub-pay-amount').value = '';
-  document.getElementById('ub-pay-left').textContent = ubFmt(remaining);
-  document.getElementById('ub-pay-receive').textContent = '₹0';
-  document.getElementById('ub-pay-bar').style.width = '0%';
-  document.getElementById('ub-pay-bar-paid').textContent = 'चुका: ' + ubFmt(r.returned || 0);
-  document.getElementById('ub-pay-bar-left').textContent = 'बाकी: ' + ubFmt(remaining);
-  document.getElementById('ub-pay-overlay').classList.add('show');
-}
-
-function closeUBPaySheet() { document.getElementById('ub-pay-overlay').classList.remove('show'); UB_CURRENT_PAY_ID = null; }
-
-function ubCalcPayment() {
-  const rows = UB_DB.get();
-  const r = rows.find(x => x.id === UB_CURRENT_PAY_ID);
-  if (!r) return;
-  const totalRemaining = Math.max(0, (r.given || 0) - (r.returned || 0));
-  const received = Math.min(parseFloat(document.getElementById('ub-pay-amount').value) || 0, totalRemaining);
-  const left = totalRemaining - received;
-  const alreadyPaid = r.returned || 0;
-  const totalPaid = alreadyPaid + received;
-  const pct = r.given > 0 ? Math.round((totalPaid / r.given) * 100) : 0;
-  document.getElementById('ub-pay-left').textContent = ubFmt(left);
-  document.getElementById('ub-pay-receive').textContent = ubFmt(received);
-  document.getElementById('ub-pay-bar').style.width = pct + '%';
-  document.getElementById('ub-pay-bar-paid').textContent = 'चुका: ' + ubFmt(totalPaid);
-  document.getElementById('ub-pay-bar-left').textContent = 'बाकी: ' + ubFmt(left);
-}
-
-function ubSavePayment() {
-  const rows = UB_DB.get();
-  const r = rows.find(x => x.id === UB_CURRENT_PAY_ID);
-  if (!r) return;
-  const received = parseFloat(document.getElementById('ub-pay-amount').value) || 0;
-  if (!received) { ubToast('❌ रकम डालें', true); return; }
-  const totalRemaining = Math.max(0, (r.given || 0) - (r.returned || 0));
-  const newReturned = Math.min((r.returned || 0) + received, r.given || 0);
-  const newRemaining = Math.max(0, (r.given || 0) - newReturned);
-  const days = ubDaysSince(r.date);
-  let status = newRemaining <= 0 ? '🟢 SETTLED' : (days >= 7 ? '🔴 OVERDUE' : '🟡 PENDING');
-  UB_DB.update(UB_CURRENT_PAY_ID, { returned: newReturned, remaining: newRemaining, status });
-  ubToast('✅ Payment दर्ज हो गई!');
-  closeUBPaySheet();
-  ubLoadList();
-}
-
-function ubSettleFull() {
-  const rows = UB_DB.get();
-  const r = rows.find(x => x.id === UB_CURRENT_PAY_ID);
-  if (!r) return;
-  UB_DB.update(UB_CURRENT_PAY_ID, { returned: r.given, remaining: 0, status: '🟢 SETTLED' });
-  ubToast('✅ पूरा चुक गया — SETTLED!');
-  closeUBPaySheet();
-  ubLoadList();
-}
-
-function openUBWA(id) {
-  const rows = UB_DB.get();
-  const r = rows.find(x => x.id === id);
-  if (!r) return;
-  if (!r.phone || r.phone.length < 10) { ubToast('❌ फोन नंबर नहीं है — पहले नंबर जोड़ें', true); return; }
-  const remaining = Math.max(0, (r.given || 0) - (r.returned || 0));
-  const takenDate = ubFmtDate(r.date);
-  const dueDate = r.dueDate ? ubFmtDate(r.dueDate) : '—';
-  const msg = `${r.name} जी 🙏\n\nआपका ${ubFmt(remaining)} का उधार बाकी है।\n\n📅 उधार लिया: ${takenDate}\n⏰ Due Date: ${dueDate}\n📊 बाकी: ${ubFmt(remaining)} (${ubFmt(r.returned || 0)} चुका दिया)\n\nसुविधा हो तो जल्द चुका दें।\nधन्यवाद 🙏`;
-  UB_CURRENT_WA_PHONE = r.phone;
-  UB_CURRENT_WA_MSG = msg;
-  document.getElementById('ub-wa-msg-preview').innerHTML = escHTML(msg).replace(/\n/g, '<br>');
-  document.getElementById('ub-wa-overlay').classList.add('show');
-}
-
-function closeUBWASheet() { document.getElementById('ub-wa-overlay').classList.remove('show'); }
-
-function ubSendWhatsApp() {
-  const _waPhone = cleanPhone(UB_CURRENT_WA_PHONE); if(_waPhone.length<10){toast('गलत फ़ोन नंबर',true);return;} const url = 'https://wa.me/91' + _waPhone + '?text=' + encodeURIComponent(UB_CURRENT_WA_MSG);
-  window.open(url, '_blank');
-  closeUBWASheet();
-}
-
-function ubCall(phone) {
-  if (!phone || phone.length < 10) { ubToast('❌ फोन नंबर नहीं है', true); return; }
-  const _phoneClean = cleanPhone(phone); if(_phoneClean.length<10){toast('गलत फ़ोन नंबर',true);return;} window.location.href='tel:+91'+_phoneClean;
-}
-// ── Calendar ──
-let UB_CAL_YEAR = new Date().getFullYear();
-let UB_CAL_MONTH = new Date().getMonth();
-const UB_HI_MONTHS = ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
-
-function ubNavGo(screenId, navId) {
-  document.querySelectorAll('.ub-screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
-  document.querySelectorAll('.ub-nav .nav-item').forEach(n => {
-    n.classList.remove('active');
-    const lbl = n.querySelector('.nav-lbl');
-    if (lbl) lbl.style.color = '';
-    n.querySelectorAll('.ub-nav-dot').forEach(d => d.remove());
-  });
-  if (navId) {
-    const activeNav = document.getElementById(navId);
-    if (activeNav) {
-      activeNav.classList.add('active');
-      const lbl = activeNav.querySelector('.nav-lbl');
-      if (lbl) lbl.style.color = '#ffe090';
-      activeNav.querySelectorAll('.ub-nav-dot').forEach(d => d.remove());
-     const dot = document.createElement('div');
-      dot.className = 'ub-nav-dot';
-      dot.style.cssText = 'display:none;';
-      activeNav.appendChild(dot);
-    }
-  }
-  if (screenId === 'ub-cal') ubRenderCalendar();
-}
-
-function ubRenderCalendar() {
-  const today = new Date();
-  const todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
-  document.getElementById('ub-cal-label').textContent = UB_HI_MONTHS[UB_CAL_MONTH] + ' ' + UB_CAL_YEAR;
-  const rows = UB_DB.get();
-  const monthPrefix = UB_CAL_YEAR + '-' + String(UB_CAL_MONTH+1).padStart(2,'0');
-  const entryDates = new Set(rows.map(r => r.date).filter(d => d && d.startsWith(monthPrefix)));
-  const firstDay = new Date(UB_CAL_YEAR, UB_CAL_MONTH, 1).getDay();
-  const startOffset = firstDay === 0 ? 6 : firstDay - 1;
-  const daysInMonth = new Date(UB_CAL_YEAR, UB_CAL_MONTH+1, 0).getDate();
-  const grid = document.getElementById('ub-cal-grid');
-  grid.innerHTML = '';
-  for (let i = 0; i < startOffset; i++) {
-    const empty = document.createElement('div');
-    empty.style.cssText = 'height:38px;';
-    grid.appendChild(empty);
-  }
-  for (let d = 1; d <= daysInMonth; d++) {
-    const ds = UB_CAL_YEAR + '-' + String(UB_CAL_MONTH+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-    const hasEntry = entryDates.has(ds);
-    const isToday = ds === todayStr;
-    const cell = document.createElement('div');
-    let cellStyle = 'height:42px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:500;position:relative;';
-    if (isToday) {
-      cellStyle += 'background:#f0c040;border:1.5px solid #ffd870;color:#2a1808;';
-    } else if (hasEntry) {
-      cellStyle += 'background:#2a1a4a;border:1.5px solid #7a6cf0;color:#e0d8ff;';
-    } else {
-      cellStyle += 'background:#1a1530;color:#555;border:1px solid #2a2545;';
-    }
-    cell.style.cssText = cellStyle;
-    cell.textContent = d;
-    if (hasEntry || isToday) {
-      const dot = document.createElement('div');
-      const dotColor = isToday ? '#2a1808' : '#7a6cf0';
-      dot.style.cssText = 'width:4px;height:4px;background:' + dotColor + ';border-radius:50%;position:absolute;bottom:4px;';
-      cell.appendChild(dot);
-    }
-    if (isToday) {
-      const lbl = document.createElement('div');
-      lbl.style.cssText = 'font-size:6px;color:#2a1808;font-weight:500;position:absolute;top:3px;';
-      lbl.textContent = 'आज';
-      cell.appendChild(lbl);
-    }
-    cell.onclick = () => ubOpenDatePopup(ds);
-    grid.appendChild(cell);
-  }
-}
-
-function ubCalPrev() {
-  UB_CAL_MONTH--;
-  if (UB_CAL_MONTH < 0) { UB_CAL_MONTH = 11; UB_CAL_YEAR--; }
-  ubRenderCalendar();
-}
-
-function ubCalNext() {
-  UB_CAL_MONTH++;
-  if (UB_CAL_MONTH > 11) { UB_CAL_MONTH = 0; UB_CAL_YEAR++; }
-  ubRenderCalendar();
-}
-
-function ubOpenDatePopup(ds) {
-  const rows = UB_DB.get();
-  const entries = rows.filter(r => r.date === ds);
-  const p = ds.split('-');
-  const dateLabel = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]))
-    .toLocaleDateString('hi-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  document.getElementById('ub-dp-title').textContent = '📅 ' + dateLabel;
-  document.getElementById('ub-dp-sub').textContent = entries.length > 0 ? entries.length + ' उधार इस दिन' : 'इस दिन कोई उधार नहीं';
-  const content = document.getElementById('ub-dp-content');
-  content.innerHTML = '';
-  if (!entries.length) {
-    content.innerHTML = '<div style="text-align:center;padding:20px;color:#555;font-size:12px;">📋 इस दिन कोई उधार नहीं था</div>';
-  } else {
-    entries.forEach(r => {
-      const remaining = Math.max(0, (r.given||0) - (r.returned||0));
-      const type = r.status === '🟢 SETTLED' || remaining <= 0 ? 'settled' : ubDaysSince(r.date) >= 7 ? 'overdue' : 'pending';
-      const color = type === 'settled' ? '#4dca4d' : type === 'overdue' ? '#f06060' : '#f0b040';
-      const statusLabel = type === 'settled' ? '🟢 SETTLED' : type === 'overdue' ? '🔴 OVERDUE' : '🟡 PENDING';
-      const card = document.createElement('div');
-      card.style.cssText = 'background:#1a1a1a;border:1px solid #2a2a2a;border-left:3px solid '+color+';border-radius:0 10px 10px 0;padding:12px;margin-bottom:10px;';
-      card.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div style="font-size:16px;font-weight:800;color:#fff;">${escHTML(r.name) || '—'}</div>
-          <div style="font-size:18px;font-weight:800;color:${color};">${ubFmt(remaining)}</div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div style="font-size:11px;font-weight:800;color:${color};">${statusLabel}</div>
-         <div style="font-size:11px;font-weight:700;color:#ccc;">उधार दिया: ${ubFmt(r.given||0)}</div>
-        </div>
-        ${r.phone ? `<div style="font-size:10px;color:#444;margin-top:5px;">📱 ${escHTML(r.phone)}</div>` : ''}
-      `;
-      content.appendChild(card);
-    });
-  }
-  const overlay = document.getElementById('ub-date-popup-overlay');
-  overlay.style.display = 'flex';
-}
-
-function ubCloseDatePopup() {
-  document.getElementById('ub-date-popup-overlay').style.display = 'none';
-}
-function ubOpenSettings() {
-  const authUser = window._currentAuthUser;
-  const phone = (authUser && authUser.phoneNumber) ? authUser.phoneNumber : '';
-  const el = document.getElementById('ub-settings-name');
-  const ph = document.getElementById('ub-settings-phone');
-  if (el) el.textContent = phone || 'उधार Book User';
-  if (ph) ph.textContent = 'उधार Book · हमेशा Free';
-  document.getElementById('ub-settings-overlay').classList.add('show');
-}
-function ubCloseSettings() {
-  document.getElementById('ub-settings-overlay').classList.remove('show');
-}
-function ubSwitchToHisaab() {
-  ubCloseSettings();
-  if (!UB_UID || UB_UID === 'default') return;
-  // CRITICAL: Update localStorage so refresh keeps user in full mode
-  try { localStorage.setItem('hk_mode_' + UB_UID, 'full'); } catch(e){}
-  if(window._db){try{import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>{m.setDoc(m.doc(window._db,'users',UB_UID,'profile','info'),{mode:'full'},{merge:true});});}catch(e){}}
-  if (!localStorage.getItem('hk_trial_start_' + UB_UID)) {
-    const ts = Date.now();
-    localStorage.setItem('hk_trial_start_' + UB_UID, ts.toString());
-    if (window._fsRegisterUser) {
-      const p = (window._currentAuthUser && window._currentAuthUser.phoneNumber) ? window._currentAuthUser.phoneNumber : '';
-      window._fsRegisterUser(UB_UID, p, ts);
-    }
-  }
-  showAppVariant('main');
-  if (typeof initApp === 'function') initApp(UB_UID);
-  if (typeof updateTrialBanner === 'function') updateTrialBanner(UB_UID);
-  setTimeout(() => { if (typeof loadHome === 'function') loadHome(); if (typeof loadUdhaarKPI === 'function') loadUdhaarKPI(); }, 600);
-}
- window.addEventListener('popstate', function() {
-  if(document.getElementById('ub-app').style.display==='none') return;
-  const ubOverlays=['ub-add-overlay','ub-pay-overlay','ub-wa-overlay','ub-settings-overlay'];
-  for(const id of ubOverlays){const el=document.getElementById(id);if(el&&el.classList.contains('show')){el.classList.remove('show');history.pushState(null,'',location.href);return;}}
-  const activeUB=document.querySelector('.ub-screen.active');
-  if(activeUB&&activeUB.id!=='ub-home'){ubNavGo('ub-home','ubn-home');history.pushState(null,'',location.href);return;}
-}); 
-  function ubSignOut() {
-  ubCloseSettings();
-  if (confirm('लॉग आउट करें?')) window.signOut();
-}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('✅ SW')).catch(e=>console.log('SW:',e));}
 </script>
 
@@ -6120,16 +5225,14 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
   // Show after login
   const appEl = document.getElementById('main-app');
-  const ubEl = document.getElementById('ub-app');
   const observer = new MutationObserver(function() {
-    if (appEl.style.display !== 'none' || ubEl.style.display !== 'none') {
+    if (appEl.style.display !== 'none') {
       setTimeout(showBanner, 2000);
       observer.disconnect();
     }
   });
   observer.observe(appEl, { attributes: true, attributeFilter: ['style'] });
-  observer.observe(ubEl, { attributes: true, attributeFilter: ['style'] });
-  if (appEl.style.display !== 'none' || ubEl.style.display !== 'none') {
+  if (appEl.style.display !== 'none') {
     setTimeout(showBanner, 2000);
   }
 
@@ -6236,11 +5339,11 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     if (!screen) return;
 
     // Hide everything else
-    var toHide = ['screen-phone','screen-otp','screen-terms','screen-udhaar-info','screen-mode','main-app','ub-app','app-lock-screen','splash-screen'];
+    var toHide = ['screen-phone','screen-otp','screen-terms','main-app','app-lock-screen','splash-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {
-        if (id === 'main-app' || id === 'ub-app') el.style.display = 'none';
+        if (id === 'main-app') el.style.display = 'none';
         else el.classList.add('hidden');
       }
     });
@@ -6303,11 +5406,11 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     if (!screen) return;
 
     // Hide all other screens
-    var toHide = ['screen-phone','screen-otp','screen-terms','screen-udhaar-info','screen-mode','screen-name','screen-browser-block','main-app','ub-app','app-lock-screen','splash-screen'];
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-name','screen-browser-block','main-app','app-lock-screen','splash-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {
-        if (id === 'main-app' || id === 'ub-app') el.style.display = 'none';
+        if (id === 'main-app') el.style.display = 'none';
         else el.classList.add('hidden');
       }
     });

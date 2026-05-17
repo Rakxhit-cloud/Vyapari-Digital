@@ -1528,6 +1528,55 @@ body.notif-modal-open { overflow: hidden; }
     <div class="terms-agree-main-btn-en">I Agree — Continue</div>
   </div>
 </div>
+
+<!-- Privacy Promise Screen -->
+<div class="auth-screen hidden" id="screen-privacy" style="padding:0;justify-content:flex-start;overflow-y:auto;">
+  <div style="width:100%;max-width:520px;margin:0 auto;padding:32px 22px 24px;box-sizing:border-box;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:34px;margin-bottom:14px;line-height:1;">🔒</div>
+      <div style="color:#fff;font-size:20px;font-weight:600;letter-spacing:-0.3px;line-height:1.25;">आपका Data, सुरक्षित</div>
+      <div style="color:#8aa0d8;font-size:12px;margin-top:6px;font-weight:400;">Your data stays private</div>
+    </div>
+    <div style="color:#c8d0e8;font-size:13px;line-height:1.65;margin-bottom:28px;">हिसाब-Kitaab आपके business की निजी जानकारी रखने के लिए बना है। हमने इसे इस तरह design किया है कि आपकी एंट्री सिर्फ़ आप तक रहें।</div>
+    <div style="margin-bottom:20px;">
+      <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">हम क्या नहीं देख सकते</div>
+      <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">आपकी बिक्री, खर्चा, माल की रकम, और notes — कुछ भी नहीं।</div>
+    </div>
+    <div style="height:1px;background:#1a2a4a;margin:18px 0;"></div>
+    <div style="margin-bottom:20px;">
+      <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">कौन access कर सकता है</div>
+      <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">सिर्फ़ आप, अपने PIN से। कोई third-party को access नहीं है।</div>
+    </div>
+    <div style="height:1px;background:#1a2a4a;margin:18px 0;"></div>
+    <div style="margin-bottom:20px;">
+      <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">Data कहाँ रहता है</div>
+      <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">आपके phone में और encrypted cloud backup में। Phone खो जाए तो दूसरे phone पर वापस मिल जाता है।</div>
+    </div>
+    <div style="height:1px;background:#1a2a4a;margin:18px 0;"></div>
+    <div style="margin-bottom:32px;">
+      <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">कभी share या sell नहीं</div>
+      <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">बाज़ार की अन्य Apps के विपरीत, आपका Data कभी third-party को नहीं बेचा जाता।</div>
+    </div>
+    <button onclick="acceptPrivacy()" style="width:100%;background:#d4a850;border:none;color:#0a0820;font-size:14px;font-weight:600;padding:13px;border-radius:10px;cursor:pointer;letter-spacing:0.2px;">Agree and Continue</button>
+  </div>
+</div>
+
+<!-- Name Screen -->
+<div class="auth-screen hidden" id="screen-name">
+  <div style="width:70px;height:70px;background:linear-gradient(135deg, #6a4818 0%, #8a5a20 50%, #4a3010 100%);border:2px solid #d4a850;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;box-shadow:0 4px 12px rgba(212, 168, 80, 0.25);">👤</div>
+  <div class="auth-title">अपनी जानकारी दें</div>
+  <div class="auth-sub">Apna naam aur dukaan ka naam batayein</div>
+  <div class="auth-card">
+    <div class="auth-label">👤 आपका नाम</div>
+    <input class="auth-input" type="text" id="name-input" placeholder="जैसे: Ramesh Kumar" style="margin-bottom:14px;" maxlength="40">
+    <div class="auth-label">🏪 दुकान/Business का नाम</div>
+    <input class="auth-input" type="text" id="business-input" placeholder="जैसे: Sharma Medical Store" style="margin-bottom:6px;" maxlength="60">
+    <div style="font-size:9px;color:#5a80b0;margin-bottom:14px;">यह नाम app के top par दिखेगा</div>
+    <div class="auth-error" id="name-error"></div>
+    <button class="auth-btn" onclick="saveName()">✅ आगे बढ़ें · Continue</button>
+  </div>
+</div>
+
 <div id="screen-browser-block">
   <div class="bb-phone">
     <div class="bb-icon-wrap">
@@ -2617,8 +2666,20 @@ window.agreeTerms = async function() {
       try { localStorage.setItem('hk_terms_accepted_' + u.uid, Date.now().toString()); } catch(e){}
     }
   } catch(e) { console.warn('terms stage track err:', e); }
-  // Terms accepted → straight to name entry (no intermediate intro screen)
+  // Terms accepted → privacy promise screen → name entry
   document.getElementById('screen-terms').classList.add('hidden');
+  document.getElementById('screen-privacy').classList.remove('hidden');
+};
+
+window.acceptPrivacy = function() {
+  // User has read and accepted the privacy promise → proceed to name entry
+  try {
+    const u = window._currentAuthUser;
+    if (u && u.uid) {
+      try { localStorage.setItem('hk_privacy_accepted_' + u.uid, Date.now().toString()); } catch(e){}
+    }
+  } catch(e) {}
+  document.getElementById('screen-privacy').classList.add('hidden');
   document.getElementById('screen-name').classList.remove('hidden');
   setTimeout(() => document.getElementById('name-input').focus(), 300);
 };
@@ -2864,6 +2925,7 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
       document.getElementById('screen-phone').classList.add('hidden');
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.add('hidden');
+      document.getElementById('screen-privacy').classList.add('hidden');
       document.getElementById('screen-name').classList.remove('hidden');
       setTimeout(() => {
         const ni = document.getElementById('name-input');
@@ -2873,6 +2935,7 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
       // Brand new — show terms screen
       document.getElementById('screen-phone').classList.add('hidden');
       document.getElementById('screen-otp').classList.add('hidden');
+      document.getElementById('screen-privacy').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
     }
   } else {
@@ -2923,6 +2986,10 @@ function launchApp(uid) {
   document.getElementById('screen-phone').classList.add('hidden');
   document.getElementById('screen-otp').classList.add('hidden');
   document.getElementById('screen-terms').classList.add('hidden');
+  const privacyEl = document.getElementById('screen-privacy');
+  if (privacyEl) privacyEl.classList.add('hidden');
+  const nameEl = document.getElementById('screen-name');
+  if (nameEl) nameEl.classList.add('hidden');
 
   // FIRE PIN LOCK FIRST — before any content renders, so user sees lock immediately
   if (window.alckInit) window.alckInit();
@@ -5339,7 +5406,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     if (!screen) return;
 
     // Hide everything else
-    var toHide = ['screen-phone','screen-otp','screen-terms','main-app','app-lock-screen','splash-screen'];
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','main-app','app-lock-screen','splash-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {
@@ -5406,7 +5473,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     if (!screen) return;
 
     // Hide all other screens
-    var toHide = ['screen-phone','screen-otp','screen-terms','screen-name','screen-browser-block','main-app','app-lock-screen','splash-screen'];
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','screen-browser-block','main-app','app-lock-screen','splash-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {

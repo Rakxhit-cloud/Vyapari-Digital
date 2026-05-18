@@ -2290,7 +2290,7 @@ body.notif-modal-open { overflow: hidden; }
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, serverTimestamp, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 const firebaseConfig = {
   apiKey: "AIzaSyDzhDpkkjXKWRd1EAbgr3AXe6yFHmXJ9W4",
   authDomain: "hisaab-kitaab-9ff45.firebaseapp.com",
@@ -2304,6 +2304,45 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 window._db = db;
+
+// ══════════════════════════════════════════════════════════
+// FIRESTORE OFFLINE PERSISTENCE (Session 1 — Reliability)
+// ══════════════════════════════════════════════════════════
+// Caches every Firestore read in IndexedDB so the app works
+// without network. Reads return instantly from cache; writes
+// queue locally and auto-flush when network returns.
+//
+// MUST be called immediately after getFirestore() and BEFORE
+// any read/write operation. We use try/catch because two known
+// failure modes are non-fatal and shouldn't break the app:
+//
+//   • code: 'failed-precondition' → another tab already has
+//     persistence enabled. Multi-tab isn't supported by the
+//     single-tab API; fall back to network-only mode in this tab.
+//
+//   • code: 'unimplemented' → browser doesn't support IndexedDB
+//     (very old Android, private browsing on some Safari).
+//     Fall back gracefully.
+//
+// In both failure cases the app continues working normally —
+// just without the offline cache boost. Existing localStorage
+// layer keeps user data intact regardless.
+try {
+  enableIndexedDbPersistence(db).then(() => {
+    console.log('✅ Firestore offline persistence enabled');
+  }).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('⚠️ Firestore persistence: another tab is active. Offline cache disabled in this tab.');
+    } else if (err.code === 'unimplemented') {
+      console.warn('⚠️ Firestore persistence: browser does not support IndexedDB. Using network-only mode.');
+    } else {
+      console.warn('⚠️ Firestore persistence enable failed:', err);
+    }
+  });
+} catch (e) {
+  console.warn('⚠️ Firestore persistence init threw:', e);
+}
+
 function startHeartbeat(uid) {
   if (!uid || uid === 'default') return;
  const updateSeen = () => {

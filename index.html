@@ -2914,11 +2914,44 @@ window.firebaseSignOut = function() {
   try { return fbSignOut(auth); } catch(e) { console.warn('signOut err:', e); }
 };
 
+// ══════════════════════════════════════════════════════════
+// SPLASH HIDE — coordinated handoff (no flash of empty chrome)
+// ══════════════════════════════════════════════════════════
+// The splash screen must stay visible until WHATEVER will show
+// next is actually painted. Otherwise the user sees an empty
+// home screen + bottom nav for ~1 second before PIN appears.
+//
+// Callers fire _hideSplashWhenReady() at the EXACT moment they
+// know the next visible thing is ready:
+//   • Auth flows  → when phone/OTP/terms/etc. screen is shown
+//   • Launch path → AFTER alckInit() has rendered PIN screen,
+//                    OR after main-app + home are ready if no PIN
+//
+// Safety net: if nothing calls this within 4 seconds (which
+// would indicate a code path we missed or an error), hide
+// anyway. Better to risk a brief flash than trap the user.
+window._splashHidden = false;
+window._hideSplashWhenReady = function() {
+  if (window._splashHidden) return;
+  window._splashHidden = true;
+  const splash = document.getElementById('splash-screen');
+  if (splash) {
+    splash.classList.add('hidden');
+    setTimeout(() => { if (splash.parentNode) splash.remove(); }, 400);
+  }
+};
+// Safety timeout — if no one hides splash within 4s, force-hide
+setTimeout(() => {
+  if (!window._splashHidden) {
+    console.warn('⚠️ Splash safety timeout fired — no caller hid it within 4s');
+    window._hideSplashWhenReady();
+  }
+}, 4000);
+
 onAuthStateChanged(auth, async user => {
   window._currentAuthUser = user;
-  // Hide splash screen
-  const splash = document.getElementById('splash-screen');
-if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); }
+  // NOTE: Splash hide moved out of here — it now hides only when PIN/auth/home
+  // is actually visible. See window._hideSplashWhenReady() below.
   if (user) {
     const uid = user.uid;
     let termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);
@@ -2966,6 +2999,7 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
       document.getElementById('screen-terms').classList.add('hidden');
       document.getElementById('screen-privacy').classList.add('hidden');
       document.getElementById('screen-name').classList.remove('hidden');
+      window._hideSplashWhenReady();
       setTimeout(() => {
         const ni = document.getElementById('name-input');
         if (ni) ni.focus();
@@ -2976,12 +3010,14 @@ if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-privacy').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
+      window._hideSplashWhenReady();
     }
   } else {
     document.getElementById('screen-phone').classList.remove('hidden');
     document.getElementById('screen-otp').classList.add('hidden');
     document.getElementById('screen-terms').classList.add('hidden');
     document.getElementById('main-app').style.display = 'none';
+    window._hideSplashWhenReady();
   }
 });
 
@@ -3035,6 +3071,14 @@ function launchApp(uid) {
 
   // Always show main app — Udhaar Book variant removed
   document.getElementById('main-app').style.display = 'block';
+
+  // Splash handoff: at this point either the PIN screen (#app-lock-screen.active)
+  // is covering the main-app, OR the user has no PIN and is about to see home.
+  // Either way, splash can safely fade now — there's no flash window because
+  // whatever should be visible IS now visible (PIN sits on top of main-app via
+  // higher z-index, main-app sits behind it ready for after unlock).
+  window._hideSplashWhenReady();
+
   if(window._startHeartbeat) window._startHeartbeat(uid);
   initApp(uid);
   updateTrialBanner(uid).catch(e=>console.warn('trial banner error:',e));
@@ -5444,8 +5488,8 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     var screen = document.getElementById('screen-browser-block');
     if (!screen) return;
 
-    // Hide everything else
-    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','main-app','app-lock-screen','splash-screen'];
+    // Hide everything else (splash handled by coordinated hide below)
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','main-app','app-lock-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {
@@ -5453,6 +5497,8 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
         else el.classList.add('hidden');
       }
     });
+
+    if (window._hideSplashWhenReady) window._hideSplashWhenReady();
 
     // Stop heartbeat if running
     if (window._stopHeartbeat) try { window._stopHeartbeat(); } catch(e) {}
@@ -5511,8 +5557,8 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     var screen = document.getElementById('screen-already-registered');
     if (!screen) return;
 
-    // Hide all other screens
-    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','screen-browser-block','main-app','app-lock-screen','splash-screen'];
+    // Hide all other screens (splash handled by coordinated hide below)
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','screen-browser-block','main-app','app-lock-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {
@@ -5520,6 +5566,8 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
         else el.classList.add('hidden');
       }
     });
+
+    if (window._hideSplashWhenReady) window._hideSplashWhenReady();
 
     // Stop heartbeat
     if (window._stopHeartbeat) try { window._stopHeartbeat(); } catch(e) {}

@@ -2366,8 +2366,292 @@ function setSyncStatus(state, msg) {
   txt.textContent = msg;
 }
 
+// ══════════════════════════════════════════════════════════
+// WRITE QUEUE (Phase 2 — Reliability)
+// ══════════════════════════════════════════════════════════
+// Defense-in-depth for writes that fail or never reach the
+// cloud. Firebase SDK has its own offline persistence (Phase 1),
+// but that lives in IndexedDB which can be evicted by Chrome
+// on low-storage devices. This queue lives in localStorage,
+// which survives almost everything except manual data clear.
+//
+// Flow:
+//   1. _fsWrite/_fsDelete tries Firestore directly first
+//   2. On any error, the operation is enqueued here
+//   3. Background tasks retry the queue with exponential backoff
+//   4. Items that fail 10+ times are marked "stuck" (kept in queue
+//      but excluded from flushes — admin tooling can surface them)
+//
+// Backoff schedule (per item):
+//   Attempts 1-2: 30s
+//   Attempt  3:  1min
+//   Attempt  4:  2min
+//   Attempt  5:  5min
+//   Attempt 6+: 15min (capped)
+//   Attempt 11+: STUCK
+window.WriteQueue = (function() {
+  const STORAGE_KEY_PREFIX = 'hk_writeq_';
+  const MAX_ATTEMPTS = 10;
+  const BACKOFF_SCHEDULE_MS = [
+    0,            // attempt 1: immediate
+    30 * 1000,    // attempt 2: +30s
+    60 * 1000,    // attempt 3: +1min
+    2 * 60 * 1000,  // attempt 4: +2min
+    5 * 60 * 1000,  // attempt 5: +5min
+    15 * 60 * 1000  // attempt 6+: +15min
+  ];
+
+  let _flushing = false;
+  let _flushIntervalId = null;
+  let _changeListeners = [];
+
+  function _storageKey() {
+    const uid = (typeof CURRENT_UID !== 'undefined' && CURRENT_UID !== 'default')
+      ? CURRENT_UID
+      : (window._currentAuthUser && window._currentAuthUser.uid) || null;
+    return uid ? STORAGE_KEY_PREFIX + uid : null;
+  }
+
+  function _read() {
+    const k = _storageKey();
+    if (!k) return [];
+    try {
+      const raw = localStorage.getItem(k);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch(e) {
+      // Corrupted queue — log but don't lose data silently
+      console.warn('⚠️ WriteQueue: corrupted queue, resetting:', e);
+      return [];
+    }
+  }
+
+  function _write(queue) {
+    const k = _storageKey();
+    if (!k) return;
+    try {
+      localStorage.setItem(k, JSON.stringify(queue));
+      _notifyChange(queue.length);
+    } catch(e) {
+      console.warn('⚠️ WriteQueue: failed to persist queue:', e);
+    }
+  }
+
+  function _notifyChange(count) {
+    _changeListeners.forEach(cb => {
+      try { cb(count); } catch(e) { console.warn('WQ listener err:', e); }
+    });
+  }
+
+  function _backoffFor(attempts) {
+    const idx = Math.min(attempts - 1, BACKOFF_SCHEDULE_MS.length - 1);
+    return BACKOFF_SCHEDULE_MS[Math.max(0, idx)];
+  }
+
+  function _genId() {
+    return 'wq_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+  }
+
+  // PUBLIC: Enqueue an operation. Called by _fsWrite/_fsDelete after they
+  // fail (or proactively when offline detected).
+  function enqueue(op, collection, docId, data) {
+    if (!_storageKey()) return null;
+    const queue = _read();
+    const now = Date.now();
+    const item = {
+      id: _genId(),
+      op,
+      collection,
+      docId: String(docId),
+      data: data || null,
+      firstAttemptAt: now,
+      lastAttemptAt: now,
+      attempts: 1,
+      nextRetryAt: now + _backoffFor(2)  // schedule next retry
+    };
+    queue.push(item);
+    _write(queue);
+    console.warn('📦 WriteQueue: enqueued', op, collection, docId, '— queue size:', queue.length);
+    return item.id;
+  }
+
+  // PUBLIC: Try to flush all due items in the queue.
+  async function flush() {
+    if (_flushing) return;
+    if (!navigator.onLine) return;
+    const queue = _read();
+    if (!queue.length) return;
+
+    _flushing = true;
+    const now = Date.now();
+    const remaining = [];
+    let processed = 0;
+    let succeeded = 0;
+    let failed = 0;
+
+    for (const item of queue) {
+      // Skip stuck items
+      if (item.attempts > MAX_ATTEMPTS) {
+        remaining.push(item);
+        continue;
+      }
+      // Skip items not yet due for retry
+      if (item.nextRetryAt && item.nextRetryAt > now) {
+        remaining.push(item);
+        continue;
+      }
+      processed++;
+
+      try {
+        await _executeWrite(item);
+        succeeded++;
+        // Don't push back to remaining — successfully synced, drop from queue
+      } catch(err) {
+        failed++;
+        const nextAttempts = item.attempts + 1;
+        const updated = {
+          ...item,
+          attempts: nextAttempts,
+          lastAttemptAt: Date.now(),
+          nextRetryAt: Date.now() + _backoffFor(nextAttempts + 1)
+        };
+        if (nextAttempts > MAX_ATTEMPTS) {
+          console.warn('⚠️ WriteQueue: item STUCK after', MAX_ATTEMPTS, 'attempts:', item.collection, item.docId);
+        }
+        remaining.push(updated);
+      }
+    }
+
+    _write(remaining);
+    _flushing = false;
+
+    if (processed > 0) {
+      console.warn(`📦 WriteQueue flush: ${succeeded} synced, ${failed} retry, ${remaining.length} pending`);
+    }
+  }
+
+  // INTERNAL: Execute a single write directly against Firestore.
+  // Throws on failure so flush() can update the item's retry state.
+  async function _executeWrite(item) {
+    const uid = (typeof CURRENT_UID !== 'undefined' && CURRENT_UID !== 'default')
+      ? CURRENT_UID
+      : (window._currentAuthUser && window._currentAuthUser.uid) || null;
+    if (!uid) throw new Error('no uid');
+    if (!window._db) throw new Error('no db');
+
+    const { doc, setDoc, deleteDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+
+    if (item.op === 'set') {
+      let ref;
+      if (item.collection === 'user-root') {
+        ref = doc(window._db, 'users', uid);
+      } else if (item.collection === 'profile') {
+        ref = doc(window._db, 'users', uid, 'profile', item.docId);
+      } else {
+        ref = doc(window._db, 'users', uid, item.collection, item.docId);
+      }
+      await setDoc(ref, { ...item.data, _syncedAt: serverTimestamp(), _retried: true }, { merge: true });
+    } else if (item.op === 'delete') {
+      const ref = doc(window._db, 'users', uid, item.collection, item.docId);
+      await deleteDoc(ref);
+    } else {
+      throw new Error('unknown op: ' + item.op);
+    }
+  }
+
+  // PUBLIC: Current queue size (including stuck items)
+  function size() {
+    return _read().length;
+  }
+
+  // PUBLIC: Count of non-stuck (still actively retrying) items
+  function pendingCount() {
+    return _read().filter(i => i.attempts <= MAX_ATTEMPTS).length;
+  }
+
+  // PUBLIC: Count of stuck (>MAX_ATTEMPTS) items
+  function stuckCount() {
+    return _read().filter(i => i.attempts > MAX_ATTEMPTS).length;
+  }
+
+  // PUBLIC: Subscribe to queue size changes (for Phase 4 UI indicator)
+  function onChange(callback) {
+    _changeListeners.push(callback);
+  }
+
+  // PUBLIC: Force a flush right now (for debugging or "retry stuck" actions)
+  function flushNow() {
+    return flush();
+  }
+
+  // PUBLIC: Reset stuck items back to retryable state (e.g., from admin UI)
+  function retryStuck() {
+    const queue = _read();
+    const now = Date.now();
+    let resetCount = 0;
+    const updated = queue.map(item => {
+      if (item.attempts > MAX_ATTEMPTS) {
+        resetCount++;
+        return { ...item, attempts: 1, nextRetryAt: now };
+      }
+      return item;
+    });
+    _write(updated);
+    if (resetCount > 0) {
+      console.warn('📦 WriteQueue: reset', resetCount, 'stuck items');
+      flush();
+    }
+    return resetCount;
+  }
+
+  // ----- Auto-flush triggers -----
+
+  // Trigger 1: Network restored
+  window.addEventListener('online', () => {
+    console.log('📡 Network restored — flushing WriteQueue');
+    setTimeout(flush, 500);  // brief delay to let connection stabilize
+  });
+
+  // Trigger 2: App becomes visible (return from background)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && navigator.onLine) {
+      setTimeout(flush, 1000);
+    }
+  });
+
+  // Trigger 3: Periodic interval (every 30 seconds while app is active)
+  function _startPeriodicFlush() {
+    if (_flushIntervalId) return;
+    _flushIntervalId = setInterval(() => {
+      if (document.visibilityState === 'visible' && navigator.onLine) {
+        flush();
+      }
+    }, 30 * 1000);
+  }
+
+  _startPeriodicFlush();
+
+  return {
+    enqueue,
+    flush,
+    flushNow,
+    size,
+    pendingCount,
+    stuckCount,
+    onChange,
+    retryStuck
+  };
+})();
+
 window._fsWrite = async function(uid, colName, item) {
   if (!uid || uid === 'default') return;
+  // Quick offline check — go straight to queue, skip the network attempt
+  if (!navigator.onLine) {
+    if (window.WriteQueue) window.WriteQueue.enqueue('set', colName, item.id, item);
+    setSyncStatus('offline', '☁️ Offline — Cloud पर बाद में sync होगा');
+    return;
+  }
   try {
     setSyncStatus('syncing', '☁️ Sync हो रहा है...');
     const ref = doc(db, 'users', uid, colName, String(item.id));
@@ -2387,21 +2671,29 @@ window._fsWrite = async function(uid, colName, item) {
     } catch(stageErr) { console.warn('first entry stage track err:', stageErr); }
   } catch(e) {
     console.warn('FS write error:', e);
-    setSyncStatus('error', '☁️ Sync error — data saved locally');
-    setTimeout(() => setSyncStatus('offline', '☁️ Offline mode'), 4000);
+    // Enqueue for retry — this is the defense-in-depth that Phase 2 adds
+    if (window.WriteQueue) window.WriteQueue.enqueue('set', colName, item.id, item);
+    setSyncStatus('error', '☁️ Sync पीछे हो रहा है — data safe है');
+    setTimeout(() => setSyncStatus('offline', '☁️ Background sync में है'), 4000);
   }
 };
 
 window._fsDelete = async function(uid, colName, docId) {
   if (!uid || uid === 'default') return;
+  if (!navigator.onLine) {
+    if (window.WriteQueue) window.WriteQueue.enqueue('delete', colName, docId, null);
+    setSyncStatus('offline', '☁️ Offline — Cloud पर बाद में sync होगा');
+    return;
+  }
   try {
     setSyncStatus('syncing', '☁️ Sync हो रहा है...');
     await deleteDoc(doc(db, 'users', uid, colName, String(docId)));
     setSyncStatus('synced', '☁️ Cloud Sync ✅');
   } catch(e) {
     console.warn('FS delete error:', e);
-    setSyncStatus('error', '☁️ Sync error — deleted locally');
-    setTimeout(() => setSyncStatus('offline', '☁️ Offline mode'), 4000);
+    if (window.WriteQueue) window.WriteQueue.enqueue('delete', colName, docId, null);
+    setSyncStatus('error', '☁️ Sync पीछे हो रहा है — data safe है');
+    setTimeout(() => setSyncStatus('offline', '☁️ Background sync में है'), 4000);
   }
 };
 
@@ -2467,6 +2759,26 @@ window._fsLoadAll = async function(uid) {
 };
 window._fsRegisterUser = async function(uid, phone, trialStart) {
   if (!uid || uid === 'default') return;
+  const profileData = {
+    uid,
+    phone: phone || '',
+    trialStart,
+    termsAgreedAt: serverTimestamp(),
+    nameSavedAt: serverTimestamp(),
+    registrationCompletedAt: serverTimestamp(),
+    registeredAt: serverTimestamp(),
+    appVersion: '1.0',
+    platform: 'PWA',
+    lastActiveAt: Date.now()
+  };
+  // If offline, queue both writes and bail
+  if (!navigator.onLine) {
+    if (window.WriteQueue) {
+      window.WriteQueue.enqueue('set', 'user-root', uid, { exists: true });
+      window.WriteQueue.enqueue('set', 'profile', 'info', profileData);
+    }
+    return;
+  }
   try {
     await setDoc(
       doc(db, 'users', uid),
@@ -2486,24 +2798,18 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
       }, { merge: true });
     } else {
       // First time — save full profile with trialStart
-      await setDoc(profileRef, {
-        uid,
-        phone: phone || '',
-        trialStart,
-        termsAgreedAt: serverTimestamp(),
-        nameSavedAt: serverTimestamp(),
-        registrationCompletedAt: serverTimestamp(),
-        registeredAt: serverTimestamp(),
-        appVersion: '1.0',
-        platform: 'PWA',
-        lastActiveAt: Date.now()
-      }, { merge: true });
+      await setDoc(profileRef, profileData, { merge: true });
     }
     console.log('✅ User registered in Firestore');
     // Start the activity heartbeat (idempotent — safe to call repeatedly)
     if (window._startActivityHeartbeat) window._startActivityHeartbeat(uid);
   } catch(e) {
     console.warn('FS register error:', e);
+    // Queue the profile write — critical for the user to be properly registered
+    if (window.WriteQueue) {
+      window.WriteQueue.enqueue('set', 'user-root', uid, { exists: true });
+      window.WriteQueue.enqueue('set', 'profile', 'info', profileData);
+    }
   }
 };
 
@@ -3085,6 +3391,14 @@ function launchApp(uid) {
   if(window.loadProfileAndUpdateHeaders) window.loadProfileAndUpdateHeaders();
   // Re-render after short delay to catch Firestore data
   setTimeout(() => { loadHome(); }, 3500);
+
+  // Phase 2: Try to flush any writes that were queued during a previous
+  // offline session. Delay briefly so Firestore SDK is fully initialized.
+  setTimeout(() => {
+    if (window.WriteQueue && navigator.onLine) {
+      window.WriteQueue.flush();
+    }
+  }, 2000);
 
   requestNotificationPermission(uid);
 }

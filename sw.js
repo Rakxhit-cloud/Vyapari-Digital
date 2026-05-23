@@ -1,4 +1,4 @@
-// Cache bust: 2026-05-04-v4 - manifest update + name fix
+// Cache bust: 2026-05-23-v5 - Live खाता rebrand: notification title fix
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
@@ -14,7 +14,7 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
-  const title = payload.notification?.title || '📒 हिसाब-Kitaab';
+  const title = payload.notification?.title || '📒 Live खाता';
   const options = {
     body: payload.notification?.body || 'आज की एंट्री करना न भूलें!',
     icon: '/icon-192.png',
@@ -58,7 +58,7 @@ self.addEventListener('activate', function(e) {
       // Notify all open clients to reload manifest reference
       return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
         clientList.forEach(function(client) {
-          client.postMessage({ type: 'SW_UPDATED', version: '2026-05-04-v4' });
+          client.postMessage({ type: 'SW_UPDATED', version: '2026-05-23-v5' });
         });
       });
     })

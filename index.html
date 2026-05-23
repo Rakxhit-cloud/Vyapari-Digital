@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-<meta name="theme-color" content="#0f0f0f">
+<meta name="theme-color" content="#0a1530">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; connect-src 'self' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<title>हिसाब-Kitaab</title>
+<title>Live खाता</title>
 <script>
 // Lock screen pre-show is now handled by alck.js (loaded later)
 // This empty block reserved for future startup hooks
@@ -76,6 +76,11 @@ window.HK_DEBUG = false;
 })();
 </script>
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
+<link rel="icon" type="image/png" sizes="96x96" href="icon-96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; overflow-x: hidden; }
@@ -1278,9 +1283,9 @@ body.notif-modal-open { overflow: hidden; }
   <div class="alck-card" id="alck-mode-unlock">
     <div class="alck-status-pill" id="alck-status-pill">🔐 LOCKED</div>
     <div class="alck-app-row">
-      <div class="alck-app-icon-sm"><div class="alck-coin-sm">हि</div></div>
+      <div class="alck-app-icon-sm"><svg width="30" height="30" viewBox="0 0 100 100"><g transform="translate(16,14) scale(0.66)"><g transform="translate(50,9)"><circle cx="0" cy="0" r="4.5" fill="#e84545"/><path d="M -10 -7 A 12.5 12.5 0 0 0 -10 7" fill="none" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/><path d="M 10 -7 A 12.5 12.5 0 0 1 10 7" fill="none" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/></g><g transform="translate(0,24)"><rect x="24" y="22" width="50" height="60" rx="4" fill="#fdfaf0" stroke="#0a0a14" stroke-width="3"/><g stroke="#0a0a14" stroke-width="2.5"><ellipse cx="24" cy="33" rx="8" ry="3.2" fill="#e8c860"/><ellipse cx="24" cy="52" rx="8" ry="3.2" fill="#e8c860"/><ellipse cx="24" cy="71" rx="8" ry="3.2" fill="#e8c860"/></g><line x1="40" y1="55" x2="60" y2="55" stroke="#d4a850" stroke-width="3.5" stroke-linecap="round"/><g transform="rotate(40 60 38)"><rect x="55" y="4" width="12" height="44" rx="6" fill="#2e4570" stroke="#0a0a14" stroke-width="2.5"/><rect x="55" y="39" width="12" height="5" fill="#d4a850"/><path d="M 55 48 L 67 48 L 64 58 L 58 58 Z" fill="#0a1530" stroke="#0a0a14" stroke-width="2.5"/><path d="M 58 58 L 64 58 L 61 68 Z" fill="#e8c860"/></g></g></g></svg></div>
       <div>
-        <div class="alck-app-meta-name">हिसाब-Kitaab</div>
+        <div class="alck-app-meta-name">Live खाता</div>
         <div class="alck-app-meta-tag" id="alck-tag-text">App locked</div>
       </div>
     </div>
@@ -1318,9 +1323,9 @@ body.notif-modal-open { overflow: hidden; }
   <div class="alck-card" id="alck-mode-lockout" style="display:none;">
     <div class="alck-status-pill danger">🔒 LOCKED</div>
     <div class="alck-app-row">
-      <div class="alck-app-icon-sm"><div class="alck-coin-sm">हि</div></div>
+      <div class="alck-app-icon-sm"><svg width="30" height="30" viewBox="0 0 100 100"><g transform="translate(16,14) scale(0.66)"><g transform="translate(50,9)"><circle cx="0" cy="0" r="4.5" fill="#e84545"/><path d="M -10 -7 A 12.5 12.5 0 0 0 -10 7" fill="none" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/><path d="M 10 -7 A 12.5 12.5 0 0 1 10 7" fill="none" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/></g><g transform="translate(0,24)"><rect x="24" y="22" width="50" height="60" rx="4" fill="#fdfaf0" stroke="#0a0a14" stroke-width="3"/><g stroke="#0a0a14" stroke-width="2.5"><ellipse cx="24" cy="33" rx="8" ry="3.2" fill="#e8c860"/><ellipse cx="24" cy="52" rx="8" ry="3.2" fill="#e8c860"/><ellipse cx="24" cy="71" rx="8" ry="3.2" fill="#e8c860"/></g><line x1="40" y1="55" x2="60" y2="55" stroke="#d4a850" stroke-width="3.5" stroke-linecap="round"/><g transform="rotate(40 60 38)"><rect x="55" y="4" width="12" height="44" rx="6" fill="#2e4570" stroke="#0a0a14" stroke-width="2.5"/><rect x="55" y="39" width="12" height="5" fill="#d4a850"/><path d="M 55 48 L 67 48 L 64 58 L 58 58 Z" fill="#0a1530" stroke="#0a0a14" stroke-width="2.5"/><path d="M 58 58 L 64 58 L 61 68 Z" fill="#e8c860"/></g></g></g></svg></div>
       <div>
-        <div class="alck-app-meta-name">हिसाब-Kitaab</div>
+        <div class="alck-app-meta-name">Live खाता</div>
         <div class="alck-app-meta-tag">Temporary block</div>
       </div>
     </div>
@@ -1351,7 +1356,11 @@ body.notif-modal-open { overflow: hidden; }
         <g transform="translate(46, 38)">
           <circle r="14" fill="url(#alckGold)" stroke="#7a5810" stroke-width="0.8"/>
           <circle r="11" fill="none" stroke="#5a3a08" stroke-width="0.4" opacity="0.5"/>
-          <text y="5" text-anchor="middle" font-size="16" font-weight="700" fill="#3a2008" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+          <g transform="translate(0,-1)">
+            <circle cx="0" cy="0" r="2.4" fill="#e84545"/>
+            <path d="M -5 -3.5 A 6 6 0 0 0 -5 3.5" fill="none" stroke="#3a2008" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M 5 -3.5 A 6 6 0 0 1 5 3.5" fill="none" stroke="#3a2008" stroke-width="1.4" stroke-linecap="round"/>
+          </g>
         </g>
         <g class="alck-lock-wiggle">
           <ellipse cx="46" cy="100" rx="20" ry="2.5" fill="#000" opacity="0.4"/>
@@ -1377,29 +1386,45 @@ body.notif-modal-open { overflow: hidden; }
 </div>
   <div class="splash-screen" id="splash-screen">
   <div class="splash-logo"><svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="coinOuter" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f0d890"/>
-      <stop offset="50%" style="stop-color:#d4a850"/>
-      <stop offset="100%" style="stop-color:#8a6818"/>
-    </linearGradient>
-    <linearGradient id="coinInner" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8c870"/>
-      <stop offset="100%" style="stop-color:#b8902f"/>
-    </linearGradient>
-    <radialGradient id="coinShine" cx="35%" cy="30%" r="40%">
-      <stop offset="0%" style="stop-color:rgba(255,250,220,0.6)"/>
-      <stop offset="100%" style="stop-color:rgba(255,250,220,0)"/>
-    </radialGradient>
-  </defs>
-  <circle cx="50" cy="50" r="46" fill="url(#coinOuter)" stroke="#8a6818" stroke-width="1.5"/>
-  <circle cx="50" cy="50" r="38" fill="none" stroke="#8a6818" stroke-width="0.8" opacity="0.5"/>
-  <circle cx="50" cy="50" r="34" fill="url(#coinInner)"/>
-  <circle cx="50" cy="50" r="46" fill="url(#coinShine)"/>
-  <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+  <!-- Live broadcast symbol -->
+  <g transform="translate(50,12)">
+    <circle cx="0" cy="0" r="4.5" fill="#e84545" stroke="#0a0a14" stroke-width="1.6"/>
+    <path d="M -10 -7 A 12.5 12.5 0 0 0 -10 7" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M 10 -7 A 12.5 12.5 0 0 1 10 7" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M -16 -11 A 19 19 0 0 0 -16 11" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>
+    <path d="M 16 -11 A 19 19 0 0 1 16 11" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>
+  </g>
+  <!-- Notebook -->
+  <g transform="translate(0,22)">
+    <rect x="20" y="24" width="54" height="64" rx="5" fill="#7a5a18" stroke="#0a0a14" stroke-width="2.5"/>
+    <rect x="24" y="22" width="50" height="64" rx="4" fill="#d8cfb8" stroke="#0a0a14" stroke-width="2.5"/>
+    <rect x="24" y="22" width="50" height="60" rx="4" fill="#fdfaf0" stroke="#0a0a14" stroke-width="2.5"/>
+    <path d="M 24 70 L 74 70 L 74 78 Q 74 82 70 82 L 28 82 Q 24 82 24 78 Z" fill="#e8e0cc"/>
+    <line x1="34" y1="24" x2="34" y2="80" stroke="#e08a8a" stroke-width="1.5"/>
+    <g stroke="#0a0a14" stroke-width="2.2">
+      <ellipse cx="24" cy="31" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="42" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="53" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="64" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="75" rx="8" ry="3" fill="#e8c860"/>
+    </g>
+    <line x1="40" y1="37" x2="68" y2="37" stroke="#1a2a4a" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+    <line x1="40" y1="46" x2="63" y2="46" stroke="#1a2a4a" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+    <line x1="40" y1="55" x2="60" y2="55" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/>
+    <g transform="rotate(40 60 38)">
+      <rect x="55" y="4" width="12" height="44" rx="6" fill="#2e4570" stroke="#0a0a14" stroke-width="2.5"/>
+      <path d="M 61 5 Q 67 5 67 10 L 67 44 Q 67 47 64 47 L 61 47 Z" fill="#1a2a4a"/>
+      <rect x="57.5" y="8" width="2.5" height="30" rx="1.25" fill="#ffffff" opacity="0.85"/>
+      <rect x="55" y="39" width="12" height="5" fill="#d4a850" stroke="#0a0a14" stroke-width="2"/>
+      <rect x="64" y="7" width="3" height="17" rx="1.5" fill="#d4a850" stroke="#0a0a14" stroke-width="1.5"/>
+      <path d="M 55 48 L 67 48 L 64 58 L 58 58 Z" fill="#0a1530" stroke="#0a0a14" stroke-width="2.2"/>
+      <path d="M 58 58 L 64 58 L 61 68 Z" fill="#e8c860" stroke="#0a0a14" stroke-width="2"/>
+      <line x1="61" y1="60" x2="61" y2="65" stroke="#0a0a14" stroke-width="1"/>
+    </g>
+  </g>
 </svg></div>
-  <div class="splash-title">हिसाब-<span class="splash-title-gold">Kitaab</span></div>
-  <div class="splash-sub">आपका अपना खाता</div>
+  <div class="splash-title"><span class="splash-title-gold">Live</span> खाता</div>
+  <div class="splash-sub">रोज़ का हिसाब, Live रखें</div>
   <div class="splash-loader-wrap">
     <div class="splash-dot"></div>
     <div class="splash-dot"></div>
@@ -1408,25 +1433,38 @@ body.notif-modal-open { overflow: hidden; }
 </div>
 
 <div class="auth-screen hidden" id="screen-phone">
-  <div class="auth-logo"><svg width="72" height="72" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="coinOuterM" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f0d890"/>
-      <stop offset="50%" style="stop-color:#d4a850"/>
-      <stop offset="100%" style="stop-color:#8a6818"/>
-    </linearGradient>
-    <linearGradient id="coinInnerM" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8c870"/>
-      <stop offset="100%" style="stop-color:#b8902f"/>
-    </linearGradient>
-  </defs>
-  <circle cx="50" cy="50" r="46" fill="url(#coinOuterM)" stroke="#8a6818" stroke-width="1.5"/>
-  <circle cx="50" cy="50" r="38" fill="none" stroke="#8a6818" stroke-width="0.8" opacity="0.5"/>
-  <circle cx="50" cy="50" r="34" fill="url(#coinInnerM)"/>
-  <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+  <div class="auth-logo"><svg width="84" height="84" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(50,12)">
+    <circle cx="0" cy="0" r="4.5" fill="#e84545" stroke="#0a0a14" stroke-width="1.6"/>
+    <path d="M -10 -7 A 12.5 12.5 0 0 0 -10 7" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M 10 -7 A 12.5 12.5 0 0 1 10 7" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M -16 -11 A 19 19 0 0 0 -16 11" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>
+    <path d="M 16 -11 A 19 19 0 0 1 16 11" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>
+  </g>
+  <g transform="translate(0,22)">
+    <rect x="20" y="24" width="54" height="64" rx="5" fill="#7a5a18" stroke="#0a0a14" stroke-width="2.5"/>
+    <rect x="24" y="22" width="50" height="60" rx="4" fill="#fdfaf0" stroke="#0a0a14" stroke-width="2.5"/>
+    <line x1="34" y1="24" x2="34" y2="80" stroke="#e08a8a" stroke-width="1.5"/>
+    <g stroke="#0a0a14" stroke-width="2.2">
+      <ellipse cx="24" cy="31" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="42" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="53" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="64" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="75" rx="8" ry="3" fill="#e8c860"/>
+    </g>
+    <line x1="40" y1="37" x2="68" y2="37" stroke="#1a2a4a" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+    <line x1="40" y1="55" x2="60" y2="55" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/>
+    <g transform="rotate(40 60 38)">
+      <rect x="55" y="4" width="12" height="44" rx="6" fill="#2e4570" stroke="#0a0a14" stroke-width="2.5"/>
+      <rect x="57.5" y="8" width="2.5" height="30" rx="1.25" fill="#ffffff" opacity="0.85"/>
+      <rect x="55" y="39" width="12" height="5" fill="#d4a850" stroke="#0a0a14" stroke-width="2"/>
+      <path d="M 55 48 L 67 48 L 64 58 L 58 58 Z" fill="#0a1530" stroke="#0a0a14" stroke-width="2.2"/>
+      <path d="M 58 58 L 64 58 L 61 68 Z" fill="#e8c860" stroke="#0a0a14" stroke-width="2"/>
+    </g>
+  </g>
 </svg></div>
-  <div class="auth-title">हिसाब-<span style="color:#d4a850;">Kitaab</span></div>
-  <div class="auth-sub">आपका अपना खाता</div>
+  <div class="auth-title"><span style="color:#d4a850;">Live</span> खाता</div>
+  <div class="auth-sub">रोज़ का हिसाब, Live रखें</div>
   <div class="auth-card">
     <div class="auth-label">📱 अपना मोबाइल नंबर डालें</div>
     <div class="auth-error" id="phone-error"></div>
@@ -1483,7 +1521,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="terms-sec-icon">🛡️</div>
       <div class="terms-sec-title">1. सेवा के बारे में</div>
       <div class="terms-sec-title-en">About the Service</div>
-      <div class="terms-sec-text">हिसाब-Kitaab एक डिजिटल हिसाब-किताब ऐप है जो छोटे व्यापारियों और दुकानदारों के लिए बनाया गया है। यह ऐप आपकी दैनिक बिक्री, खर्च, माल और उधार का रिकॉर्ड रखने में मदद करता है।</div>
+      <div class="terms-sec-text">Live खाता एक डिजिटल हिसाब-किताब ऐप है जो छोटे व्यापारियों और दुकानदारों के लिए बनाया गया है। यह ऐप आपकी दैनिक बिक्री, खर्च, माल और उधार का रिकॉर्ड रखने में मदद करता है।</div>
     </div>
     <div class="terms-sec-card">
       <div class="terms-sec-icon">🎁</div>
@@ -1537,7 +1575,7 @@ body.notif-modal-open { overflow: hidden; }
       <div style="color:#fff;font-size:20px;font-weight:600;letter-spacing:-0.3px;line-height:1.25;">आपका Data, सुरक्षित</div>
       <div style="color:#8aa0d8;font-size:12px;margin-top:6px;font-weight:400;">Your data stays private</div>
     </div>
-    <div style="color:#c8d0e8;font-size:13px;line-height:1.65;margin-bottom:28px;">हिसाब-Kitaab आपके business की निजी जानकारी रखने के लिए बना है। हमने इसे इस तरह design किया है कि आपकी एंट्री सिर्फ़ आप तक रहें।</div>
+    <div style="color:#c8d0e8;font-size:13px;line-height:1.65;margin-bottom:28px;">Live खाता आपके business की निजी जानकारी रखने के लिए बना है। हमने इसे इस तरह design किया है कि आपकी एंट्री सिर्फ़ आप तक रहें।</div>
     <div style="margin-bottom:20px;">
       <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">हम क्या नहीं देख सकते</div>
       <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">आपकी बिक्री, खर्चा, माल की रकम, और notes — कुछ भी नहीं।</div>
@@ -1582,9 +1620,9 @@ body.notif-modal-open { overflow: hidden; }
     <div class="bb-icon-wrap">
       <div class="bb-ring bb-ring1"></div>
       <div class="bb-ring bb-ring2"></div>
-      <div class="bb-app-icon"><div class="bb-coin">हि</div></div>
+      <div class="bb-app-icon"><svg width="54" height="54" viewBox="0 0 100 100"><g transform="translate(14,12) scale(0.72)"><g transform="translate(50,9)"><circle cx="0" cy="0" r="4.5" fill="#e84545"/><path d="M -10 -7 A 12.5 12.5 0 0 0 -10 7" fill="none" stroke="#d4a850" stroke-width="2.8" stroke-linecap="round"/><path d="M 10 -7 A 12.5 12.5 0 0 1 10 7" fill="none" stroke="#d4a850" stroke-width="2.8" stroke-linecap="round"/><path d="M -16 -11 A 19 19 0 0 0 -16 11" fill="none" stroke="#d4a850" stroke-width="2.8" stroke-linecap="round" opacity="0.55"/><path d="M 16 -11 A 19 19 0 0 1 16 11" fill="none" stroke="#d4a850" stroke-width="2.8" stroke-linecap="round" opacity="0.55"/></g><g transform="translate(0,24)"><rect x="20" y="24" width="54" height="64" rx="5" fill="#7a5a18" stroke="#0a0a14" stroke-width="2.5"/><rect x="24" y="22" width="50" height="60" rx="4" fill="#fdfaf0" stroke="#0a0a14" stroke-width="2.5"/><g stroke="#0a0a14" stroke-width="2.2"><ellipse cx="24" cy="31" rx="8" ry="3" fill="#e8c860"/><ellipse cx="24" cy="42" rx="8" ry="3" fill="#e8c860"/><ellipse cx="24" cy="53" rx="8" ry="3" fill="#e8c860"/><ellipse cx="24" cy="64" rx="8" ry="3" fill="#e8c860"/><ellipse cx="24" cy="75" rx="8" ry="3" fill="#e8c860"/></g><line x1="40" y1="55" x2="60" y2="55" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/><g transform="rotate(40 60 38)"><rect x="55" y="4" width="12" height="44" rx="6" fill="#2e4570" stroke="#0a0a14" stroke-width="2.5"/><rect x="55" y="39" width="12" height="5" fill="#d4a850"/><path d="M 55 48 L 67 48 L 64 58 L 58 58 Z" fill="#0a1530" stroke="#0a0a14" stroke-width="2.2"/><path d="M 58 58 L 64 58 L 61 68 Z" fill="#e8c860"/></g></g></g></svg></div>
     </div>
-    <div class="bb-app-title">हिसाब-Kitaab</div>
+    <div class="bb-app-title">Live खाता</div>
     <div class="bb-check-wrap" id="bb-check-wrap"><span class="bb-check">✓</span></div>
     <div class="bb-success" id="bb-success-text">Registration complete</div>
     <div class="bb-divider"></div>
@@ -1597,12 +1635,12 @@ body.notif-modal-open { overflow: hidden; }
 <!-- Already Registered Screen (browser users who completed registration earlier) -->
 <div id="screen-already-registered">
   <div class="ar-top">
-    <div class="ar-logo-wrap"><div class="ar-logo">हि</div></div>
+    <div class="ar-logo-wrap"><div class="ar-logo" style="background:#0a1530;border:3px solid #1a2a4a;"><svg width="68" height="68" viewBox="0 0 100 100"><g transform="translate(14,12) scale(0.72)"><g transform="translate(50,9)"><circle cx="0" cy="0" r="4.5" fill="#e84545"/><path d="M -10 -7 A 12.5 12.5 0 0 0 -10 7" fill="none" stroke="#d4a850" stroke-width="2.8" stroke-linecap="round"/><path d="M 10 -7 A 12.5 12.5 0 0 1 10 7" fill="none" stroke="#d4a850" stroke-width="2.8" stroke-linecap="round"/><path d="M -16 -11 A 19 19 0 0 0 -16 11" fill="none" stroke="#d4a850" stroke-width="2.8" stroke-linecap="round" opacity="0.55"/><path d="M 16 -11 A 19 19 0 0 1 16 11" fill="none" stroke="#d4a850" stroke-width="2.8" stroke-linecap="round" opacity="0.55"/></g><g transform="translate(0,24)"><rect x="20" y="24" width="54" height="64" rx="5" fill="#7a5a18" stroke="#0a0a14" stroke-width="2.5"/><rect x="24" y="22" width="50" height="60" rx="4" fill="#fdfaf0" stroke="#0a0a14" stroke-width="2.5"/><g stroke="#0a0a14" stroke-width="2.2"><ellipse cx="24" cy="31" rx="8" ry="3" fill="#e8c860"/><ellipse cx="24" cy="42" rx="8" ry="3" fill="#e8c860"/><ellipse cx="24" cy="53" rx="8" ry="3" fill="#e8c860"/><ellipse cx="24" cy="64" rx="8" ry="3" fill="#e8c860"/><ellipse cx="24" cy="75" rx="8" ry="3" fill="#e8c860"/></g><line x1="40" y1="55" x2="60" y2="55" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/><g transform="rotate(40 60 38)"><rect x="55" y="4" width="12" height="44" rx="6" fill="#2e4570" stroke="#0a0a14" stroke-width="2.5"/><rect x="55" y="39" width="12" height="5" fill="#d4a850"/><path d="M 55 48 L 67 48 L 64 58 L 58 58 Z" fill="#0a1530" stroke="#0a0a14" stroke-width="2.2"/><path d="M 58 58 L 64 58 L 61 68 Z" fill="#e8c860"/></g></g></g></svg></div></div>
     <div class="ar-title-row">
       <span class="ar-tick">✅</span>
       <span class="ar-title">आप Already Registered हैं</span>
     </div>
-    <div class="ar-subtitle">Welcome back to हिसाब-Kitaab</div>
+    <div class="ar-subtitle">Welcome back to Live खाता</div>
   </div>
   <div class="ar-profile-card">
     <div class="ar-prof-row">
@@ -1632,7 +1670,7 @@ body.notif-modal-open { overflow: hidden; }
     <span class="ar-install-btn-icon">⬇️</span>
     <span class="ar-install-btn-text">App खोलें · Install करें</span>
   </button>
-  <div class="ar-footer">हिसाब-Kitaab · आपका अपना खाता</div>
+  <div class="ar-footer">Live खाता · रोज़ का हिसाब, Live रखें</div>
 </div>
 
 <div id="main-app" style="display:none;">
@@ -1642,9 +1680,9 @@ body.notif-modal-open { overflow: hidden; }
   <div class="install-sheet">
     <div class="install-sheet-handle"></div>
     <div class="install-sheet-top">
-      <div class="install-sheet-appicon"><img src="icon-192.png" alt="हिसाब-Kitaab"></div>
+      <div class="install-sheet-appicon"><img src="icon-192.png" alt="Live खाता"></div>
       <div>
-        <div class="install-sheet-appname">हिसाब-Kitaab</div>
+        <div class="install-sheet-appname">Live खाता</div>
         <div class="install-sheet-appsub">📲 होम स्क्रीन पर इंस्टॉल करें — बिल्कुल फ्री</div>
       </div>
     </div>
@@ -1779,22 +1817,33 @@ body.notif-modal-open { overflow: hidden; }
   <div class="header">
     <div class="header-left">
       <div style="width:52px;height:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(212,168,80,0.25));"><svg width="52" height="52" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="coinOuterS" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f0d890"/>
-      <stop offset="50%" style="stop-color:#d4a850"/>
-      <stop offset="100%" style="stop-color:#8a6818"/>
-    </linearGradient>
-    <linearGradient id="coinInnerS" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8c870"/>
-      <stop offset="100%" style="stop-color:#b8902f"/>
-    </linearGradient>
-  </defs>
-  <circle cx="50" cy="50" r="46" fill="url(#coinOuterS)" stroke="#8a6818" stroke-width="1.5"/>
-  <circle cx="50" cy="50" r="34" fill="url(#coinInnerS)"/>
-  <text x="50" y="68" text-anchor="middle" font-size="46" font-weight="700" fill="#1a1208" font-family="'Noto Sans Devanagari','Mangal',serif">हि</text>
+  <g transform="translate(50,12)">
+    <circle cx="0" cy="0" r="4.5" fill="#e84545" stroke="#0a0a14" stroke-width="1.6"/>
+    <path d="M -10 -7 A 12.5 12.5 0 0 0 -10 7" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M 10 -7 A 12.5 12.5 0 0 1 10 7" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M -16 -11 A 19 19 0 0 0 -16 11" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>
+    <path d="M 16 -11 A 19 19 0 0 1 16 11" fill="none" stroke="#d4a850" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>
+  </g>
+  <g transform="translate(0,22)">
+    <rect x="20" y="24" width="54" height="64" rx="5" fill="#7a5a18" stroke="#0a0a14" stroke-width="2.5"/>
+    <rect x="24" y="22" width="50" height="60" rx="4" fill="#fdfaf0" stroke="#0a0a14" stroke-width="2.5"/>
+    <g stroke="#0a0a14" stroke-width="2.2">
+      <ellipse cx="24" cy="31" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="42" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="53" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="64" rx="8" ry="3" fill="#e8c860"/>
+      <ellipse cx="24" cy="75" rx="8" ry="3" fill="#e8c860"/>
+    </g>
+    <line x1="40" y1="55" x2="60" y2="55" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/>
+    <g transform="rotate(40 60 38)">
+      <rect x="55" y="4" width="12" height="44" rx="6" fill="#2e4570" stroke="#0a0a14" stroke-width="2.5"/>
+      <rect x="55" y="39" width="12" height="5" fill="#d4a850" stroke="#0a0a14" stroke-width="2"/>
+      <path d="M 55 48 L 67 48 L 64 58 L 58 58 Z" fill="#0a1530" stroke="#0a0a14" stroke-width="2.2"/>
+      <path d="M 58 58 L 64 58 L 61 68 Z" fill="#e8c860" stroke="#0a0a14" stroke-width="2"/>
+    </g>
+  </g>
 </svg></div>
-      <div style="min-width:0;flex:1;"><div id="hk-greeting" style="font-size:13px;color:#d4a850;font-weight:700;margin-bottom:3px;display:none;"></div><div id="hk-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div><div id="hk-brand" style="font-size:11px;color:#e8d8b8;font-weight:500;">हिसाब-<span style="color:#d4a850;font-weight:700;">Kitaab</span> · आपका अपना खाता</div></div>
+      <div style="min-width:0;flex:1;"><div id="hk-greeting" style="font-size:13px;color:#d4a850;font-weight:700;margin-bottom:3px;display:none;"></div><div id="hk-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div><div id="hk-brand" style="font-size:11px;color:#e8d8b8;font-weight:500;"><span style="color:#d4a850;font-weight:700;">Live</span> खाता · रोज़ का हिसाब, Live रखें</div></div>
     </div>
     <div style="background:#14254a;border:1px solid #2a4078;border-radius:8px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#d4a850;font-weight:500;" id="t-day"></div><div style="font-size:10px;color:#e8d8b8;font-weight:500;" id="t-date"></div></div>
   </div>
@@ -3147,7 +3196,7 @@ window.updatePersonalHeaders = function(name, businessName) {
   const greeting = window.getGreeting();
   const hasName = name && name.length > 0;
   const hasBiz = businessName && businessName.length > 0;
-  // हिसाब-Kitaab header
+  // Live खाता header
   const hkGreet = document.getElementById('hk-greeting');
   const hkBiz = document.getElementById('hk-business');
   const hkBrand = document.getElementById('hk-brand');
@@ -5122,7 +5171,7 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
       const cred = await navigator.credentials.create({
         publicKey: {
           challenge: challenge,
-          rp: { name: 'हिसाब-Kitaab', id: window.location.hostname },
+          rp: { name: 'Live खाता', id: window.location.hostname },
           user: { id: userId, name: 'user', displayName: 'User' },
           pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
           authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },

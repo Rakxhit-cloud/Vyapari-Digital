@@ -1,28 +1,58 @@
 {
-  "id": "/?source=pwa",
-  "name": "हिसाब-Kitaab — आपका अपना खाता",
-  "short_name": "हिसाब-Kitaab",
-  "description": "आपका अपना खाता — रोज़ की डायरी, हिंदी में, मोबाइल पर। दुकान का बिक्री, खर्चा, उधार, माल — सब कुछ अपने फ़ोन में।",
-  "start_url": "/?source=pwa",
-  "scope": "/",
+  "name": "Live खाता",
+  "short_name": "Live खाता",
+  "description": "रोज़ का हिसाब, Live रखें — आपका अपना डिजिटल खाता",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0a1530",
   "theme_color": "#0a1530",
-  "orientation": "portrait",
   "lang": "hi",
-  "categories": ["business", "finance", "productivity"],
+  "dir": "ltr",
+  "categories": ["finance", "business", "productivity"],
   "icons": [
+    {
+      "src": "icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

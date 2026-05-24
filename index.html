@@ -3763,6 +3763,51 @@ function lgPersistRec(rec) {
   }
 }
 
+// Silently auto-save any past day (date < today) that has entries but was
+// never closed. Returns an array of the dates that were just auto-saved, so
+// the caller can show a single centered notice on the new day. No blocking.
+function lgAutoSavePastDays() {
+  if (!CURRENT_UID || CURRENT_UID === 'default') return [];
+  const list = DB.get(K.BIKRI);
+  const autoSaved = [];
+  list.forEach(r => {
+    if (!r.date || !(r.date < TSTR)) return;
+    if (!Array.isArray(r.lgBoxes) || r.lgBoxes.length === 0) return;
+    if (r.lgSaved === true) return;
+    // This past day has entries but was never closed → finalize it silently.
+    r.lgSaved = true;
+    r.lgSavedAt = Date.now();
+    // Mirror the recent-saves marker the rest of the code relies on.
+    try {
+      const key = 'hk_lg_recent_saves_' + CURRENT_UID;
+      let recent = {};
+      try { recent = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e){}
+      recent[r.date] = Date.now();
+      Object.keys(recent).forEach(k => {
+        if ((Date.now() - recent[k]) > 3600000) delete recent[k];
+      });
+      localStorage.setItem(key, JSON.stringify(recent));
+    } catch(e){}
+    lgPersistRec(r);
+    autoSaved.push(r.date);
+  });
+  autoSaved.sort();
+  return autoSaved;
+}
+
+// Show a single centered notice on the new day if past days were auto-saved.
+function lgNotifyAutoSaved(dates) {
+  if (!dates || !dates.length) return;
+  if (typeof showSuccessModal !== 'function') return;
+  let sub;
+  if (dates.length === 1) {
+    sub = '✓ ' + lgFormatDate(dates[0]) + ' की एंट्री अपने आप save हो गई';
+  } else {
+    sub = '✓ ' + dates.length + ' दिनों की एंट्री अपने आप save हो गई';
+  }
+  showSuccessModal('Live हिसाब auto-save', sub);
+}
+
 // Find any past day (date < today) with lgBoxes > 0 and lgSaved !== true.
 // Defended by a "recently saved" localStorage marker that prevents the
 // blocker from re-triggering during the ~few seconds where a Firestore
@@ -3794,14 +3839,13 @@ function lgFindOldestUnsavedPastDay() {
 
 // Entry point — called from home tile tap
 function lgOpen() {
-  const unsavedPast = lgFindOldestUnsavedPastDay();
-  if (unsavedPast) {
-    // Hard block: open that day's screen with the blocker banner
-    lgRenderDay(unsavedPast, /*blocked=*/true);
-  } else {
-    lgRenderDay(TSTR, /*blocked=*/false);
-  }
+  // Silently finalize any past day that was never closed, then notify once.
+  const autoSaved = lgAutoSavePastDays();
+  lgRenderDay(TSTR, /*blocked=*/false);
   go('s-livegalla');
+  if (autoSaved.length) {
+    setTimeout(() => lgNotifyAutoSaved(autoSaved), 300);
+  }
 }
 
 // Render the entire Live गल्ला screen for a given date
@@ -4154,17 +4198,17 @@ function lgConfirmClosing() {
   }, 700);
 }
 
-// Hook into app open / home navigation: when entering home, if there's an
-// unsaved past day, force the user to Live गल्ला blocker.
+// Hook into app open / home navigation: silently auto-save any past day that
+// was never closed, and show a single centered notice on the new day.
+// (No longer blocks the user — they are never trapped on an old day.)
 window.lgCheckAndBlock = function() {
   if (!CURRENT_UID || CURRENT_UID === 'default') return false;
-  const unsavedPast = lgFindOldestUnsavedPastDay();
-  if (unsavedPast) {
-    lgRenderDay(unsavedPast, true);
-    go('s-livegalla');
-    return true;
+  const autoSaved = lgAutoSavePastDays();
+  if (autoSaved.length) {
+    setTimeout(() => lgNotifyAutoSaved(autoSaved), 400);
+    if (typeof loadHome === 'function') loadHome();
   }
-  return false;
+  return false; // never block
 };
 // ============================================================
 // END Live गल्ला

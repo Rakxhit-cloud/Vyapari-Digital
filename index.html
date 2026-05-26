@@ -2767,27 +2767,40 @@ window._fsLoadAll = async function(uid) {
       cloudItems.forEach(ci => {
         const idx = merged.findIndex(r => r.id === ci.id);
         if (idx > -1) {
-          // CRITICAL: don't blindly overwrite local with cloud.
-          // If local has a more recent lgSavedAt (Live गल्ला save) than cloud,
-          // it means the user just saved on this device and the cloud version
-          // is stale — keep local. Otherwise take cloud (it's likely newer
-          // from another device or sync from before this session).
+          // Phase 3 conflict resolution — newest edit wins, never drop data.
+          // Decision order:
+          //   1. Both have updatedAt -> larger updatedAt wins.
+          //   2. Only one has updatedAt -> that one is newer (edited since the
+          //      updatedAt feature shipped) and wins.
+          //   3. Neither has updatedAt (old pre-Phase-3 records) -> fall back to
+          //      the original lgSavedAt comparison (preserves old behavior).
+          //   4. A record present on only one side is always kept (handled by
+          //      the else branch below).
           const localR = merged[idx];
-          const localSavedAt = localR.lgSavedAt || 0;
-          const cloudSavedAt = ci.lgSavedAt || 0;
-          if (localSavedAt > cloudSavedAt) {
-            // Local is newer — keep it. Re-trigger the write to cloud so
-            // they stay in sync going forward.
+          const lU = (typeof localR.updatedAt === 'number') ? localR.updatedAt : null;
+          const cU = (typeof ci.updatedAt === 'number') ? ci.updatedAt : null;
+          let keepLocal;
+          if (lU !== null && cU !== null) {
+            keepLocal = lU > cU;            // rule 1
+          } else if (lU !== null && cU === null) {
+            keepLocal = true;               // rule 2 (local edited more recently)
+          } else if (lU === null && cU !== null) {
+            keepLocal = false;              // rule 2 (cloud edited more recently)
+          } else {
+            // rule 3 — fall back to legacy lgSavedAt comparison
+            keepLocal = (localR.lgSavedAt || 0) > (ci.lgSavedAt || 0);
+          }
+          if (keepLocal) {
+            // Local is newer — keep it and re-push to cloud so they re-converge.
             if (window._fsWrite) {
               try { window._fsWrite(uid, colName, localR); } catch(e){}
             }
             // do NOT overwrite merged[idx]
           } else {
-            // Cloud is newer or equal — use it
-            merged[idx] = ci;
+            merged[idx] = ci;               // cloud is newer — take it
           }
         } else {
-          merged.push(ci);
+          merged.push(ci);                  // rule 4 — record only in cloud, keep it
         }
       });
       localStorage.setItem(lsKey, JSON.stringify(merged));
@@ -3639,13 +3652,14 @@ const DB = {
   set(k,v) { localStorage.setItem(this._k(k), JSON.stringify(v)); },
   push(k, item) {
     item.id = Date.now() + '_' + Math.random().toString(36).substr(2,5);
+    item.updatedAt = Date.now();   // Phase 3: last-edit time for conflict merge
     const a = this.get(k); a.push(item); this.set(k, a);
     if (window._fsWrite) window._fsWrite(CURRENT_UID, k, item);
     return item;
   },
   update(k, id, u) {
     const a = this.get(k), i = a.findIndex(r => r.id === id);
-    if (i > -1) { a[i] = { ...a[i], ...u }; this.set(k, a); if (window._fsWrite) window._fsWrite(CURRENT_UID, k, a[i]); }
+    if (i > -1) { a[i] = { ...a[i], ...u, updatedAt: Date.now() }; this.set(k, a); if (window._fsWrite) window._fsWrite(CURRENT_UID, k, a[i]); }
   },
   remove(k, id) {
     this.set(k, this.get(k).filter(r => r.id !== id));

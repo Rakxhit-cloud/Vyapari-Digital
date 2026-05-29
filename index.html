@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <meta name="theme-color" content="#0a1530">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; connect-src 'self' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -83,6 +83,37 @@ window.HK_DEBUG = false;
 <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+/* ===== NATIVE-FEEL POLISH (added) ===== */
+/* #2 Lock overscroll/bounce + pull-to-refresh so scrolling feels contained like a native app */
+html, body { overscroll-behavior: none; overscroll-behavior-y: contain; }
+/* #1 Tap polish: buttons/tappables don't show text-selection or callout menus on long-press */
+button, .fab, .auth-btn, .nav-item, .kpi-card, .edit-pay-pill, .ss-view-all,
+.hafta-card, .dlr-row, [onclick] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation; /* removes any residual tap latency */
+}
+/* #3 Screen transition: gentle fade+rise when a screen becomes active.
+   Pure CSS reacting to the .active class go() already toggles — go() is untouched.
+   Falls back to instant show if anything goes wrong (never a broken screen). */
+.screen.active {
+  animation: scr-in 0.22s ease-out;
+}
+@keyframes scr-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .screen.active { animation: none; }
+}
+/* #4 Safe-area insets: keep fixed bottom-nav and FAB clear of the gesture bar / notch */
+.bottom-nav { padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
+.fab { bottom: calc(86px + env(safe-area-inset-bottom)); }
+/* ===== END NATIVE-FEEL POLISH ===== */
+
 body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; overflow-x: hidden; }
 .sync-status-bar { background: #0a1a0a; border-bottom: 1px solid #1a2a1a; padding: 3px 16px; display: flex; align-items: center; gap: 6px; }
 .sync-status-txt { font-size: 8px; color: #3a6a3a; font-weight: 700; }
@@ -4256,6 +4287,17 @@ function playCrystalTinkle(){
   _smTone(1976, 0.35, 0.14, 0.05);
   _smTone(2637, 0.30, 0.06, 0.08);
 }
+// Haptic feedback helper — a tiny vibration on key success moments.
+// Safe everywhere: navigator.vibrate is ignored on devices/browsers that
+// don't support it (e.g. desktop, iOS Safari), so this never errors.
+function hapticTap(ms){
+  try {
+    if (navigator && typeof navigator.vibrate === 'function') {
+      navigator.vibrate(ms || 18); // short, subtle — not a buzz
+    }
+  } catch(e){}
+}
+
 function showSuccessModal(title, sub){
   const overlay = document.getElementById('success-modal-overlay');
   if(!overlay) return;
@@ -4265,6 +4307,7 @@ function showSuccessModal(title, sub){
   if(subEl) subEl.textContent = sub || '⚡ 30 सेकंड · आज';
   overlay.classList.add('show');
   try { playCrystalTinkle(); } catch(e){}
+  try { hapticTap(); } catch(e){}
   setTimeout(() => { overlay.classList.remove('show'); }, 1800);
 }
 window.showSuccessModal = showSuccessModal;

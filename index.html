@@ -1277,6 +1277,23 @@ body.notif-modal-open { overflow: hidden; }
 .lg-key-tri { color:#d4a850; border-color:rgba(212,168,80,0.6); font-size:13px; }
 .lg-commit-btn { background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%); border:2px solid #f0d890; color:#1a1208; font-size:12px; font-weight:600; padding:11px; border-radius:10px; text-align:center; margin-top:9px; cursor:pointer; }
 .lg-commit-btn:active { opacity:.85; }
+/* ===== ENTRY NOTE ROW ===== */
+.lg-note-row { background:#081223; border:1.5px solid #2a4078; border-radius:10px; padding:10px; margin-bottom:10px; }
+.lg-note-label { font-size:11px; font-weight:600; color:#d4a850; margin-bottom:8px; }
+.lg-note-label span { font-size:9px; color:#8aa0d8; font-weight:400; margin-left:3px; }
+.lg-note-input { width:100%; background:#14254a; border:1px solid #2a4078; border-radius:8px; padding:9px 12px; font-size:13px; color:#e8d8b8; outline:none; margin-bottom:8px; }
+.lg-note-input:focus { border-color:#d4a850; background:#1a3060; }
+.lg-note-input::placeholder { color:#4a5aa8; }
+.lg-note-chips { display:flex; gap:5px; flex-wrap:wrap; }
+.lg-note-chip { background:#081223; border:1.5px solid #2a4078; border-radius:13px; padding:5px 12px; font-size:11px; font-weight:600; color:#e8d8b8; cursor:pointer; user-select:none; touch-action:manipulation; }
+.lg-note-chip:active { background:#142544; }
+/* note indicator dot on boxes that have a note */
+.lg-box { position:relative; }
+.lg-box-notedot { position:absolute; top:5px; right:6px; width:7px; height:7px; background:#f0c040; border-radius:50%; box-shadow:0 0 4px rgba(240,192,64,0.6); }
+/* note block inside box-action overlay */
+.lg-box-action-note { background:#081223; border:1px solid #2a4078; border-radius:8px; padding:9px 11px; margin-bottom:13px; text-align:left; font-size:13px; color:#e8d8b8; line-height:1.4; display:flex; align-items:flex-start; gap:6px; }
+.lg-box-action-note.empty { border-style:dashed; border-color:#3a5088; color:#6f80a8; justify-content:center; cursor:pointer; }
+/* ===== END ENTRY NOTE ROW ===== */
 
 /* Box edit/delete mini-overlay */
 .lg-box-action { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1500; display:none; align-items:center; justify-content:center; padding:20px; }
@@ -2200,6 +2217,16 @@ body.notif-modal-open { overflow: hidden; }
         <div class="lg-display-amount" id="lg-keypad-amount">₹0</div>
         <div class="lg-display-hint">अधिकतम 5 अंक · ₹99,999 तक</div>
       </div>
+      <div class="lg-note-row" id="lg-note-row">
+        <div class="lg-note-label">📝 Note <span>optional</span></div>
+        <input type="text" class="lg-note-input" id="lg-note-input" maxlength="40" placeholder="रमेश जी / उधार…" oninput="window.lgKeypad.note=this.value" autocomplete="off">
+        <div class="lg-note-chips">
+          <span class="lg-note-chip" onclick="lgNoteChip('उधार')">उधार</span>
+          <span class="lg-note-chip" onclick="lgNoteChip('थोक')">थोक</span>
+          <span class="lg-note-chip" onclick="lgNoteChip('वापसी')">वापसी</span>
+          <span class="lg-note-chip" onclick="lgNoteChip('बाकी')">बाकी</span>
+        </div>
+      </div>
       <div class="lg-keypad">
         <div class="lg-key" onclick="lgKeyPress('1')">1</div>
         <div class="lg-key" onclick="lgKeyPress('2')">2</div>
@@ -2224,6 +2251,7 @@ body.notif-modal-open { overflow: hidden; }
   <div class="lg-box-action-card">
     <div class="lg-box-action-amt" id="lg-box-action-amt">₹0</div>
     <div class="lg-box-action-meta" id="lg-box-action-meta">—</div>
+    <div class="lg-box-action-note" id="lg-box-action-note" onclick="lgEditBox()"></div>
     <div class="lg-box-action-btns">
       <button class="lg-action-btn lg-action-edit" onclick="lgEditBox()">✏️ Edit</button>
       <button class="lg-action-btn lg-action-del" onclick="lgDeleteBox()">🗑️ Delete</button>
@@ -3665,7 +3693,8 @@ window.lgState = {
 window.lgKeypad = {
   type: null,    // 'cash' | 'upi' | 'expense'
   editN: null,   // if editing an existing box, its number (1-indexed) within type
-  amount: ''     // current typed digits
+  amount: '',    // current typed digits
+  note: ''       // optional note text for this box
 };
 
 // Get or create the bikri record for a date. Returns the live reference.
@@ -3908,6 +3937,11 @@ function lgRenderGrid(type) {
     const cell = document.createElement('div');
     cell.className = 'lg-box lg-box-' + type;
     cell.innerHTML = '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
+    if (box.note && box.note.trim()) {
+      const dot = document.createElement('div');
+      dot.className = 'lg-box-notedot';
+      cell.appendChild(dot);
+    }
     // Only allow edit/delete if not blocked-and-readonly (we still allow edits on
     // blocker mode since that's the whole point — fix mistakes then save)
     cell.onclick = () => lgOpenBoxAction(type, n);
@@ -3954,9 +3988,14 @@ function lgOpenKeypad(type, editN) {
     const boxes = (r.lgBoxes || []).filter(b => b.type === type);
     const box = boxes[editN - 1];
     window.lgKeypad.amount = box ? String(box.amount) : '';
+    window.lgKeypad.note = (box && box.note) ? box.note : '';
   } else {
     window.lgKeypad.amount = '';
+    window.lgKeypad.note = '';
   }
+  // Sync the note input field to current note state
+  const noteInput = document.getElementById('lg-note-input');
+  if (noteInput) noteInput.value = window.lgKeypad.note;
   // Title — show entry number
   const r = window.lgState.rec;
   const existingCount = (r.lgBoxes || []).filter(b => b.type === type).length;
@@ -3977,6 +4016,18 @@ function lgOpenKeypad(type, editN) {
 
 function lgCloseKeypad() {
   document.getElementById('lg-keypad-modal').classList.remove('show');
+}
+
+// Append a quick-chip word to the note (with a space if there's already text).
+function lgNoteChip(word) {
+  const cur = (window.lgKeypad.note || '').trim();
+  // avoid duplicating the same word
+  if (cur.split(/\s+/).includes(word)) return;
+  const next = cur ? (cur + ' ' + word) : word;
+  window.lgKeypad.note = next.slice(0, 40);
+  const noteInput = document.getElementById('lg-note-input');
+  if (noteInput) noteInput.value = window.lgKeypad.note;
+  try { hapticTap(10); } catch(e){}
 }
 
 function lgKeyPress(d) {
@@ -4025,16 +4076,17 @@ function lgCommitBox() {
   if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
   const type = window.lgKeypad.type;
   const editN = window.lgKeypad.editN;
+  const note = (window.lgKeypad.note || '').trim().slice(0, 40);
   if (editN !== null) {
-    // Edit: find the editN-th box of this type and update its amount
+    // Edit: find the editN-th box of this type and update its amount + note
     const typeBoxes = r.lgBoxes.filter(b => b.type === type);
     const target = typeBoxes[editN - 1];
-    if (target) target.amount = amt;
+    if (target) { target.amount = amt; target.note = note; }
   } else {
     // Add new box
     const typeBoxes = r.lgBoxes.filter(b => b.type === type);
     const nextN = typeBoxes.length + 1;
-    r.lgBoxes.push({ n: nextN, type: type, amount: amt, ts: Date.now() });
+    r.lgBoxes.push({ n: nextN, type: type, amount: amt, note: note, ts: Date.now() });
   }
   // If we're editing/adding to a previously-saved day (e.g., from blocker),
   // mark it unsaved again so the user re-commits.
@@ -4072,6 +4124,16 @@ function lgOpenBoxAction(type, n) {
   document.getElementById('lg-box-action-amt').textContent = '₹' + box.amount.toLocaleString('en-IN');
   const labels = { cash: 'नकद बिक्री', upi: 'UPI बिक्री', expense: 'खर्चा' };
   document.getElementById('lg-box-action-meta').textContent = labels[type] + ' · Box ' + n;
+  const noteEl = document.getElementById('lg-box-action-note');
+  if (noteEl) {
+    if (box.note && box.note.trim()) {
+      noteEl.className = 'lg-box-action-note';
+      noteEl.innerHTML = '<span>📝</span><span>' + box.note.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
+    } else {
+      noteEl.className = 'lg-box-action-note empty';
+      noteEl.textContent = '📝 + note जोड़ें';
+    }
+  }
   document.getElementById('lg-box-action').classList.add('show');
 }
 

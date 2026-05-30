@@ -1281,15 +1281,12 @@ body.notif-modal-open { overflow: hidden; }
 .lg-note-row { background:#081223; border:1.5px solid #2a4078; border-radius:10px; padding:10px; margin-bottom:10px; }
 .lg-note-label { font-size:11px; font-weight:600; color:#d4a850; margin-bottom:8px; }
 .lg-note-label span { font-size:9px; color:#8aa0d8; font-weight:400; margin-left:3px; }
-.lg-note-input { width:100%; background:#14254a; border:1px solid #2a4078; border-radius:8px; padding:9px 12px; font-size:13px; color:#e8d8b8; outline:none; margin-bottom:8px; }
+.lg-note-input { width:100%; background:#14254a; border:1px solid #2a4078; border-radius:8px; padding:9px 12px; font-size:13px; color:#e8d8b8; outline:none; }
 .lg-note-input:focus { border-color:#d4a850; background:#1a3060; }
 .lg-note-input::placeholder { color:#4a5aa8; }
-.lg-note-chips { display:flex; gap:5px; flex-wrap:wrap; }
-.lg-note-chip { background:#081223; border:1.5px solid #2a4078; border-radius:13px; padding:5px 12px; font-size:11px; font-weight:600; color:#e8d8b8; cursor:pointer; user-select:none; touch-action:manipulation; }
-.lg-note-chip:active { background:#142544; }
 /* note indicator dot on boxes that have a note */
 .lg-box { position:relative; }
-.lg-box-notedot { position:absolute; top:5px; right:6px; width:7px; height:7px; background:#f0c040; border-radius:50%; box-shadow:0 0 4px rgba(240,192,64,0.6); }
+.lg-box-notedot { position:absolute; bottom:4px; right:5px; width:6px; height:6px; background:#f0c040; border-radius:50%; box-shadow:0 0 4px rgba(240,192,64,0.6); }
 /* note block inside box-action overlay */
 .lg-box-action-note { background:#081223; border:1px solid #2a4078; border-radius:8px; padding:9px 11px; margin-bottom:13px; text-align:left; font-size:13px; color:#e8d8b8; line-height:1.4; display:flex; align-items:flex-start; gap:6px; }
 .lg-box-action-note.empty { border-style:dashed; border-color:#3a5088; color:#6f80a8; justify-content:center; cursor:pointer; }
@@ -2219,13 +2216,7 @@ body.notif-modal-open { overflow: hidden; }
       </div>
       <div class="lg-note-row" id="lg-note-row">
         <div class="lg-note-label">📝 Note <span>optional</span></div>
-        <input type="text" class="lg-note-input" id="lg-note-input" maxlength="40" placeholder="रमेश जी / उधार…" oninput="window.lgKeypad.note=this.value" autocomplete="off">
-        <div class="lg-note-chips">
-          <span class="lg-note-chip" onclick="lgNoteChip('उधार')">उधार</span>
-          <span class="lg-note-chip" onclick="lgNoteChip('थोक')">थोक</span>
-          <span class="lg-note-chip" onclick="lgNoteChip('वापसी')">वापसी</span>
-          <span class="lg-note-chip" onclick="lgNoteChip('बाकी')">बाकी</span>
-        </div>
+        <input type="text" class="lg-note-input" id="lg-note-input" maxlength="80" placeholder="रमेश जी / उधार…" oninput="window.lgKeypad.note=this.value" autocomplete="off">
       </div>
       <div class="lg-keypad">
         <div class="lg-key" onclick="lgKeyPress('1')">1</div>
@@ -4018,18 +4009,6 @@ function lgCloseKeypad() {
   document.getElementById('lg-keypad-modal').classList.remove('show');
 }
 
-// Append a quick-chip word to the note (with a space if there's already text).
-function lgNoteChip(word) {
-  const cur = (window.lgKeypad.note || '').trim();
-  // avoid duplicating the same word
-  if (cur.split(/\s+/).includes(word)) return;
-  const next = cur ? (cur + ' ' + word) : word;
-  window.lgKeypad.note = next.slice(0, 40);
-  const noteInput = document.getElementById('lg-note-input');
-  if (noteInput) noteInput.value = window.lgKeypad.note;
-  try { hapticTap(10); } catch(e){}
-}
-
 function lgKeyPress(d) {
   if (window.lgKeypad.amount.length >= LG_MAX_DIGITS) return;
   // Avoid leading zero stacking
@@ -4076,7 +4055,7 @@ function lgCommitBox() {
   if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
   const type = window.lgKeypad.type;
   const editN = window.lgKeypad.editN;
-  const note = (window.lgKeypad.note || '').trim().slice(0, 40);
+  const note = (window.lgKeypad.note || '').trim().slice(0, 80);
   if (editN !== null) {
     // Edit: find the editN-th box of this type and update its amount + note
     const typeBoxes = r.lgBoxes.filter(b => b.type === type);

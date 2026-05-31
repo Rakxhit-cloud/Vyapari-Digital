@@ -732,13 +732,15 @@ body.notif-modal-open { overflow: hidden; }
 .lgent-legend { font-size: 10.5px; color: #8a93a6; display: flex; gap: 9px; }
 .lgent-legend .lgd { display: inline-flex; align-items: center; gap: 3px; }
 .lgent-legend .lgdot { font-size: 9px; }
-.lgent-wrap { position: relative; }
+.lgent-wrap { position: relative; background: #0a0c11; border: 1px solid #2a2e3a; border-radius: 10px; padding: 7px; }
 .lgent-scroll { max-height: 168px; overflow-y: auto; }
-.lgent-wrap.scrollable::after { content: ''; position: absolute; bottom: 0; left: 0; right: 4px; height: 22px; background: linear-gradient(180deg, transparent, #191c24); pointer-events: none; }
-.lgent-row { background: #0d0f15; border-radius: 0 8px 8px 0; padding: 9px 11px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.lgent-wrap.scrollable::after { content: ''; position: absolute; bottom: 1px; left: 1px; right: 8px; height: 22px; background: linear-gradient(180deg, transparent, #0a0c11); pointer-events: none; border-radius: 0 0 9px 9px; }
+.lgent-row { background: #0d0f15; border-radius: 0 8px 8px 0; padding: 9px 11px; margin-bottom: 6px; display: flex; align-items: center; gap: 9px; }
+.lgent-row:last-child { margin-bottom: 0; }
 .lgent-row.t-cash { border-left: 3px solid #3ec873; }
 .lgent-row.t-upi { border-left: 3px solid #4a9fd4; }
 .lgent-row.t-expense { border-left: 3px solid #cc7a47; }
+.lgent-num { font-size: 10px; font-weight: 700; color: #7a8294; min-width: 16px; text-align: center; flex-shrink: 0; }
 .lgent-chip { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px; min-width: 44px; text-align: center; flex-shrink: 0; }
 .lgent-chip.t-cash { color: #3ec873; background: rgba(62,200,115,0.14); }
 .lgent-chip.t-upi { color: #5dcaff; background: rgba(93,202,255,0.14); }
@@ -4853,11 +4855,11 @@ function openDatePopup(ds){
         const _lbl = { cash: 'नकद', upi: 'UPI', expense: 'खर्चा' };
         const _cnt = { cash: 0, upi: 0, expense: 0 };
         _boxes.forEach(b => { if (_cnt[b.type] !== undefined) _cnt[b.type]++; });
-        const _rows = _boxes.map(b => {
+        const _rows = _boxes.map((b, _i) => {
           const t = (b.type === 'cash' || b.type === 'upi' || b.type === 'expense') ? b.type : 'cash';
           const note = (b.note || '').trim();
           const noteHtml = note ? `<span class="lgent-note">${escHTML(note)}</span>` : `<span class="lgent-note empty">note नहीं</span>`;
-          return `<div class="lgent-row t-${t}"><span class="lgent-chip t-${t}">${_lbl[t]}</span>${noteHtml}<span class="lgent-amt">${fmt(b.amount || 0)}</span></div>`;
+          return `<div class="lgent-row t-${t}"><span class="lgent-num">${_i + 1}</span><span class="lgent-chip t-${t}">${_lbl[t]}</span>${noteHtml}<span class="lgent-amt">${fmt(b.amount || 0)}</span></div>`;
         }).join('');
         const _scrollable = _boxes.length > 4;
         _entryListHtml = `
@@ -4872,7 +4874,7 @@ function openDatePopup(ds){
         <div class="lgent-wrap${_scrollable ? ' scrollable' : ''}">
           <div class="lgent-scroll">${_rows}</div>
         </div>
-        ${_scrollable ? '<div class="lgent-hint">↕ scroll करें</div>' : ''}`;
+        ${_scrollable ? '<div class="lgent-hint">⬇ और एंट्री — scroll करें</div>' : ''}`;
       }
       card.innerHTML = `
         <div class="dpx-card-header">
@@ -5018,9 +5020,8 @@ function closeDatePopupDirect(){
   const overlay=document.getElementById('date-popup-overlay');
   const sheet=document.getElementById('date-popup-sheet');
   if(sheet){
-    sheet.style.transform='';
     sheet.classList.add('closing');
-    setTimeout(()=>{overlay.classList.remove('show');sheet.classList.remove('closing');dpCurrentDate=null;},210);
+    setTimeout(()=>{overlay.classList.remove('show');sheet.classList.remove('closing');sheet.style.transform='';sheet.style.transition='';dpCurrentDate=null;},230);
   } else {
     overlay.classList.remove('show');dpCurrentDate=null;
   }
@@ -5040,9 +5041,17 @@ function closeDatePopupDirect(){
   function end(){
     if(!dragging)return;
     dragging=false;
-    sheet.style.transition='transform .2s ease';
-    if(dy>110){closeDatePopupDirect();}
-    else{sheet.style.transform='translateY(0)';setTimeout(()=>{sheet.style.transition='';sheet.style.transform='';},200);}
+    if(dy>110){
+      // animate down from current drag position, then hide (no class fight)
+      const overlay=document.getElementById('date-popup-overlay');
+      sheet.style.transition='transform .2s ease';
+      sheet.style.transform='translateY(100%)';
+      setTimeout(()=>{overlay.classList.remove('show');sheet.style.transition='';sheet.style.transform='';dpCurrentDate=null;},200);
+    } else {
+      sheet.style.transition='transform .2s ease';
+      sheet.style.transform='translateY(0)';
+      setTimeout(()=>{sheet.style.transition='';sheet.style.transform='';},200);
+    }
   }
   grab.addEventListener('touchstart',e=>start(e.touches[0].clientY),{passive:true});
   grab.addEventListener('touchmove',e=>{move(e.touches[0].clientY);if(dragging&&dy>0)e.preventDefault();},{passive:false});

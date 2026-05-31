@@ -654,13 +654,18 @@ body.notif-modal-open { overflow: hidden; }
 .cal-leg-txt { font-size: 7px; font-weight: 700; }
 .date-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 700; display: none; align-items: flex-end; justify-content: center; }
 .date-popup-overlay.show { display: flex; }
-.date-popup-sheet { background: #161616; border-radius: 18px 18px 0 0; border-top: 2px solid #d4a850; padding: 14px 16px 24px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; animation: slideUp .25s ease; }
+.date-popup-sheet { background: #161616; border-radius: 18px 18px 0 0; border-top: 2px solid #d4a850; padding: 14px 16px 24px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; animation: slideUp .25s ease; will-change: transform; }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.date-popup-handle { width: 40px; height: 3px; background: #4a3878; border-radius: 2px; margin: 0 auto 12px; }
-.date-popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+@keyframes slideDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
+.date-popup-sheet.closing { animation: slideDown .22s ease forwards; }
+.date-popup-grab { padding: 6px 0 8px; margin: -6px 0 0; cursor: grab; touch-action: none; }
+.date-popup-grab:active { cursor: grabbing; }
+.date-popup-handle { width: 44px; height: 5px; background: #6a5aa0; border-radius: 3px; margin: 0 auto; }
+.date-popup-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
 .date-popup-title { font-size: 15px; font-weight: 500; color: #e8d8b8; }
 .date-popup-sub { font-size: 11px; color: #b0a0e8; margin-top: 3px; }
-.date-popup-close { background: #2a0818; border: 1px solid #4a182a; border-radius: 7px; padding: 6px 12px; font-size: 10px; color: #ff8aa8; font-weight: 500; cursor: pointer; }
+.date-popup-close { flex-shrink: 0; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #3a1018; border: 1.5px solid #c44560; border-radius: 50%; font-size: 17px; line-height: 1; color: #ff8aa8; font-weight: 700; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+.date-popup-close:active { background: #4a1622; transform: scale(0.92); }
 .dp-entry-card { border-radius: 0 10px 10px 0; padding: 13px; margin-bottom: 10px; }
 .dp-great { background: linear-gradient(135deg, #1a3060 0%, #0a1530 100%); border: 1px solid #2a4078; border-left: 3px solid #d4a850; border-radius: 10px; }
 .dp-ok    { background: linear-gradient(135deg, #2a1810 0%, #1a0f08 100%); border: 1px solid #4a2818; border-left: 3px solid #cc7a47; border-radius: 10px; }
@@ -1740,13 +1745,13 @@ body.notif-modal-open { overflow: hidden; }
 </div>
 <div class="date-popup-overlay" id="date-popup-overlay" onclick="closeDatePopup(event)">
   <div class="date-popup-sheet" id="date-popup-sheet">
-    <div class="date-popup-handle"></div>
+    <div class="date-popup-grab" id="date-popup-grab"><div class="date-popup-handle"></div></div>
     <div class="date-popup-header">
       <div>
         <div class="date-popup-title" id="dp-title"></div>
         <div class="date-popup-sub" id="dp-sub"></div>
       </div>
-      <div class="date-popup-close" onclick="closeDatePopupDirect()">✕ बंद</div>
+      <div class="date-popup-close" onclick="closeDatePopupDirect()" role="button" aria-label="बंद करें">✕</div>
     </div>
     <div id="dp-content"></div>
   </div>
@@ -4954,10 +4959,48 @@ function openDatePopup(ds){
     };
   }
 
+  const _sheet=document.getElementById('date-popup-sheet');
+  if(_sheet){_sheet.classList.remove('closing');_sheet.style.transition='';_sheet.style.transform='';}
   document.getElementById('date-popup-overlay').classList.add('show');
 }
 function closeDatePopup(e){if(e.target===document.getElementById('date-popup-overlay'))closeDatePopupDirect();}
-function closeDatePopupDirect(){document.getElementById('date-popup-overlay').classList.remove('show');dpCurrentDate=null;}
+function closeDatePopupDirect(){
+  const overlay=document.getElementById('date-popup-overlay');
+  const sheet=document.getElementById('date-popup-sheet');
+  if(sheet){
+    sheet.style.transform='';
+    sheet.classList.add('closing');
+    setTimeout(()=>{overlay.classList.remove('show');sheet.classList.remove('closing');dpCurrentDate=null;},210);
+  } else {
+    overlay.classList.remove('show');dpCurrentDate=null;
+  }
+}
+(function initDatePopupDrag(){
+  const sheet=document.getElementById('date-popup-sheet');
+  const grab=document.getElementById('date-popup-grab');
+  if(!sheet||!grab)return;
+  let startY=0,dy=0,dragging=false;
+  function start(y){startY=y;dy=0;dragging=true;sheet.style.transition='none';}
+  function move(y){
+    if(!dragging)return;
+    dy=y-startY;
+    if(dy<0)dy=0;
+    sheet.style.transform='translateY('+dy+'px)';
+  }
+  function end(){
+    if(!dragging)return;
+    dragging=false;
+    sheet.style.transition='transform .2s ease';
+    if(dy>110){closeDatePopupDirect();}
+    else{sheet.style.transform='translateY(0)';setTimeout(()=>{sheet.style.transition='';sheet.style.transform='';},200);}
+  }
+  grab.addEventListener('touchstart',e=>start(e.touches[0].clientY),{passive:true});
+  grab.addEventListener('touchmove',e=>{move(e.touches[0].clientY);if(dragging&&dy>0)e.preventDefault();},{passive:false});
+  grab.addEventListener('touchend',end);
+  grab.addEventListener('mousedown',e=>{start(e.clientY);
+    const mm=ev=>move(ev.clientY),mu=()=>{end();document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);};
+    document.addEventListener('mousemove',mm);document.addEventListener('mouseup',mu);});
+})();
 let entryMode='quick';
 function setEntryMode(mode){
   entryMode=mode;

@@ -725,6 +725,28 @@ body.notif-modal-open { overflow: hidden; }
 .dpx-pay-settled { background: linear-gradient(135deg, rgba(45, 186, 77, 0.22), rgba(45, 186, 77, 0.1)); color: #7afa7a; border: 0.5px solid #2dba4d; }
 .dpx-pay-detail { font-size: 9.5px; color: #8aa0d8; font-weight: 500; }
 .dpx-scroll-hint { text-align: center; font-size: 9.5px; color: #5dcaa5; margin-top: 4px; opacity: 0.7; font-style: italic; }
+/* === हर एंट्री itemized list (flat) === */
+.lgent-head { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 9px; }
+.lgent-title { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: #d4a850; letter-spacing: 0.3px; }
+.lgent-title::before { content: ''; width: 3px; height: 13px; background: #d4a850; border-radius: 2px; }
+.lgent-legend { font-size: 10.5px; color: #8a93a6; display: flex; gap: 9px; }
+.lgent-legend .lgd { display: inline-flex; align-items: center; gap: 3px; }
+.lgent-legend .lgdot { font-size: 9px; }
+.lgent-wrap { position: relative; }
+.lgent-scroll { max-height: 168px; overflow-y: auto; }
+.lgent-wrap.scrollable::after { content: ''; position: absolute; bottom: 0; left: 0; right: 4px; height: 22px; background: linear-gradient(180deg, transparent, #191c24); pointer-events: none; }
+.lgent-row { background: #0d0f15; border-radius: 0 8px 8px 0; padding: 9px 11px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.lgent-row.t-cash { border-left: 3px solid #3ec873; }
+.lgent-row.t-upi { border-left: 3px solid #4a9fd4; }
+.lgent-row.t-expense { border-left: 3px solid #cc7a47; }
+.lgent-chip { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px; min-width: 44px; text-align: center; flex-shrink: 0; }
+.lgent-chip.t-cash { color: #3ec873; background: rgba(62,200,115,0.14); }
+.lgent-chip.t-upi { color: #5dcaff; background: rgba(93,202,255,0.14); }
+.lgent-chip.t-expense { color: #cc7a47; background: rgba(204,122,71,0.15); }
+.lgent-note { font-size: 12.5px; color: #cdd3e0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lgent-note.empty { color: #6a7388; font-style: italic; }
+.lgent-amt { font-size: 13px; font-weight: 600; color: #f0f2f6; flex-shrink: 0; }
+.lgent-hint { text-align: center; font-size: 10px; color: #7a8294; margin-top: 6px; }
 .dp-rating { font-size: 12px; font-weight: 500; margin-bottom: 8px; padding: 3px 10px; border-radius: 5px; display: inline-block; }
 .dp-great .dp-rating { background: #4a3818; color: #d4a850; }
 .dp-ok .dp-rating { background: #4a2818; color: #cc7a47; }
@@ -4825,6 +4847,33 @@ function openDatePopup(ds){
       const profit = calcEntryProfit(r);
       const card = document.createElement('div');
       card.className = 'dpx-bikri-card';
+      const _boxes = Array.isArray(r.lgBoxes) ? r.lgBoxes.filter(b => b && (b.amount || b.amount === 0)) : [];
+      let _entryListHtml = '';
+      if (_boxes.length > 0) {
+        const _lbl = { cash: 'नकद', upi: 'UPI', expense: 'खर्चा' };
+        const _cnt = { cash: 0, upi: 0, expense: 0 };
+        _boxes.forEach(b => { if (_cnt[b.type] !== undefined) _cnt[b.type]++; });
+        const _rows = _boxes.map(b => {
+          const t = (b.type === 'cash' || b.type === 'upi' || b.type === 'expense') ? b.type : 'cash';
+          const note = (b.note || '').trim();
+          const noteHtml = note ? `<span class="lgent-note">${escHTML(note)}</span>` : `<span class="lgent-note empty">note नहीं</span>`;
+          return `<div class="lgent-row t-${t}"><span class="lgent-chip t-${t}">${_lbl[t]}</span>${noteHtml}<span class="lgent-amt">${fmt(b.amount || 0)}</span></div>`;
+        }).join('');
+        const _scrollable = _boxes.length > 4;
+        _entryListHtml = `
+        <div class="lgent-head">
+          <div class="lgent-title">हर एंट्री</div>
+          <div class="lgent-legend">
+            <span class="lgd"><span class="lgdot" style="color:#3ec873;">●</span> ${_cnt.cash}</span>
+            <span class="lgd"><span class="lgdot" style="color:#5dcaff;">●</span> ${_cnt.upi}</span>
+            <span class="lgd"><span class="lgdot" style="color:#cc7a47;">●</span> ${_cnt.expense}</span>
+          </div>
+        </div>
+        <div class="lgent-wrap${_scrollable ? ' scrollable' : ''}">
+          <div class="lgent-scroll">${_rows}</div>
+        </div>
+        ${_scrollable ? '<div class="lgent-hint">↕ scroll करें</div>' : ''}`;
+      }
       card.innerHTML = `
         <div class="dpx-card-header">
           <div class="dpx-section-tag">💰 बिक्री</div>
@@ -4849,6 +4898,7 @@ function openDatePopup(ds){
           ${r.upi ? `<div class="dpx-mini-card up"><div class="dpx-mini-lbl">UPI</div><div class="dpx-mini-val">${fmt(r.upi)}</div></div>` : ''}
         </div>
         ${r.notes ? `<div style="margin-top:8px;padding:6px 10px;background:rgba(74,144,212,0.08);border-left:2px solid #4a90d4;border-radius:4px;font-size:11px;color:#b0c8e8;">📝 ${escHTML(r.notes)}</div>` : ''}
+        ${_entryListHtml}
         <div class="dpx-actions">
           <button class="dpx-edit-btn">✏️ सुधारें</button>
           <button class="dpx-del-btn">🗑️ हटाएं</button>

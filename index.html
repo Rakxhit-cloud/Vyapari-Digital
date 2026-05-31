@@ -833,6 +833,12 @@ body.notif-modal-open { overflow: hidden; }
 .splash-title { font-size: 26px; font-weight: 500; color: #e8d8b8; margin-top: 6px; letter-spacing: -0.4px; }
 .splash-title-gold { color: #d4a850; }
 .splash-sub { font-size: 12px; color: #b0a0e8; letter-spacing: 0.5px; }
+/* ===== TAGLINE LIVE DOT (glowing, matches logo broadcast red) ===== */
+@keyframes lk-live-pulse { 0%,100%{ box-shadow:0 0 4px 1px rgba(232,69,69,0.7); opacity:1; } 50%{ box-shadow:0 0 8px 3px rgba(232,69,69,0.95); opacity:0.85; } }
+.lk-livedot { display:inline-block; width:9px; height:9px; border-radius:50%; background:#e84545; margin-left:5px; vertical-align:middle; animation:lk-live-pulse 1.4s ease-in-out infinite; }
+.lk-livedot.sm { width:7px; height:7px; margin-left:4px; }
+@media (prefers-reduced-motion: reduce){ .lk-livedot{ animation:none; box-shadow:0 0 5px 1px rgba(232,69,69,0.8); } }
+/* ===== END TAGLINE LIVE DOT ===== */
 .splash-loader-wrap { display: flex; gap: 6px; margin-top: 14px; }
 .splash-dot { width: 8px; height: 8px; background: #d4a850; border-radius: 50%; animation: dotBounce 1.2s ease-in-out infinite; }
 .splash-dot:nth-child(2) { animation-delay: 0.15s; background: #cc7a47; }
@@ -1432,7 +1438,7 @@ body.notif-modal-open { overflow: hidden; }
   <div class="splash-screen" id="splash-screen">
   <div class="splash-logo"><img src="icon-512.png" alt="Live खाता" style="width:100%;height:100%;object-fit:contain;"></div>
   <div class="splash-title"><span class="splash-title-gold">Live</span> खाता</div>
-  <div class="splash-sub">रोज़ का हिसाब, Live रखें</div>
+  <div class="splash-sub">अब हिसाब चलेगा LIVE<span class="lk-livedot"></span></div>
   <div class="splash-loader-wrap">
     <div class="splash-dot"></div>
     <div class="splash-dot"></div>
@@ -1443,7 +1449,7 @@ body.notif-modal-open { overflow: hidden; }
 <div class="auth-screen hidden" id="screen-phone">
   <div class="auth-logo"><img src="icon-512.png" alt="Live खाता" style="width:100%;height:100%;object-fit:contain;"></div>
   <div class="auth-title"><span style="color:#d4a850;">Live</span> खाता</div>
-  <div class="auth-sub">रोज़ का हिसाब, Live रखें</div>
+  <div class="auth-sub">अब हिसाब चलेगा LIVE<span class="lk-livedot"></span></div>
   <div class="auth-card">
     <div class="auth-label">📱 अपना मोबाइल नंबर डालें</div>
     <div class="auth-error" id="phone-error"></div>
@@ -1649,7 +1655,7 @@ body.notif-modal-open { overflow: hidden; }
     <span class="ar-install-btn-icon">⬇️</span>
     <span class="ar-install-btn-text">App खोलें · Install करें</span>
   </button>
-  <div class="ar-footer">Live खाता · रोज़ का हिसाब, Live रखें</div>
+  <div class="ar-footer">Live खाता · अब हिसाब चलेगा LIVE<span class="lk-livedot sm"></span></div>
 </div>
 
 <div id="main-app" style="display:none;">
@@ -1822,7 +1828,7 @@ body.notif-modal-open { overflow: hidden; }
     </g>
   </g>
 </svg></div>
-      <div style="min-width:0;flex:1;"><div id="hk-greeting" style="font-size:13px;color:#d4a850;font-weight:700;margin-bottom:3px;display:none;"></div><div id="hk-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div><div id="hk-brand" style="font-size:11px;color:#e8d8b8;font-weight:500;"><span style="color:#d4a850;font-weight:700;">Live</span> खाता · रोज़ का हिसाब, Live रखें</div></div>
+      <div style="min-width:0;flex:1;"><div id="hk-greeting" style="font-size:13px;color:#d4a850;font-weight:700;margin-bottom:3px;display:none;"></div><div id="hk-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div><div id="hk-brand" style="font-size:11px;color:#e8d8b8;font-weight:500;"><span style="color:#d4a850;font-weight:700;">Live</span> खाता · अब हिसाब चलेगा LIVE<span class="lk-livedot sm"></span></div></div>
     </div>
     <div style="background:#14254a;border:1px solid #2a4078;border-radius:8px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#d4a850;font-weight:500;" id="t-day"></div><div style="font-size:10px;color:#e8d8b8;font-weight:500;" id="t-date"></div></div>
   </div>

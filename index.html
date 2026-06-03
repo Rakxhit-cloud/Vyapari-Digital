@@ -1446,6 +1446,38 @@ body.notif-modal-open { overflow: hidden; }
 .mk-in{width:100%;background:#0d1838;border:1px solid #2a4078;border-radius:11px;padding:13px 14px;color:#f4f6fa;font-size:15px;box-shadow:inset 0 1px 3px rgba(0,0,0,0.25);outline:none;}
 .mk-in.mk-amt{font-size:20px;font-weight:700;color:#d4a850;}
 .mk-save{width:100%;margin-top:8px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#d4a850,#e8c870);border:2px solid #f0d890;color:#1a1208;font-size:15px;font-weight:700;text-align:center;box-shadow:0 3px 0 #8a6818,0 5px 14px rgba(212,168,80,0.25);cursor:pointer;}
+/* supplier profile inner page */
+.mkp-header{padding:14px 16px;border-bottom:1px solid #cc7a47;background:#0a1530;}
+.mkp-hrow{display:flex;align-items:center;gap:11px;}
+.mkp-name{font-size:19px;font-weight:700;color:#f4f6fa;letter-spacing:-0.3px;}
+.mkp-meta{font-size:11px;color:#9ad0c0;margin-top:2px;}
+.mkp-newrow{display:flex;justify-content:flex-end;margin-top:12px;}
+.mkp-new{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#d4a850,#e8c870);border:1.5px solid #f0d890;color:#1a1208;font-size:13px;font-weight:700;padding:9px 16px;border-radius:11px;box-shadow:0 2px 8px rgba(212,168,80,0.3);cursor:pointer;}
+.mkp-new .pl{font-size:16px;font-weight:800;}
+.mkp-sum{display:flex;gap:9px;margin-bottom:18px;}
+.mkp-ss{flex:1;border-radius:11px;padding:9px 12px;position:relative;overflow:hidden;}
+.mkp-ss::before{content:"";position:absolute;top:0;left:0;bottom:0;width:3px;}
+.mkp-ss-nakad{background:linear-gradient(135deg,#0e2417,#0a1a12);border:1px solid #1d5a3a;} .mkp-ss-nakad::before{background:#3ec873;}
+.mkp-ss-udhaar{background:linear-gradient(135deg,#241808,#1a1206);border:1px solid #5a3a1a;} .mkp-ss-udhaar::before{background:#cc7a47;}
+.mkp-ss-baki{background:linear-gradient(135deg,#2e1a0a,#1f1206);border:1px solid #6a4420;} .mkp-ss-baki::before{background:#f0a050;}
+.mkp-ss-lbl{font-size:9.5px;font-weight:600;margin-bottom:2px;}
+.mkp-ss-nakad .mkp-ss-lbl{color:#5dd88a;} .mkp-ss-udhaar .mkp-ss-lbl{color:#e89b5a;} .mkp-ss-baki .mkp-ss-lbl{color:#f0b070;}
+.mkp-ss-val{font-size:15px;font-weight:700;color:#f4f6fa;}
+.mkp-dgrp{margin-bottom:16px;}
+.mkp-dhead{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
+.mkp-dhead .bar{width:3px;height:14px;background:#d4a850;border-radius:2px;}
+.mkp-dhead .d{font-size:13px;font-weight:700;color:#e8c878;}
+.mkp-dhead .tot{margin-left:auto;font-size:10.5px;color:#9ad0c0;background:#0d1838;border:1px solid #2a4078;padding:3px 10px;border-radius:10px;font-weight:600;}
+.mkp-row{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1px solid #243a68;border-radius:12px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 8px rgba(0,0,0,0.22);}
+.mkp-num{width:24px;height:24px;border-radius:7px;background:#0a1530;border:1px solid #2a4078;color:#9ab0e0;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mkp-mid{flex:1;min-width:0;}
+.mkp-item{font-size:13.5px;font-weight:600;color:#f0f2f6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mkp-note{font-size:10.5px;color:#8aa0d8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mkp-rt{text-align:right;flex-shrink:0;}
+.mkp-amt{font-size:14px;font-weight:700;color:#f4f6fa;}
+.mkp-chip{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;margin-top:3px;}
+.mkp-chip-nakad{color:#5dd88a;background:rgba(62,200,115,0.14);border:0.5px solid #2d7a4a;}
+.mkp-chip-udhaar{color:#e89b5a;background:rgba(204,122,71,0.15);border:0.5px solid #7a4a26;}
 </style>
 </head>
 <body> <!-- Splash Screen -->
@@ -2433,6 +2465,26 @@ body.notif-modal-open { overflow: hidden; }
     <div class="mk-sub2">हर सप्लायर का खरीद + उधार हिसाब</div>
     <div id="sup-list"></div>
     <div class="mk-addbar" onclick="openMaalEntry('')">➕ नया सप्लायर / खरीद जोड़ें</div>
+  </div>
+</div>
+
+<div id="s-supplier-profile" class="screen">
+  <div class="mkp-header">
+    <div class="mkp-hrow">
+      <div class="mk-back" onclick="go('s-suppliers')">←</div>
+      <div class="mk-av" id="mkp-av">?</div>
+      <div><div class="mkp-name" id="mkp-name">—</div><div class="mkp-meta" id="mkp-meta">—</div></div>
+    </div>
+    <div class="mkp-newrow"><div class="mkp-new" id="mkp-new" onclick="openMaalEntry(_mkProfileName||'')"><span class="pl">+</span> नई एंट्री</div></div>
+  </div>
+  <div class="mk-stripe"></div>
+  <div class="fw">
+    <div class="mkp-sum">
+      <div class="mkp-ss mkp-ss-nakad"><div class="mkp-ss-lbl">नकद</div><div class="mkp-ss-val" id="mkp-nakad">₹0</div></div>
+      <div class="mkp-ss mkp-ss-udhaar"><div class="mkp-ss-lbl">उधार</div><div class="mkp-ss-val" id="mkp-udhaar">₹0</div></div>
+      <div class="mkp-ss mkp-ss-baki"><div class="mkp-ss-lbl">अभी बाकी</div><div class="mkp-ss-val" id="mkp-baki">₹0</div></div>
+    </div>
+    <div id="mkp-groups"></div>
   </div>
 </div>
 
@@ -5416,6 +5468,8 @@ function renderSuppliers(){
       <div class="mk-tots"><div class="mk-t mk-t-nakad"><div class="mk-t-lbl">नकद</div><div class="mk-t-val">${fmt(g.mNak)}</div></div><div class="mk-t mk-t-udhaar"><div class="mk-t-lbl">उधार</div><div class="mk-t-val">${fmt(g.mUdh)}</div></div></div>${bakiHtml}`;
     const sname=(g.name==='बिना नाम')?'':g.name;
     card.querySelector('.mk-card-plus').onclick=(e)=>{e.stopPropagation();openMaalEntry(sname);};
+    card.style.cursor='pointer';
+    card.onclick=()=>openSupplierProfile(g.name);
     list.appendChild(card);
   });
 }
@@ -5457,6 +5511,50 @@ function saveMaalEntry(){
   closeMaalEntry();
   renderSuppliers();
   loadMaalHome();
+  if(_mkProfileName!==null && mkSupKey(_mkProfileName)===mkSupKey(supplier))renderSupplierProfile();
+}
+
+// ===== supplier profile inner page =====
+let _mkProfileName=null;
+function openSupplierProfile(name){
+  _mkProfileName=name||'';
+  renderSupplierProfile();
+  go('s-supplier-profile');
+}
+function renderSupplierProfile(){
+  if(_mkProfileName===null)return;
+  const targetKey=mkSupKey(_mkProfileName);
+  const rows=(DB.get(K.MAAL)||[]).filter(r=>mkSupKey(r.supplier)===targetKey);
+  const displayName=_mkProfileName||'बिना नाम';
+  const setT=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  setT('mkp-name',displayName);
+  setT('mkp-av',(displayName[0]||'?').toUpperCase());
+  // totals (all-time for this supplier)
+  let nak=0,udh=0,baki=0;
+  rows.forEach(r=>{const a=r.amount||0;if(r.pay==='नकद')nak+=a;else{udh+=a;baki+=Math.max(0,a-(r.paid||0));}});
+  setT('mkp-nakad',fmt(nak));setT('mkp-udhaar',fmt(udh));setT('mkp-baki',fmt(baki));
+  setT('mkp-meta',rows.length+' खरीद · आखिरी '+fmtRelDate(rows.map(r=>r.date||'').sort().slice(-1)[0]||''));
+  // group by date, newest date first
+  const byDate={};
+  rows.forEach(r=>{const d=r.date||'';(byDate[d]=byDate[d]||[]).push(r);});
+  const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+  const wrap=document.getElementById('mkp-groups');if(!wrap)return;wrap.innerHTML='';
+  if(!rows.length){wrap.innerHTML='<div class="mk-empty">कोई खरीद नहीं — ऊपर "नई एंट्री" से जोड़ें</div>';return;}
+  dates.forEach(d=>{
+    const entries=byDate[d];
+    // within a date, keep insertion order (ts/id ascending) for stable serial nos
+    entries.sort((a,b)=>((a.ts||0)-(b.ts||0))||String(a.id).localeCompare(String(b.id)));
+    let dayTot=0;entries.forEach(e=>dayTot+=(e.amount||0));
+    const grp=document.createElement('div');grp.className='mkp-dgrp';
+    let rowsHtml='';
+    entries.forEach((r,i)=>{
+      const isNakad=r.pay==='नकद';
+      const noteHtml=(r.note&&r.note.trim())?`<div class="mkp-note">📝 ${escHTML(r.note.trim())}</div>`:'';
+      rowsHtml+=`<div class="mkp-row"><div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}</div><div class="mkp-rt"><div class="mkp-amt">${fmt(r.amount)}</div><div class="mkp-chip ${isNakad?'mkp-chip-nakad':'mkp-chip-udhaar'}">${isNakad?'नकद':'उधार'}</div></div></div>`;
+    });
+    grp.innerHTML=`<div class="mkp-dhead"><div class="bar"></div><div class="d">${fmtDate(d)}</div><div class="tot">कुल ${fmt(dayTot)}</div></div>${rowsHtml}`;
+    wrap.appendChild(grp);
+  });
 }
 let _supplierPayId=null;
 

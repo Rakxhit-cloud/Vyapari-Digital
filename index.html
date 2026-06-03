@@ -4818,6 +4818,7 @@ let MAAL_LEDGER_FILTER='all';
 let MAAL_LEDGER_SEARCH='';
 function loadMaalForMonth(mi){
   MAAL_LEDGER_MI=mi;
+  if(!document.getElementById('h-maal-total'))return; // home माल block removed (replaced by tile → s-suppliers)
   const rows=DB.get(K.MAAL);
   let tot=0,nak=0,udh=0;
   const monthRows=[],pendingRows=[],paidRows=[];

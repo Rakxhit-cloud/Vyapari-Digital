@@ -1356,6 +1356,96 @@ body.notif-modal-open { overflow: hidden; }
 .lg-dp-saved-text { font-size:11.5px; color:#8aef7a; font-weight:600; }
 .lg-dp-saved-amt { font-size:13px; font-weight:700; color:#c4f4b8; margin-left:auto; }
 
+/* ===== माल की खरीद — supplier feature ===== */
+.mk-tile{background:linear-gradient(135deg,#0a2828 0%,#10322e 100%);border:1.5px solid #cc7a47;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 4px 18px rgba(204,122,71,0.14);}
+.mk-tile-stripe{height:5px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
+.mk-tile-body{padding:18px 16px;display:flex;align-items:center;gap:15px;}
+.mk-tile-icon{width:68px;height:68px;background:linear-gradient(135deg,#5a3818 0%,#3a2410 100%);border:2.5px solid #cc7a47;border-radius:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mk-tile-text{flex:1;}
+.mk-tile-title{font-size:23px;font-weight:700;color:#e89b5a;line-height:1.1;letter-spacing:-0.3px;}
+.mk-tile-sub{font-size:11.5px;color:#9ad0c0;margin-top:5px;font-weight:500;}
+.mk-tile-cta{background:linear-gradient(135deg,#cc7a47 0%,#e8a050 100%);color:#1a1208;font-size:13px;font-weight:700;padding:10px 15px;border-radius:10px;border:1.5px solid #f0b878;flex-shrink:0;}
+.mk-tile-pill{background:#0a1f1a;border-radius:9px;padding:2px 9px;display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:0.4px;border:1px solid #3ec873;color:#5dd88a;margin-left:7px;vertical-align:middle;}
+.mk-tile-dot,.mk-dot{width:6px;height:6px;border-radius:50%;display:inline-block;background:#3ec873;}
+/* screen header */
+.mk-header{padding:14px 16px;border-bottom:1px solid #cc7a47;background:#0a1530;}
+.mk-hl{display:flex;align-items:center;gap:11px;}
+.mk-back{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#14224a,#0d1838);border:1px solid #2a4078;display:flex;align-items:center;justify-content:center;color:#b0a0e8;font-size:18px;flex-shrink:0;cursor:pointer;}
+.mk-hicon{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#5a3818,#3a2410);border:1px solid #cc7a47;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mk-htitle{font-size:19px;font-weight:700;color:#e89b5a;letter-spacing:-0.3px;}
+.mk-pill{background:#0a1f1a;border-radius:9px;padding:2px 9px;display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:0.4px;border:1px solid #3ec873;color:#5dd88a;margin-left:6px;vertical-align:middle;}
+.mk-hsub{font-size:11px;color:#9ad0c0;margin-top:1px;}
+.mk-monthchip{font-size:11px;color:#d4a850;background:#1a1208;border:1px solid #5a4418;border-radius:9px;padding:5px 11px;text-align:center;line-height:1.3;margin-left:auto;}
+.mk-stripe{height:4px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
+/* result card */
+.mk-res{background:linear-gradient(160deg,#11233f 0%,#0c1832 100%);border:1px solid #2a4078;border-radius:16px;overflow:hidden;margin-bottom:18px;box-shadow:0 4px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(122,108,240,0.06);}
+.mk-res-stripe{height:4px;background:linear-gradient(90deg,#cc7a47,#3ec873);}
+.mk-res-body{padding:15px 16px;}
+.mk-res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+.mk-res-head .l{font-size:13px;color:#e89b5a;font-weight:700;}
+.mk-res-head .r{font-size:10px;color:#8aa0d8;}
+.mk-box{border-radius:13px;padding:13px 15px;position:relative;overflow:hidden;}
+.mk-box::before{content:"";position:absolute;top:0;left:0;bottom:0;width:3px;}
+.mk-box-lbl{font-size:11px;font-weight:600;margin-bottom:4px;}
+.mk-box-val{font-weight:700;letter-spacing:-0.4px;color:#f4f6fa;}
+.mk-box-total{background:linear-gradient(135deg,#16233f,#0e1a30);border:1px solid #3a5288;margin-bottom:11px;}
+.mk-box-total::before{background:#d4a850;}
+.mk-box-total .mk-box-lbl{color:#e8c878;font-size:12px;}
+.mk-box-total .mk-box-val{font-size:27px;color:#f0d8b0;}
+.mk-row2{display:flex;gap:11px;}
+.mk-row2 .mk-box{flex:1;}
+.mk-box-nakad{background:linear-gradient(135deg,#0e2417,#0a1a12);border:1px solid #1d5a3a;}
+.mk-box-nakad::before{background:#3ec873;}
+.mk-box-nakad .mk-box-lbl{color:#5dd88a;} .mk-box-nakad .mk-box-val{font-size:21px;color:#7eea9e;}
+.mk-box-udhaar{background:linear-gradient(135deg,#241808,#1a1206);border:1px solid #5a3a1a;}
+.mk-box-udhaar::before{background:#cc7a47;}
+.mk-box-udhaar .mk-box-lbl{color:#e89b5a;} .mk-box-udhaar .mk-box-val{font-size:21px;color:#f0b878;}
+.mk-baki{margin-top:11px;background:linear-gradient(135deg,#2e1a0a,#1f1206);border:1px solid #5a3a1a;border-radius:9px;padding:8px 13px;display:flex;justify-content:space-between;align-items:center;}
+.mk-baki .l{font-size:11px;color:#e89b5a;font-weight:700;}
+.mk-baki .v{font-size:14px;color:#f0c890;font-weight:700;}
+/* section head */
+.mk-sec{display:flex;align-items:center;gap:8px;margin:4px 2px 4px;}
+.mk-sec .bar{width:3px;height:14px;background:#d4a850;border-radius:2px;}
+.mk-sec .t{font-size:13px;font-weight:700;color:#d4a850;letter-spacing:0.4px;}
+.mk-sec .c{margin-left:auto;font-size:10px;color:#9ab0e0;background:#0d1838;border:1px solid #2a4078;padding:3px 10px;border-radius:11px;font-weight:600;}
+.mk-sub2{font-size:11px;color:#8aa0d8;margin:0 2px 12px;}
+/* supplier card */
+.mk-card{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1px solid #2a4078;border-radius:15px;padding:14px;margin-bottom:11px;position:relative;box-shadow:0 3px 12px rgba(0,0,0,0.3),inset 0 1px 0 rgba(122,108,240,0.06);}
+.mk-card-top{display:flex;align-items:center;gap:11px;margin-bottom:12px;padding-right:44px;}
+.mk-av{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,#3a4a90,#1e2c5c);border:1px solid #5a6ac0;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#cdd8f8;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1);}
+.mk-name{font-size:15.5px;font-weight:700;color:#f4f6fa;}
+.mk-meta{font-size:10.5px;color:#8aa0d8;margin-top:2px;}
+.mk-tots{display:flex;gap:9px;}
+.mk-t{flex:1;border-radius:10px;padding:8px 11px;position:relative;overflow:hidden;}
+.mk-t::before{content:"";position:absolute;top:0;left:0;bottom:0;width:2px;}
+.mk-t-nakad{background:#0d1f15;border:0.5px solid #1d5a3a;} .mk-t-nakad::before{background:#3ec873;}
+.mk-t-udhaar{background:#1f1408;border:0.5px solid #5a3a1a;} .mk-t-udhaar::before{background:#cc7a47;}
+.mk-t-lbl{font-size:9px;font-weight:600;margin-bottom:2px;}
+.mk-t-nakad .mk-t-lbl{color:#5dd88a;} .mk-t-udhaar .mk-t-lbl{color:#e89b5a;}
+.mk-t-val{font-size:15px;font-weight:700;color:#f4f6fa;}
+.mk-card-plus{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f0d080,#d4a850);border:1.5px solid #f4dc9a;color:#1a1208;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(212,168,80,0.55),0 2px 7px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.4);cursor:pointer;}
+.mk-card-baki{margin-top:11px;background:linear-gradient(135deg,#2e1a0a,#1f1206);border:1px solid #5a3a1a;border-radius:9px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;}
+.mk-card-baki .l{font-size:11px;color:#e89b5a;font-weight:700;}
+.mk-card-baki .v{font-size:14px;color:#f0c890;font-weight:700;}
+.mk-empty{text-align:center;font-size:12px;color:#6a7aa0;padding:22px 10px;background:#0d1838;border:1px dashed #2a4078;border-radius:12px;}
+.mk-addbar{width:100%;margin-top:8px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#d4a850,#e8c870);border:2px solid #f0d890;color:#1a1208;font-size:15px;font-weight:700;text-align:center;box-shadow:0 3px 0 #8a6818,0 5px 14px rgba(212,168,80,0.25);cursor:pointer;}
+/* entry popup */
+.mk-pop-overlay{position:fixed;inset:0;background:rgba(2,4,10,0.62);z-index:9000;display:none;align-items:flex-end;justify-content:center;}
+.mk-pop-overlay.show{display:flex;}
+.mk-pop{background:linear-gradient(180deg,#0e1830 0%,#0a1228 100%);border-top:2px solid #cc7a47;border-radius:20px 20px 0 0;padding:14px 17px 24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;animation:slideUp .25s ease;}
+.mk-pop-grab{width:46px;height:5px;background:#6a5aa0;border-radius:3px;margin:0 auto 15px;}
+.mk-pop-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.mk-pop-title{font-size:17px;font-weight:700;color:#e89b5a;letter-spacing:-0.3px;}
+.mk-pop-sub{font-size:11px;color:#9ab0e0;margin-top:3px;}
+.mk-pop-sub b{color:#d4a850;}
+.mk-pop-x{width:36px;height:36px;border-radius:50%;background:#3a1018;border:1.5px solid #c44560;color:#ff8aa8;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
+.mk-fld{margin-bottom:13px;}
+.mk-fldrow{display:flex;gap:10px;}
+.mk-fldrow .mk-fld{flex:1;}
+.mk-fld-lbl{font-size:11px;color:#b0a0e8;font-weight:600;margin-bottom:7px;}
+.mk-in{width:100%;background:#0d1838;border:1px solid #2a4078;border-radius:11px;padding:13px 14px;color:#f4f6fa;font-size:15px;box-shadow:inset 0 1px 3px rgba(0,0,0,0.25);outline:none;}
+.mk-in.mk-amt{font-size:20px;font-weight:700;color:#d4a850;}
+.mk-save{width:100%;margin-top:8px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#d4a850,#e8c870);border:2px solid #f0d890;color:#1a1208;font-size:15px;font-weight:700;text-align:center;box-shadow:0 3px 0 #8a6818,0 5px 14px rgba(212,168,80,0.25);cursor:pointer;}
 </style>
 </head>
 <body> <!-- Splash Screen -->
@@ -1985,8 +2075,30 @@ body.notif-modal-open { overflow: hidden; }
     <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
     
-    <div class="sec-head"><div class="sec-icon sec-icon-copper">📦</div><div class="sec-text"><div class="sec-title" style="color:#cc7a47;">माल की खरीद</div><div class="sec-sub">Goods Purchase</div></div><span class="sec-badge" style="background:#4a2818;color:#cc7a47;border:1px solid #cc7a47;">महीने में</span></div>
-    <div class="sec-card sc-teal"><div class="mini-grid"><div class="mini-card mc-ta"><div class="mini-lbl">कुल माल आया</div><div class="mini-val" id="h-maal-total">₹0</div></div><div class="mini-card mc-tb"><div class="mini-lbl">सप्लायर बाकी</div><div class="mini-val" id="h-maal-pending">₹0</div></div></div><div class="stat-row-nakad"><span class="stat-k-new">नकद दिया</span><span class="stat-v-new" id="h-maal-nakad">₹0</span></div><div class="stat-row-udhaar"><span class="stat-k-new">उधार लिया</span><span class="stat-v-new" id="h-maal-udhaar">₹0</span></div><div id="h-maal-pending-section" style="display:none;"><div class="ss-section-head ss-pending"><span style="color:#f0b040;">⚠</span><span style="color:#f0b040;font-weight:500;">जल्दी चुकाएं</span><span class="ss-count ss-count-amber" id="h-maal-pending-count">0</span></div><div id="h-maal-pending-list"></div></div><div id="h-maal-recent-section"><div class="ss-section-head ss-recent"><span style="color:#d4a850;">🕐</span><span style="color:#d4a850;font-weight:500;">हाल की खरीद</span><span class="ss-count ss-count-gold" id="h-maal-recent-count">0</span></div><div id="h-maal-recent-list"><div class="empty" style="padding:8px;font-size:10px;color:#4a5aa8;">⏳</div></div></div><div class="ss-view-all" id="h-maal-view-all" onclick="openMaalLedger()" style="display:none;">देखें सारा · <span id="h-maal-total-count">0</span> entries →</div></div>
+    <div class="mk-tile" onclick="go('s-suppliers')">
+      <div class="mk-tile-stripe"></div>
+      <div class="mk-tile-body">
+        <div class="mk-tile-icon">
+          <svg width="42" height="42" viewBox="0 0 58 58">
+            <defs>
+              <linearGradient id="mkbt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8a860"/><stop offset="1" stop-color="#cc8444"/></linearGradient>
+              <linearGradient id="mkbl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c47a3e"/><stop offset="1" stop-color="#9a5e2c"/></linearGradient>
+              <linearGradient id="mkbr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b06c34"/><stop offset="1" stop-color="#834d24"/></linearGradient>
+            </defs>
+            <g transform="translate(30,5)"><path d="M0 4 L9 0 L18 4 L9 8 Z" fill="#d8a052" stroke="#6e4420" stroke-width="0.7"/><path d="M0 4 L0 15 L9 19 L9 8 Z" fill="#9a6630" stroke="#6e4420" stroke-width="0.7"/><path d="M18 4 L18 15 L9 19 L9 8 Z" fill="#84561f" stroke="#6e4420" stroke-width="0.7"/></g>
+            <g transform="translate(6,18)"><path d="M0 8 L15 0 L30 8 L15 16 Z" fill="url(#mkbt)" stroke="#6e4420" stroke-width="0.9"/><path d="M0 8 L15 16 L15 33 L0 25 Z" fill="url(#mkbl)" stroke="#6e4420" stroke-width="0.9"/><path d="M30 8 L15 16 L15 33 L30 25 Z" fill="url(#mkbr)" stroke="#6e4420" stroke-width="0.9"/><path d="M15 16 L15 33" stroke="#6e4420" stroke-width="0.8" opacity="0.5"/></g>
+            <g transform="translate(2,30) rotate(-8)"><rect x="0" y="0" width="17" height="22" rx="1.6" fill="#f5eeda" stroke="#b8a878" stroke-width="0.8"/><line x1="3" y1="4" x2="14" y2="4" stroke="#c0392b" stroke-width="1.2" stroke-linecap="round"/><line x1="3" y1="8" x2="12" y2="8" stroke="#9aa0b0" stroke-width="0.9" stroke-linecap="round"/><text x="3" y="19" fill="#1f6d3a" font-size="6.5" font-weight="800">₹</text></g>
+            <circle cx="48" cy="44" r="9" fill="#e8a850" stroke="#fff" stroke-width="1.6"/><text x="48" y="48" text-anchor="middle" fill="#5a3410" font-size="11" font-weight="800">₹</text>
+          </svg>
+        </div>
+        <div class="mk-tile-text">
+          <div class="mk-tile-title">माल की खरीद<span class="mk-tile-pill"><span class="mk-tile-dot"></span>सप्लायर</span></div>
+          <div class="mk-tile-sub">हर सप्लायर · हर उधार — एक tap में</div>
+        </div>
+        <div class="mk-tile-cta">खोलें →</div>
+      </div>
+    </div>
+    <span id="w-maal" style="display:none;">₹0</span>
     
    </div>
   </div>
@@ -2286,6 +2398,65 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 
+<div id="s-suppliers" class="screen">
+  <div class="mk-header">
+    <div class="mk-hl">
+      <div class="mk-back" onclick="go('s-home')">←</div>
+      <div class="mk-hicon">
+        <svg width="34" height="34" viewBox="0 0 58 58">
+          <g transform="translate(12,14)"><path d="M0 8 L15 0 L30 8 L15 16 Z" fill="#e8a860" stroke="#6e4420" stroke-width="0.9"/><path d="M0 8 L15 16 L15 33 L0 25 Z" fill="#c47a3e" stroke="#6e4420" stroke-width="0.9"/><path d="M30 8 L15 16 L15 33 L30 25 Z" fill="#b06c34" stroke="#6e4420" stroke-width="0.9"/></g>
+          <circle cx="46" cy="44" r="9" fill="#e8a850" stroke="#fff" stroke-width="1.4"/><text x="46" y="48" text-anchor="middle" fill="#5a3410" font-size="11" font-weight="800">₹</text>
+        </svg>
+      </div>
+      <div>
+        <div class="mk-htitle">माल की खरीद<span class="mk-pill"><span class="mk-dot"></span>LIVE</span></div>
+        <div class="mk-hsub">हर सप्लायर · हर उधार</div>
+      </div>
+      <div class="mk-monthchip" id="sup-month-chip">—</div>
+    </div>
+  </div>
+  <div class="mk-stripe"></div>
+  <div class="fw">
+    <div class="mk-res">
+      <div class="mk-res-stripe"></div>
+      <div class="mk-res-body">
+        <div class="mk-res-head"><div class="l">📦 इस महीने का माल · This Month</div><div class="r" id="sup-res-month">—</div></div>
+        <div class="mk-box mk-box-total"><div class="mk-box-lbl">📦 कुल माल</div><div class="mk-box-val" id="sup-total">₹0</div></div>
+        <div class="mk-row2">
+          <div class="mk-box mk-box-nakad"><div class="mk-box-lbl">💵 नकद</div><div class="mk-box-val" id="sup-nakad">₹0</div></div>
+          <div class="mk-box mk-box-udhaar"><div class="mk-box-lbl">📋 उधार</div><div class="mk-box-val" id="sup-udhaar">₹0</div></div>
+        </div>
+        <div class="mk-baki" id="sup-baki-strip"><span class="l">⚠ सप्लायर बाकी</span><span class="v" id="sup-baki">₹0</span></div>
+      </div>
+    </div>
+    <div class="mk-sec"><div class="bar"></div><div class="t">सप्लायर</div><div class="c" id="sup-count">0</div></div>
+    <div class="mk-sub2">हर सप्लायर का खरीद + उधार हिसाब</div>
+    <div id="sup-list"></div>
+    <div class="mk-addbar" onclick="openMaalEntry('')">➕ नया सप्लायर / खरीद जोड़ें</div>
+  </div>
+</div>
+
+<div class="mk-pop-overlay" id="mk-pop-overlay" onclick="mkPopBgClose(event)">
+  <div class="mk-pop" id="mk-pop">
+    <div class="mk-pop-grab"></div>
+    <div class="mk-pop-head">
+      <div><div class="mk-pop-title">नई खरीद</div><div class="mk-pop-sub" id="me-sub">सप्लायर: <b id="me-supplier-lbl">—</b></div></div>
+      <div class="mk-pop-x" onclick="closeMaalEntry()">✕</div>
+    </div>
+    <input type="hidden" id="me-supplier">
+    <div class="pay-toggle" style="width:100%;margin-bottom:14px;"><div class="pbtn pn" id="me-nbtn" onclick="setPay('me','nakad')">💵 नकद</div><div class="pbtn" id="me-ubtn" onclick="setPay('me','udhaar')">📋 उधार</div></div>
+    <input type="hidden" id="me-pay" value="nakad">
+    <div class="mk-fld" id="me-supplier-field" style="display:none;"><div class="mk-fld-lbl">🏪 सप्लायर का नाम</div><input type="text" class="mk-in" id="me-supplier-new" placeholder="सप्लायर का नाम"></div>
+    <div class="mk-fld"><div class="mk-fld-lbl">📦 माल का नाम</div><input type="text" class="mk-in" id="me-name" placeholder="Surgical Gloves, Syringe…"></div>
+    <div class="mk-fldrow">
+      <div class="mk-fld"><div class="mk-fld-lbl">📅 तारीख</div><input type="date" class="mk-in" id="me-date"></div>
+      <div class="mk-fld"><div class="mk-fld-lbl">💰 रकम ₹</div><input type="number" class="mk-in mk-amt" id="me-amount" placeholder="0"></div>
+    </div>
+    <div class="mk-fld"><div class="mk-fld-lbl">📝 नोट</div><input type="text" class="mk-in" id="me-note" placeholder="कोई बात…"></div>
+    <div class="mk-save" onclick="saveMaalEntry()">💾 नई खरीद save करें</div>
+  </div>
+</div>
+
 <div id="s-maal" class="screen">
   <div class="header" style="border-bottom-color:#cc7a47;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#4a2818 0%,#6a3818 50%,#2a1810 100%);border:2px solid #cc7a47;">📦</div><div><div class="header-title">माल की खरीद</div><div class="header-sub" style="color:#cc7a47;">नया माल दर्ज करें</div></div></div></div>
   <div class="fw">
@@ -2350,7 +2521,6 @@ body.notif-modal-open { overflow: hidden; }
 <div class="bottom-nav">
   <div class="nav-item active" id="n-home" onclick="go('s-home')"><div class="nav-icon">🏠</div><div class="nav-lbl">होम</div><div class="nav-dot"></div></div>
   <div class="nav-item" id="n-entry" onclick="go('s-entry')"><div class="nav-icon">📝</div><div class="nav-lbl">एंट्री</div></div>
-  <div class="nav-item" id="n-maal" onclick="go('s-maal')"><div class="nav-icon">📦</div><div class="nav-lbl">माल</div></div>
   <div class="nav-item" id="n-more" onclick="toggleMore()"><div class="nav-icon">⋯</div><div class="nav-lbl">और</div></div>
 </div>
 </div>
@@ -4304,7 +4474,7 @@ function initApp(uid){
   }, 1200);
 }
 
-const NM={'s-home':'n-home','s-entry':'n-entry','s-maal':'n-maal'};
+const NM={'s-home':'n-home','s-entry':'n-entry'};
 function quickEntryFromHome(mode){
 go('s-entry');
 setTimeout(function(){ setEntryMode(mode); },100);
@@ -4330,6 +4500,7 @@ function go(id){
   if(id==='s-monthly')loadMonthly();
   if(id==='s-goal')loadGoalScreen();
   if(id==='s-maal')loadMaalStats();
+  if(id==='s-suppliers')renderSuppliers();
   
 }
   function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
@@ -5205,7 +5376,87 @@ function saveEntry(){const cash=parseFloat(document.getElementById('e-cash').val
 function saveMaal(){const amount=parseFloat(document.getElementById('m-amount').value)||0;if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}const date=document.getElementById('m-date').value,supplier=document.getElementById('m-supplier').value||'';const name=document.getElementById('m-name').value||'',pay=document.getElementById('m-pay').value==='nakad'?'नकद':'उधार';const note=document.getElementById('m-note').value||'';DB.push(K.MAAL,{date,supplier,name,amount,pay,note});showSuccessModal('माल एंट्री सेव हो गई', '📦 माल की खरीद · आज');['m-supplier','m-name','m-amount','m-note'].forEach(id=>document.getElementById(id).value='');setPay('m','nakad');loadMaalStats();setTimeout(()=>go('s-home'),1000);}
 function saveGoal(){const month=document.getElementById('g-month').value,target=parseFloat(document.getElementById('g-target').value)||0;if(!target){toast('❌ लक्ष्य रकम ज़रूर भरें',true);return;}const note=document.getElementById('g-note').value||'';DB.push(K.GOAL,{month,target,note});showSuccessModal('लक्ष्य सेव हो गया', '🎯 आपका लक्ष्य · दर्ज');document.getElementById('g-target').value='';document.getElementById('g-note').value='';loadGoalScreen();}
 function loadHome(){buildMonthNav();loadKPIForMonth(monthNavSelected);loadMaalForMonth(monthNavSelected);if(mahineyOpen){buildMonthGrid();if(calSelectedMonth!==null)renderCalendar();}}
-function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;const rec=[];rows.forEach(r=>{if(inHafta(r.date,activeHafta-1)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;if(rec.length<3)rec.push(r);}});document.getElementById('h-maal-total').textContent=fmt(tot);document.getElementById('h-maal-pending').textContent=fmt(udh);document.getElementById('h-maal-nakad').textContent=fmt(nak);document.getElementById('h-maal-udhaar').textContent=fmt(udh);document.getElementById('w-maal').textContent=fmt(tot);const ml=document.getElementById('h-maal-list');ml.innerHTML='<div class="dlr-lbl">ताज़ा खरीद — देर तक दबाएं</div>';if(!rec.length)ml.innerHTML+='<div style="font-size:10px;color:#444;padding:5px 0;">कोई एंट्री नहीं</div>';else rec.forEach(r=>{const card=makeLPCard('dlr-row',`<div><div class="dlr-name">${r.supplier||'—'}</div><div class="dlr-goods">${r.name||''}</div></div><div style="text-align:right"><div class="dlr-amt">${fmt(r.amount)}</div><div class="dlr-type ${r.pay==='नकद'?'tn':'tu'}">${r.pay||''}</div></div>`,K.MAAL,r.id,r);ml.appendChild(card);});}
+function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0;rows.forEach(r=>{if(inHafta(r.date,activeHafta-1))tot+=(r.amount||0);});const w=document.getElementById('w-maal');if(w)w.textContent=fmt(tot);}
+
+// ===== माल की खरीद — supplier feature (Path A: group by name) =====
+function mkSupKey(s){const t=(s||'').trim();return t?t.toLowerCase():'__blank__';}
+function renderSuppliers(){
+  const rows=DB.get(K.MAAL)||[];
+  const now=new Date();
+  const ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  let mTot=0,mNak=0,mUdh=0;
+  const groups={};
+  rows.forEach(r=>{
+    const key=mkSupKey(r.supplier);
+    if(!groups[key])groups[key]={name:(r.supplier||'').trim()||'बिना नाम',mNak:0,mUdh:0,baki:0,count:0,last:''};
+    const g=groups[key],a=r.amount||0,inMonth=(r.date||'').startsWith(ym);
+    if(inMonth){if(r.pay==='नकद')g.mNak+=a;else g.mUdh+=a;mTot+=a;if(r.pay==='नकद')mNak+=a;else mUdh+=a;}
+    if(r.pay==='उधार')g.baki+=Math.max(0,a-(r.paid||0));
+    g.count++;
+    if((r.date||'')>g.last)g.last=r.date||'';
+  });
+  const setT=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  setT('sup-total',fmt(mTot));setT('sup-nakad',fmt(mNak));setT('sup-udhaar',fmt(mUdh));
+  let totBaki=0;Object.values(groups).forEach(g=>totBaki+=g.baki);
+  setT('sup-baki',fmt(totBaki));
+  const strip=document.getElementById('sup-baki-strip');if(strip)strip.style.display=totBaki>0?'flex':'none';
+  setT('sup-res-month',HI_MONTHS[now.getMonth()]+' '+now.getFullYear());
+  const chip=document.getElementById('sup-month-chip');if(chip)chip.innerHTML=HI_MONTHS[now.getMonth()]+'<br>'+now.getFullYear();
+  const arr=Object.values(groups).sort((a,b)=>(b.last||'').localeCompare(a.last||''));
+  setT('sup-count',arr.length);
+  const list=document.getElementById('sup-list');if(!list)return;list.innerHTML='';
+  if(!arr.length){list.innerHTML='<div class="mk-empty">अभी कोई सप्लायर नहीं —<br>नीचे से पहली खरीद जोड़ें</div>';return;}
+  arr.forEach(g=>{
+    const card=document.createElement('div');card.className='mk-card';
+    const av=(g.name[0]||'?').toUpperCase();
+    const bakiHtml=g.baki>0?`<div class="mk-card-baki"><span class="l">⚠ अभी बाकी</span><span class="v">${fmt(g.baki)}</span></div>`:'';
+    card.innerHTML=`<div class="mk-card-plus">+</div>
+      <div class="mk-card-top"><div class="mk-av">${escHTML(av)}</div><div><div class="mk-name">${escHTML(g.name)}</div><div class="mk-meta">${g.count} खरीद · आखिरी ${fmtRelDate(g.last)}</div></div></div>
+      <div class="mk-tots"><div class="mk-t mk-t-nakad"><div class="mk-t-lbl">नकद</div><div class="mk-t-val">${fmt(g.mNak)}</div></div><div class="mk-t mk-t-udhaar"><div class="mk-t-lbl">उधार</div><div class="mk-t-val">${fmt(g.mUdh)}</div></div></div>${bakiHtml}`;
+    const sname=(g.name==='बिना नाम')?'':g.name;
+    card.querySelector('.mk-card-plus').onclick=(e)=>{e.stopPropagation();openMaalEntry(sname);};
+    list.appendChild(card);
+  });
+}
+function openMaalEntry(supplier){
+  const ov=document.getElementById('mk-pop-overlay');
+  document.getElementById('me-name').value='';
+  document.getElementById('me-amount').value='';
+  document.getElementById('me-note').value='';
+  document.getElementById('me-supplier-new').value='';
+  const today=new Date();document.getElementById('me-date').value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  setPay('me','nakad');
+  const field=document.getElementById('me-supplier-field');
+  if(supplier){
+    document.getElementById('me-supplier').value=supplier;
+    document.getElementById('me-supplier-lbl').textContent=supplier;
+    document.getElementById('me-sub').style.display='block';
+    field.style.display='none';
+  } else {
+    document.getElementById('me-supplier').value='';
+    document.getElementById('me-sub').style.display='none';
+    field.style.display='block';
+  }
+  ov.classList.add('show');
+}
+function closeMaalEntry(){document.getElementById('mk-pop-overlay').classList.remove('show');}
+function mkPopBgClose(e){if(e.target===document.getElementById('mk-pop-overlay'))closeMaalEntry();}
+function saveMaalEntry(){
+  const amount=parseFloat(document.getElementById('me-amount').value)||0;
+  if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}
+  let supplier=document.getElementById('me-supplier').value||'';
+  if(!supplier)supplier=(document.getElementById('me-supplier-new').value||'').trim();
+  if(!supplier){toast('❌ सप्लायर का नाम भरें',true);return;}
+  const date=document.getElementById('me-date').value;
+  const name=document.getElementById('me-name').value||'';
+  const pay=document.getElementById('me-pay').value==='nakad'?'नकद':'उधार';
+  const note=document.getElementById('me-note').value||'';
+  DB.push(K.MAAL,{date,supplier,name,amount,pay,note});
+  showSuccessModal('नई खरीद सेव हो गई','📦 '+escHTML(supplier));
+  closeMaalEntry();
+  renderSuppliers();
+  loadMaalHome();
+}
 let _supplierPayId=null;
 
 function openSupplierPayOverlay(id){

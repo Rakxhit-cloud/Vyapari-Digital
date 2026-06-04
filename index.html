@@ -1378,7 +1378,7 @@ body.notif-modal-open { overflow: hidden; }
 .mk-monthchip{font-size:11px;color:#d4a850;background:#1a1208;border:1px solid #5a4418;border-radius:9px;padding:5px 11px;text-align:center;line-height:1.3;margin-left:auto;}
 .mk-stripe{height:4px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
 /* result card */
-.mk-res{background:linear-gradient(160deg,#11233f 0%,#0c1832 100%);border:1px solid #2a4078;border-radius:16px;overflow:hidden;margin-bottom:18px;box-shadow:0 4px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(122,108,240,0.06);}
+.mk-res{background:linear-gradient(160deg,#0b1626 0%,#070f1d 100%);border:1px solid #233a60;border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,0.35),inset 0 1px 0 rgba(122,108,240,0.05);}
 .mk-res-stripe{height:4px;background:linear-gradient(90deg,#cc7a47,#3ec873);}
 .mk-res-body{padding:15px 16px;}
 .mk-res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
@@ -1410,7 +1410,7 @@ body.notif-modal-open { overflow: hidden; }
 .mk-sec .c{margin-left:auto;font-size:10px;color:#9ab0e0;background:#0d1838;border:1px solid #2a4078;padding:3px 10px;border-radius:11px;font-weight:600;}
 .mk-sub2{font-size:11px;color:#8aa0d8;margin:0 2px 12px;}
 /* supplier card */
-.mk-card{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1px solid #2a4078;border-radius:15px;padding:14px;margin-bottom:11px;position:relative;box-shadow:0 3px 12px rgba(0,0,0,0.3),inset 0 1px 0 rgba(122,108,240,0.06);}
+.mk-card{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1.5px solid #3d5aa6;border-radius:15px;padding:14px;margin-bottom:11px;position:relative;box-shadow:0 3px 14px rgba(0,0,0,0.3),0 0 0 1px rgba(61,90,166,0.15),inset 0 1px 0 rgba(122,108,240,0.08);}
 .mk-card-top{display:flex;align-items:center;gap:11px;margin-bottom:12px;padding-right:44px;}
 .mk-av{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,#3a4a90,#1e2c5c);border:1px solid #5a6ac0;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#cdd8f8;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1);}
 .mk-name{font-size:15.5px;font-weight:700;color:#f4f6fa;}
@@ -2108,7 +2108,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
     <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
     
-    <div class="mk-tile" onclick="go('s-suppliers')">
+    <div class="mk-tile" onclick="go('s-suppliers')" style="margin-top:18px;">
       <div class="mk-tile-stripe"></div>
       <div class="mk-tile-body">
         <div class="mk-tile-icon">
@@ -2553,7 +2553,6 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 
-<button class="fab" onclick="go('s-entry')">+</button>
 <div class="bottom-nav">
   <div class="nav-item active" id="n-home" onclick="go('s-home')"><div class="nav-icon">🏠</div><div class="nav-lbl">होम</div><div class="nav-dot"></div></div>
   <div class="nav-item" id="n-entry" onclick="go('s-entry')"><div class="nav-icon">📝</div><div class="nav-lbl">एंट्री</div></div>

@@ -1487,6 +1487,13 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-chip{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;margin-top:3px;}
 .mkp-chip-nakad{color:#5dd88a;background:rgba(62,200,115,0.14);border:0.5px solid #2d7a4a;}
 .mkp-chip-udhaar{color:#e89b5a;background:rgba(204,122,71,0.15);border:0.5px solid #7a4a26;}
+.mkp-chip-settled{color:#5dd88a;background:rgba(62,200,115,0.15);border:0.5px solid #2d7a4a;}
+.spay-info{background:#0d1838;border:1px solid #2a4078;border-radius:11px;padding:12px 14px;font-size:12.5px;color:#9ab0e0;line-height:1.7;}
+.spay-info span{color:#f4f6fa;font-weight:700;float:right;}
+.spay-btn{flex:1;text-align:center;padding:13px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;}
+.spay-btn-pay{background:linear-gradient(135deg,#14306a,#0d1f4a);border:1px solid #4a90d4;color:#8ab8e8;}
+.spay-btn-full{background:linear-gradient(135deg,#0e2c1a,#0a1f12);border:1px solid #3ec873;color:#6dee96;}
+.spay-btn-cancel{margin-top:9px;background:#1e1012;border:1px solid #5a2530;color:#e08a9c;text-align:center;padding:12px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;}
 </style>
 </head>
 <body> <!-- Splash Screen -->
@@ -2541,23 +2548,26 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 <div class="popup-overlay" id="supplier-pay-overlay">
-  <div class="popup-sheet">
-    <div class="popup-title" style="color:#d4a850;font-size:12px;">💳 सप्लायर उधार चुकाएं / Pay Supplier</div>
-    <div class="popup-entry-info" id="supplier-pay-info"></div>
-    <div style="margin-bottom:12px;">
-      <div style="font-size:11px;font-weight:800;color:#d4a850;margin-bottom:8px;letter-spacing:.3px;">💰 कितना चुका रहे हैं? / Amount paying</div><div style="font-size:11px;font-weight:800;color:#d4a850;margin-bottom:8px;letter-spacing:.3px;">💰 कितना चुका रहे हैं? / Amount paying</div>
-      <input type="number" id="supplier-pay-amount" placeholder="₹ 0" inputmode="numeric"
-        style="width:100%;background:#1e1e1e;border:1px solid #3dca6a;border-radius:8px;padding:10px 14px;font-size:16px;color:#fff;outline:none;text-align:center;">
-      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;">
-       <span style="color:#d4a850;font-weight:700;" id="supplier-pay-remaining-lbl">बाकी: ₹0</span>
-        <span style="color:#7dea8a;font-weight:700;" id="supplier-pay-after-lbl">चुकाने के बाद: ₹0</span>
+  <div class="mk-pop" style="max-width:480px;">
+    <div class="mk-pop-grab"></div>
+    <div class="mk-pop-head">
+      <div><div class="mk-pop-title" style="color:#d4a850;">💳 उधार चुकाएं</div><div class="mk-pop-sub">Pay Supplier</div></div>
+      <div class="mk-pop-x" onclick="closeSupplierPayOverlay()">✕</div>
+    </div>
+    <div class="spay-info" id="supplier-pay-info"></div>
+    <div class="mk-fld" style="margin-top:14px;">
+      <div class="mk-fld-lbl" style="color:#d4a850;">💰 कितना चुका रहे हैं? · Amount paying</div>
+      <input type="number" id="supplier-pay-amount" placeholder="₹ 0" inputmode="numeric" class="mk-in mk-amt" style="text-align:center;border-color:#3ec873;">
+      <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:11px;">
+        <span style="color:#e89b5a;font-weight:700;" id="supplier-pay-remaining-lbl">बाकी: ₹0</span>
+        <span style="color:#5dd88a;font-weight:700;" id="supplier-pay-after-lbl">चुकाने के बाद: ₹0</span>
       </div>
     </div>
-    <div class="popup-btns">
-      <button class="popup-btn popup-edit" onclick="saveSupplierPayment()">✅ Payment दर्ज करें</button>
-      <button class="popup-btn" style="background:#0d2a1a;border:1px solid #2dba4d;color:#d4a850;" onclick="settleSupplierFull()">🎉 पूरा चुक गया</button>
+    <div style="display:flex;gap:9px;margin-top:6px;">
+      <div class="spay-btn spay-btn-pay" onclick="saveSupplierPayment()">✅ Payment दर्ज करें</div>
+      <div class="spay-btn spay-btn-full" onclick="settleSupplierFull()">🎉 पूरा चुक गया</div>
     </div>
-  <button class="popup-cancel" onclick="closeSupplierPayOverlay()" style="background:#1a0808;border:1px solid #f06060;color:#ff8aa8;font-weight:700;">✕ रद्द करें · Cancel</button>
+    <div class="spay-btn spay-btn-cancel" onclick="closeSupplierPayOverlay()">✕ रद्द करें · Cancel</div>
   </div>
 </div>
 
@@ -4008,6 +4018,35 @@ function lgPersistRec(rec) {
     rec.id = list[idx].id;
     DB.update(K.BIKRI, rec.id, rec);
   }
+}
+
+// Programmatically add a खर्चा (expense) box to a day's Live हिसाब — used by the
+// माल feature so every cash outflow to a supplier lands in Live हिसाब expenses.
+// Carefully seeds legacy days (totals but no lgBoxes) so the lgPersistRec recompute
+// never wipes their original cash/upi/expense.
+function lgAddExpenseBox(date, amount, note){
+  amount = Math.round(amount||0);
+  if(!date || amount<=0) return;
+  const t=new Date();
+  const todayStr=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  const list=DB.get(K.BIKRI);
+  let rec=list.find(r=>r.date===date);
+  if(!rec){
+    rec={date:date,sales:0,cash:0,upi:0,expense:0,udhaar:0,profit:0,margin:0,rating:'⚠️ धीमा',notes:'',lgBoxes:[],
+         lgSaved:(date!==todayStr), lgSavedAt:(date!==todayStr)?Date.now():null};
+  }
+  if(!Array.isArray(rec.lgBoxes)) rec.lgBoxes=[];
+  // LEGACY SEED: record has real totals but no boxes → reconstruct boxes so the
+  // recompute in lgPersistRec keeps the original sales/expense intact.
+  if(rec.lgBoxes.length===0 && ((rec.cash||0)>0 || (rec.upi||0)>0 || (rec.expense||0)>0)){
+    if((rec.cash||0)>0)    rec.lgBoxes.push({n:1,type:'cash',   amount:rec.cash,   note:'(पुराना)',ts:Date.now()});
+    if((rec.upi||0)>0)     rec.lgBoxes.push({n:1,type:'upi',    amount:rec.upi,    note:'(पुराना)',ts:Date.now()});
+    if((rec.expense||0)>0) rec.lgBoxes.push({n:1,type:'expense',amount:rec.expense,note:'(पुराना)',ts:Date.now()});
+  }
+  const eCount=rec.lgBoxes.filter(b=>b.type==='expense').length;
+  rec.lgBoxes.push({n:eCount+1, type:'expense', amount:amount, note:(note||'').slice(0,80), ts:Date.now(), src:'maal'});
+  lgPersistRec(rec);
+  if(typeof loadHome==='function')setTimeout(loadHome,50);
 }
 
 // Silently auto-save any past day (date < today) that has entries but was
@@ -5502,6 +5541,9 @@ function saveMaalEntry(){
   const pay=document.getElementById('me-pay').value==='nakad'?'नकद':'उधार';
   const note=document.getElementById('me-note').value||'';
   DB.push(K.MAAL,{date,supplier,name,amount,pay,note});
+  if(pay==='नकद'){
+    lgAddExpenseBox(date, amount, ('माल — '+supplier+(name?' · '+name:'')).slice(0,80));
+  }
   showSuccessModal('नई खरीद सेव हो गई','📦 '+escHTML(supplier));
   closeMaalEntry();
   renderSuppliers();
@@ -5545,9 +5587,14 @@ function renderSupplierProfile(){
     entries.forEach((r,i)=>{
       const isNakad=r.pay==='नकद';
       const remaining=isNakad?0:Math.max(0,(r.amount||0)-(r.paid||0));
+      const settled=!isNakad&&(r.amount||0)>0&&(r.paid||0)>=(r.amount||0);
       const noteHtml=(r.note&&r.note.trim())?`<div class="mkp-note">📝 ${escHTML(r.note.trim())}</div>`:'';
       const payHtml=(!isNakad&&remaining>0)?`<button class="mkp-pay" onclick="event.stopPropagation();openSupplierPayOverlay('${escJS(r.id)}')">💳 चुकाएं · ${fmt(remaining)} बाकी</button>`:'';
-      rowsHtml+=`<div class="mkp-row"><div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt">${fmt(r.amount)}</div><div class="mkp-chip ${isNakad?'mkp-chip-nakad':'mkp-chip-udhaar'}">${isNakad?'नकद':'उधार'}</div></div></div>`;
+      let chipCls,chipTxt;
+      if(isNakad){chipCls='mkp-chip-nakad';chipTxt='नकद';}
+      else if(settled){chipCls='mkp-chip-settled';chipTxt='✓ चुका';}
+      else {chipCls='mkp-chip-udhaar';chipTxt='उधार';}
+      rowsHtml+=`<div class="mkp-row"><div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt">${fmt(r.amount)}</div><div class="mkp-chip ${chipCls}">${chipTxt}</div></div></div>`;
     });
     grp.innerHTML=`<div class="mkp-dhead"><div class="bar"></div><div class="d">${fmtDate(d)}</div><div class="tot">कुल ${fmt(dayTot)}</div></div>${rowsHtml}`;
     wrap.appendChild(grp);
@@ -5576,9 +5623,11 @@ function saveSupplierPayment(){
   const amt=parseFloat(document.getElementById('supplier-pay-amount').value)||0;
   if(!amt){toast('❌ रकम डालें',true);return;}
   const newPaid=Math.min((r.paid||0)+amt,r.amount||0);
+  const paidDelta=newPaid-(r.paid||0);
   // Note: 'pay' field preserved as original — historical truth.
   // Status (DUE/PARTIAL/SETTLED) is derived from paid vs amount in popup.
   DB.update(K.MAAL,_supplierPayId,{paid:newPaid});
+  if(paidDelta>0){const _t=new Date();const _ds=_t.getFullYear()+'-'+String(_t.getMonth()+1).padStart(2,'0')+'-'+String(_t.getDate()).padStart(2,'0');lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80));}
   showSuccessModal('Payment दर्ज', '💵 Payment recorded');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
@@ -5589,7 +5638,9 @@ function settleSupplierFull(){
   if(!_supplierPayId)return;
   const r=DB.get(K.MAAL).find(x=>x.id===_supplierPayId);if(!r)return;
   // 'pay' preserved — full settlement just zeros out the balance
+  const paidDelta=(r.amount||0)-(r.paid||0);
   DB.update(K.MAAL,_supplierPayId,{paid:r.amount||0});
+  if(paidDelta>0){const _t=new Date();const _ds=_t.getFullYear()+'-'+String(_t.getMonth()+1).padStart(2,'0')+'-'+String(_t.getDate()).padStart(2,'0');lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80));}
   showSuccessModal('पूरा चुक गया', '✅ Full payment cleared');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);

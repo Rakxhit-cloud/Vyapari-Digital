@@ -1468,8 +1468,9 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-dhead .bar{width:3px;height:14px;background:#d4a850;border-radius:2px;}
 .mkp-dhead .d{font-size:13px;font-weight:700;color:#e8c878;}
 .mkp-dhead .tot{margin-left:auto;font-size:10.5px;color:#9ad0c0;background:#0d1838;border:1px solid #2a4078;padding:3px 10px;border-radius:10px;font-weight:600;}
-.mkp-row{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1px solid #243a68;border-radius:12px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 8px rgba(0,0,0,0.22);}
-.mkp-num{width:24px;height:24px;border-radius:7px;background:#0a1530;border:1px solid #2a4078;color:#9ab0e0;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mkp-row{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1px solid #243a68;border-radius:12px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:flex-start;gap:11px;box-shadow:0 2px 8px rgba(0,0,0,0.22);}
+.mkp-num{width:24px;height:24px;border-radius:7px;background:#0a1530;border:1px solid #2a4078;color:#9ab0e0;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.mkp-pay{margin-top:7px;background:linear-gradient(135deg,#3a2410,#241608);border:1px solid #cc7a47;color:#f0b878;font-size:11px;font-weight:700;padding:6px 11px;border-radius:8px;cursor:pointer;}
 .mkp-mid{flex:1;min-width:0;}
 .mkp-item{font-size:13.5px;font-weight:600;color:#f0f2f6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mkp-note{font-size:10.5px;color:#8aa0d8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -2509,26 +2510,9 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 
-<div id="s-maal" class="screen">
-  <div class="header" style="border-bottom-color:#cc7a47;"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#4a2818 0%,#6a3818 50%,#2a1810 100%);border:2px solid #cc7a47;">📦</div><div><div class="header-title">माल की खरीद</div><div class="header-sub" style="color:#cc7a47;">नया माल दर्ज करें</div></div></div></div>
-  <div class="fw">
-    <div class="fcard">
-      <div class="frow"><div class="flbl">📅 तारीख</div><input type="date" class="finput" id="m-date"></div>
-      <div class="frow"><div class="flbl">🏪 सप्लायर का नाम</div><input type="text" class="finput" id="m-supplier" placeholder="दुकानदार का नाम"></div>
-      <div class="frow"><div class="flbl">📦 माल का नाम</div><input type="text" class="finput" id="m-name" placeholder="आटा, चावल..."></div>
-      <div class="frow"><div class="flbl">💰 खरीद रकम ₹</div><input type="number" class="finput" id="m-amount" placeholder="0"></div>
-      <div class="frow" style="border-bottom:none;flex-direction:column;align-items:flex-start;gap:5px;"><div class="flbl">💳 भुगतान का तरीका</div><div class="pay-toggle" style="width:100%;"><div class="pbtn pn" id="m-nbtn" onclick="setPay('m','nakad')">💵 नकद</div><div class="pbtn" id="m-ubtn" onclick="setPay('m','udhaar')">📋 उधार</div></div></div>
-      <input type="hidden" id="m-pay" value="nakad">
-      <div class="frow"><div class="flbl">📝 नोट</div><input type="text" class="finput" id="m-note" placeholder="कोई बात..."></div>
-    </div>
-   <div style="background:linear-gradient(135deg, #2a1810 0%, #1a0f08 100%);border:1px solid #4a2818;border-left:3px solid #cc7a47;border-radius:0 9px 9px 0;padding:12px;margin-top:10px;">
-      <div class="rrow" style="border-color:#3a2818;"><div class="rlbl" style="color:#d4a850;">इस हफ़्ते कुल माल</div><div style="font-size:15px;font-weight:500;color:#e8d8b8;" id="mw-total">₹0</div></div>
-      <div class="rrow" style="border-color:#3a2818;"><div class="rlbl" style="color:#6ab070;">नकद दिया</div><div style="font-size:14px;font-weight:500;color:#a0e8a8;" id="mw-nakad">₹0</div></div>
-      <div class="rrow"><div class="rlbl" style="color:#cc7a47;">सप्लायर को बाकी</div><div style="font-size:14px;font-weight:500;color:#e8c898;" id="mw-pending">₹0</div></div>
-    </div>
-    <button class="sbtn" onclick="saveMaal()">💾 माल की एंट्री सेव करें</button>
-  </div>
-</div>
+
+
+
 
 
 <div id="s-monthly" class="screen">
@@ -4551,7 +4535,6 @@ function go(id){
   if(id==='s-home')loadHome();
   if(id==='s-monthly')loadMonthly();
   if(id==='s-goal')loadGoalScreen();
-  if(id==='s-maal')loadMaalStats();
   if(id==='s-suppliers')renderSuppliers();
   
 }
@@ -5426,7 +5409,6 @@ function saveQuickEntry(){
 function calcProfit(){const c=parseFloat(document.getElementById('e-cash').value)||0,upi=parseFloat(document.getElementById('e-upi').value)||0,s=c+upi,x=parseFloat(document.getElementById('e-expense').value)||0,u=0;const p=s-x-u,m=s>0?Math.round((p/s)*100):0;document.getElementById('r-profit').textContent='₹'+p.toLocaleString('en-IN');document.getElementById('r-margin').textContent=m+'%';let r='—';if(s>=5000)r='🔥 बहुत अच्छा';else if(s>=3000)r='👍 अच्छा';else if(s>0)r='⚠️ धीमा';document.getElementById('r-rating').textContent=r;}
 function setPay(px,type){document.getElementById(px+'-pay').value=type;document.getElementById(px+'-nbtn').className='pbtn'+(type==='nakad'?' pn':'');document.getElementById(px+'-ubtn').className='pbtn'+(type==='udhaar'?' pu':'');}
 function saveEntry(){const cash=parseFloat(document.getElementById('e-cash').value)||0;const upi=parseFloat(document.getElementById('e-upi').value)||0;const s=cash+upi;if(!s){toast('❌ नकद या UPI बिक्री ज़रूर भरें',true);return;}const date=document.getElementById('e-date').value,expense=parseFloat(document.getElementById('e-expense').value)||0;const notes=cleanText(document.getElementById('e-notes').value,500);const profit=s-expense,margin=s>0?Math.round((profit/s)*100):0;let rating='⚠️ धीमा';if(s>=5000)rating='🔥 बहुत अच्छा';else if(s>=3000)rating='👍 अच्छा';DB.push(K.BIKRI,{date,sales:s,cash,upi,expense,udhaar:0,notes,profit,margin,rating});window.pickedEntryDate=null;showSuccessModal('एंट्री सेव हो गई', '📋 पूरी एंट्री · आज');['e-cash','e-upi','e-expense','e-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});calcProfit();setTimeout(()=>go('s-home'),1000);}
-function saveMaal(){const amount=parseFloat(document.getElementById('m-amount').value)||0;if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}const date=document.getElementById('m-date').value,supplier=document.getElementById('m-supplier').value||'';const name=document.getElementById('m-name').value||'',pay=document.getElementById('m-pay').value==='nakad'?'नकद':'उधार';const note=document.getElementById('m-note').value||'';DB.push(K.MAAL,{date,supplier,name,amount,pay,note});showSuccessModal('माल एंट्री सेव हो गई', '📦 माल की खरीद · आज');['m-supplier','m-name','m-amount','m-note'].forEach(id=>document.getElementById(id).value='');setPay('m','nakad');loadMaalStats();setTimeout(()=>go('s-home'),1000);}
 function saveGoal(){const month=document.getElementById('g-month').value,target=parseFloat(document.getElementById('g-target').value)||0;if(!target){toast('❌ लक्ष्य रकम ज़रूर भरें',true);return;}const note=document.getElementById('g-note').value||'';DB.push(K.GOAL,{month,target,note});showSuccessModal('लक्ष्य सेव हो गया', '🎯 आपका लक्ष्य · दर्ज');document.getElementById('g-target').value='';document.getElementById('g-note').value='';loadGoalScreen();}
 function loadHome(){buildMonthNav();loadKPIForMonth(monthNavSelected);loadMaalForMonth(monthNavSelected);if(mahineyOpen){buildMonthGrid();if(calSelectedMonth!==null)renderCalendar();}}
 function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0;rows.forEach(r=>{if(inHafta(r.date,activeHafta-1))tot+=(r.amount||0);});const w=document.getElementById('w-maal');if(w)w.textContent=fmt(tot);}
@@ -5549,8 +5531,10 @@ function renderSupplierProfile(){
     let rowsHtml='';
     entries.forEach((r,i)=>{
       const isNakad=r.pay==='नकद';
+      const remaining=isNakad?0:Math.max(0,(r.amount||0)-(r.paid||0));
       const noteHtml=(r.note&&r.note.trim())?`<div class="mkp-note">📝 ${escHTML(r.note.trim())}</div>`:'';
-      rowsHtml+=`<div class="mkp-row"><div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}</div><div class="mkp-rt"><div class="mkp-amt">${fmt(r.amount)}</div><div class="mkp-chip ${isNakad?'mkp-chip-nakad':'mkp-chip-udhaar'}">${isNakad?'नकद':'उधार'}</div></div></div>`;
+      const payHtml=(!isNakad&&remaining>0)?`<button class="mkp-pay" onclick="event.stopPropagation();openSupplierPayOverlay('${escJS(r.id)}')">💳 चुकाएं · ${fmt(remaining)} बाकी</button>`:'';
+      rowsHtml+=`<div class="mkp-row"><div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt">${fmt(r.amount)}</div><div class="mkp-chip ${isNakad?'mkp-chip-nakad':'mkp-chip-udhaar'}">${isNakad?'नकद':'उधार'}</div></div></div>`;
     });
     grp.innerHTML=`<div class="mkp-dhead"><div class="bar"></div><div class="d">${fmtDate(d)}</div><div class="tot">कुल ${fmt(dayTot)}</div></div>${rowsHtml}`;
     wrap.appendChild(grp);
@@ -5585,6 +5569,8 @@ function saveSupplierPayment(){
   showSuccessModal('Payment दर्ज', '💵 Payment recorded');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
+  renderSuppliers();
+  if(_mkProfileName!==null)renderSupplierProfile();
 }
 function settleSupplierFull(){
   if(!_supplierPayId)return;
@@ -5594,9 +5580,10 @@ function settleSupplierFull(){
   showSuccessModal('पूरा चुक गया', '✅ Full payment cleared');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
+  renderSuppliers();
+  if(_mkProfileName!==null)renderSupplierProfile();
 }
 
-function loadMaalStats(){const rows=DB.get(K.MAAL);let tot=0,nak=0,udh=0;rows.forEach(r=>{if(thisWeek(r.date)){const a=r.amount||0;tot+=a;if(r.pay==='नकद')nak+=a;else udh+=a;}});document.getElementById('mw-total').textContent=fmt(tot);document.getElementById('mw-nakad').textContent=fmt(nak);document.getElementById('mw-pending').textContent=fmt(udh);}
 let openHafta=null;
 let activeHafta=CUR_HAFTA;
 function toggleHafta(hNum){for(let i=1;i<=4;i++)document.getElementById(`hafta-panel-${i}`).classList.remove('open');document.querySelectorAll('.hafta-card-past').forEach(c=>c.classList.remove('hafta-card-selected'));if(openHafta===hNum){openHafta=null;activeHafta=CUR_HAFTA;loadMaalHome();const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(inHafta(r.date,CUR_HAFTA-1)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);const mT=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-mT-tE));return;}else{openHafta=hNum;document.getElementById(`hafta-panel-${hNum}`).classList.add('open');if(hNum!==CUR_HAFTA){const allCards=Array.from(document.getElementById('hafta-grid').children);const clickedCard=allCards[hNum-1];if(clickedCard&&clickedCard.classList.contains('hafta-card-past'))clickedCard.classList.add('hafta-card-selected');}}activeHafta=hNum;loadMaalHome();const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(inHafta(r.date,activeHafta-1)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);const mT=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-mT-tE));}

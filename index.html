@@ -1409,6 +1409,14 @@ body.notif-modal-open { overflow: hidden; }
 .mk-sec .t{font-size:13px;font-weight:700;color:#d4a850;letter-spacing:0.4px;}
 .mk-sec .c{margin-left:auto;font-size:10px;color:#9ab0e0;background:#0d1838;border:1px solid #2a4078;padding:3px 10px;border-radius:11px;font-weight:600;}
 .mk-sub2{font-size:11px;color:#8aa0d8;margin:0 2px 12px;}
+.mk-addbtn{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#d4a850,#e8c870);border:1.5px solid #f0d890;color:#1a1208;font-size:12px;font-weight:700;padding:6px 13px;border-radius:9px;box-shadow:0 2px 7px rgba(212,168,80,0.3);cursor:pointer;}
+.mk-addbtn .pl{font-size:15px;font-weight:800;line-height:1;}
+.mk-search{display:flex;align-items:center;gap:8px;background:#0d1838;border:1px solid #2a4078;border-radius:11px;padding:10px 13px;margin:0 0 14px;box-shadow:inset 0 1px 3px rgba(0,0,0,0.25);}
+.mk-search-ico{font-size:14px;opacity:0.8;flex-shrink:0;}
+.mk-search input{flex:1;background:transparent;border:none;outline:none;color:#f4f6fa;font-size:14px;min-width:0;}
+.mk-search input::placeholder{color:#5a6a90;}
+.mk-search-clear{font-size:13px;color:#8aa0d8;flex-shrink:0;cursor:pointer;padding:0 2px;}
+.mk-search-empty{text-align:center;font-size:12px;color:#6a7aa0;padding:18px 10px;}
 /* supplier card */
 .mk-card{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1.5px solid #3d5aa6;border-radius:15px;padding:14px;margin-bottom:11px;position:relative;box-shadow:0 3px 14px rgba(0,0,0,0.3),0 0 0 1px rgba(61,90,166,0.15),inset 0 1px 0 rgba(122,108,240,0.08);}
 .mk-card-top{display:flex;align-items:center;gap:11px;margin-bottom:12px;padding-right:44px;}
@@ -2462,10 +2470,10 @@ body.notif-modal-open { overflow: hidden; }
         <div class="mk-baki" id="sup-baki-strip"><span class="l">⚠ सप्लायर बाकी</span><span class="v" id="sup-baki">₹0</span></div>
       </div>
     </div>
-    <div class="mk-sec"><div class="bar"></div><div class="t">सप्लायर</div><div class="c" id="sup-count">0</div></div>
+    <div class="mk-sec"><div class="bar"></div><div class="t">सप्लायर</div><div class="c" id="sup-count">0</div><div class="mk-addbtn" onclick="openMaalEntry('')"><span class="pl">+</span> नया</div></div>
     <div class="mk-sub2">हर सप्लायर का खरीद + उधार हिसाब</div>
+    <div class="mk-search"><span class="mk-search-ico">🔍</span><input type="text" id="sup-search" placeholder="नाम से सप्लायर खोजें…" oninput="renderSuppliers()"><span class="mk-search-clear" id="sup-search-clear" onclick="document.getElementById('sup-search').value='';renderSuppliers();" style="display:none;">✕</span></div>
     <div id="sup-list"></div>
-    <div class="mk-addbar" onclick="openMaalEntry('')">➕ नया सप्लायर / खरीद जोड़ें</div>
   </div>
 </div>
 
@@ -5436,10 +5444,16 @@ function renderSuppliers(){
   const strip=document.getElementById('sup-baki-strip');if(strip)strip.style.display=totBaki>0?'flex':'none';
   setT('sup-res-month',HI_MONTHS[now.getMonth()]+' '+now.getFullYear());
   const chip=document.getElementById('sup-month-chip');if(chip)chip.innerHTML=HI_MONTHS[now.getMonth()]+'<br>'+now.getFullYear();
-  const arr=Object.values(groups).sort((a,b)=>(b.last||'').localeCompare(a.last||''));
-  setT('sup-count',arr.length);
+  const allArr=Object.values(groups).sort((a,b)=>(b.last||'').localeCompare(a.last||''));
+  setT('sup-count',allArr.length);
+  // search filter
+  const searchEl=document.getElementById('sup-search');
+  const q=(searchEl?searchEl.value:'').trim().toLowerCase();
+  const clearBtn=document.getElementById('sup-search-clear');if(clearBtn)clearBtn.style.display=q?'inline':'none';
+  const arr=q?allArr.filter(g=>g.name.toLowerCase().includes(q)):allArr;
   const list=document.getElementById('sup-list');if(!list)return;list.innerHTML='';
-  if(!arr.length){list.innerHTML='<div class="mk-empty">अभी कोई सप्लायर नहीं —<br>नीचे से पहली खरीद जोड़ें</div>';return;}
+  if(!allArr.length){list.innerHTML='<div class="mk-empty">अभी कोई सप्लायर नहीं —<br>"नया" से पहली खरीद जोड़ें</div>';return;}
+  if(!arr.length){list.innerHTML='<div class="mk-search-empty">🔍 "'+escHTML(q)+'" से कोई सप्लायर नहीं मिला</div>';return;}
   arr.forEach(g=>{
     const card=document.createElement('div');card.className='mk-card';
     const av=(g.name[0]||'?').toUpperCase();

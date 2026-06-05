@@ -6264,13 +6264,36 @@ function appLockStart() {}
 function appLockActivate() {}
 function appLockUnlock() {}
 function appLockToggle() { if (window.alckOpenChangePinFlow) window.alckOpenChangePinFlow(); }
-history.pushState(null, '', location.href);
-window.addEventListener('popstate', function() {
-  const overlays=['supplier-pay-overlay','action-popup','confirm-popup','edit-popup','date-popup-overlay','install-banner','lg-note-modal'];
-  for(const id of overlays){const el=document.getElementById(id);if(el&&(el.classList.contains('show')||el.style.display==='flex')){el.classList.remove('show');el.style.display='';history.pushState(null,'',location.href);return;}}
-  const active=document.querySelector('.screen.active');
-  if(active&&active.id!=='s-home'){go('s-home');history.pushState(null,'',location.href);return;}
-});  
+history.pushState({app:1}, '', location.href);
+(function(){
+  const PARENT={'s-supplier-profile':'s-suppliers','s-suppliers':'s-home','s-entry':'s-home','s-calendar':'s-home','s-goal':'s-home','s-monthly':'s-home','s-livegalla':'s-home'};
+  let exitArmed=false, exitTimer=null;
+  function isOpen(el){return el && (el.classList.contains('show')||el.style.display==='flex'||el.style.display==='block');}
+  // Close the single topmost open layer (popup/menu). Returns true if one was closed.
+  function closeOneLayer(){
+    const dp=document.getElementById('date-popup-overlay');
+    if(isOpen(dp)){ if(typeof closeDatePopupDirect==='function')closeDatePopupDirect(); else dp.classList.remove('show'); return true; }
+    const ov=['lg-keypad-modal','lg-box-action','mk-pop-overlay','supplier-pay-overlay','lg-note-modal','action-popup','confirm-popup','edit-popup','maal-ledger-overlay','install-banner'];
+    for(const id of ov){const el=document.getElementById(id);if(isOpen(el)){el.classList.remove('show');el.classList.remove('compact');el.classList.remove('kbd-open');if(el.style.display)el.style.display='';return true;}}
+    const more=document.getElementById('more-menu');
+    if(more && more.style.display==='block'){more.style.display='none';return true;}
+    return false;
+  }
+  function rearm(){history.pushState({app:1},'',location.href);}
+  window.addEventListener('popstate',function(){
+    // 1) Close any open popup/menu first
+    if(closeOneLayer()){rearm();return;}
+    // 2) Step back one screen toward home
+    const active=document.querySelector('.screen.active');
+    if(active && active.id && active.id!=='s-home'){go(PARENT[active.id]||'s-home');rearm();return;}
+    // 3) On home, nothing open → press back twice to exit (native feel)
+    if(exitArmed){exitArmed=false;clearTimeout(exitTimer);history.back();return;}
+    exitArmed=true;
+    if(typeof toast==='function')toast('फिर से दबाएं — ऐप बंद करने के लिए');
+    clearTimeout(exitTimer);exitTimer=setTimeout(()=>{exitArmed=false;},2000);
+    rearm();
+  });
+})();
 function loadGoalScreen(){const el=document.getElementById('goal-list');el.innerHTML='';const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}goals.slice().reverse().forEach(g=>{const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';const parts=g.month.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='gcard';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;el.appendChild(div);});}
 </script>
 

@@ -4076,28 +4076,52 @@ function lgAddExpenseBox(date, amount, note, maalId, maalKind){
   if(typeof loadHome==='function')setTimeout(loadHome,50);
 }
 // Reverse-sync: remove every auto-created खर्चा box linked to a माल record (across all days).
-function lgRemoveMaalExpenses(maalId){
+function lgRemoveMaalExpenses(maalId, fb){
   if(!maalId)return;
+  let removedAny=false;
   DB.get(K.BIKRI).forEach(rec=>{
     if(!Array.isArray(rec.lgBoxes))return;
     const before=rec.lgBoxes.length;
     rec.lgBoxes=rec.lgBoxes.filter(b=>!(b&&b.src==='maal'&&b.maalId===maalId));
-    if(rec.lgBoxes.length!==before){
-      let en=0; rec.lgBoxes.forEach(b=>{if(b.type==='expense')b.n=++en;});
-      lgPersistRec(rec);
-    }
+    if(rec.lgBoxes.length!==before){removedAny=true;let en=0;rec.lgBoxes.forEach(b=>{if(b.type==='expense')b.n=++en;});lgPersistRec(rec);}
   });
+  // FALLBACK: legacy box created before maalId existed → match by date+amount+note
+  if(!removedAny && fb){
+    DB.get(K.BIKRI).forEach(rec=>{
+      if(!Array.isArray(rec.lgBoxes))return;
+      if(fb.date && rec.date!==fb.date)return;
+      const before=rec.lgBoxes.length;
+      rec.lgBoxes=rec.lgBoxes.filter(b=>!(b&&b.src==='maal'&&!b.maalId&&b.type==='expense'&&Math.round(b.amount)===Math.round(fb.oldAmount)&&(!fb.oldNote||b.note===fb.oldNote)));
+      if(rec.lgBoxes.length!==before){let en=0;rec.lgBoxes.forEach(b=>{if(b.type==='expense')b.n=++en;});lgPersistRec(rec);}
+    });
+  }
   if(typeof loadHome==='function')setTimeout(loadHome,50);
 }
 // Reverse-sync: update the नकद-purchase खर्चा box when a माल entry's amount/name is edited.
-function lgUpdateMaalPurchaseExpense(maalId,newAmount,newNote){
+function lgUpdateMaalPurchaseExpense(maalId,newAmount,newNote,fb){
   if(!maalId)return;
+  let done=false;
   DB.get(K.BIKRI).forEach(rec=>{
     if(!Array.isArray(rec.lgBoxes))return;
     let changed=false;
-    rec.lgBoxes.forEach(b=>{ if(b&&b.src==='maal'&&b.maalId===maalId&&b.maalKind==='purchase'){ b.amount=Math.round(newAmount); if(newNote!=null)b.note=(newNote||'').slice(0,80); changed=true; } });
+    rec.lgBoxes.forEach(b=>{ if(b&&b.src==='maal'&&b.maalId===maalId&&(b.maalKind==='purchase'||!b.maalKind)){ b.amount=Math.round(newAmount); if(newNote!=null)b.note=(newNote||'').slice(0,80); b.maalKind='purchase'; changed=true; done=true; } });
     if(changed)lgPersistRec(rec);
   });
+  // FALLBACK: legacy unlinked box → match by date+amount+note, then BACKFILL the link
+  if(!done && fb){
+    let matched=false;
+    DB.get(K.BIKRI).forEach(rec=>{
+      if(matched || !Array.isArray(rec.lgBoxes))return;
+      if(fb.date && rec.date!==fb.date)return;
+      let changed=false;
+      rec.lgBoxes.forEach(b=>{
+        if(!matched && b&&b.src==='maal'&&!b.maalId&&b.type==='expense'&&Math.round(b.amount)===Math.round(fb.oldAmount)&&(!fb.oldNote||b.note===fb.oldNote)){
+          b.maalId=maalId; b.maalKind='purchase'; b.amount=Math.round(newAmount); if(newNote!=null)b.note=(newNote||'').slice(0,80); changed=true; matched=true;
+        }
+      });
+      if(changed)lgPersistRec(rec);
+    });
+  }
   if(typeof loadHome==='function')setTimeout(loadHome,50);
 }
 
@@ -5632,10 +5656,12 @@ function saveMaalEdit(){
   const isNakad=r.pay==='नकद';
   const paid=r.paid||0;
   if(!isNakad && newAmount<paid){toast('❌ चुकाई रकम से कम नहीं हो सकती',true);return;}
+  const _oldNote=('माल — '+(r.supplier||'')+(r.name?' · '+r.name:'')).slice(0,80);
+  const _fb={date:r.date, oldAmount:r.amount, oldNote:_oldNote};
   DB.update(K.MAAL,_maalEditId,{amount:newAmount,name:newName});
   // reverse-sync: नकद purchase has a linked खर्चा box → update it to match
   if(isNakad){
-    lgUpdateMaalPurchaseExpense(_maalEditId,newAmount,('माल — '+(r.supplier||'')+(newName?' · '+newName:'')).slice(0,80));
+    lgUpdateMaalPurchaseExpense(_maalEditId,newAmount,('माल — '+(r.supplier||'')+(newName?' · '+newName:'')).slice(0,80),_fb);
   }
   showSuccessModal('एंट्री अपडेट हुई','✏️ बदलाव सेव हो गए');
   closeMaalEdit();
@@ -5657,7 +5683,9 @@ function deleteMaalEntry(){
   _maalDelArmed=false;clearTimeout(_maalDelTimer);
   if(btn){btn.classList.remove('armed');btn.textContent='🗑️ यह एंट्री हटाएं';}
   const id=_maalEditId;
-  lgRemoveMaalExpenses(id);      // remove linked खर्चा (purchase + any payments)
+  const _dr=(DB.get(K.MAAL)||[]).find(x=>x.id===id);
+  const _dfb=_dr?{date:_dr.date,oldAmount:_dr.amount,oldNote:('माल — '+(_dr.supplier||'')+(_dr.name?' · '+_dr.name:'')).slice(0,80)}:null;
+  lgRemoveMaalExpenses(id,_dfb);      // remove linked खर्चा (purchase + any payments)
   DB.remove(K.MAAL,id);
   showSuccessModal('एंट्री हटा दी','🗑️ एंट्री और इसका खर्चा हटा दिया');
   closeMaalEdit();

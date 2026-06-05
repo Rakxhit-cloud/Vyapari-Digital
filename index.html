@@ -1488,6 +1488,18 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-chip-nakad{color:#5dd88a;background:rgba(62,200,115,0.14);border:0.5px solid #2d7a4a;}
 .mkp-chip-udhaar{color:#e89b5a;background:rgba(204,122,71,0.15);border:0.5px solid #7a4a26;}
 .mkp-chip-settled{color:#5dd88a;background:rgba(62,200,115,0.15);border:0.5px solid #2d7a4a;}
+.mkp-entry{margin-bottom:9px;}
+.mkp-entry .mkp-row{margin-bottom:4px;}
+.mkp-edit{background:transparent;border:1px solid #2a4078;color:#8aa0d8;font-size:10.5px;font-weight:600;padding:4px 11px;border-radius:7px;cursor:pointer;margin-left:0;}
+.mkp-edit:active{background:#15233f;}
+.mk-center-overlay{align-items:center !important;}
+.mk-edit-modal{background:linear-gradient(180deg,#0e1830 0%,#0a1228 100%);border:1.5px solid #cc7a47;border-radius:18px;padding:18px 17px 20px;width:calc(100% - 40px);max-width:380px;box-shadow:0 12px 40px rgba(0,0,0,0.6);}
+.mk-edit-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.mk-edit-sup{font-size:11.5px;color:#9ab0e0;margin-bottom:15px;}
+.mk-edit-sup b{color:#f4f6fa;}
+.mk-edit-hint{display:none;font-size:10.5px;color:#f0b070;background:rgba(204,122,71,0.1);border:1px solid #5a3a1a;border-radius:8px;padding:8px 10px;margin-bottom:12px;line-height:1.45;}
+.mk-edit-del{margin-top:10px;text-align:center;padding:12px;border-radius:11px;background:#1e1012;border:1px solid #5a2530;color:#e08a9c;font-size:13px;font-weight:700;cursor:pointer;}
+.mk-edit-del.armed{background:#3a1018;border-color:#ff6a8a;color:#ff8aa8;}
 .spay-info{background:#0d1838;border:1px solid #2a4078;border-radius:11px;padding:12px 14px;font-size:12.5px;color:#9ab0e0;line-height:1.7;}
 .spay-info span{color:#f4f6fa;font-weight:700;float:right;}
 .spay-btn{flex:1;text-align:center;padding:13px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;}
@@ -2547,6 +2559,21 @@ body.notif-modal-open { overflow: hidden; }
     <div style="margin-top:14px;" id="goal-list"><div class="loading">⏳</div></div>
   </div>
 </div>
+<div class="popup-overlay mk-center-overlay" id="maal-edit-overlay">
+  <div class="mk-edit-modal">
+    <div class="mk-edit-head">
+      <div class="mk-pop-title" style="color:#d4a850;">✏️ एंट्री सुधारें</div>
+      <div class="mk-pop-x" onclick="closeMaalEdit()">✕</div>
+    </div>
+    <div class="mk-edit-sup" id="me2-sup">—</div>
+    <div class="mk-fld"><div class="mk-fld-lbl">📦 माल का नाम</div><input type="text" class="mk-in" id="me2-name" placeholder="माल का नाम"></div>
+    <div class="mk-fld"><div class="mk-fld-lbl">💰 रकम ₹</div><input type="number" class="mk-in mk-amt" id="me2-amount" placeholder="0"></div>
+    <div class="mk-edit-hint" id="me2-hint"></div>
+    <div class="mk-save" onclick="saveMaalEdit()">💾 बदलाव सेव करें</div>
+    <div class="mk-edit-del" onclick="deleteMaalEntry()">🗑️ यह एंट्री हटाएं</div>
+  </div>
+</div>
+
 <div class="popup-overlay" id="supplier-pay-overlay">
   <div class="mk-pop" style="max-width:480px;">
     <div class="mk-pop-grab"></div>
@@ -4024,7 +4051,7 @@ function lgPersistRec(rec) {
 // माल feature so every cash outflow to a supplier lands in Live हिसाब expenses.
 // Carefully seeds legacy days (totals but no lgBoxes) so the lgPersistRec recompute
 // never wipes their original cash/upi/expense.
-function lgAddExpenseBox(date, amount, note){
+function lgAddExpenseBox(date, amount, note, maalId, maalKind){
   amount = Math.round(amount||0);
   if(!date || amount<=0) return;
   const t=new Date();
@@ -4044,8 +4071,33 @@ function lgAddExpenseBox(date, amount, note){
     if((rec.expense||0)>0) rec.lgBoxes.push({n:1,type:'expense',amount:rec.expense,note:'(पुराना)',ts:Date.now()});
   }
   const eCount=rec.lgBoxes.filter(b=>b.type==='expense').length;
-  rec.lgBoxes.push({n:eCount+1, type:'expense', amount:amount, note:(note||'').slice(0,80), ts:Date.now(), src:'maal'});
+  rec.lgBoxes.push({n:eCount+1, type:'expense', amount:amount, note:(note||'').slice(0,80), ts:Date.now(), src:'maal', maalId:maalId||null, maalKind:maalKind||'purchase'});
   lgPersistRec(rec);
+  if(typeof loadHome==='function')setTimeout(loadHome,50);
+}
+// Reverse-sync: remove every auto-created खर्चा box linked to a माल record (across all days).
+function lgRemoveMaalExpenses(maalId){
+  if(!maalId)return;
+  DB.get(K.BIKRI).forEach(rec=>{
+    if(!Array.isArray(rec.lgBoxes))return;
+    const before=rec.lgBoxes.length;
+    rec.lgBoxes=rec.lgBoxes.filter(b=>!(b&&b.src==='maal'&&b.maalId===maalId));
+    if(rec.lgBoxes.length!==before){
+      let en=0; rec.lgBoxes.forEach(b=>{if(b.type==='expense')b.n=++en;});
+      lgPersistRec(rec);
+    }
+  });
+  if(typeof loadHome==='function')setTimeout(loadHome,50);
+}
+// Reverse-sync: update the नकद-purchase खर्चा box when a माल entry's amount/name is edited.
+function lgUpdateMaalPurchaseExpense(maalId,newAmount,newNote){
+  if(!maalId)return;
+  DB.get(K.BIKRI).forEach(rec=>{
+    if(!Array.isArray(rec.lgBoxes))return;
+    let changed=false;
+    rec.lgBoxes.forEach(b=>{ if(b&&b.src==='maal'&&b.maalId===maalId&&b.maalKind==='purchase'){ b.amount=Math.round(newAmount); if(newNote!=null)b.note=(newNote||'').slice(0,80); changed=true; } });
+    if(changed)lgPersistRec(rec);
+  });
   if(typeof loadHome==='function')setTimeout(loadHome,50);
 }
 
@@ -5540,9 +5592,9 @@ function saveMaalEntry(){
   const name=document.getElementById('me-name').value||'';
   const pay=document.getElementById('me-pay').value==='nakad'?'नकद':'उधार';
   const note=document.getElementById('me-note').value||'';
-  DB.push(K.MAAL,{date,supplier,name,amount,pay,note});
+  const _pushedMaal=DB.push(K.MAAL,{date,supplier,name,amount,pay,note});
   if(pay==='नकद'){
-    lgAddExpenseBox(date, amount, ('माल — '+supplier+(name?' · '+name:'')).slice(0,80));
+    lgAddExpenseBox(date, amount, ('माल — '+supplier+(name?' · '+name:'')).slice(0,80), _pushedMaal&&_pushedMaal.id, 'purchase');
   }
   showSuccessModal('नई खरीद सेव हो गई','📦 '+escHTML(supplier));
   closeMaalEntry();
@@ -5553,6 +5605,66 @@ function saveMaalEntry(){
 
 // ===== supplier profile inner page =====
 let _mkProfileName=null;
+let _maalEditId=null;
+function openMaalEdit(id){
+  const r=(DB.get(K.MAAL)||[]).find(x=>x.id===id);
+  if(!r)return;
+  _maalEditId=id;
+  document.getElementById('me2-name').value=r.name||'';
+  document.getElementById('me2-amount').value=r.amount||0;
+  const isNakad=r.pay==='नकद';
+  const paid=r.paid||0;
+  document.getElementById('me2-sup').innerHTML=`सप्लायर: <b>${escHTML(r.supplier||'—')}</b> · <span style="color:${isNakad?'#5dd88a':'#e89b5a'}">${isNakad?'नकद':'उधार'}</span>`;
+  const hint=document.getElementById('me2-hint');
+  if(!isNakad && paid>0){ hint.style.display='block'; hint.textContent='⚠ इस उधार पर ₹'+paid.toLocaleString('en-IN')+' चुका चुके हैं — रकम उससे कम नहीं हो सकती।'; }
+  else { hint.style.display='none'; }
+  document.getElementById('maal-edit-overlay').classList.add('show');
+  _maalDelArmed=false;clearTimeout(_maalDelTimer);
+  const _db=document.querySelector('.mk-edit-del');if(_db){_db.classList.remove('armed');_db.textContent='🗑️ यह एंट्री हटाएं';}
+}
+function closeMaalEdit(){document.getElementById('maal-edit-overlay').classList.remove('show');_maalEditId=null;_maalDelArmed=false;clearTimeout(_maalDelTimer);}
+function saveMaalEdit(){
+  if(!_maalEditId)return;
+  const r=(DB.get(K.MAAL)||[]).find(x=>x.id===_maalEditId);if(!r)return;
+  const newAmount=Math.round(parseFloat(document.getElementById('me2-amount').value)||0);
+  const newName=(document.getElementById('me2-name').value||'').trim();
+  if(newAmount<=0){toast('❌ रकम सही भरें',true);return;}
+  const isNakad=r.pay==='नकद';
+  const paid=r.paid||0;
+  if(!isNakad && newAmount<paid){toast('❌ चुकाई रकम से कम नहीं हो सकती',true);return;}
+  DB.update(K.MAAL,_maalEditId,{amount:newAmount,name:newName});
+  // reverse-sync: नकद purchase has a linked खर्चा box → update it to match
+  if(isNakad){
+    lgUpdateMaalPurchaseExpense(_maalEditId,newAmount,('माल — '+(r.supplier||'')+(newName?' · '+newName:'')).slice(0,80));
+  }
+  showSuccessModal('एंट्री अपडेट हुई','✏️ बदलाव सेव हो गए');
+  closeMaalEdit();
+  renderSuppliers();
+  if(_mkProfileName!==null)renderSupplierProfile();
+  loadMaalHome();
+}
+let _maalDelArmed=false,_maalDelTimer=null;
+function deleteMaalEntry(){
+  if(!_maalEditId)return;
+  const btn=document.querySelector('.mk-edit-del');
+  if(!_maalDelArmed){
+    _maalDelArmed=true;
+    if(btn){btn.classList.add('armed');btn.textContent='⚠️ पक्का हटाएं? फिर दबाएं';}
+    clearTimeout(_maalDelTimer);
+    _maalDelTimer=setTimeout(()=>{_maalDelArmed=false;if(btn){btn.classList.remove('armed');btn.textContent='🗑️ यह एंट्री हटाएं';}},3000);
+    return;
+  }
+  _maalDelArmed=false;clearTimeout(_maalDelTimer);
+  if(btn){btn.classList.remove('armed');btn.textContent='🗑️ यह एंट्री हटाएं';}
+  const id=_maalEditId;
+  lgRemoveMaalExpenses(id);      // remove linked खर्चा (purchase + any payments)
+  DB.remove(K.MAAL,id);
+  showSuccessModal('एंट्री हटा दी','🗑️ एंट्री और इसका खर्चा हटा दिया');
+  closeMaalEdit();
+  renderSuppliers();
+  if(_mkProfileName!==null)renderSupplierProfile();
+  loadMaalHome();
+}
 function openSupplierProfile(name){
   _mkProfileName=name||'';
   renderSupplierProfile();
@@ -5594,7 +5706,7 @@ function renderSupplierProfile(){
       if(isNakad){chipCls='mkp-chip-nakad';chipTxt='नकद';}
       else if(settled){chipCls='mkp-chip-settled';chipTxt='✓ चुका';}
       else {chipCls='mkp-chip-udhaar';chipTxt='उधार';}
-      rowsHtml+=`<div class="mkp-row"><div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt">${fmt(r.amount)}</div><div class="mkp-chip ${chipCls}">${chipTxt}</div></div></div>`;
+      rowsHtml+=`<div class="mkp-entry"><div class="mkp-row"><div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt">${fmt(r.amount)}</div><div class="mkp-chip ${chipCls}">${chipTxt}</div></div></div><button class="mkp-edit" onclick="event.stopPropagation();openMaalEdit('${escJS(r.id)}')">✏️ Edit करें</button></div>`;
     });
     grp.innerHTML=`<div class="mkp-dhead"><div class="bar"></div><div class="d">${fmtDate(d)}</div><div class="tot">कुल ${fmt(dayTot)}</div></div>${rowsHtml}`;
     wrap.appendChild(grp);
@@ -5627,7 +5739,7 @@ function saveSupplierPayment(){
   // Note: 'pay' field preserved as original — historical truth.
   // Status (DUE/PARTIAL/SETTLED) is derived from paid vs amount in popup.
   DB.update(K.MAAL,_supplierPayId,{paid:newPaid});
-  if(paidDelta>0){const _t=new Date();const _ds=_t.getFullYear()+'-'+String(_t.getMonth()+1).padStart(2,'0')+'-'+String(_t.getDate()).padStart(2,'0');lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80));}
+  if(paidDelta>0){const _t=new Date();const _ds=_t.getFullYear()+'-'+String(_t.getMonth()+1).padStart(2,'0')+'-'+String(_t.getDate()).padStart(2,'0');lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80),r.id,'payment');}
   showSuccessModal('Payment दर्ज', '💵 Payment recorded');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
@@ -5640,7 +5752,7 @@ function settleSupplierFull(){
   // 'pay' preserved — full settlement just zeros out the balance
   const paidDelta=(r.amount||0)-(r.paid||0);
   DB.update(K.MAAL,_supplierPayId,{paid:r.amount||0});
-  if(paidDelta>0){const _t=new Date();const _ds=_t.getFullYear()+'-'+String(_t.getMonth()+1).padStart(2,'0')+'-'+String(_t.getDate()).padStart(2,'0');lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80));}
+  if(paidDelta>0){const _t=new Date();const _ds=_t.getFullYear()+'-'+String(_t.getMonth()+1).padStart(2,'0')+'-'+String(_t.getDate()).padStart(2,'0');lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80),r.id,'payment');}
   showSuccessModal('पूरा चुक गया', '✅ Full payment cleared');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
@@ -6273,7 +6385,7 @@ history.pushState({app:1}, '', location.href);
   function closeOneLayer(){
     const dp=document.getElementById('date-popup-overlay');
     if(isOpen(dp)){ if(typeof closeDatePopupDirect==='function')closeDatePopupDirect(); else dp.classList.remove('show'); return true; }
-    const ov=['lg-keypad-modal','lg-box-action','mk-pop-overlay','supplier-pay-overlay','lg-note-modal','action-popup','confirm-popup','edit-popup','maal-ledger-overlay','install-banner'];
+    const ov=['lg-keypad-modal','lg-box-action','maal-edit-overlay','mk-pop-overlay','supplier-pay-overlay','lg-note-modal','action-popup','confirm-popup','edit-popup','maal-ledger-overlay','install-banner'];
     for(const id of ov){const el=document.getElementById(id);if(isOpen(el)){el.classList.remove('show');el.classList.remove('compact');el.classList.remove('kbd-open');if(el.style.display)el.style.display='';return true;}}
     const more=document.getElementById('more-menu');
     if(more && more.style.display==='block'){more.style.display='none';return true;}

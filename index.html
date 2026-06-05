@@ -1357,18 +1357,16 @@ body.notif-modal-open { overflow: hidden; }
 .lg-dp-saved-amt { font-size:13px; font-weight:700; color:#c4f4b8; margin-left:auto; }
 
 /* ===== माल की खरीद — supplier feature ===== */
-@keyframes mk-breathe { 0%,100% { box-shadow:0 4px 18px rgba(204,122,71,0.14); transform:scale(1); } 50% { box-shadow:0 6px 28px rgba(204,122,71,0.32); transform:scale(1.012); } }
-.mk-tile{background:linear-gradient(135deg,#0a2828 0%,#10322e 100%);border:1.5px solid #cc7a47;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 4px 18px rgba(204,122,71,0.14);animation:mk-breathe 4s ease-in-out infinite;will-change:transform;}
-@media (prefers-reduced-motion: reduce){ .mk-tile{ animation:none; } }
+.mk-tile{background:linear-gradient(135deg,#0a2828 0%,#10322e 100%);border:1.5px solid #cc7a47;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 4px 18px rgba(204,122,71,0.14);}
 .mk-tile-stripe{height:5px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
 .mk-tile-body{padding:18px 16px;display:flex;align-items:center;gap:15px;}
-.mk-tile-icon{width:68px;height:68px;background:linear-gradient(135deg,#5a3818 0%,#3a2410 100%);border:2.5px solid #cc7a47;border-radius:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mk-tile-icon{width:68px;height:68px;background:linear-gradient(135deg,#5a3818 0%,#3a2410 100%);border:2.5px solid #cc7a47;border-radius:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:hk-breathe 2.4s ease-in-out infinite;}
 .mk-tile-text{flex:1;}
 .mk-tile-title{font-size:23px;font-weight:700;color:#e89b5a;line-height:1.1;letter-spacing:-0.3px;}
 .mk-tile-sub{font-size:11.5px;color:#9ad0c0;margin-top:5px;font-weight:500;}
 .mk-tile-cta{background:linear-gradient(135deg,#cc7a47 0%,#e8a050 100%);color:#1a1208;font-size:13px;font-weight:700;padding:10px 15px;border-radius:10px;border:1.5px solid #f0b878;flex-shrink:0;}
-.mk-tile-pill{background:#0a1f1a;border-radius:9px;padding:2px 9px;display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:0.4px;border:1px solid #3ec873;color:#5dd88a;margin-left:7px;vertical-align:middle;}
-.mk-tile-dot,.mk-dot{width:6px;height:6px;border-radius:50%;display:inline-block;background:#3ec873;}
+.mk-tile-pill{background:#0a1f1a;border-radius:10px;padding:4px 11px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.4px;border:1px solid #3ec873;color:#5dd88a;margin-left:8px;vertical-align:middle;animation:hk-breathe 2.4s ease-in-out infinite;}
+.mk-tile-dot,.mk-dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#3ec873;}
 /* screen header */
 .mk-header{padding:14px 16px;border-bottom:1px solid #cc7a47;background:#0a1530;}
 .mk-hl{display:flex;align-items:center;gap:11px;}

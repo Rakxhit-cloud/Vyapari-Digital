@@ -1357,7 +1357,9 @@ body.notif-modal-open { overflow: hidden; }
 .lg-dp-saved-amt { font-size:13px; font-weight:700; color:#c4f4b8; margin-left:auto; }
 
 /* ===== माल की खरीद — supplier feature ===== */
-.mk-tile{background:linear-gradient(135deg,#0a2828 0%,#10322e 100%);border:1.5px solid #cc7a47;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 4px 18px rgba(204,122,71,0.14);}
+@keyframes mk-breathe { 0%,100% { box-shadow:0 4px 18px rgba(204,122,71,0.14); transform:scale(1); } 50% { box-shadow:0 6px 28px rgba(204,122,71,0.32); transform:scale(1.012); } }
+.mk-tile{background:linear-gradient(135deg,#0a2828 0%,#10322e 100%);border:1.5px solid #cc7a47;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 4px 18px rgba(204,122,71,0.14);animation:mk-breathe 4s ease-in-out infinite;will-change:transform;}
+@media (prefers-reduced-motion: reduce){ .mk-tile{ animation:none; } }
 .mk-tile-stripe{height:5px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
 .mk-tile-body{padding:18px 16px;display:flex;align-items:center;gap:15px;}
 .mk-tile-icon{width:68px;height:68px;background:linear-gradient(135deg,#5a3818 0%,#3a2410 100%);border:2.5px solid #cc7a47;border-radius:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}

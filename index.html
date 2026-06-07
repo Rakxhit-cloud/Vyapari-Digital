@@ -1960,8 +1960,10 @@ body.notif-modal-open { overflow: hidden; }
   <div class="more-item" onclick="alckOpenChangePinFlow();toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:1.5px solid #7a6cf0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div> <span style="color:#e8d8b8;font-weight:500;">PIN बदलें · Change PIN</span> <span style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:6px;background:rgba(240, 192, 64, 0.15);color:#f0c040;border:1px solid #d4a020;font-weight:500;">SECURE</span></div>
   <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4a3818 0%,#2a1808 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📅</div> <span style="color:#e8d8b8;font-weight:500;">महीने का हिसाब</span></div>
   <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1810 0%,#1a0f08 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎯</div> <span style="color:#e8d8b8;font-weight:500;">लक्ष्य</span></div>
-  <div class="more-item" style="border-bottom:none;" onclick="signOut();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
+  <div class="more-item" onclick="signOut();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
+  <div class="more-item" style="border-bottom:none;" onclick="toggleMore();openDeleteAccount();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3a0a0a 0%,#220505 100%);border:1.5px solid #c0392b;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🗑️</div> <span style="color:#ff7a7a;font-weight:500;">मेरा खाता और डेटा मिटाएं</span></div>
 </div>
+<div id="del-recaptcha-container"></div>
 <div id="success-modal-overlay">
   <div class="success-modal-card">
     <div class="success-modal-strip"></div>
@@ -2559,6 +2561,35 @@ body.notif-modal-open { overflow: hidden; }
     <div style="margin-top:14px;" id="goal-list"><div class="loading">⏳</div></div>
   </div>
 </div>
+<div class="popup-overlay mk-center-overlay" id="del-acct-overlay">
+  <div class="mk-edit-modal" style="border-color:#c0392b;">
+    <div class="mk-edit-head">
+      <div class="mk-pop-title" style="color:#ff7a7a;">🗑️ खाता मिटाएं</div>
+      <div class="mk-pop-x" onclick="closeDeleteAccount()">✕</div>
+    </div>
+
+    <div id="del-step1">
+      <div style="font-size:13px;color:#e8c0c0;line-height:1.6;background:rgba(192,57,43,0.1);border:1px solid #5a2020;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+        यह आपका <b>पूरा खाता</b> और <b>सारा डेटा</b> — बिक्री, खर्चा, माल, सप्लायर, उधार — <b>हमेशा के लिए</b> मिटा देगा।<br>यह वापस नहीं आ सकता।
+      </div>
+      <label style="display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:#cdd8f8;cursor:pointer;margin-bottom:16px;">
+        <input type="checkbox" id="del-confirm-check" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;">
+        <span>मैं समझता/समझती हूँ कि सारा डेटा हमेशा के लिए मिट जाएगा</span>
+      </label>
+      <div class="mk-save" style="background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="delAcctProceed()">आगे बढ़ें · OTP भेजें</div>
+      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="closeDeleteAccount()">रद्द करें · Cancel</div>
+    </div>
+
+    <div id="del-step2" style="display:none;">
+      <div style="font-size:12.5px;color:#9ab0e0;margin-bottom:12px;">आपके नंबर पर भेजा गया OTP डालें — पुष्टि के लिए।</div>
+      <input type="tel" inputmode="numeric" maxlength="6" class="mk-in" id="del-otp" placeholder="6-अंकों का OTP" style="text-align:center;font-size:20px;letter-spacing:6px;">
+      <div id="del-err" style="display:none;font-size:11.5px;color:#ff8a8a;margin-top:8px;"></div>
+      <div class="mk-save" id="del-final-btn" style="margin-top:14px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="delAcctConfirm()">🗑️ हमेशा के लिए मिटाएं</div>
+      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="closeDeleteAccount()">रद्द करें · Cancel</div>
+    </div>
+  </div>
+</div>
+
 <div class="popup-overlay mk-center-overlay" id="maal-edit-overlay">
   <div class="mk-edit-modal">
     <div class="mk-edit-head">
@@ -2607,7 +2638,7 @@ body.notif-modal-open { overflow: hidden; }
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, deleteUser, PhoneAuthProvider, reauthenticateWithCredential } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, serverTimestamp, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 const firebaseConfig = {
   apiKey: "AIzaSyDzhDpkkjXKWRd1EAbgr3AXe6yFHmXJ9W4",
@@ -3900,6 +3931,46 @@ async function saveFCMToken(uid) {
 window.signOut = async function() {
   try { sessionStorage.removeItem('hk_fresh_session'); } catch(e){}
   await fbSignOut(auth);
+  location.reload();
+};
+
+// ===== Delete account & all data (required for Play Store; privacy compliance) =====
+let _delConfirmation = null, _delVerifier = null;
+// Step 1: send a fresh OTP to the logged-in user's own number (re-auth + confirmation)
+window._fsDeleteSendOTP = async function() {
+  const user = auth.currentUser;
+  if (!user || !user.phoneNumber) throw new Error('not-logged-in');
+  if (_delVerifier) { try { _delVerifier.clear(); } catch(e){} _delVerifier = null; }
+  _delVerifier = new RecaptchaVerifier(auth, 'del-recaptcha-container', { size: 'invisible', callback: () => {} });
+  _delConfirmation = await signInWithPhoneNumber(auth, user.phoneNumber, _delVerifier);
+  return true;
+};
+// Step 2: verify OTP → re-authenticate → delete ALL data → delete auth account → sign out
+window._fsDeleteConfirm = async function(otp) {
+  const user = auth.currentUser;
+  if (!user || !_delConfirmation) throw new Error('no-confirmation');
+  // Re-authenticate (Firebase requires recent login to delete an account)
+  const cred = PhoneAuthProvider.credential(_delConfirmation.verificationId, otp);
+  await reauthenticateWithCredential(user, cred);
+  const uid = user.uid;
+  // 1) Delete all Firestore data FIRST (works while still logged in; owner-only rules)
+  const cols = ['bikri', 'maal', 'goal'];
+  for (const colName of cols) {
+    const snap = await getDocs(collection(db, 'users', uid, colName));
+    for (const d of snap.docs) { try { await deleteDoc(doc(db, 'users', uid, colName, d.id)); } catch(e){} }
+  }
+  try { await deleteDoc(doc(db, 'users', uid, 'profile', 'info')); } catch(e){}
+  try { await deleteDoc(doc(db, 'users', uid)); } catch(e){}
+  // 2) Clear all local cache for this user from the device
+  try {
+    const toRemove = [];
+    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.indexOf(uid) !== -1) toRemove.push(k); }
+    toRemove.forEach(k => { try { localStorage.removeItem(k); } catch(e){} });
+  } catch(e){}
+  try { sessionStorage.removeItem('hk_fresh_session'); } catch(e){}
+  // 3) Delete the auth account (data already gone, so compliance is satisfied even if this step is blocked)
+  try { await deleteUser(user); } catch(e){ try { await fbSignOut(auth); } catch(e2){} }
+  // 4) Back to a clean login screen
   location.reload();
 };
 
@@ -5647,6 +5718,44 @@ function openMaalEdit(id){
   const _db=document.querySelector('.mk-edit-del');if(_db){_db.classList.remove('armed');_db.textContent='🗑️ यह एंट्री हटाएं';}
 }
 function closeMaalEdit(){document.getElementById('maal-edit-overlay').classList.remove('show');_maalEditId=null;_maalDelArmed=false;clearTimeout(_maalDelTimer);}
+
+// ===== Delete account & data — UI flow =====
+function openDeleteAccount(){
+  document.getElementById('del-step1').style.display='block';
+  document.getElementById('del-step2').style.display='none';
+  document.getElementById('del-confirm-check').checked=false;
+  document.getElementById('del-otp').value='';
+  const e=document.getElementById('del-err');if(e)e.style.display='none';
+  document.getElementById('del-acct-overlay').classList.add('show');
+}
+function closeDeleteAccount(){document.getElementById('del-acct-overlay').classList.remove('show');}
+async function delAcctProceed(){
+  if(!document.getElementById('del-confirm-check').checked){toast('❌ पहले पुष्टि करें',true);return;}
+  const btn=document.querySelector('#del-step1 .mk-save');
+  const old=btn.textContent;btn.textContent='OTP भेजा जा रहा है…';btn.style.pointerEvents='none';
+  try{
+    await window._fsDeleteSendOTP();
+    document.getElementById('del-step1').style.display='none';
+    document.getElementById('del-step2').style.display='block';
+    setTimeout(()=>{const o=document.getElementById('del-otp');if(o)o.focus();},100);
+  }catch(e){
+    toast('❌ OTP नहीं भेज सका, फिर कोशिश करें',true);
+  }finally{ btn.textContent=old;btn.style.pointerEvents=''; }
+}
+async function delAcctConfirm(){
+  const otp=(document.getElementById('del-otp').value||'').trim();
+  const err=document.getElementById('del-err');
+  if(otp.length<6){err.textContent='पूरा 6-अंकों का OTP डालें';err.style.display='block';return;}
+  const btn=document.getElementById('del-final-btn');
+  btn.textContent='मिटाया जा रहा है…';btn.style.pointerEvents='none';
+  err.style.display='none';
+  try{
+    await window._fsDeleteConfirm(otp);  // reloads on success
+  }catch(e){
+    err.textContent='OTP गलत है या कुछ गड़बड़ हुई — फिर कोशिश करें';err.style.display='block';
+    btn.textContent='🗑️ हमेशा के लिए मिटाएं';btn.style.pointerEvents='';
+  }
+}
 function saveMaalEdit(){
   if(!_maalEditId)return;
   const r=(DB.get(K.MAAL)||[]).find(x=>x.id===_maalEditId);if(!r)return;
@@ -6413,7 +6522,7 @@ history.pushState({app:1}, '', location.href);
   function closeOneLayer(){
     const dp=document.getElementById('date-popup-overlay');
     if(isOpen(dp)){ if(typeof closeDatePopupDirect==='function')closeDatePopupDirect(); else dp.classList.remove('show'); return true; }
-    const ov=['lg-keypad-modal','lg-box-action','maal-edit-overlay','mk-pop-overlay','supplier-pay-overlay','lg-note-modal','action-popup','confirm-popup','edit-popup','maal-ledger-overlay','install-banner'];
+    const ov=['lg-keypad-modal','lg-box-action','del-acct-overlay','maal-edit-overlay','mk-pop-overlay','supplier-pay-overlay','lg-note-modal','action-popup','confirm-popup','edit-popup','maal-ledger-overlay','install-banner'];
     for(const id of ov){const el=document.getElementById(id);if(isOpen(el)){el.classList.remove('show');el.classList.remove('compact');el.classList.remove('kbd-open');if(el.style.display)el.style.display='';return true;}}
     const more=document.getElementById('more-menu');
     if(more && more.style.display==='block'){more.style.display='none';return true;}

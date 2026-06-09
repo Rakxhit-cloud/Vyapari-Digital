@@ -2638,6 +2638,7 @@ body.notif-modal-open { overflow: hidden; }
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, deleteUser, PhoneAuthProvider, reauthenticateWithCredential } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, serverTimestamp, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 const firebaseConfig = {
@@ -2650,6 +2651,11 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+// App Check — verifies requests come from the genuine app (reCAPTCHA v3, invisible)
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('6Ld4hRUtAAAAABKQue9vaNYVhdZZJhNBtod0onWW'),
+  isTokenAutoRefreshEnabled: true
+});
 const auth = getAuth(app);
 const db = getFirestore(app);
 window._db = db;

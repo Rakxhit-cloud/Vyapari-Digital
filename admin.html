@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📊 हिसाब-Kitaab — Admin</title>
+<title>📊 Live खाता — Admin</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
@@ -278,7 +278,7 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
       <div class="brand-logo">📊</div>
       <div>
         <div class="brand-title">Admin Dashboard</div>
-        <div class="brand-sub">हिसाब-Kitaab · Authenticated</div>
+        <div class="brand-sub">Live खाता · Authenticated</div>
       </div>
     </div>
     <button class="logout-btn" id="logout-btn">Logout</button>
@@ -1023,7 +1023,7 @@ function trialSectionHTML(p) {
     <div class="profile-section">
       <div class="trial-row">
         <span class="trial-row-label">Trial status</span>
-        <span class="trial-row-aside">After trial · ₹149/mo</span>
+        <span class="trial-row-aside">After trial · ₹49/mo</span>
       </div>
       <div class="trial-big">
         <span class="trial-big-num ${cls}">${dl}</span>
@@ -1165,8 +1165,8 @@ function pickTemplate(u) {
     return {
       tag: 'TRIAL OVER',
       tone: 'expiring',
-      preview: 'Trial खत्म हो गया है — ₹149/महीने में जारी रखें।',
-      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Trial पूरा हुआ*\n\nआपका 90-दिन Free Trial खत्म हो गया है। आपका सारा data safe है।\n\nContinue करने के लिए:\n• ₹149 / महीना\n• सभी features unlimited\n\n👉 https://hisaabkitaab.online\n\n_हिसाब-Kitaab_`
+      preview: 'Trial खत्म हो गया है — ₹49/महीने में जारी रखें।',
+      full: `नमस्कार 🙏\n\n*Live खाता — Trial पूरा हुआ*\n\nआपका 90-दिन Free Trial खत्म हो गया है। आपका सारा data safe है।\n\nContinue करने के लिए:\n• ₹49 / महीना\n• सभी features unlimited\n\n👉 https://livekhaata.app\n\n_Live खाता_`
     };
   }
 
@@ -1176,7 +1176,7 @@ function pickTemplate(u) {
       tag: 'TRIAL ENDING',
       tone: 'expiring',
       preview: `Trial में सिर्फ ${dl} दिन बाकी हैं।`,
-      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Trial ${dl} दिन में पूरा*\n\nआपका 90-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹149 / महीना\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_हिसाब-Kitaab_`
+      full: `नमस्कार 🙏\n\n*Live खाता — Trial ${dl} दिन में पूरा*\n\nआपका 90-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹49 / महीना\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_Live खाता_`
     };
   }
 
@@ -1186,7 +1186,7 @@ function pickTemplate(u) {
       tag: 'TRIAL REMINDER',
       tone: 'stuck',
       preview: `Trial में ${dl} दिन बाकी हैं।`,
-      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Trial ${dl} दिन में पूरा*\n\nआपका 90-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹149 / महीना\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_हिसाब-Kitaab_`
+      full: `नमस्कार 🙏\n\n*Live खाता — Trial ${dl} दिन में पूरा*\n\nआपका 90-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹49 / महीना\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_Live खाता_`
     };
   }
 
@@ -1196,7 +1196,7 @@ function pickTemplate(u) {
       tag: 'OTP STUCK',
       tone: 'stuck',
       preview: 'Registration अधूरी है — 2 step बाकी।',
-      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Registration अधूरी है*\n\nOTP verify हो चुका है। पूरा करने के लिए 2 step बाकी:\n\n• Terms accept करें\n• नाम + दुकान का नाम भरें\n\nFree Trial: 90 दिन\n\n👉 https://hisaabkitaab.online\n\n_हिसाब-Kitaab_`
+      full: `नमस्कार 🙏\n\n*Live खाता — Registration अधूरी है*\n\nOTP verify हो चुका है। पूरा करने के लिए 2 step बाकी:\n\n• Terms accept करें\n• नाम + दुकान का नाम भरें\n\nFree Trial: 90 दिन\n\n👉 https://livekhaata.app\n\n_Live खाता_`
     };
   }
 
@@ -1206,7 +1206,7 @@ function pickTemplate(u) {
       tag: 'TERMS STUCK',
       tone: 'stuck',
       preview: 'एक step बाकी — नाम और दुकान का नाम भरें।',
-      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — एक Step बाकी*\n\nTerms accept हो गए हैं। Registration complete करने के लिए सिर्फ एक काम:\n\n• नाम और दुकान का नाम भरें (30 सेकंड)\n\n90 दिन का Free Trial activate हो जाएगा।\n\n👉 https://hisaabkitaab.online\n\n_हिसाब-Kitaab_`
+      full: `नमस्कार 🙏\n\n*Live खाता — एक Step बाकी*\n\nTerms accept हो गए हैं। Registration complete करने के लिए सिर्फ एक काम:\n\n• नाम और दुकान का नाम भरें (30 सेकंड)\n\n90 दिन का Free Trial activate हो जाएगा।\n\n👉 https://livekhaata.app\n\n_Live खाता_`
     };
   }
 
@@ -1216,7 +1216,7 @@ function pickTemplate(u) {
       tag: 'INSTALL',
       tone: 'stuck',
       preview: 'App install करना बाकी है।',
-      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — App Install करें*\n\nRegistration complete है। अब App install करना बाकी।\n\n*Steps:*\n1. Chrome में link खोलें\n2. "App install करें" button tap करें\n3. Home screen पर icon दिखेगा\n4. PIN set करें — done\n\n👉 https://hisaabkitaab.online\n\nInstall में दिक्कत? Reply करें।\n\n_हिसाब-Kitaab_`
+      full: `नमस्कार 🙏\n\n*Live खाता — App Install करें*\n\nRegistration complete है। अब App install करना बाकी।\n\n*Steps:*\n1. Chrome में link खोलें\n2. "App install करें" button tap करें\n3. Home screen पर icon दिखेगा\n4. PIN set करें — done\n\n👉 https://livekhaata.app\n\nInstall में दिक्कत? Reply करें।\n\n_Live खाता_`
     };
   }
 
@@ -1228,7 +1228,7 @@ function pickTemplate(u) {
       tag: 'FIRST ENTRY',
       tone: 'stuck',
       preview: 'App ready है — पहली entry डालें।',
-      full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — पहली Entry डालें*\n\nApp ready है। एक quick entry से शुरू करें:\n\n• आज की कोई बिक्री\n• कोई एक खर्चा\n• या माल की खरीद\n\nLive खाता में 10 सेकंड में entry हो जाती है।\n\n90 दिन Free Trial — आज ही शुरू करें।\n\n_हिसाब-Kitaab_`
+      full: `नमस्कार 🙏\n\n*Live खाता — पहली Entry डालें*\n\nApp ready है। एक quick entry से शुरू करें:\n\n• आज की कोई बिक्री\n• कोई एक खर्चा\n• या माल की खरीद\n\nLive खाता में 10 सेकंड में entry हो जाती है।\n\n90 दिन Free Trial — आज ही शुरू करें।\n\n_Live खाता_`
     };
   }
 
@@ -1240,7 +1240,7 @@ function pickTemplate(u) {
         tag: 'RE-ENGAGE',
         tone: 'stuck',
         preview: 'कुछ दिनों से app use नहीं हो रहा।',
-        full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — सब ठीक है?*\n\nकुछ दिनों से app use नहीं हो रहा। कोई दिक्कत आ रही है?\n\n• कोई problem हो\n• कोई feature की कमी हो\n• कोई suggestion हो\n\nReply करें — हम मदद करेंगे।\n\n👉 https://hisaabkitaab.online\n\n_हिसाब-Kitaab_`
+        full: `नमस्कार 🙏\n\n*Live खाता — सब ठीक है?*\n\nकुछ दिनों से app use नहीं हो रहा। कोई दिक्कत आ रही है?\n\n• कोई problem हो\n• कोई feature की कमी हो\n• कोई suggestion हो\n\nReply करें — हम मदद करेंगे।\n\n👉 https://livekhaata.app\n\n_Live खाता_`
       };
     }
   }
@@ -1250,7 +1250,7 @@ function pickTemplate(u) {
     tag: 'CHECK-IN',
     tone: '',
     preview: 'App कैसा experience दे रही है?',
-    full: `नमस्कार 🙏\n\n*हिसाब-Kitaab — Feedback*\n\nApp कैसा experience दे रही है?\n\n• कोई दिक्कत\n• कोई suggestion\n• कोई feature request\n\nReply करें — हर message पढ़ा जाता है।\n\n_हिसाब-Kitaab_`
+    full: `नमस्कार 🙏\n\n*Live खाता — Feedback*\n\nApp कैसा experience दे रही है?\n\n• कोई दिक्कत\n• कोई suggestion\n• कोई feature request\n\nReply करें — हर message पढ़ा जाता है।\n\n_Live खाता_`
   };
 }
 

@@ -55,6 +55,9 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .filter-tab{background:rgba(20,37,74,0.4);border:1px solid #2a4078;color:#8aa0d8;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
 .filter-tab:hover{border-color:#d4a850;color:#d4a850}
 .filter-tab.active{background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%);border-color:#f0d890;color:#1a1208}
+.src-badge{display:inline-block;margin-top:5px;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;letter-spacing:.3px}
+.src-web{background:rgba(93,202,255,0.12);border:1px solid #2f6d99;color:#5dcaff}
+.src-play{background:rgba(62,200,115,0.12);border:1px solid #2f8f57;color:#5dd88a}
 .refresh-btn{background:rgba(93,202,165,0.1);border:1px solid #5dcaa5;color:#5dcaa5;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
 .refresh-btn:hover{background:rgba(93,202,165,0.18)}
 
@@ -301,6 +304,8 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
       <button class="filter-tab" data-filter="stuck">Stuck</button>
       <button class="filter-tab" data-filter="partial">Partial</button>
       <button class="filter-tab" data-filter="expiring">Expiring</button>
+      <button class="filter-tab" data-filter="web">🌐 Web</button>
+      <button class="filter-tab" data-filter="play">▶ Play</button>
     </div>
     <button class="refresh-btn" id="refresh-btn">🔄 Refresh</button>
   </div>
@@ -724,6 +729,8 @@ function renderUserList() {
       const dl = daysLeft(u.profile.trialStart);
       if (dl > 10 || dl === 0) return false;
     }
+    if (currentFilter === 'web' && (u.profile.regSource || 'web') !== 'web') return false;
+    if (currentFilter === 'play' && u.profile.regSource !== 'play') return false;
     if (currentSearch) {
       const q = currentSearch.toLowerCase();
       const hay = [u.uid, u.profile.phone || '', u.profile.name || '', u.profile.businessName || ''].join(' ').toLowerCase();
@@ -766,6 +773,10 @@ function userRowHTML(u, num) {
   const bizHTML = p.businessName
     ? `<div class="name-biz">${escapeHTML(p.businessName)}</div>`
     : '';
+  const src = (p.regSource === 'play') ? 'play' : 'web';
+  const srcBadge = src === 'play'
+    ? '<span class="src-badge src-play">▶ Play</span>'
+    : '<span class="src-badge src-web">🌐 Web</span>';
   const dl = daysLeft(p.trialStart);
   const tCls = trialClass(dl);
   const trialHtml = p.trialStart
@@ -790,6 +801,7 @@ function userRowHTML(u, num) {
         <div>
           ${nameHTML}
           ${bizHTML}
+          ${srcBadge}
         </div>
       </div>
       <div data-label="Stage">${stagePill}</div>

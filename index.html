@@ -2509,12 +2509,12 @@ body.notif-modal-open { overflow: hidden; }
   </div>
   <div class="mk-stripe"></div>
   <div class="fw">
+    <div id="mkp-contact"></div>
     <div class="mkp-sum">
       <div class="mkp-ss mkp-ss-nakad"><div class="mkp-ss-lbl">नकद</div><div class="mkp-ss-val" id="mkp-nakad">₹0</div></div>
       <div class="mkp-ss mkp-ss-udhaar"><div class="mkp-ss-lbl">उधार</div><div class="mkp-ss-val" id="mkp-udhaar">₹0</div></div>
       <div class="mkp-ss mkp-ss-baki"><div class="mkp-ss-lbl">अभी बाकी</div><div class="mkp-ss-val" id="mkp-baki">₹0</div></div>
     </div>
-    <div id="mkp-contact"></div>
     <div id="mkp-groups"></div>
   </div>
 </div>
@@ -5884,7 +5884,7 @@ function renderSupplierProfile(){
     if(_wp.length){
       const _ph=String(_wp[0].supplierPhone).trim();
       const _wa=_waNum(_ph);
-      _cel.innerHTML='<div style="background:#0d1838;border:1px solid #2a4078;border-radius:14px;padding:12px 14px;margin-bottom:14px;"><div style="font-size:14px;color:#cdd8f8;font-weight:600;margin-bottom:10px;">📞 '+escHTML(_ph)+'</div><div style="display:flex;gap:10px;"><a href="tel:+'+_wa+'" style="flex:1;text-align:center;background:rgba(93,202,255,0.14);border:1px solid #3a6d99;color:#5dcaff;font-weight:600;font-size:13px;padding:11px;border-radius:10px;text-decoration:none;">📞 कॉल करें</a><a href="https://wa.me/'+_wa+'" target="_blank" rel="noopener" style="flex:1;text-align:center;background:rgba(37,211,102,0.15);border:1px solid #1f9d50;color:#5dd88a;font-weight:600;font-size:13px;padding:11px;border-radius:10px;text-decoration:none;">💬 WhatsApp</a></div></div>';
+      _cel.innerHTML='<div style="background:linear-gradient(135deg,#1b2e58,#101c3d);border:1px solid #c8884a;border-radius:12px;padding:9px 11px;margin:2px 0 12px;box-shadow:0 2px 10px rgba(204,122,71,0.12);"><div style="font-size:16px;color:#ffd9a8;font-weight:800;letter-spacing:.6px;margin-bottom:8px;">📞 '+escHTML(_ph)+'</div><div style="display:flex;gap:8px;"><a href="tel:+'+_wa+'" style="flex:1;text-align:center;background:linear-gradient(135deg,#36a2ec,#2474c4);border:1px solid #7fd0ff;color:#ffffff;font-weight:800;font-size:13px;padding:9px;border-radius:9px;text-decoration:none;">📞 कॉल</a><a href="https://wa.me/'+_wa+'" target="_blank" rel="noopener" style="flex:1;text-align:center;background:linear-gradient(135deg,#2bd36e,#1fad55);border:1px solid #5cf09a;color:#ffffff;font-weight:800;font-size:13px;padding:9px;border-radius:9px;text-decoration:none;">💬 WhatsApp</a></div></div>';
     } else { _cel.innerHTML=''; }
   }
   // group by date, newest date first

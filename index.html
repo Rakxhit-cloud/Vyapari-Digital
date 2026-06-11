@@ -2528,7 +2528,16 @@ body.notif-modal-open { overflow: hidden; }
     <input type="hidden" id="me-supplier">
     <div class="pay-toggle" style="width:100%;margin-bottom:14px;"><div class="pbtn pn" id="me-nbtn" onclick="setPay('me','nakad')">💵 नकद</div><div class="pbtn" id="me-ubtn" onclick="setPay('me','udhaar')">📋 उधार</div></div>
     <input type="hidden" id="me-pay" value="nakad">
-    <div class="mk-fld" id="me-supplier-field" style="display:none;"><div class="mk-fld-lbl">🏪 सप्लायर का नाम</div><input type="text" class="mk-in" id="me-supplier-new" placeholder="सप्लायर का नाम"></div>
+    <div id="me-supplier-field" style="display:none;">
+      <div class="mk-fld">
+        <div class="mk-fld-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;"><span>🏪 सप्लायर का नाम</span><button type="button" id="me-contact-btn" onclick="pickSupplierContact()" style="display:none;background:rgba(93,202,255,0.14);border:1px solid #3a6d99;color:#5dcaff;font-size:11px;font-weight:600;padding:5px 11px;border-radius:8px;cursor:pointer;">📇 Contacts</button></div>
+        <input type="text" class="mk-in" id="me-supplier-new" placeholder="सप्लायर का नाम">
+      </div>
+      <div class="mk-fld">
+        <div class="mk-fld-lbl">📞 सप्लायर का फ़ोन <span style="opacity:.55;font-weight:400;">(optional)</span></div>
+        <input type="tel" class="mk-in" id="me-supplier-phone" placeholder="+91…" inputmode="tel">
+      </div>
+    </div>
     <div class="mk-fld"><div class="mk-fld-lbl">📦 माल का नाम</div><input type="text" class="mk-in" id="me-name" placeholder="Surgical Gloves, Syringe…"></div>
     <div class="mk-fldrow">
       <div class="mk-fld"><div class="mk-fld-lbl">📅 तारीख</div><input type="date" class="mk-in" id="me-date"></div>
@@ -5682,6 +5691,7 @@ function openMaalEntry(supplier){
   document.getElementById('me-amount').value='';
   document.getElementById('me-note').value='';
   document.getElementById('me-supplier-new').value='';
+  document.getElementById('me-supplier-phone').value='';
   const today=new Date();document.getElementById('me-date').value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
   setPay('me','nakad');
   const field=document.getElementById('me-supplier-field');
@@ -5694,11 +5704,25 @@ function openMaalEntry(supplier){
     document.getElementById('me-supplier').value='';
     document.getElementById('me-sub').style.display='none';
     field.style.display='block';
+    const _cb=document.getElementById('me-contact-btn');
+    if(_cb)_cb.style.display=(('contacts' in navigator)&&('ContactsManager' in window))?'inline-block':'none';
   }
   ov.classList.add('show');
 }
 function closeMaalEntry(){document.getElementById('mk-pop-overlay').classList.remove('show');}
 function mkPopBgClose(e){if(e.target===document.getElementById('mk-pop-overlay'))closeMaalEntry();}
+async function pickSupplierContact(){
+  try{
+    if(!('contacts' in navigator) || !('ContactsManager' in window)){ toast('इस डिवाइस पर contacts उपलब्ध नहीं',true); return; }
+    const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});
+    if(!contacts || !contacts.length) return;
+    const c=contacts[0];
+    const nm=(c.name && c.name.length)?String(c.name[0]).trim():'';
+    const tel=(c.tel && c.tel.length)?String(c.tel[0]).trim():'';
+    if(nm) document.getElementById('me-supplier-new').value=nm;
+    if(tel) document.getElementById('me-supplier-phone').value=tel;
+  }catch(e){ /* user cancelled or no permission — silent */ }
+}
 function saveMaalEntry(){
   const amount=parseFloat(document.getElementById('me-amount').value)||0;
   if(!amount){toast('❌ खरीद रकम ज़रूर भरें',true);return;}
@@ -5709,7 +5733,10 @@ function saveMaalEntry(){
   const name=document.getElementById('me-name').value||'';
   const pay=document.getElementById('me-pay').value==='nakad'?'नकद':'उधार';
   const note=document.getElementById('me-note').value||'';
-  const _pushedMaal=DB.push(K.MAAL,{date,supplier,name,amount,pay,note});
+  const supplierPhone=(document.getElementById('me-supplier-phone').value||'').trim();
+  const _maalData={date,supplier,name,amount,pay,note};
+  if(supplierPhone)_maalData.supplierPhone=supplierPhone;
+  const _pushedMaal=DB.push(K.MAAL,_maalData);
   if(pay==='नकद'){
     lgAddExpenseBox(date, amount, ('माल — '+supplier+(name?' · '+name:'')).slice(0,80), _pushedMaal&&_pushedMaal.id, 'purchase');
   }

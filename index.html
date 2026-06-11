@@ -2658,6 +2658,20 @@ const appCheck = initializeAppCheck(app, {
 });
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Registration source (web vs Play TWA) — first-touch, persisted, written once at signup
+function getRegSource() {
+  try {
+    const saved = localStorage.getItem('hk_reg_source');
+    if (saved) return saved;
+    const params = new URLSearchParams(location.search);
+    const isPlay = params.get('src') === 'play' || (document.referrer && document.referrer.indexOf('android-app://') === 0);
+    const src = isPlay ? 'play' : 'web';
+    localStorage.setItem('hk_reg_source', src);
+    return src;
+  } catch(e) { return 'web'; }
+}
+getRegSource();
 window._db = db;
 
 // ══════════════════════════════════════════════════════════
@@ -3137,6 +3151,7 @@ window._fsRegisterUser = async function(uid, phone, trialStart) {
     registeredAt: serverTimestamp(),
     appVersion: '1.0',
     platform: 'PWA',
+    regSource: getRegSource(),
     lastActiveAt: Date.now()
   };
   // If offline, queue both writes and bail
@@ -3254,6 +3269,7 @@ window._fsTrackStage = async function(uid, stage, phone) {
         payload.registeredAt = serverTimestamp();
         payload.appVersion = '1.0';
         payload.platform = 'PWA';
+        payload.regSource = getRegSource();
       }
     }
     await setDoc(profileRef, payload, { merge: true });

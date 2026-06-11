@@ -2514,6 +2514,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="mkp-ss mkp-ss-udhaar"><div class="mkp-ss-lbl">उधार</div><div class="mkp-ss-val" id="mkp-udhaar">₹0</div></div>
       <div class="mkp-ss mkp-ss-baki"><div class="mkp-ss-lbl">अभी बाकी</div><div class="mkp-ss-val" id="mkp-baki">₹0</div></div>
     </div>
+    <div id="mkp-contact"></div>
     <div id="mkp-groups"></div>
   </div>
 </div>
@@ -5851,6 +5852,12 @@ function deleteMaalEntry(){
   if(_mkProfileName!==null)renderSupplierProfile();
   loadMaalHome();
 }
+function _waNum(p){
+  let d=String(p||'').replace(/[^\d]/g,'');
+  if(d.length===10) d='91'+d;                          // bare 10-digit Indian mobile
+  else if(d.length===11 && d.charAt(0)==='0') d='91'+d.slice(1); // leading 0
+  return d;                                             // else assume already has country code
+}
 function openSupplierProfile(name){
   _mkProfileName=name||'';
   renderSupplierProfile();
@@ -5869,6 +5876,17 @@ function renderSupplierProfile(){
   rows.forEach(r=>{const a=r.amount||0;if(r.pay==='नकद')nak+=a;else{udh+=a;baki+=Math.max(0,a-(r.paid||0));}});
   setT('mkp-nakad',fmt(nak));setT('mkp-udhaar',fmt(udh));setT('mkp-baki',fmt(baki));
   setT('mkp-meta',rows.length+' खरीद · आखिरी '+fmtRelDate(rows.map(r=>r.date||'').sort().slice(-1)[0]||''));
+  // contact bar (phone + Call + WhatsApp) — from the latest entry that has a saved number
+  const _cel=document.getElementById('mkp-contact');
+  if(_cel){
+    const _wp=rows.filter(r=>r.supplierPhone&&String(r.supplierPhone).trim())
+      .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||((b.ts||0)-(a.ts||0)));
+    if(_wp.length){
+      const _ph=String(_wp[0].supplierPhone).trim();
+      const _wa=_waNum(_ph);
+      _cel.innerHTML='<div style="background:#0d1838;border:1px solid #2a4078;border-radius:14px;padding:12px 14px;margin-bottom:14px;"><div style="font-size:14px;color:#cdd8f8;font-weight:600;margin-bottom:10px;">📞 '+escHTML(_ph)+'</div><div style="display:flex;gap:10px;"><a href="tel:+'+_wa+'" style="flex:1;text-align:center;background:rgba(93,202,255,0.14);border:1px solid #3a6d99;color:#5dcaff;font-weight:600;font-size:13px;padding:11px;border-radius:10px;text-decoration:none;">📞 कॉल करें</a><a href="https://wa.me/'+_wa+'" target="_blank" rel="noopener" style="flex:1;text-align:center;background:rgba(37,211,102,0.15);border:1px solid #1f9d50;color:#5dd88a;font-weight:600;font-size:13px;padding:11px;border-radius:10px;text-decoration:none;">💬 WhatsApp</a></div></div>';
+    } else { _cel.innerHTML=''; }
+  }
   // group by date, newest date first
   const byDate={};
   rows.forEach(r=>{const d=r.date||'';(byDate[d]=byDate[d]||[]).push(r);});

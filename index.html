@@ -2441,6 +2441,20 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lg-box-grid" id="lg-grid-cash"></div>
     </div>
 
+    <!-- उधार बिक्री section (Credit → separate udhaar ledger, totals untouched) -->
+    <div style="margin-bottom:18px;">
+      <div class="lg-cat-head">
+        <div class="lg-cat-head-left">
+          <span style="font-size:22px;">📕</span>
+          <span style="font-size:17px;color:#ff8a7a;font-weight:700;">उधार बिक्री</span>
+          <div class="lg-pill lg-pill-red"><span class="lg-dot lg-dot-red"></span>LIVE</div>
+        </div>
+        <div style="font-size:11px;color:#ff8a7a;font-weight:500;" id="lg-credit-meta">₹0 · 0 एंट्री</div>
+      </div>
+      <div class="lg-cat-sub">Credit Sales · ग्राहक का उधार — उधार Book में जाता है</div>
+      <div class="lg-box-grid" id="lg-grid-credit"></div>
+    </div>
+
     <!-- UPI बिक्री section -->
     <div style="margin-bottom:18px;">
       <div class="lg-cat-head">
@@ -2524,6 +2538,93 @@ body.notif-modal-open { overflow: hidden; }
       <button class="lg-action-btn lg-action-del" onclick="lgDeleteBox()">🗑️ Delete</button>
     </div>
     <button class="lg-action-cancel" onclick="lgCloseBoxAction()">Cancel</button>
+  </div>
+</div>
+
+<style>
+  .lg-pill-red{background:rgba(226,58,58,.15);border:1px solid #c23030;color:#ff8a7a;}
+  .lg-dot-red{background:#ff5a4a;}
+  #lg-grid-credit{display:flex;flex-wrap:wrap;gap:10px;}
+  .lg-cbox{min-width:64px;background:linear-gradient(135deg,#2a1212,#1d0e0e);border:1.5px solid #c23030;border-radius:12px;padding:9px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;}
+  .lg-cbox-amt{font-size:15px;font-weight:800;color:#ff8a7a;}
+  .lg-cbox-nm{font-size:10px;color:#c0a8a8;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .lg-cadd{width:56px;height:56px;border:2px dashed #c23030;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#ff8a7a;cursor:pointer;background:rgba(226,58,58,.06);}
+  .credit-bd{position:fixed;inset:0;background:rgba(4,8,20,.8);z-index:9999;display:none;align-items:flex-start;justify-content:center;padding:26px 13px;overflow-y:auto;}
+  .credit-fld{margin-top:12px;}
+  .credit-fld label{display:block;font-size:12px;color:#cdd8f8;font-weight:700;margin-bottom:6px;}
+  .credit-inp{width:100%;background:#0b1430;border:1.5px solid #2a4078;border-radius:11px;padding:12px 14px;color:#fff;font-size:15px;}
+  .credit-phone-row{display:flex;gap:8px;}
+  .credit-pick{flex-shrink:0;width:48px;border:1.5px solid #2a4078;border-radius:11px;background:#13234a;color:#d4a850;font-size:18px;cursor:pointer;}
+  .credit-listbtn{width:100%;margin-top:14px;padding:13px;border-radius:12px;border:1.5px dashed #d4a850;background:rgba(212,168,80,.08);color:#e8c870;font-size:14px;font-weight:800;cursor:pointer;}
+  .credit-listbtn.ready{border-style:solid;border-color:#3ec873;background:rgba(62,200,115,.12);color:#5dd88a;}
+  .credit-save{width:100%;margin-top:16px;padding:15px;border-radius:13px;border:1px solid #ff8a7a;background:linear-gradient(135deg,#e23a3a,#ff5a4a);color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
+  .credit-del{display:none;width:100%;margin-top:8px;padding:11px;border-radius:11px;border:1px solid #6a2020;background:transparent;color:#ff8a7a;font-size:12px;font-weight:700;cursor:pointer;}
+  .cl-card{width:100%;max-width:440px;background:linear-gradient(180deg,#14193e,#0d1230);border:1.5px solid #2c3a6a;border-radius:18px;padding:16px;box-shadow:0 14px 44px rgba(0,0,0,.55);}
+  .cl-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;}
+  .cl-title{font-size:16px;font-weight:800;color:#e8c870;}
+  .cl-total{background:linear-gradient(135deg,#2a2018,#1d150c);border:1px solid #6a5020;border-radius:10px;padding:7px 13px;font-size:15px;font-weight:800;color:#f0c890;}
+  .cl-rows{max-height:48vh;overflow-y:auto;padding-right:3px;}
+  .cl-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .cl-sn{width:22px;font-size:13px;color:#8aa0d8;font-weight:700;flex-shrink:0;}
+  .cl-prod{flex:1;min-width:0;background:#0b1430;border:1.5px solid #2a4078;border-radius:9px;padding:10px;color:#fff;font-size:13px;}
+  .cl-amt{width:72px;background:#0b1430;border:1.5px solid #2a4078;border-radius:9px;padding:10px;color:#f0c890;font-size:13px;font-weight:700;text-align:right;flex-shrink:0;}
+  .cl-addrow{width:100%;margin-top:6px;padding:10px;border:1.5px dashed #2a4078;border-radius:10px;background:transparent;color:#8aa0d8;font-size:12px;font-weight:700;cursor:pointer;}
+  .cl-save{display:block;margin:15px auto 2px;padding:13px 42px;border-radius:12px;border:1px solid #5cf09a;background:linear-gradient(135deg,#2bd36e,#1fab53);color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
+</style>
+<!-- उधार (Credit) entry popup -->
+<div class="credit-bd" id="credit-modal" onclick="if(event.target===this)creditClose()">
+  <div class="lg-modal-card" style="margin-top:8px;">
+    <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#e23a3a,#ff6a4a,#d4a850);"></div>
+    <div class="lg-modal-body">
+      <div class="lg-modal-head">
+        <div class="lg-modal-title" id="credit-modal-title">📕 उधार · नया ग्राहक</div>
+        <div class="lg-modal-close" onclick="creditClose()">✕</div>
+      </div>
+      <div class="lg-display">
+        <div class="lg-display-amount" id="credit-amount">₹0</div>
+        <div class="lg-display-hint" id="credit-amt-hint">अधिकतम 5 अंक · या नीचे List बनाएं</div>
+      </div>
+      <div class="lg-keypad" id="credit-keypad">
+        <div class="lg-key" onclick="creditKey('1')">1</div>
+        <div class="lg-key" onclick="creditKey('2')">2</div>
+        <div class="lg-key" onclick="creditKey('3')">3</div>
+        <div class="lg-key" onclick="creditKey('4')">4</div>
+        <div class="lg-key" onclick="creditKey('5')">5</div>
+        <div class="lg-key" onclick="creditKey('6')">6</div>
+        <div class="lg-key" onclick="creditKey('7')">7</div>
+        <div class="lg-key" onclick="creditKey('8')">8</div>
+        <div class="lg-key" onclick="creditKey('9')">9</div>
+        <div class="lg-key lg-key-back" onclick="creditBack()">⌫</div>
+        <div class="lg-key" onclick="creditKey('0')">0</div>
+        <div class="lg-key lg-key-tri" onclick="creditTri()">000</div>
+      </div>
+      <button class="credit-listbtn" id="credit-list-btn" onclick="creditListOpen()">📝 List बनाएं</button>
+      <div class="credit-fld">
+        <label>👤 ग्राहक का नाम</label>
+        <input class="credit-inp" id="credit-name" maxlength="40" placeholder="जैसे: रमेश जी" autocomplete="off">
+      </div>
+      <div class="credit-fld">
+        <label>📞 Contact नंबर <span style="color:#8aa0d8;font-weight:500;">(अगर phone में नहीं है)</span></label>
+        <div class="credit-phone-row">
+          <input class="credit-inp" id="credit-phone" maxlength="15" inputmode="tel" placeholder="10 अंकों का नंबर" autocomplete="off" oninput="this.value=this.value.replace(/[^0-9+]/g,'')">
+          <button class="credit-pick" onclick="creditPickContact()" title="Contacts से चुनें">📇</button>
+        </div>
+      </div>
+      <button class="credit-save" onclick="creditSave()">💾 उधार Save करें</button>
+      <button class="credit-del" id="credit-del-row" onclick="creditDelEntry()">🗑️ यह entry हटाएं</button>
+    </div>
+  </div>
+</div>
+<!-- List बनाएं notepad -->
+<div class="credit-bd" id="credit-list-modal" onclick="if(event.target===this)creditListClose()" style="z-index:10000;">
+  <div class="cl-card">
+    <div class="cl-head">
+      <div class="cl-title">📝 List बनाएं</div>
+      <div class="cl-total">Total: <span id="credit-list-total">₹0</span></div>
+    </div>
+    <div class="cl-rows" id="credit-list-rows"></div>
+    <button class="cl-addrow" id="credit-list-addrow" onclick="creditListAddRow()">+ और row जोड़ें (max 40)</button>
+    <button class="cl-save" onclick="creditListSave()">💾 List Save करें</button>
   </div>
 </div>
 
@@ -4438,6 +4539,7 @@ function lgRenderDay(date, blocked) {
   lgRenderGrid('upi');
   lgRenderGrid('expense');
   lgRenderSaveArea();
+  if(typeof renderCreditGrid==='function')renderCreditGrid();
 }
 
 function lgFormatDate(ds) {
@@ -6705,6 +6807,117 @@ history.pushState({app:1}, '', location.href);
   });
 })();
 function loadGoalScreen(){const el=document.getElementById('goal-list');el.innerHTML='';const goals=DB.get(K.GOAL),bikri=DB.get(K.BIKRI);if(!goals.length){el.innerHTML='<div class="empty">🎯<br>अभी कोई लक्ष्य नहीं है</div>';return;}goals.slice().reverse().forEach(g=>{const monthSales=bikri.filter(r=>r.date&&r.date.startsWith(g.month)).reduce((s,r)=>s+(r.sales||0),0);const pct=g.target>0?Math.min(Math.round((monthSales/g.target)*100),100):0;const diff=monthSales-g.target,met=monthSales>=g.target?'✅ हाँ':'❌ नहीं';const parts=g.month.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='gcard';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:12px;font-weight:700;">${met}</div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:3px;"><span>लक्ष्य ${fmt(g.target)}</span><span>${pct}%</span></div><div class="gbar-bg"><div class="gbar" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:#555;"><span>असली ${fmt(monthSales)}</span><span style="color:${diff>=0?'#4dca4d':'#f06060'}">${diff>=0?'+':''}₹${diff.toLocaleString('en-IN')}</span></div>${g.note?`<div style="font-size:9px;color:#444;margin-top:5px;">📝 ${g.note}</div>`:''}`;el.appendChild(div);});}
+
+/* ================= उधार (Credit) entry → K.UDHAAR ledger ================= */
+window.creditState = { editId:null, items:[], total:0, amount:'' };
+function _cesc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function _crFmt(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
+function creditTodayRecs(){return (DB.get(K.UDHAAR)||[]).filter(function(r){return r&&r.date===TSTR;});}
+function renderCreditGrid(){
+  var grid=document.getElementById('lg-grid-credit'); if(!grid)return;
+  var recs=creditTodayRecs(),tot=0; recs.forEach(function(r){tot+=Number(r.amount||0);});
+  var meta=document.getElementById('lg-credit-meta'); if(meta)meta.textContent=_crFmt(tot)+' · '+recs.length+' एंट्री';
+  var h='';
+  recs.forEach(function(r){
+    h+='<div class="lg-cbox" onclick="creditOpen(\''+r.id+'\')"><div class="lg-cbox-amt">'+_crFmt(r.amount)+'</div><div class="lg-cbox-nm">'+_cesc(r.custName||'ग्राहक')+'</div></div>';
+  });
+  h+='<div class="lg-cadd" onclick="creditOpen()">+</div>';
+  grid.innerHTML=h;
+}
+function creditCurAmt(){var st=window.creditState;return st.items.length?st.total:(parseInt(st.amount||'0',10)||0);}
+function creditSyncAmount(){
+  var st=window.creditState;
+  document.getElementById('credit-amount').textContent=_crFmt(creditCurAmt());
+  document.getElementById('credit-keypad').style.display=st.items.length?'none':'grid';
+  document.getElementById('credit-amt-hint').textContent=st.items.length?('List से · '+st.items.length+' सामान'):'अधिकतम 5 अंक · या नीचे List बनाएं';
+}
+function creditSyncListBtn(){
+  var st=window.creditState,b=document.getElementById('credit-list-btn');
+  if(st.items.length){b.innerHTML='✅ List तैयार ('+st.items.length+' सामान)';b.classList.add('ready');}
+  else{b.innerHTML='📝 List बनाएं';b.classList.remove('ready');}
+}
+function creditOpen(editId){
+  var st=window.creditState; st.editId=editId||null; st.items=[]; st.total=0; st.amount='';
+  var name='',phone='';
+  if(editId){
+    var r=(DB.get(K.UDHAAR)||[]).find(function(x){return x.id===editId;});
+    if(r){name=r.custName||'';phone=r.custPhone||'';st.items=(r.items||[]).slice();st.total=Number(r.amount||0);st.amount=String(Math.round(r.amount||0));}
+  }
+  document.getElementById('credit-name').value=name;
+  document.getElementById('credit-phone').value=phone;
+  document.getElementById('credit-del-row').style.display=editId?'block':'none';
+  document.getElementById('credit-modal-title').textContent=editId?'📕 उधार · Edit':'📕 उधार · नया ग्राहक';
+  creditSyncAmount(); creditSyncListBtn();
+  document.getElementById('credit-modal').style.display='flex';
+}
+function creditClose(){document.getElementById('credit-modal').style.display='none';}
+function creditKey(d){var st=window.creditState;if(st.items.length)return;if(st.amount.length>=5)return;if(st.amount===''&&d==='0')return;st.amount+=d;creditSyncAmount();}
+function creditBack(){var st=window.creditState;if(st.items.length)return;st.amount=st.amount.slice(0,-1);creditSyncAmount();}
+function creditTri(){var st=window.creditState;if(st.items.length)return;if(st.amount===''||st.amount==='0')return;var n=Math.min(parseInt(st.amount+'000',10),99999);st.amount=String(n);creditSyncAmount();}
+function _clRowHtml(n,prod,amt){
+  return '<div class="cl-row"><span class="cl-sn">'+n+'.</span>'+
+    '<input class="cl-prod" maxlength="20" placeholder="सामान / Product" value="'+_cesc(prod||'')+'">'+
+    '<input class="cl-amt" maxlength="4" inputmode="numeric" placeholder="\u20b9" value="'+_cesc(amt||'')+'" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');creditListRecalc();"></div>';
+}
+function creditListOpen(){
+  var st=window.creditState,rows=document.getElementById('credit-list-rows'),h='';
+  var items=st.items.length?st.items:[];
+  var min=Math.max(6,items.length);
+  for(var i=0;i<min;i++){var it=items[i]||{};h+=_clRowHtml(i+1,it.product,it.amount?String(it.amount):'');}
+  rows.innerHTML=h; creditListRecalc();
+  document.getElementById('credit-list-modal').style.display='flex';
+}
+function creditListClose(){document.getElementById('credit-list-modal').style.display='none';}
+function creditListAddRow(){
+  var rows=document.getElementById('credit-list-rows');
+  var n=rows.querySelectorAll('.cl-row').length;
+  if(n>=40){toast('अधिकतम 40 सामान',true);return;}
+  rows.insertAdjacentHTML('beforeend',_clRowHtml(n+1,'',''));
+}
+function creditListRecalc(){
+  var rows=document.getElementById('credit-list-rows'),t=0;
+  rows.querySelectorAll('.cl-amt').forEach(function(a){t+=parseInt(a.value||'0',10)||0;});
+  document.getElementById('credit-list-total').textContent=_crFmt(t);
+}
+function creditListSave(){
+  var rows=document.getElementById('credit-list-rows'),items=[],t=0,n=0;
+  rows.querySelectorAll('.cl-row').forEach(function(row){
+    var p=row.querySelector('.cl-prod').value.trim();
+    var a=parseInt(row.querySelector('.cl-amt').value||'0',10)||0;
+    if(p||a){n++;items.push({n:n,product:p.slice(0,20),amount:a});t+=a;}
+  });
+  if(!items.length){toast('कम से कम एक सामान भरें',true);return;}
+  var st=window.creditState; st.items=items; st.total=t; st.amount=String(t);
+  creditListClose(); creditSyncAmount(); creditSyncListBtn();
+  toast('✅ List तैयार · '+_crFmt(t));
+}
+function creditPickContact(){
+  if(!(navigator.contacts&&navigator.contacts.select)){toast('यह सिर्फ Android Chrome में चलता है',true);return;}
+  navigator.contacts.select(['name','tel'],{multiple:false}).then(function(c){
+    if(c&&c[0]){if(c[0].name&&c[0].name[0])document.getElementById('credit-name').value=c[0].name[0];if(c[0].tel&&c[0].tel[0])document.getElementById('credit-phone').value=String(c[0].tel[0]).replace(/[^0-9+]/g,'');}
+  }).catch(function(){});
+}
+function creditSave(){
+  var st=window.creditState;
+  var name=document.getElementById('credit-name').value.trim();
+  var phone=document.getElementById('credit-phone').value.trim();
+  var amt=creditCurAmt();
+  if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}
+  if(amt<=0){toast('❌ रकम भरें या List बनाएं',true);return;}
+  if(st.editId){
+    var list=DB.get(K.UDHAAR)||[],r=list.find(function(x){return x.id===st.editId;});
+    if(r){var patch=Object.assign({},r,{custName:name,custPhone:phone,items:st.items.slice(),amount:amt});DB.update(K.UDHAAR,st.editId,patch);}
+  }else{
+    DB.push(K.UDHAAR,{date:TSTR,custName:name,custPhone:phone,items:st.items.slice(),amount:amt,payments:[],paid:0,ts:Date.now()});
+  }
+  toast('✅ उधार जुड़ गया — '+name);
+  creditClose(); renderCreditGrid();
+}
+function creditDelEntry(){
+  var st=window.creditState; if(!st.editId)return;
+  if(!confirm('यह उधार entry हटाएं?'))return;
+  DB.remove(K.UDHAAR,st.editId); creditClose(); renderCreditGrid(); toast('🗑️ हटा दिया');
+}
 </script>
 
 <script>

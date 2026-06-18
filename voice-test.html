@@ -29,6 +29,8 @@
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(226,58,58,.45)}70%{box-shadow:0 0 0 22px rgba(226,58,58,0)}100%{box-shadow:0 0 0 0 rgba(226,58,58,0)}}
   .miclabel{margin-top:11px;font-size:14px;font-weight:700;color:var(--txt2);}
   .interim{margin-top:9px;min-height:20px;font-size:13px;color:var(--gold-soft);font-style:italic;text-align:center;padding:0 10px;}
+  .dbg{margin:0 auto 14px;background:#08101f;border:1px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:10.5px;line-height:1.7;color:#8fe0b0;max-height:130px;overflow-y:auto;font-family:ui-monospace,Menlo,monospace;}
+  .dbg:empty{display:none;}
 
   .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:16px;}
   .chip{font-size:11px;color:var(--mut);background:#0b1430;border:1px solid var(--bd);border-radius:20px;padding:5px 11px;}
@@ -83,6 +85,8 @@
     <div id="micLabel" class="miclabel">शुरू करने के लिए दबाएँ</div>
     <div id="interim" class="interim"></div>
   </div>
+
+  <div id="dbg" class="dbg"></div>
 
   <div class="chips">
     <span class="chip">"2 किलो चीनी 80"</span>
@@ -219,47 +223,42 @@ function testManual(){
 }
 
 /* ---------- speech engine (interruption-resilient) ---------- */
-var rec=null, listening=false, restartTimer=null;
+var rec=null, listening=false, running=false, restartTimer=null;
+function dlog(msg){var d=document.getElementById('dbg');if(!d)return;var t=new Date().toLocaleTimeString('en-IN',{hour12:false});d.innerHTML='<div>'+t+' · '+esc(msg)+'</div>'+d.innerHTML;}
 function speechSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
 function toggleMic(){ listening ? stopMic() : startMic(); }
 function startMic(){
   if(!speechSupported()){showNoSupport();return;}
+  listening=true; updateMic(); dlog('▶️ शुरू'); startRec();
+}
+function startRec(){
+  if(running) return;
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   rec=new SR();
-  rec.lang='hi-IN';
-  rec.continuous=true;
-  rec.interimResults=true;
-  rec.maxAlternatives=1;
+  rec.lang='hi-IN'; rec.continuous=false; rec.interimResults=true; rec.maxAlternatives=1;
+  rec.onstart=function(){running=true;dlog('🎙️ सुन रहा है');};
+  rec.onaudiostart=function(){dlog('🔊 audio चालू');};
+  rec.onspeechstart=function(){dlog('🗣️ आवाज़ मिली');};
   rec.onresult=function(e){
     var interim='';
     for(var i=e.resultIndex;i<e.results.length;i++){
-      var r=e.results[i];
-      var txt=(r[0]&&r[0].transcript)||'';
-      if(r.isFinal){ addFromSpeech(txt); }
+      var r=e.results[i]; var txt=(r[0]&&r[0].transcript)||'';
+      if(r.isFinal){ dlog('✅ '+txt); addFromSpeech(txt); }
       else interim+=txt;
     }
     document.getElementById('interim').textContent=interim?('… '+interim):'';
   };
   rec.onerror=function(e){
+    dlog('⚠️ error: '+e.error);
     if(e.error==='not-allowed'||e.error==='service-not-allowed'){listening=false;updateMic();document.getElementById('micLabel').textContent='Mic की अनुमति दें (Allow)';}
   };
   rec.onend=function(){
-    document.getElementById('interim').textContent='';
-    if(listening){ /* auto-restart so a pause / customer interruption does not stop it */
-      clearTimeout(restartTimer);
-      restartTimer=setTimeout(function(){ if(listening){ try{rec.start();}catch(e){} } },250);
-    }
+    running=false; document.getElementById('interim').textContent='';
+    if(listening){ clearTimeout(restartTimer); restartTimer=setTimeout(startRec,400); }
   };
-  listening=true;
-  try{rec.start();}catch(e){}
-  updateMic();
+  try{ rec.start(); }catch(err){ running=false; dlog('start त्रुटि: '+err.message); if(listening){clearTimeout(restartTimer);restartTimer=setTimeout(startRec,500);} }
 }
-function stopMic(){
-  listening=false; clearTimeout(restartTimer);
-  try{rec&&rec.stop();}catch(e){}
-  updateMic();
-  document.getElementById('interim').textContent='';
-}
+function stopMic(){ listening=false; clearTimeout(restartTimer); try{rec&&rec.stop();}catch(e){} updateMic(); document.getElementById('interim').textContent=''; dlog('⏹️ बंद'); }
 function updateMic(){
   var b=document.getElementById('mic'), l=document.getElementById('micLabel');
   if(listening){b.classList.add('on');b.textContent='⏹️';l.textContent='सुन रहा हूँ… बोलिए (रोकने के लिए दबाएँ)';}

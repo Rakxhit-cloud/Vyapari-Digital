@@ -2749,6 +2749,67 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 
+<style>
+  .uc-ss{flex:1;border-radius:12px;padding:10px 11px;position:relative;overflow:hidden;border:1px solid;}
+  .uc-ss .l{font-size:9.5px;font-weight:700;margin-bottom:3px;}
+  .uc-ss .v{font-size:15.5px;font-weight:800;color:#fff;}
+  .uc-recv{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,#2bd36e,#1fab53);border:1px solid #5cf09a;color:#fff;font-weight:800;font-size:14.5px;padding:13px;border-radius:13px;margin-bottom:15px;cursor:pointer;box-shadow:0 4px 16px rgba(43,211,110,.25);}
+  .uc-methods{display:flex;gap:10px;margin-top:12px;}
+  .uc-m{flex:1;text-align:center;padding:13px;border-radius:12px;border:2px solid #2a4078;background:#0b1430;color:#94a0c4;font-weight:800;font-size:14px;cursor:pointer;}
+  .uc-m-cash.active{border-color:#3ec873;background:rgba(62,200,115,.12);color:#5dd88a;}
+  .uc-m-upi.active{border-color:#5dcaff;background:rgba(93,202,255,.12);color:#5dcaff;}
+  .uc-quick{margin-top:10px;font-size:12px;color:#5dd88a;border:1px solid #1d5a3a;border-radius:9px;padding:8px 12px;background:rgba(62,200,115,.1);font-weight:700;cursor:pointer;display:inline-block;}
+  .uc-flowtip{background:rgba(93,202,255,.08);border:1px solid #2f6d99;border-radius:11px;padding:10px 12px;font-size:11px;color:#aee0ff;margin-top:13px;line-height:1.5;}
+</style>
+<div id="s-udhaar-customer" class="screen">
+  <div class="header" style="border-bottom-color:#e23a3a;">
+    <div class="header-left">
+      <button onclick="go('s-udhaar-book')" style="background:#2a1018;border:1.5px solid #c23030;width:38px;height:38px;border-radius:10px;color:#ff8a7a;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;">←</button>
+      <div class="header-icon" id="uc-avatar" style="background:linear-gradient(135deg,#ff5a4a,#c62828);border:2px solid #ff8a7a;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;">R</div>
+      <div>
+        <div id="uc-name" style="font-size:18px;font-weight:800;color:#fff;">—</div>
+        <div id="uc-meta" style="font-size:10px;color:#c0a8a8;letter-spacing:.5px;">—</div>
+      </div>
+    </div>
+  </div>
+  <div class="fw" style="padding:14px;">
+    <div id="uc-contact" style="background:linear-gradient(135deg,#2a1622,#171022);border:1px solid #c23030;border-radius:14px;padding:12px;margin-bottom:13px;"></div>
+    <div style="display:flex;gap:9px;margin-bottom:14px;">
+      <div class="uc-ss" style="background:linear-gradient(135deg,#2a1212,#1d0d0d);border-color:#c23030;"><div class="l" style="color:#ff8a7a;">कुल उधार</div><div class="v" id="uc-credit">₹0</div></div>
+      <div class="uc-ss" style="background:linear-gradient(135deg,#0e2417,#0a1a12);border-color:#1d5a3a;"><div class="l" style="color:#5dd88a;">मिल गया</div><div class="v" id="uc-paid">₹0</div></div>
+      <div class="uc-ss" style="background:linear-gradient(135deg,#2a2018,#1d150c);border-color:#6a5020;"><div class="l" style="color:#f0c890;">अभी बाकी</div><div class="v" id="uc-out">₹0</div></div>
+    </div>
+    <div class="uc-recv" onclick="ucPayOpen()">💰 पैसे मिले — Receive Payment</div>
+    <div id="uc-ledger"></div>
+  </div>
+</div>
+<!-- पैसे मिले popup -->
+<div class="credit-bd" id="uc-pay-modal" onclick="if(event.target===this)ucPayClose()">
+  <div class="lg-modal-card" style="margin-top:14px;">
+    <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#2bd36e,#5dd88a,#d4a850);"></div>
+    <div class="lg-modal-body">
+      <div class="lg-modal-head">
+        <div class="lg-modal-title">💰 पैसे मिले</div>
+        <div class="lg-modal-close" onclick="ucPayClose()">✕</div>
+      </div>
+      <div class="lg-display">
+        <div style="display:flex;align-items:center;justify-content:center;gap:4px;">
+          <span style="font-size:30px;font-weight:800;color:#fff;">₹</span>
+          <input id="uc-pay-amt" inputmode="numeric" placeholder="0" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="width:60%;background:transparent;border:none;text-align:left;color:#fff;font-size:34px;font-weight:800;outline:none;">
+        </div>
+        <div class="lg-display-hint" id="uc-pay-hint">अभी बाकी ₹0</div>
+      </div>
+      <div style="text-align:center;"><span class="uc-quick" onclick="ucPayFull()">✓ पूरा भरें</span></div>
+      <div class="uc-methods">
+        <div class="uc-m uc-m-cash active" id="uc-m-cash" onclick="ucPayMethod('cash')">💵 नकद</div>
+        <div class="uc-m uc-m-upi" id="uc-m-upi" onclick="ucPayMethod('upi')">📱 UPI</div>
+      </div>
+      <div class="uc-flowtip">यह रकम अपने आप <b style="color:#cfeaff;">Live हिसाब</b> के <b style="color:#cfeaff;">नकद / UPI</b> में जुड़ जाएगी।</div>
+      <button class="credit-save" style="background:linear-gradient(135deg,#2bd36e,#1fab53);border-color:#5cf09a;" onclick="ucPaySave()">💾 पैसे मिले — Save करें</button>
+    </div>
+  </div>
+</div>
+
 <div id="s-monthly" class="screen">
   <div class="header"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border:2px solid #d4a850;">📅</div><div><div class="header-title">महीने का हिसाब</div><div class="header-sub">मासिक सारांश</div></div></div></div>
   <div class="pad" style="padding-top:12px;" id="monthly-list"><div class="loading">⏳</div></div>
@@ -3275,7 +3336,7 @@ window._fsLoadAll = async function(uid) {
   if (!uid || uid === 'default') return;
   setSyncStatus('syncing', '☁️ Cloud से data लोड हो रहा है...');
   try {
-    const cols = ['bikri', 'maal', 'goal'];
+    const cols = ['bikri', 'maal', 'udhaar', 'goal'];
     for (const colName of cols) {
       const snap = await getDocs(collection(db, 'users', uid, colName));
       if (snap.empty) continue;
@@ -4957,7 +5018,9 @@ function go(id){
   if(id==='s-monthly')loadMonthly();
   if(id==='s-goal')loadGoalScreen();
   if(id==='s-suppliers')renderSuppliers();
-  
+  if(id==='s-udhaar-book'&&window.renderUdhaarList)renderUdhaarList();
+  if(id==='s-udhaar-customer'&&window.renderUdhaarProfile&&window.ucKey)renderUdhaarProfile(window.ucKey);
+  if(id==='s-home'&&window.updateUdhaarTotals)updateUdhaarTotals();
 }
   function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
 document.addEventListener('click',e=>{const m=document.getElementById('more-menu'),b=document.getElementById('n-more');if(m&&b&&!m.contains(e.target)&&!b.contains(e.target))m.style.display='none';});
@@ -6778,7 +6841,7 @@ function appLockUnlock() {}
 function appLockToggle() { if (window.alckOpenChangePinFlow) window.alckOpenChangePinFlow(); }
 history.pushState({app:1}, '', location.href);
 (function(){
-  const PARENT={'s-udhaar-book':'s-home','s-supplier-profile':'s-suppliers','s-suppliers':'s-home','s-entry':'s-home','s-calendar':'s-home','s-goal':'s-home','s-monthly':'s-home','s-livegalla':'s-home'};
+  const PARENT={'s-udhaar-customer':'s-udhaar-book','s-udhaar-book':'s-home','s-supplier-profile':'s-suppliers','s-suppliers':'s-home','s-entry':'s-home','s-calendar':'s-home','s-goal':'s-home','s-monthly':'s-home','s-livegalla':'s-home'};
   let exitArmed=false, exitTimer=null;
   function isOpen(el){return el && (el.classList.contains('show')||el.style.display==='flex'||el.style.display==='block');}
   // Close the single topmost open layer (popup/menu). Returns true if one was closed.
@@ -6812,7 +6875,7 @@ function loadGoalScreen(){const el=document.getElementById('goal-list');el.inner
 window.creditState = { editId:null, items:[], total:0, amount:'' };
 function _cesc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function _crFmt(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
-function creditTodayRecs(){return (DB.get(K.UDHAAR)||[]).filter(function(r){return r&&r.date===TSTR;});}
+function creditTodayRecs(){return (DB.get(K.UDHAAR)||[]).filter(function(r){return r&&r.date===TSTR&&r.type!=='payment';});}
 function renderCreditGrid(){
   var grid=document.getElementById('lg-grid-credit'); if(!grid)return;
   var recs=creditTodayRecs(),tot=0; recs.forEach(function(r){tot+=Number(r.amount||0);});
@@ -6917,6 +6980,161 @@ function creditDelEntry(){
   var st=window.creditState; if(!st.editId)return;
   if(!confirm('यह उधार entry हटाएं?'))return;
   DB.remove(K.UDHAAR,st.editId); creditClose(); renderCreditGrid(); toast('🗑️ हटा दिया');
+}
+
+/* ===== उधार Book: read side (customers, profile, receive payment) ===== */
+function lgAddIncomeBox(date, amount, note, method){
+  amount=Math.round(amount||0); if(!date||amount<=0)return;
+  var type=(method==='upi')?'upi':'cash';
+  var t=new Date();
+  var todayStr=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  var list=DB.get(K.BIKRI), rec=list.find(function(r){return r.date===date;});
+  if(!rec){rec={date:date,sales:0,cash:0,upi:0,expense:0,udhaar:0,profit:0,margin:0,rating:'⚠️ धीमा',notes:'',lgBoxes:[],lgSaved:(date!==todayStr),lgSavedAt:(date!==todayStr)?Date.now():null};}
+  if(!Array.isArray(rec.lgBoxes))rec.lgBoxes=[];
+  if(rec.lgBoxes.length===0 && ((rec.cash||0)>0||(rec.upi||0)>0||(rec.expense||0)>0)){
+    if((rec.cash||0)>0)rec.lgBoxes.push({n:1,type:'cash',amount:rec.cash,note:'(पुराना)',ts:Date.now()});
+    if((rec.upi||0)>0)rec.lgBoxes.push({n:1,type:'upi',amount:rec.upi,note:'(पुराना)',ts:Date.now()});
+    if((rec.expense||0)>0)rec.lgBoxes.push({n:1,type:'expense',amount:rec.expense,note:'(पुराना)',ts:Date.now()});
+  }
+  var cnt=rec.lgBoxes.filter(function(b){return b.type===type;}).length;
+  rec.lgBoxes.push({n:cnt+1,type:type,amount:amount,note:(note||'').slice(0,80),ts:Date.now(),src:'udhaar'});
+  lgPersistRec(rec);
+  if(typeof loadHome==='function')setTimeout(loadHome,50);
+}
+function _custKey(name,phone){var p=(phone||'').replace(/[^0-9]/g,'');return p?('p:'+p.slice(-10)):('n:'+(name||'').trim().toLowerCase());}
+function udhaarCustomers(){
+  var all=DB.get(K.UDHAAR)||[],map={};
+  all.forEach(function(r){
+    if(!r)return;
+    var key=_custKey(r.custName,r.custPhone);
+    if(!map[key])map[key]={key:key,name:r.custName||'ग्राहक',phone:r.custPhone||'',credit:0,paid:0,txns:[],last:0};
+    var c=map[key];
+    if(!c.phone&&r.custPhone)c.phone=r.custPhone;
+    if(r.type==='payment')c.paid+=Number(r.amount||0); else c.credit+=Number(r.amount||0);
+    c.txns.push(r); if((r.ts||0)>c.last)c.last=r.ts||0;
+  });
+  return Object.keys(map).map(function(k){var c=map[k];c.outstanding=c.credit-c.paid;return c;});
+}
+function udhaarTotalReceivable(){return udhaarCustomers().reduce(function(s,c){return s+Math.max(0,c.outstanding);},0);}
+function updateUdhaarTotals(){
+  var t=udhaarTotalReceivable();
+  var a=document.getElementById('ub-total'),b=document.getElementById('ub-home-total');
+  if(a)a.textContent=fmt(t); if(b)b.textContent=fmt(t);
+}
+function renderUdhaarList(){
+  updateUdhaarTotals();
+  var box=document.getElementById('ub-list'); if(!box)return;
+  var sEl=document.getElementById('ub-search');
+  var q=((sEl&&sEl.value)||'').trim().toLowerCase();
+  var custs=udhaarCustomers().filter(function(c){return c.credit>0;});
+  custs.sort(function(a,b){return b.last-a.last;});
+  if(q)custs=custs.filter(function(c){return c.name.toLowerCase().indexOf(q)>-1||(c.phone||'').indexOf(q)>-1;});
+  if(!custs.length){
+    box.innerHTML='<div style="text-align:center;color:#94a0c4;padding:42px 16px;"><div style="font-size:42px;margin-bottom:10px;opacity:.55;">📕</div><div style="font-size:14px;font-weight:600;color:#cdd8f8;">'+(q?'कोई ग्राहक नहीं मिला':'अभी कोई उधार ग्राहक नहीं')+'</div>'+(q?'':'<div style="font-size:12px;margin-top:7px;line-height:1.55;">Live हिसाब में बिक्री को <b style="color:#ff8a7a;">उधार</b> चुनें —<br>ग्राहक यहाँ अपने आप आ जाएगा।</div>')+'</div>';
+    return;
+  }
+  var h='';
+  custs.forEach(function(c){
+    var letter=_cesc(((c.name||'?').trim().charAt(0)||'?').toUpperCase());
+    var n=c.txns.filter(function(t){return t.type!=='payment';}).length;
+    var ek=c.key.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    h+='<div onclick="openUdhaarProfile(\''+ek+'\')" style="background:linear-gradient(135deg,#121b40,#0d1532);border:1px solid #263c70;border-radius:15px;padding:13px;margin-bottom:11px;display:flex;align-items:center;gap:13px;cursor:pointer;">'+
+      '<div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#ff5a4a,#c62828);border:1px solid #ff8a7a;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;flex-shrink:0;">'+letter+'</div>'+
+      '<div style="min-width:0;"><div style="font-size:16px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;">'+_cesc(c.name)+'</div><div style="font-size:11px;color:#94a0c4;margin-top:3px;">'+n+' उधार'+(c.paid>0?(' · मिला '+fmt(c.paid)):'')+'</div></div>'+
+      '<div style="margin-left:auto;text-align:right;"><div style="font-size:17px;font-weight:800;color:#f0c890;">'+fmt(Math.max(0,c.outstanding))+'</div><div style="font-size:10px;color:#ff8a7a;font-weight:600;">मिलना है</div></div>'+
+    '</div>';
+  });
+  box.innerHTML=h;
+}
+function openUdhaarProfile(key){window.ucKey=key;go('s-udhaar-customer');renderUdhaarProfile(key);}
+function _udDate(ds){if(!ds)return '';var p=String(ds).split('-');if(p.length<3)return ds;var m=['जन','फर','मार्च','अप्रैल','मई','जून','जुल','अग','सित','अक्टू','नव','दिस'];return parseInt(p[2])+' '+(m[parseInt(p[1])-1]||'')+' '+p[0];}
+function renderUdhaarProfile(key){
+  var c=udhaarCustomers().find(function(x){return x.key===key;});
+  if(!c){go('s-udhaar-book');return;}
+  window.ucCust=c;
+  var first=((c.name||'?').trim().charAt(0)||'?').toUpperCase();
+  document.getElementById('uc-name').textContent=c.name;
+  document.getElementById('uc-avatar').textContent=first;
+  var nCredit=c.txns.filter(function(t){return t.type!=='payment';}).length;
+  document.getElementById('uc-meta').textContent=nCredit+' उधार · CREDIT LEDGER';
+  document.getElementById('uc-credit').textContent=fmt(c.credit);
+  document.getElementById('uc-paid').textContent=fmt(c.paid);
+  document.getElementById('uc-out').textContent=fmt(Math.max(0,c.outstanding));
+  var cbox=document.getElementById('uc-contact'),ph=c.phone||'';
+  if(ph){
+    var wa=_waNum(ph);
+    cbox.innerHTML='<div style="font-size:15px;color:#ffd9c8;font-weight:800;margin-bottom:10px;">📞 '+_cesc(ph)+'</div>'+
+      '<div style="display:flex;gap:9px;">'+
+        '<a href="tel:'+_cesc(ph)+'" style="flex:1;text-align:center;text-decoration:none;background:linear-gradient(135deg,#36a2ec,#2474c4);border:1px solid #7fd0ff;color:#fff;font-weight:800;font-size:12.5px;padding:10px;border-radius:10px;">📞 कॉल</a>'+
+        '<a href="https://wa.me/'+wa+'" target="_blank" style="flex:1;text-align:center;text-decoration:none;background:linear-gradient(135deg,#2bd36e,#1fad55);border:1px solid #5cf09a;color:#fff;font-weight:800;font-size:12.5px;padding:10px;border-radius:10px;">💬 WhatsApp</a>'+
+      '</div>'+
+      '<div onclick="ucReminder()" style="margin-top:9px;text-align:center;background:linear-gradient(135deg,#e23a3a,#ff5a4a);border:1px solid #ff8a7a;color:#fff;font-weight:800;font-size:12.5px;padding:11px;border-radius:10px;cursor:pointer;">🔔 उधार की याद दिलाएं — Reminder भेजें</div>';
+  }else{
+    cbox.innerHTML='<div style="font-size:12px;color:#94a0c4;text-align:center;padding:6px;">📞 कोई नंबर नहीं — entry edit करके जोड़ें</div>';
+  }
+  var txns=c.txns.slice().sort(function(a,b){return (b.ts||0)-(a.ts||0);}),lh='';
+  txns.forEach(function(t){
+    var d=_udDate(t.date);
+    if(t.type==='payment'){
+      lh+='<div style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">'+
+        '<div><div style="font-size:14px;font-weight:600;color:#fff;">पैसे मिले</div><div style="font-size:10.5px;color:#94a0c4;margin-top:2px;">'+d+' · '+(t.method==='upi'?'UPI':'नकद')+'</div></div>'+
+        '<div style="text-align:right;"><div style="color:#5dd88a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(62,200,115,.14);border:1px solid #1d5a3a;color:#5dd88a;">वापसी</span></div></div>';
+    }else{
+      var it='';
+      if(t.items&&t.items.length)it=t.items.map(function(x){return _cesc(x.product||'')+(x.amount?(' ₹'+x.amount):'');}).filter(Boolean).join(' · ');
+      lh+='<div onclick="creditOpenFromProfile(\''+t.id+'\')" style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">'+
+        '<div style="min-width:0;flex:1;"><div style="font-size:14px;font-weight:600;color:#fff;">'+d+'</div><div style="font-size:10.5px;color:#94a0c4;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(it||'उधार')+'</div></div>'+
+        '<div style="text-align:right;margin-left:8px;"><div style="color:#ff8a7a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(226,58,58,.15);border:1px solid #c23030;color:#ff8a7a;">उधार लिया</span></div></div>';
+    }
+  });
+  document.getElementById('uc-ledger').innerHTML=lh;
+}
+function creditOpenFromProfile(id){
+  var r=(DB.get(K.UDHAAR)||[]).find(function(x){return x.id===id;});
+  if(!r)return;
+  if(r.date===TSTR){ go('s-livegalla'); setTimeout(function(){creditOpen(id);},140); }
+  else toast('पुरानी entry — सिर्फ आज वाली edit होती है');
+}
+function ucReminder(){
+  var c=window.ucCust; if(!c)return;
+  if(!c.phone){toast('कोई नंबर नहीं',true);return;}
+  var biz=(localStorage.getItem('hk_business_name')||'दुकान');
+  var lines=['नमस्ते '+c.name+' जी,', biz+' से उधार याद दिला रहे हैं।'];
+  var credits=c.txns.filter(function(t){return t.type!=='payment';}).sort(function(a,b){return (b.ts||0)-(a.ts||0);});
+  if(credits[0]&&credits[0].items&&credits[0].items.length){
+    lines.push(''); lines.push('पिछली खरीद:');
+    credits[0].items.forEach(function(x){if(x.product||x.amount)lines.push('• '+(x.product||'')+' — ₹'+(x.amount||0));});
+  }
+  lines.push(''); lines.push('कुल बाकी: ₹'+Math.max(0,c.outstanding).toLocaleString('en-IN'));
+  lines.push('कृपया सुविधानुसार चुका दें। धन्यवाद 🙏');
+  window.open('https://wa.me/'+_waNum(c.phone)+'?text='+encodeURIComponent(lines.join('\n')),'_blank');
+}
+window.ucPay={method:'cash'};
+function ucPayOpen(){
+  var c=window.ucCust; if(!c)return;
+  window.ucPay={method:'cash'};
+  document.getElementById('uc-pay-amt').value='';
+  document.getElementById('uc-pay-hint').textContent='अभी बाकी '+fmt(Math.max(0,c.outstanding));
+  ucPayMethod('cash');
+  document.getElementById('uc-pay-modal').style.display='flex';
+}
+function ucPayClose(){document.getElementById('uc-pay-modal').style.display='none';}
+function ucPayMethod(m){window.ucPay.method=m;
+  document.getElementById('uc-m-cash').classList.toggle('active',m==='cash');
+  document.getElementById('uc-m-upi').classList.toggle('active',m==='upi');
+}
+function ucPayFull(){var c=window.ucCust;if(!c)return;document.getElementById('uc-pay-amt').value=String(Math.max(0,c.outstanding));}
+function ucPaySave(){
+  var c=window.ucCust; if(!c)return;
+  var amt=parseInt((document.getElementById('uc-pay-amt').value||'0').replace(/[^0-9]/g,''),10)||0;
+  if(amt<=0){toast('❌ रकम भरें',true);return;}
+  var method=window.ucPay.method;
+  DB.push(K.UDHAAR,{date:TSTR,custName:c.name,custPhone:c.phone,type:'payment',method:method,amount:amt,ts:Date.now()});
+  lgAddIncomeBox(TSTR,amt,'उधार वापसी — '+c.name,method);
+  ucPayClose();
+  toast('✅ ₹'+amt.toLocaleString('en-IN')+' मिला — Live हिसाब में जुड़ा');
+  renderUdhaarProfile(c.key);
+  if(typeof renderCreditGrid==='function')renderCreditGrid();
 }
 </script>
 

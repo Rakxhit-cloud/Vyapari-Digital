@@ -2625,6 +2625,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="cl-rows" id="credit-list-rows"></div>
     <button class="cl-addrow" id="credit-list-addrow" onclick="creditListAddRow()">+ और row जोड़ें (max 40)</button>
     <button class="cl-save" id="credit-list-save" onclick="creditListSave()">💾 List Save करें</button>
+    <button id="credit-list-wa" onclick="creditListWhatsApp()" style="display:block;margin:10px auto 2px;padding:11px 32px;border-radius:11px;border:1px solid rgba(43,211,110,.5);background:rgba(43,211,110,.13);color:#7fe0a8;font-size:13.5px;font-weight:700;cursor:pointer;">💬 WhatsApp पर भेजें</button>
   </div>
 </div>
 
@@ -2779,7 +2780,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="uc-ss" style="background:linear-gradient(135deg,#0e2417,#0a1a12);border-color:#1d5a3a;"><div class="l" style="color:#5dd88a;">मिल गया</div><div class="v" id="uc-paid">₹0</div></div>
       <div class="uc-ss" style="background:linear-gradient(135deg,#2a2018,#1d150c);border-color:#6a5020;"><div class="l" style="color:#f0c890;">अभी बाकी</div><div class="v" id="uc-out">₹0</div></div>
     </div>
-    <div class="uc-recv" onclick="ucPayOpen()">💰 पैसे मिले — Receive Payment</div>
+    <div class="uc-recv" onclick="ucPayOpen()">💰 Payment आया</div>
     <div id="uc-ledger"></div>
   </div>
 </div>
@@ -2789,7 +2790,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#2bd36e,#5dd88a,#d4a850);"></div>
     <div class="lg-modal-body">
       <div class="lg-modal-head">
-        <div class="lg-modal-title">💰 पैसे मिले</div>
+        <div class="lg-modal-title">💰 Payment आया</div>
         <div class="lg-modal-close" onclick="ucPayClose()">✕</div>
       </div>
       <div class="lg-display">
@@ -2805,7 +2806,7 @@ body.notif-modal-open { overflow: hidden; }
         <div class="uc-m uc-m-upi" id="uc-m-upi" onclick="ucPayMethod('upi')">📱 UPI</div>
       </div>
       <div class="uc-flowtip">यह रकम अपने आप <b style="color:#cfeaff;">Live हिसाब</b> के <b style="color:#cfeaff;">नकद / UPI</b> में जुड़ जाएगी।</div>
-      <button class="credit-save" style="background:linear-gradient(135deg,#2bd36e,#1fab53);border-color:#5cf09a;" onclick="ucPaySave()">💾 पैसे मिले — Save करें</button>
+      <button class="credit-save" style="background:linear-gradient(135deg,#2bd36e,#1fab53);border-color:#5cf09a;" onclick="ucPaySave()">💾 Payment आया — Save करें</button>
     </div>
   </div>
 </div>
@@ -6969,6 +6970,25 @@ function creditListSave(){
   creditListClose(); creditSyncAmount(); creditSyncListBtn();
   toast('✅ List तैयार · '+_crFmt(t));
 }
+function creditListWhatsApp(){
+  var rows=document.getElementById('credit-list-rows'),items=[],t=0;
+  rows.querySelectorAll('.cl-row').forEach(function(row){
+    var p=row.querySelector('.cl-prod').value.trim();
+    var a=parseInt(row.querySelector('.cl-amt').value||'0',10)||0;
+    if(p||a){items.push({product:p,amount:a});t+=a;}
+  });
+  if(!items.length){toast('पहले list भरें',true);return;}
+  var phone='',name='';
+  if(window.creditListMode==='entry'&&window.ucCust){phone=window.ucCust.phone||'';name=window.ucCust.name||'';}
+  else{var pe=document.getElementById('credit-phone'),ne=document.getElementById('credit-name');phone=((pe&&pe.value)||'').trim();name=((ne&&ne.value)||'').trim();}
+  var biz=(localStorage.getItem('hk_business_name')||'दुकान');
+  var lines=['नमस्ते '+(name?(name+' जी'):'')+',', biz+' से आपका हिसाब:',''];
+  items.forEach(function(x,i){lines.push((i+1)+'. '+(x.product||'')+' — ₹'+(x.amount||0));});
+  lines.push('————————'); lines.push('कुल: ₹'+t.toLocaleString('en-IN')); lines.push('धन्यवाद 🙏');
+  var msg=encodeURIComponent(lines.join('\n'));
+  var url=phone?('https://wa.me/'+_waNum(phone)+'?text='+msg):('https://api.whatsapp.com/send?text='+msg);
+  window.open(url,'_blank');
+}
 function creditPickContact(){
   if(!(navigator.contacts&&navigator.contacts.select)){toast('यह सिर्फ Android Chrome में चलता है',true);return;}
   navigator.contacts.select(['name','tel'],{multiple:false}).then(function(c){
@@ -7079,28 +7099,35 @@ function renderUdhaarProfile(key){
   if(ph){
     var wa=_waNum(ph);
     cbox.innerHTML='<div style="font-size:15px;color:#ffd9c8;font-weight:800;margin-bottom:10px;">📞 '+_cesc(ph)+'</div>'+
-      '<div style="display:flex;gap:9px;">'+
-        '<a href="tel:'+_cesc(ph)+'" style="flex:1;text-align:center;text-decoration:none;background:linear-gradient(135deg,#36a2ec,#2474c4);border:1px solid #7fd0ff;color:#fff;font-weight:800;font-size:12.5px;padding:10px;border-radius:10px;">📞 कॉल</a>'+
-        '<a href="https://wa.me/'+wa+'" target="_blank" style="flex:1;text-align:center;text-decoration:none;background:linear-gradient(135deg,#2bd36e,#1fad55);border:1px solid #5cf09a;color:#fff;font-weight:800;font-size:12.5px;padding:10px;border-radius:10px;">💬 WhatsApp</a>'+
-      '</div>'+
-      '<div onclick="ucReminder()" style="margin-top:9px;text-align:center;background:linear-gradient(135deg,#e23a3a,#ff5a4a);border:1px solid #ff8a7a;color:#fff;font-weight:800;font-size:12.5px;padding:11px;border-radius:10px;cursor:pointer;">🔔 उधार की याद दिलाएं — Reminder भेजें</div>';
+      '<div style="display:flex;gap:8px;">'+
+        '<a href="tel:'+_cesc(ph)+'" style="flex:1;text-align:center;text-decoration:none;background:rgba(74,158,226,.13);border:1px solid rgba(74,158,226,.42);color:#9fd4ff;font-weight:700;font-size:12px;padding:8px;border-radius:9px;">कॉल</a>'+
+        '<a href="https://wa.me/'+wa+'" target="_blank" style="flex:1;text-align:center;text-decoration:none;background:rgba(43,211,110,.12);border:1px solid rgba(43,211,110,.42);color:#7fe0a8;font-weight:700;font-size:12px;padding:8px;border-radius:9px;">WhatsApp</a>'+
+      '</div>';
   }else{
     cbox.innerHTML='<div style="font-size:12px;color:#94a0c4;text-align:center;padding:6px;">📞 कोई नंबर नहीं — entry edit करके जोड़ें</div>';
   }
-  var txns=c.txns.slice().sort(function(a,b){return (b.ts||0)-(a.ts||0);}),lh='';
-  txns.forEach(function(t){
-    var d=_udDate(t.date);
-    if(t.type==='payment'){
-      lh+='<div style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">'+
-        '<div><div style="font-size:14px;font-weight:600;color:#fff;">पैसे मिले</div><div style="font-size:10.5px;color:#94a0c4;margin-top:2px;">'+d+' · '+(t.method==='upi'?'UPI':'नकद')+'</div></div>'+
-        '<div style="text-align:right;"><div style="color:#5dd88a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(62,200,115,.14);border:1px solid #1d5a3a;color:#5dd88a;">वापसी</span></div></div>';
-    }else{
-      var it='';
-      if(t.items&&t.items.length)it=t.items.map(function(x){return _cesc(x.product||'')+(x.amount?(' ₹'+x.amount):'');}).filter(Boolean).join(' · ');
-      lh+='<div onclick="openEntryList(\''+t.id+'\')" style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">'+
-        '<div style="min-width:0;flex:1;"><div style="font-size:14px;font-weight:600;color:#fff;">'+d+'</div><div style="font-size:10.5px;color:#94a0c4;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(it||'उधार')+'</div></div>'+
-        '<div style="text-align:right;margin-left:8px;"><div style="color:#ff8a7a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(226,58,58,.15);border:1px solid #c23030;color:#ff8a7a;">उधार लिया</span></div></div>';
-    }
+  var byDate={};
+  c.txns.forEach(function(t){(byDate[t.date]=byDate[t.date]||[]).push(t);});
+  var dates=Object.keys(byDate).sort(function(a,b){return a<b?1:(a>b?-1:0);}),lh='';
+  dates.forEach(function(d){
+    var day=byDate[d].slice().sort(function(a,b){return (a.ts||0)-(b.ts||0);});
+    lh+='<div style="font-size:11px;color:#f0c890;font-weight:800;margin:15px 2px 9px;display:flex;align-items:center;gap:7px;"><span style="width:3px;height:13px;background:#d4a850;border-radius:2px;display:inline-block;"></span>'+_udDate(d)+'</div>';
+    day.forEach(function(t,idx){
+      var sn=(idx+1);
+      if(t.type==='payment'){
+        lh+='<div style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">'+
+          '<span style="font-size:13px;color:#8aa0d8;font-weight:700;flex-shrink:0;">'+sn+'.</span>'+
+          '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;color:#fff;">Payment आया</div><div style="font-size:10.5px;color:#94a0c4;margin-top:2px;">'+(t.method==='upi'?'UPI':'नकद')+'</div></div>'+
+          '<div style="text-align:right;"><div style="color:#5dd88a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(62,200,115,.14);border:1px solid #1d5a3a;color:#5dd88a;">वापसी</span></div></div>';
+      }else{
+        var it='';
+        if(t.items&&t.items.length)it=t.items.map(function(x){return _cesc(x.product||'')+(x.amount?(' ₹'+x.amount):'');}).filter(Boolean).join(' · ');
+        lh+='<div onclick="openEntryList(\''+t.id+'\')" style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;">'+
+          '<span style="font-size:13px;color:#ff8a7a;font-weight:700;flex-shrink:0;">'+sn+'.</span>'+
+          '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(it||'उधार')+'</div><div style="font-size:10px;color:#7fa0d8;margin-top:3px;">सूची देखें ›</div></div>'+
+          '<div style="text-align:right;margin-left:4px;"><div style="color:#ff8a7a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(226,58,58,.15);border:1px solid #c23030;color:#ff8a7a;">उधार लिया</span></div></div>';
+      }
+    });
   });
   document.getElementById('uc-ledger').innerHTML=lh;
 }

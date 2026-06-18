@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Voice Test · Live खाता</title>
+<style>
+  :root{
+    --navy:#0a1530; --navy2:#0d1838; --bd:#2a4078;
+    --gold:#d4a850; --gold2:#e8c870; --gold-soft:#f0c890;
+    --green:#3ec873; --green2:#5dd88a; --red:#e23a3a; --red2:#ff5a4a; --red3:#ff8a7a;
+    --txt:#f4f6fa; --txt2:#cdd8f8; --mut:#94a0c4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:radial-gradient(130% 80% at 50% 0%,#0c1538 0%,#070b1e 70%);font-family:'Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;color:var(--txt);min-height:100vh;padding:14px 12px 40px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:480px;margin:0 auto;}
+  .top{display:flex;align-items:center;gap:11px;margin-bottom:14px;}
+  .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#f56a6a,#c62828);border:2px solid #ffb0a0;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+  .ttl{font-size:18px;font-weight:800;color:var(--gold-soft);}
+  .sub{font-size:11px;color:var(--mut);margin-top:2px;}
+
+  .help{background:linear-gradient(135deg,#11193e,#0c1330);border:1px solid var(--bd);border-radius:13px;padding:12px 14px;font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:16px;}
+  .help b{color:var(--gold-soft);}
+
+  .micwrap{display:flex;flex-direction:column;align-items:center;margin:8px 0 18px;}
+  .mic{width:96px;height:96px;border-radius:50%;border:none;background:linear-gradient(135deg,#2bd36e,#1fab53);color:#fff;font-size:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 26px rgba(43,211,110,.35);transition:transform .12s;}
+  .mic:active{transform:scale(.95);}
+  .mic.on{background:linear-gradient(135deg,#e23a3a,#ff5a4a);box-shadow:0 0 0 0 rgba(226,58,58,.5);animation:pulse 1.5s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(226,58,58,.45)}70%{box-shadow:0 0 0 22px rgba(226,58,58,0)}100%{box-shadow:0 0 0 0 rgba(226,58,58,0)}}
+  .miclabel{margin-top:11px;font-size:14px;font-weight:700;color:var(--txt2);}
+  .interim{margin-top:9px;min-height:20px;font-size:13px;color:var(--gold-soft);font-style:italic;text-align:center;padding:0 10px;}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:16px;}
+  .chip{font-size:11px;color:var(--mut);background:#0b1430;border:1px solid var(--bd);border-radius:20px;padding:5px 11px;}
+
+  .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;}
+  .bar .h{font-size:13px;font-weight:800;color:var(--gold-soft);}
+  .bar .tot{background:linear-gradient(135deg,#2a2018,#1d150c);border:1px solid #6a5020;border-radius:10px;padding:6px 12px;font-size:14px;font-weight:800;color:var(--gold-soft);}
+
+  .row{background:linear-gradient(135deg,#121b40,#0d1532);border:1px solid #263c70;border-radius:13px;padding:10px 11px;margin-bottom:9px;}
+  .row .heard{font-size:10.5px;color:var(--mut);margin-bottom:7px;}
+  .row .heard b{color:var(--red3);font-weight:700;}
+  .row .fields{display:flex;align-items:center;gap:8px;}
+  .row .sn{width:20px;font-size:13px;font-weight:800;color:var(--gold);flex-shrink:0;}
+  .row input.p{flex:1;min-width:0;background:#0b1430;border:1.5px solid var(--bd);border-radius:9px;padding:9px 10px;color:#fff;font-size:14px;}
+  .row input.a{width:78px;background:#0b1430;border:1.5px solid var(--bd);border-radius:9px;padding:9px 10px;color:var(--gold-soft);font-size:14px;font-weight:700;text-align:right;flex-shrink:0;}
+  .row .del{width:34px;height:34px;flex-shrink:0;border:1px solid #6a2020;background:transparent;color:var(--red3);border-radius:9px;font-size:15px;cursor:pointer;}
+
+  .empty{text-align:center;color:var(--mut);padding:30px 16px;font-size:13px;line-height:1.6;}
+  .empty .em{font-size:34px;opacity:.5;margin-bottom:8px;}
+
+  .clearbtn{display:block;margin:14px auto 0;background:transparent;border:1px solid var(--bd);color:var(--mut);font-size:12px;font-weight:700;padding:9px 20px;border-radius:10px;cursor:pointer;}
+
+  .manual{margin-top:24px;border-top:1px dashed var(--bd);padding-top:16px;}
+  .manual .lbl{font-size:12px;color:var(--mut);font-weight:700;margin-bottom:8px;}
+  .manual .mrow{display:flex;gap:8px;}
+  .manual input{flex:1;background:#0b1430;border:1.5px solid var(--bd);border-radius:11px;padding:11px 13px;color:#fff;font-size:14px;}
+  .manual button{background:linear-gradient(135deg,#d4a850,#e8c870);border:none;color:#1a1308;font-size:13px;font-weight:800;padding:0 16px;border-radius:11px;cursor:pointer;}
+  .manual .out{margin-top:9px;font-size:12.5px;color:var(--txt2);min-height:18px;}
+  .manual .out b{color:var(--green2);}
+
+  .nosup{background:rgba(226,58,58,.1);border:1px solid var(--red);border-radius:12px;padding:13px;font-size:12.5px;color:var(--red3);line-height:1.6;margin-bottom:14px;display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">🎤</div>
+    <div>
+      <div class="ttl">Voice Test · Live खाता</div>
+      <div class="sub">बोलकर सामान की List बनाने का टेस्ट</div>
+    </div>
+  </div>
+
+  <div id="nosup" class="nosup"></div>
+
+  <div class="help">
+    <b>कैसे टेस्ट करें:</b> नीचे mic दबाएँ और सामान बोलें — जैसे <b>"2 किलो चीनी अस्सी"</b>। एक सामान बोलकर ज़रा रुकें, फिर अगला बोलें। हर सामान नीचे जुड़ता जाएगा। App ने <b>क्या सुना</b> और <b>क्या समझा</b> — दोनों दिखेंगे, ताकि सही पता चले।
+  </div>
+
+  <div class="micwrap">
+    <button id="mic" class="mic" onclick="toggleMic()">🎙️</button>
+    <div id="micLabel" class="miclabel">शुरू करने के लिए दबाएँ</div>
+    <div id="interim" class="interim"></div>
+  </div>
+
+  <div class="chips">
+    <span class="chip">"2 किलो चीनी 80"</span>
+    <span class="chip">"5 लीटर सरसों का तेल छह सौ"</span>
+    <span class="chip">"आधा किलो धनिया चालीस"</span>
+    <span class="chip">"चावल ढाई सौ"</span>
+  </div>
+
+  <div class="bar">
+    <div class="h">📝 बोली गई List</div>
+    <div class="tot">कुल: <span id="total">₹0</span></div>
+  </div>
+  <div id="list"></div>
+  <button class="clearbtn" onclick="clearAll()">🗑️ साफ़ करें</button>
+
+  <div class="manual">
+    <div class="lbl">⌨️ बिना बोले parser टेस्ट करें (टाइप करके):</div>
+    <div class="mrow">
+      <input id="mtext" placeholder="जैसे: 5 लीटर तेल साढ़े छह सौ" onkeydown="if(event.key==='Enter')testManual()">
+      <button onclick="testManual()">जाँचें</button>
+    </div>
+    <div id="mout" class="out"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- Hindi number brain ---------- */
+var SIMPLE={
+ 'जीरो':0,'शून्य':0,'सुन्ना':0,
+ 'एक':1,'दो':2,'तीन':3,'चार':4,'पांच':5,'पाँच':5,'छह':6,'छे':6,'छः':6,'सात':7,'आठ':8,'नौ':9,
+ 'दस':10,'ग्यारह':11,'बारह':12,'तेरह':13,'चौदह':14,'पंद्रह':15,'पन्द्रह':15,'सोलह':16,'सत्रह':17,'अठारह':18,'उन्नीस':19,
+ 'बीस':20,'इक्कीस':21,'बाईस':22,'तेईस':23,'चौबीस':24,'पच्चीस':25,'छब्बीस':26,'सत्ताईस':27,'अट्ठाईस':28,'उनतीस':29,
+ 'तीस':30,'इकतीस':31,'बत्तीस':32,'तैंतीस':33,'चौंतीस':34,'पैंतीस':35,'छत्तीस':36,'सैंतीस':37,'अड़तीस':38,'उनतालीस':39,
+ 'चालीस':40,'इकतालीस':41,'बयालीस':42,'तैंतालीस':43,'चवालीस':44,'पैंतालीस':45,'छयालीस':46,'सैंतालीस':47,'अड़तालीस':48,'उनचास':49,
+ 'पचास':50,'इक्यावन':51,'बावन':52,'तिरपन':53,'चौवन':54,'पचपन':55,'छप्पन':56,'सत्तावन':57,'अट्ठावन':58,'उनसठ':59,
+ 'साठ':60,'इकसठ':61,'बासठ':62,'तिरसठ':63,'चौंसठ':64,'पैंसठ':65,'छियासठ':66,'सड़सठ':67,'अड़सठ':68,'उनहत्तर':69,
+ 'सत्तर':70,'इकहत्तर':71,'बहत्तर':72,'तिहत्तर':73,'चौहत्तर':74,'पचहत्तर':75,'छिहत्तर':76,'सतहत्तर':77,'अठहत्तर':78,'उन्यासी':79,
+ 'अस्सी':80,'इक्यासी':81,'बयासी':82,'तिरासी':83,'चौरासी':84,'पचासी':85,'छियासी':86,'सतासी':87,'अठासी':88,'नवासी':89,
+ 'नब्बे':90,'इक्यानवे':91,'बानवे':92,'तिरानवे':93,'चौरानवे':94,'पचानवे':95,'छियानवे':96,'सत्तानवे':97,'अट्ठानवे':98,'निन्यानवे':99,
+ 'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,'hundred':100,'thousand':1000
+};
+var FIXEDFRAC={'डेढ़':1.5,'डेढ':1.5,'ढाई':2.5,'ढाइ':2.5,'सवा':1.25}; /* सवा alone before मल्ट handled separately */
+var PREFRAC={'साढ़े':0.5,'साढे':0.5,'पौने':-0.25};
+var QSAWA={'सवा':0.25};
+var HALF={'आधा':0.5,'आधी':0.5,'आध':0.5};
+var MULT={'सौ':100,'सौं':100,'हज़ार':1000,'हजार':1000,'हज़ारों':1000,'thousand':1000,'लाख':100000,'hundred':100};
+var UNIT=/^(किलो|किलोग्राम|kilo|kilos|kg|ग्राम|gram|grams|gm|जीएम|लीटर|litre|liter|liters|ltr|ml|एमएल|मिली|मिलीलीटर|पैकेट|packet|packets|पैकेट्स|दर्जन|dozen|डिब्बा|डिब्बे|डब्बा|box|पीस|piece|pieces|pcs|नग|बोतल|bottle|जोड़ी|pair|मीटर|meter|metre)$/i;
+
+function devToLatin(s){var m={'०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9'};return s.replace(/[०-९]/g,function(d){return m[d];});}
+function isNumish(t){t=t.toLowerCase();return /^\d+$/.test(t)||(t in SIMPLE)||(t in MULT)||(t in FIXEDFRAC)||(t in PREFRAC)||(t in QSAWA)||(t in HALF)||/^(रुपये|रुपए|रुपय|रूपये|rupaye|rupees|rupee|rs\.?|₹)$/.test(t);}
+
+function wordsToNumber(str){
+  if(!str) return null;
+  var s=devToLatin(String(str)).toLowerCase().replace(/रुपये|रुपए|रुपय|रूपये|rupaye|rupees|rupee|rs\.?|₹/g,' ').replace(/[,]/g,'').replace(/\s+/g,' ').trim();
+  if(!s) return null;
+  if(/^\d{1,9}$/.test(s)) return parseInt(s,10);
+  var toks=s.split(' ').filter(Boolean);
+  var total=0,cur=0,pre=null,used=false;
+  for(var i=0;i<toks.length;i++){
+    var t=toks[i];
+    if(/^\d+$/.test(t)){var v=parseInt(t,10);if(pre!=null){v=v+pre;pre=null;}cur+=v;used=true;continue;}
+    if(t in QSAWA){pre=QSAWA[t];used=true;continue;}      /* सवा → +0.25 on next */
+    if(t in PREFRAC){pre=PREFRAC[t];used=true;continue;}    /* साढ़े +0.5, पौने -0.25 on next */
+    if(t in FIXEDFRAC && !(t in QSAWA)){cur+=FIXEDFRAC[t];used=true;continue;} /* ढाई 2.5, डेढ़ 1.5 */
+    if(t in HALF){cur+=HALF[t];used=true;continue;}
+    if(t in SIMPLE){var v2=SIMPLE[t];if(pre!=null){v2=v2+pre;pre=null;}cur+=v2;used=true;continue;}
+    if(t in MULT){
+      var m=MULT[t];
+      if(cur===0&&pre!=null){cur=1+pre;pre=null;}
+      if(cur===0)cur=1;
+      if(m===100){cur=cur*100;} else {total+=cur*m;cur=0;}
+      used=true;continue;
+    }
+  }
+  if(pre!=null)cur+=pre;
+  return used?Math.round(total+cur):null;
+}
+
+function parseItem(text){
+  var s=String(text||'').replace(/\s+/g,' ').trim();
+  if(!s) return {product:'',amount:null,heard:text};
+  var toks=s.split(' ');
+  var i=toks.length-1, run=[];
+  while(i>=0 && isNumish(toks[i])){run.unshift(toks[i]);i--;}
+  var amount=null;
+  if(run.length){amount=wordsToNumber(run.join(' '));}
+  var product=toks.slice(0,i+1).join(' ').trim();
+  /* if everything was a number (no product), keep product empty, amount stands */
+  if(!product && amount!=null){product='';}
+  return {product:product,amount:amount,heard:s};
+}
+
+/* ---------- list state ---------- */
+var items=[];
+function render(){
+  var list=document.getElementById('list');
+  if(!items.length){list.innerHTML='<div class="empty"><div class="em">🎙️</div>अभी कुछ नहीं बोला गया।<br>mic दबाकर सामान बोलें।</div>';document.getElementById('total').textContent='₹0';return;}
+  var h='',tot=0;
+  items.forEach(function(it,idx){
+    tot+=Number(it.amount||0);
+    h+='<div class="row">'+
+      '<div class="heard">🔊 सुना: <b>'+esc(it.heard||'')+'</b></div>'+
+      '<div class="fields">'+
+        '<span class="sn">'+(idx+1)+'.</span>'+
+        '<input class="p" value="'+esc(it.product||'')+'" oninput="upd('+idx+',\'product\',this.value)" placeholder="सामान">'+
+        '<input class="a" inputmode="numeric" value="'+(it.amount!=null?it.amount:'')+'" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');upd('+idx+',\'amount\',this.value)" placeholder="₹">'+
+        '<button class="del" onclick="del('+idx+')">✕</button>'+
+      '</div></div>';
+  });
+  list.innerHTML=h;
+  document.getElementById('total').textContent='₹'+tot.toLocaleString('en-IN');
+}
+function upd(i,k,v){if(!items[i])return;items[i][k]=(k==='amount')?(v===''?null:parseInt(v,10)):v;var tot=0;items.forEach(function(x){tot+=Number(x.amount||0);});document.getElementById('total').textContent='₹'+tot.toLocaleString('en-IN');}
+function del(i){items.splice(i,1);render();}
+function clearAll(){items=[];render();}
+function addFromSpeech(txt){
+  if(!txt||!txt.trim())return;
+  var p=parseItem(txt.trim());
+  items.push(p);
+  render();
+  try{if(navigator.vibrate)navigator.vibrate(30);}catch(e){}
+  var list=document.getElementById('list');
+  list.lastElementChild&&list.lastElementChild.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* ---------- manual parser test ---------- */
+function testManual(){
+  var v=document.getElementById('mtext').value.trim();
+  var out=document.getElementById('mout');
+  if(!v){out.innerHTML='';return;}
+  var p=parseItem(v);
+  out.innerHTML='सामान: <b>'+esc(p.product||'—')+'</b> &nbsp;·&nbsp; दाम: <b>'+(p.amount!=null?('₹'+p.amount):'—')+'</b>';
+}
+
+/* ---------- speech engine (interruption-resilient) ---------- */
+var rec=null, listening=false, restartTimer=null;
+function speechSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
+function toggleMic(){ listening ? stopMic() : startMic(); }
+function startMic(){
+  if(!speechSupported()){showNoSupport();return;}
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  rec=new SR();
+  rec.lang='hi-IN';
+  rec.continuous=true;
+  rec.interimResults=true;
+  rec.maxAlternatives=1;
+  rec.onresult=function(e){
+    var interim='';
+    for(var i=e.resultIndex;i<e.results.length;i++){
+      var r=e.results[i];
+      var txt=(r[0]&&r[0].transcript)||'';
+      if(r.isFinal){ addFromSpeech(txt); }
+      else interim+=txt;
+    }
+    document.getElementById('interim').textContent=interim?('… '+interim):'';
+  };
+  rec.onerror=function(e){
+    if(e.error==='not-allowed'||e.error==='service-not-allowed'){listening=false;updateMic();document.getElementById('micLabel').textContent='Mic की अनुमति दें (Allow)';}
+  };
+  rec.onend=function(){
+    document.getElementById('interim').textContent='';
+    if(listening){ /* auto-restart so a pause / customer interruption does not stop it */
+      clearTimeout(restartTimer);
+      restartTimer=setTimeout(function(){ if(listening){ try{rec.start();}catch(e){} } },250);
+    }
+  };
+  listening=true;
+  try{rec.start();}catch(e){}
+  updateMic();
+}
+function stopMic(){
+  listening=false; clearTimeout(restartTimer);
+  try{rec&&rec.stop();}catch(e){}
+  updateMic();
+  document.getElementById('interim').textContent='';
+}
+function updateMic(){
+  var b=document.getElementById('mic'), l=document.getElementById('micLabel');
+  if(listening){b.classList.add('on');b.textContent='⏹️';l.textContent='सुन रहा हूँ… बोलिए (रोकने के लिए दबाएँ)';}
+  else{b.classList.remove('on');b.textContent='🎙️';l.textContent='शुरू करने के लिए दबाएँ';}
+}
+function showNoSupport(){
+  var n=document.getElementById('nosup');
+  n.style.display='block';
+  n.innerHTML='⚠️ यह browser voice support नहीं करता। कृपया <b>Android फ़ोन में Chrome</b> से, और <b>https</b> link (livekhaata.app वाला) से खोलें — तभी mic चलेगा।';
+}
+if(!speechSupported())showNoSupport();
+render();
+</script>
+</body>
+</html>

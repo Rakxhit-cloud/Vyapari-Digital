@@ -2624,7 +2624,7 @@ body.notif-modal-open { overflow: hidden; }
     </div>
     <div class="cl-rows" id="credit-list-rows"></div>
     <button class="cl-addrow" id="credit-list-addrow" onclick="creditListAddRow()">+ और row जोड़ें (max 40)</button>
-    <button class="cl-save" onclick="creditListSave()">💾 List Save करें</button>
+    <button class="cl-save" id="credit-list-save" onclick="creditListSave()">💾 List Save करें</button>
   </div>
 </div>
 
@@ -6923,14 +6923,19 @@ function _clRowHtml(n,prod,amt){
     '<input class="cl-amt" maxlength="4" inputmode="numeric" placeholder="\u20b9" value="'+_cesc(amt||'')+'" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');creditListRecalc();"></div>';
 }
 function creditListOpen(){
+  window.creditListMode='popup';
   var st=window.creditState,rows=document.getElementById('credit-list-rows'),h='';
   var items=st.items.length?st.items:[];
   var min=Math.max(6,items.length);
   for(var i=0;i<min;i++){var it=items[i]||{};h+=_clRowHtml(i+1,it.product,it.amount?String(it.amount):'');}
   rows.innerHTML=h; creditListRecalc();
+  rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=false;inp.style.opacity='1';});
+  document.getElementById('credit-list-addrow').style.display='block';
+  document.getElementById('credit-list-save').style.display='block';
+  var ct=document.querySelector('#credit-list-modal .cl-title'); if(ct)ct.textContent='📝 List बनाएं';
   document.getElementById('credit-list-modal').style.display='flex';
 }
-function creditListClose(){document.getElementById('credit-list-modal').style.display='none';}
+function creditListClose(){document.getElementById('credit-list-modal').style.display='none';window.creditListMode='popup';}
 function creditListAddRow(){
   var rows=document.getElementById('credit-list-rows');
   var n=rows.querySelectorAll('.cl-row').length;
@@ -6950,6 +6955,16 @@ function creditListSave(){
     if(p||a){n++;items.push({n:n,product:p.slice(0,20),amount:a});t+=a;}
   });
   if(!items.length){toast('कम से कम एक सामान भरें',true);return;}
+  if(window.creditListMode==='entry'){
+    if(!window.creditListEditable){toast('पुरानी list — सिर्फ आज वाली edit होती है',true);return;}
+    DB.update(K.UDHAAR,window.creditListEntryId,{items:items,amount:t});
+    creditListClose();
+    toast('✅ List update हुई · '+_crFmt(t));
+    if(window.ucCust&&typeof renderUdhaarProfile==='function')renderUdhaarProfile(window.ucCust.key);
+    if(typeof renderCreditGrid==='function')renderCreditGrid();
+    if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
+    return;
+  }
   var st=window.creditState; st.items=items; st.total=t; st.amount=String(t);
   creditListClose(); creditSyncAmount(); creditSyncListBtn();
   toast('✅ List तैयार · '+_crFmt(t));
@@ -7082,18 +7097,29 @@ function renderUdhaarProfile(key){
     }else{
       var it='';
       if(t.items&&t.items.length)it=t.items.map(function(x){return _cesc(x.product||'')+(x.amount?(' ₹'+x.amount):'');}).filter(Boolean).join(' · ');
-      lh+='<div onclick="creditOpenFromProfile(\''+t.id+'\')" style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">'+
+      lh+='<div onclick="openEntryList(\''+t.id+'\')" style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">'+
         '<div style="min-width:0;flex:1;"><div style="font-size:14px;font-weight:600;color:#fff;">'+d+'</div><div style="font-size:10.5px;color:#94a0c4;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(it||'उधार')+'</div></div>'+
         '<div style="text-align:right;margin-left:8px;"><div style="color:#ff8a7a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(226,58,58,.15);border:1px solid #c23030;color:#ff8a7a;">उधार लिया</span></div></div>';
     }
   });
   document.getElementById('uc-ledger').innerHTML=lh;
 }
-function creditOpenFromProfile(id){
+function openEntryList(id){
   var r=(DB.get(K.UDHAAR)||[]).find(function(x){return x.id===id;});
-  if(!r)return;
-  if(r.date===TSTR){ go('s-livegalla'); setTimeout(function(){creditOpen(id);},140); }
-  else toast('पुरानी entry — सिर्फ आज वाली edit होती है');
+  if(!r||r.type==='payment')return;
+  window.creditListMode='entry';
+  window.creditListEntryId=id;
+  var editable=(r.date===TSTR);
+  window.creditListEditable=editable;
+  var rows=document.getElementById('credit-list-rows'),h='';
+  var items=(r.items&&r.items.length)?r.items:[{product:'',amount:''}];
+  for(var i=0;i<items.length;i++){var it=items[i]||{};h+=_clRowHtml(i+1,it.product,(it.amount!=null&&it.amount!=='')?String(it.amount):'');}
+  rows.innerHTML=h; creditListRecalc();
+  rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=!editable;inp.style.opacity=editable?'1':'.65';});
+  document.getElementById('credit-list-addrow').style.display=editable?'block':'none';
+  document.getElementById('credit-list-save').style.display=editable?'block':'none';
+  var ct=document.querySelector('#credit-list-modal .cl-title'); if(ct)ct.textContent=editable?'📝 List — आज तक editable':'📝 List · पुरानी (सिर्फ देखें)';
+  document.getElementById('credit-list-modal').style.display='flex';
 }
 function ucReminder(){
   var c=window.ucCust; if(!c)return;

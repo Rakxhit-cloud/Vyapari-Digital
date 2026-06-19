@@ -5105,6 +5105,7 @@ function go(id){
   const nid=NM[id];
   if(nid){const n=document.getElementById(nid);n.classList.add('active');const d=document.createElement('div');d.className='nav-dot';n.appendChild(d);}
   if(id==='s-home')loadHome();
+  if(id==='s-home'&&window._syncEngagementCounts)window._syncEngagementCounts();
   if(id==='s-mahina'&&window.loadHome)loadHome();
   if(id==='s-monthly')loadMonthly();
   if(id==='s-goal')loadGoalScreen();
@@ -7077,6 +7078,27 @@ function mpinForgot(){
   toast('दुबारा login करके नया PIN बनाएं');
   setTimeout(function(){ if(window.signOut)window.signOut(); },800);
 }
+/* ===== Engagement counts → own profile (admin reads these; app reads its own entries, privacy rules intact) ===== */
+var _engCountKey='';
+function _syncEngagementCounts(){
+  try{
+    var uid=(window._currentAuthUser&&window._currentAuthUser.uid)||null;
+    if(!uid||!window._db)return;
+    var cash=0,upi=0,kharcha=0;
+    (DB.get(K.BIKRI)||[]).forEach(function(rec){
+      var bx=Array.isArray(rec.lgBoxes)?rec.lgBoxes:[];
+      if(bx.length){bx.forEach(function(b){if(b.type==='cash')cash++;else if(b.type==='upi')upi++;else if(b.type==='expense')kharcha++;});}
+      else{if((rec.cash||0)>0)cash++;if((rec.upi||0)>0)upi++;if((rec.expense||0)>0)kharcha++;}
+    });
+    var udhaar=(DB.get(K.UDHAAR)||[]).filter(function(x){return x&&x.type!=='payment';}).length;
+    var key=cash+'|'+upi+'|'+kharcha+'|'+udhaar;
+    if(key===_engCountKey)return; _engCountKey=key;
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(function(m){
+      m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{cashCount:cash,upiCount:upi,kharchaCount:kharcha,udhaarCount:udhaar,countsUpdatedAt:Date.now()},{merge:true}).catch(function(){});
+    }).catch(function(){});
+  }catch(e){}
+}
+window._syncEngagementCounts=_syncEngagementCounts;
 window.vcParse=(function(){
   var SIMPLE={
    'जीरो':0,'शून्य':0,'सुन्ना':0,

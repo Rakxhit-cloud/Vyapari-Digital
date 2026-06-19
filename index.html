@@ -2570,6 +2570,17 @@ body.notif-modal-open { overflow: hidden; }
   .cl-amt{width:72px;background:#0b1430;border:1.5px solid #2a4078;border-radius:9px;padding:10px;color:#f0c890;font-size:13px;font-weight:700;text-align:right;flex-shrink:0;}
   .cl-addrow{width:100%;margin-top:6px;padding:10px;border:1.5px dashed #2a4078;border-radius:10px;background:transparent;color:#8aa0d8;font-size:12px;font-weight:700;cursor:pointer;}
   .cl-save{display:block;margin:15px auto 2px;padding:13px 42px;border-radius:12px;border:1px solid #5cf09a;background:linear-gradient(135deg,#2bd36e,#1fab53);color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
+  .cl-voice{margin:0 0 13px;padding:11px;border:1.5px solid #2a4078;border-radius:12px;background:linear-gradient(180deg,#0d1638,#0a1130);}
+  .cl-voice-tip{font-size:11px;color:#8aa0d8;margin-bottom:8px;line-height:1.55;}
+  .cl-voice-tip b{color:#e8c870;font-weight:700;}
+  .cl-voice-row{display:flex;gap:7px;align-items:center;}
+  .cl-voice-inp{flex:1;min-width:0;background:#0b1430;border:1.5px solid #2a4078;border-radius:9px;padding:11px;color:#fff;font-size:13.5px;}
+  .cl-voice-inp::placeholder{color:#5a6a96;}
+  .cl-voice-add{flex-shrink:0;padding:11px 15px;border-radius:9px;border:1px solid #5cf09a;background:linear-gradient(135deg,#2bd36e,#1fab53);color:#fff;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
+  .cl-voice-prev{min-height:15px;margin-top:8px;font-size:12px;color:#7fe0a8;line-height:1.5;}
+  .cl-voice-prev b{color:#fff;font-weight:700;}
+  .cl-voice-prev .amt{color:#f0c890;font-weight:700;}
+  .cl-voice-prev .muted{color:#5a6a96;}
 </style>
 <!-- उधार (Credit) entry popup -->
 <div class="credit-bd" id="credit-modal" onclick="if(event.target===this)creditClose()">
@@ -2621,6 +2632,14 @@ body.notif-modal-open { overflow: hidden; }
     <div class="cl-head">
       <div class="cl-title">📝 List बनाएं</div>
       <div class="cl-total">Total: <span id="credit-list-total">₹0</span></div>
+    </div>
+    <div class="cl-voice" id="cl-voice-bar">
+      <div class="cl-voice-tip">🎤 <b>बोलकर लिखें:</b> कीबोर्ड का mic दबाएँ और एक सामान बोलें — जैसे "<b>2 किलो चीनी 90</b>" या "<b>ढाई सौ ग्राम सूजी</b>"। फिर ➕ दबाएँ, नीचे list में जुड़ जाएगा।</div>
+      <div class="cl-voice-row">
+        <input class="cl-voice-inp" id="cl-voice-input" placeholder="🎤 बोलें या टाइप करें…" autocomplete="off" oninput="creditVoicePreview()" onkeydown="if(event.key==='Enter'){event.preventDefault();creditVoiceAdd();}">
+        <button class="cl-voice-add" onclick="creditVoiceAdd()">➕ जोड़ें</button>
+      </div>
+      <div class="cl-voice-prev" id="cl-voice-preview"></div>
     </div>
     <div class="cl-rows" id="credit-list-rows"></div>
     <button class="cl-addrow" id="credit-list-addrow" onclick="creditListAddRow()">+ और row जोड़ें (max 40)</button>
@@ -6918,21 +6937,118 @@ function creditClose(){document.getElementById('credit-modal').style.display='no
 function creditKey(d){var st=window.creditState;if(st.items.length)return;if(st.amount.length>=5)return;if(st.amount===''&&d==='0')return;st.amount+=d;creditSyncAmount();}
 function creditBack(){var st=window.creditState;if(st.items.length)return;st.amount=st.amount.slice(0,-1);creditSyncAmount();}
 function creditTri(){var st=window.creditState;if(st.items.length)return;if(st.amount===''||st.amount==='0')return;var n=Math.min(parseInt(st.amount+'000',10),99999);st.amount=String(n);creditSyncAmount();}
+/* ===== Voice → {product, amount} parser (Hindi + romanized, tested in voice-test) ===== */
+window.vcParse=(function(){
+  var SIMPLE={
+   'जीरो':0,'शून्य':0,'सुन्ना':0,
+   'एक':1,'दो':2,'तीन':3,'चार':4,'पांच':5,'पाँच':5,'छह':6,'छे':6,'छः':6,'सात':7,'आठ':8,'नौ':9,
+   'दस':10,'ग्यारह':11,'बारह':12,'तेरह':13,'चौदह':14,'पंद्रह':15,'पन्द्रह':15,'सोलह':16,'सत्रह':17,'अठारह':18,'उन्नीस':19,
+   'बीस':20,'इक्कीस':21,'बाईस':22,'तेईस':23,'चौबीस':24,'पच्चीस':25,'छब्बीस':26,'सत्ताईस':27,'अट्ठाईस':28,'उनतीस':29,
+   'तीस':30,'इकतीस':31,'बत्तीस':32,'तैंतीस':33,'चौंतीस':34,'पैंतीस':35,'छत्तीस':36,'सैंतीस':37,'अड़तीस':38,'उनतालीस':39,
+   'चालीस':40,'इकतालीस':41,'बयालीस':42,'तैंतालीस':43,'चवालीस':44,'पैंतालीस':45,'छयालीस':46,'सैंतालीस':47,'अड़तालीस':48,'उनचास':49,
+   'पचास':50,'इक्यावन':51,'बावन':52,'तिरपन':53,'चौवन':54,'पचपन':55,'छप्पन':56,'सत्तावन':57,'अट्ठावन':58,'उनसठ':59,
+   'साठ':60,'इकसठ':61,'बासठ':62,'तिरसठ':63,'चौंसठ':64,'पैंसठ':65,'छियासठ':66,'सड़सठ':67,'अड़सठ':68,'उनहत्तर':69,
+   'सत्तर':70,'इकहत्तर':71,'बहत्तर':72,'तिहत्तर':73,'चौहत्तर':74,'पचहत्तर':75,'छिहत्तर':76,'सतहत्तर':77,'अठहत्तर':78,'उन्यासी':79,
+   'अस्सी':80,'इक्यासी':81,'बयासी':82,'तिरासी':83,'चौरासी':84,'पचासी':85,'छियासी':86,'सतासी':87,'अठासी':88,'नवासी':89,
+   'नब्बे':90,'इक्यानवे':91,'बानवे':92,'तिरानवे':93,'चौरानवे':94,'पचानवे':95,'छियानवे':96,'सत्तानवे':97,'अट्ठानवे':98,'निन्यानवे':99,
+   'ek':1,'do':2,'teen':3,'char':4,'chaar':4,'paanch':5,'panch':5,'paach':5,'chhe':6,'che':6,'chah':6,'saat':7,'aath':8,'nau':9,'das':10,
+   'bees':20,'bis':20,'tees':30,'tis':30,'chalis':40,'chaalis':40,'pachas':50,'pachaas':50,'saath':60,'sattar':70,'assi':80,'assee':80,'navve':90,'nabbe':90,'pachhattar':75,'pachhtar':75,
+   'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10
+  };
+  var FIXEDFRAC={'डेढ़':1.5,'डेढ':1.5,'ढाई':2.5,'ढाइ':2.5,'derh':1.5,'dedh':1.5,'dhedh':1.5,'dhai':2.5,'dhaai':2.5,'dhayi':2.5};
+  var QSAWA={'सवा':0.25,'sava':0.25,'sawa':0.25};
+  var PREFRAC={'साढ़े':0.5,'साढे':0.5,'saadhe':0.5,'sadhe':0.5,'saade':0.5,'पौने':-0.25,'paune':-0.25,'poune':-0.25};
+  var HALF={'आधा':0.5,'आधी':0.5,'आध':0.5,'aadha':0.5,'adha':0.5,'aadhaa':0.5,'aadhi':0.5};
+  var MULT={'सौ':100,'सौं':100,'sau':100,'हज़ार':1000,'हजार':1000,'hazaar':1000,'hazar':1000,'hajar':1000,'लाख':100000,'lakh':100000,'hundred':100,'thousand':1000};
+  function devToLatin(s){var m={'०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9'};return s.replace(/[०-९]/g,function(d){return m[d];});}
+  function isNumish(t){t=t.toLowerCase();return /^\d+$/.test(t)||(t in SIMPLE)||(t in MULT)||(t in FIXEDFRAC)||(t in PREFRAC)||(t in QSAWA)||(t in HALF);}
+  function isWhole(t){t=t.toLowerCase();return /^\d+$/.test(t)||(t in SIMPLE)||(t in MULT);}
+  function wordsToNumber(str){
+    if(!str) return null;
+    var s=devToLatin(String(str)).toLowerCase().replace(/₹|रुपये|रुपए|रुपय|रूपये|rupaye|rupay|rupees?|rs\.?/g,' ').replace(/[,]/g,'').replace(/\s+/g,' ').trim();
+    if(!s) return null;
+    if(/^\d{1,9}$/.test(s)) return parseInt(s,10);
+    var toks=s.split(' ').filter(Boolean),total=0,cur=0,pre=null,used=false;
+    for(var i=0;i<toks.length;i++){
+      var t=toks[i];
+      if(/^\d+$/.test(t)){var v=parseInt(t,10);if(pre!=null){v=v+pre;pre=null;}cur+=v;used=true;continue;}
+      if(t in QSAWA){pre=QSAWA[t];used=true;continue;}
+      if(t in PREFRAC){pre=PREFRAC[t];used=true;continue;}
+      if(t in FIXEDFRAC){cur+=FIXEDFRAC[t];used=true;continue;}
+      if(t in HALF){cur+=HALF[t];used=true;continue;}
+      if(t in SIMPLE){var v2=SIMPLE[t];if(pre!=null){v2=v2+pre;pre=null;}cur+=v2;used=true;continue;}
+      if(t in MULT){var mm=MULT[t];if(cur===0&&pre!=null){cur=1+pre;pre=null;}if(cur===0)cur=1;if(mm===100){cur=cur*100;}else{total+=cur*mm;cur=0;}used=true;continue;}
+    }
+    if(pre!=null)cur+=pre;
+    return used?Math.round(total+cur):null;
+  }
+  function normalizeQty(str){
+    var toks=String(str).split(' ').filter(Boolean),out=[],buf=[],whole=false;
+    function flush(){if(buf.length){if(whole){var v=wordsToNumber(buf.join(' '));out.push(v!=null?String(v):buf.join(' '));}else{out.push(buf.join(' '));}}buf=[];whole=false;}
+    for(var i=0;i<toks.length;i++){var t=toks[i];
+      if(isNumish(t)){buf.push(t);if(isWhole(t))whole=true;}
+      else{flush();out.push(t);}
+    }
+    flush();
+    return out.join(' ');
+  }
+  function parseItem(raw){
+    var text=devToLatin(String(raw||'')).replace(/\s+/g,' ').trim();
+    if(!text) return {product:'',amount:null,heard:raw};
+    var amount=null,work=text;
+    var m=work.match(/₹\s*([\d,]+)/)||work.match(/([\d,]+)\s*₹/)||work.match(/\b(?:rs|rupees?|rupaye|rupay)\b\.?\s*([\d,]+)/i)||work.match(/([\d,]+)\s*(?:\brs\b|\brupees?\b|\brupaye\b|\brupay\b)/i);
+    if(m){amount=parseInt(String(m[1]).replace(/,/g,''),10);work=work.replace(m[0],' ').replace(/\s+/g,' ').trim();}
+    if(amount==null){var hm=work.match(/([\u0900-\u097Fa-z0-9 ]+?)\s*(?:रुपये|रुपए|रुपय|रूपये|rupaye|rupay|rupees?)\b/i);if(hm){var a=wordsToNumber(hm[1]);if(a!=null&&a>0){amount=a;work=work.replace(hm[0],' ').replace(/\s+/g,' ').trim();}}}
+    if(amount==null){var tk=work.split(' ').filter(Boolean),i=tk.length-1,run=[];while(i>=0&&isNumish(tk[i])){run.unshift(tk[i]);i--;}if(run.length){amount=wordsToNumber(run.join(' '));work=tk.slice(0,i+1).join(' ').trim();}}
+    if(amount==null){var tk2=work.split(' ').filter(Boolean),kaIdx=-1;for(var j=1;j<tk2.length;j++){var w=tk2[j].toLowerCase();if(w==='ka'||w==='ki'||w==='का'||w==='की'||w==='के'){kaIdx=j;break;}}if(kaIdx>0){var ok=true,lead=tk2.slice(0,kaIdx);for(var k=0;k<lead.length;k++){if(!isNumish(lead[k])){ok=false;break;}}if(ok){var a2=wordsToNumber(lead.join(' '));if(a2!=null&&a2>0){amount=a2;work=tk2.slice(kaIdx+1).join(' ').trim();}}}}
+    var product=normalizeQty(work);
+    return {product:product,amount:amount,heard:text};
+  }
+  return parseItem;
+})();
+function creditVoicePreview(){
+  var inp=document.getElementById('cl-voice-input'),pv=document.getElementById('cl-voice-preview');
+  if(!inp||!pv)return;
+  var raw=inp.value.trim();
+  if(!raw){pv.innerHTML='';return;}
+  var p=window.vcParse(raw);
+  if(!p.product&&p.amount==null){pv.innerHTML='<span class="muted">समझ नहीं आया — फिर बोलें</span>';return;}
+  pv.innerHTML='समझा → <b>'+_cesc(p.product||'—')+'</b>'+(p.amount!=null?(' · <span class="amt">\u20b9'+p.amount+'</span>'):' · <span class="muted">दाम नहीं</span>');
+}
+function creditVoiceAdd(){
+  var inp=document.getElementById('cl-voice-input');
+  if(!inp)return;
+  var raw=inp.value.trim();
+  if(!raw){inp.focus();return;}
+  var p=window.vcParse(raw);
+  if(!p.product&&p.amount==null){toast('समझ नहीं आया — फिर बोलें',true);inp.focus();return;}
+  var rows=document.getElementById('credit-list-rows');
+  var n=rows.querySelectorAll('.cl-row').length;
+  if(n>=40){toast('अधिकतम 40 सामान',true);return;}
+  rows.insertAdjacentHTML('beforeend',_clRowHtml(n+1,(p.product||'').slice(0,30),p.amount!=null?String(p.amount):''));
+  creditListRecalc();
+  inp.value=''; var pv=document.getElementById('cl-voice-preview'); if(pv)pv.innerHTML='';
+  inp.focus();
+  if(navigator.vibrate){try{navigator.vibrate(15);}catch(e){}}
+}
 function _clRowHtml(n,prod,amt){
   return '<div class="cl-row"><span class="cl-sn">'+n+'.</span>'+
-    '<input class="cl-prod" maxlength="20" placeholder="सामान / Product" value="'+_cesc(prod||'')+'">'+
+    '<input class="cl-prod" maxlength="30" placeholder="सामान / Product" value="'+_cesc(prod||'')+'">'+
     '<input class="cl-amt" maxlength="4" inputmode="numeric" placeholder="\u20b9" value="'+_cesc(amt||'')+'" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');creditListRecalc();"></div>';
 }
 function creditListOpen(){
   window.creditListMode='popup';
   var st=window.creditState,rows=document.getElementById('credit-list-rows'),h='';
   var items=st.items.length?st.items:[];
-  var min=Math.max(6,items.length);
+  var min=Math.max(items.length,1);
   for(var i=0;i<min;i++){var it=items[i]||{};h+=_clRowHtml(i+1,it.product,it.amount?String(it.amount):'');}
   rows.innerHTML=h; creditListRecalc();
   rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=false;inp.style.opacity='1';});
   document.getElementById('credit-list-addrow').style.display='block';
   document.getElementById('credit-list-save').style.display='block';
+  var vb=document.getElementById('cl-voice-bar'); if(vb)vb.style.display='block';
+  var vi=document.getElementById('cl-voice-input'); if(vi)vi.value='';
+  var vp=document.getElementById('cl-voice-preview'); if(vp)vp.innerHTML='';
   var ct=document.querySelector('#credit-list-modal .cl-title'); if(ct)ct.textContent='📝 List बनाएं';
   document.getElementById('credit-list-modal').style.display='flex';
 }
@@ -6953,7 +7069,7 @@ function creditListSave(){
   rows.querySelectorAll('.cl-row').forEach(function(row){
     var p=row.querySelector('.cl-prod').value.trim();
     var a=parseInt(row.querySelector('.cl-amt').value||'0',10)||0;
-    if(p||a){n++;items.push({n:n,product:p.slice(0,20),amount:a});t+=a;}
+    if(p||a){n++;items.push({n:n,product:p.slice(0,30),amount:a});t+=a;}
   });
   if(!items.length){toast('कम से कम एक सामान भरें',true);return;}
   if(window.creditListMode==='entry'){
@@ -7145,6 +7261,9 @@ function openEntryList(id){
   rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=!editable;inp.style.opacity=editable?'1':'.65';});
   document.getElementById('credit-list-addrow').style.display=editable?'block':'none';
   document.getElementById('credit-list-save').style.display=editable?'block':'none';
+  var vb=document.getElementById('cl-voice-bar'); if(vb)vb.style.display=editable?'block':'none';
+  var vi=document.getElementById('cl-voice-input'); if(vi)vi.value='';
+  var vp=document.getElementById('cl-voice-preview'); if(vp)vp.innerHTML='';
   var ct=document.querySelector('#credit-list-modal .cl-title'); if(ct)ct.textContent=editable?'📝 List — आज तक editable':'📝 List · पुरानी (सिर्फ देखें)';
   document.getElementById('credit-list-modal').style.display='flex';
 }

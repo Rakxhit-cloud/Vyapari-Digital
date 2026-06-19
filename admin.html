@@ -381,15 +381,15 @@ window._loadUsersFromFirestore = async function() {
       // This shouldn't happen since rules allow admin to read profiles,
       // but better to fail gracefully than show a broken list.
     }
-    // Counts come from the profile doc (populated by the daily Cloud Function).
-    // We do NOT read the entry sub-collections — Firestore rules forbid admin
-    // from reading entries (privacy guarantee).
-    const bikriCount  = profile.bikriCount  || 0;
-    const maalCount   = profile.maalCount   || 0;
-    const kacchaCount = profile.kacchaCount || 0;
-    const udhaarCount = profile.udhaarCount || 0;
-    const lastActive  = profile.lastActiveAt || null;
-    users.push({ uid, profile, bikriCount, maalCount, kacchaCount, udhaarCount, lastActive });
+    // Entry counts come from the user's OWN profile doc — the app counts its
+    // own entries and writes cashCount/upiCount/kharchaCount/udhaarCount here.
+    // The admin never reads entry sub-collections (owner-only privacy rule).
+    const cashCount    = profile.cashCount    || 0;
+    const upiCount     = profile.upiCount     || 0;
+    const kharchaCount = profile.kharchaCount || 0;
+    const udhaarCount  = profile.udhaarCount  || 0;
+    const lastActive   = profile.lastActiveAt || null;
+    users.push({ uid, profile, cashCount, upiCount, kharchaCount, udhaarCount, lastActive });
   }
   return users;
 };
@@ -649,7 +649,7 @@ function classifyStage(p, u) {
   // GROUND TRUTH: if the user has made any entries, they MUST have
   // installed the PWA and crossed the activation threshold. Entry counts
   // override missing funnel timestamps (old users predate the funnel tracker).
-  if (u && (u.bikriCount > 0 || u.maalCount > 0 || u.kacchaCount > 0 || u.udhaarCount > 0)) {
+  if (u && (u.cashCount > 0 || u.upiCount > 0 || u.kharchaCount > 0 || u.udhaarCount > 0)) {
     return 'complete';
   }
   if (p.firstEntryAt) return 'complete';
@@ -832,13 +832,13 @@ function stagePillHTML(stage) {
 
 function entriesMiniHTML(u) {
   const arr = [
-    { k: 'b', n: u.bikriCount },
-    { k: 'm', n: u.maalCount },
-    { k: 'k', n: u.kacchaCount },
-    { k: 'u', n: u.udhaarCount }
+    { c: 'b', l: 'Cash', n: u.cashCount },
+    { c: 'm', l: 'UPI', n: u.upiCount },
+    { c: 'k', l: 'खर्चा', n: u.kharchaCount },
+    { c: 'u', l: 'उधार', n: u.udhaarCount }
   ];
   return '<div class="entries-mini">' + arr.map(x =>
-    `<span class="entry-chip ${x.n === 0 ? 'zero' : x.k}">${x.k.toUpperCase()} ${x.n}</span>`
+    `<span class="entry-chip ${x.n === 0 ? 'zero' : x.c}">${x.l} ${x.n}</span>`
   ).join('') + '</div>';
 }
 
@@ -886,6 +886,27 @@ function openProfile(uid) {
     if (phone) {
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
+  });
+  // Bind Welcome (post-install greeting) button
+  const _wb = card.querySelector('.action-welcome');
+  if (_wb) _wb.addEventListener('click', () => {
+    const WELCOME_MSG = `नमस्ते 🙏 *Live खाता* में आपका स्वागत है!
+
+अब आपकी दुकान का पूरा हिसाब आपके फ़ोन में — आसान, सुरक्षित और पूरी तरह हिंदी में।
+
+✅ हर बिक्री और खर्चा — सिर्फ़ एक tap में
+📕 *उधार Book* — हर ग्राहक का उधार याद रखें, बिल सीधे WhatsApp पर भेजें
+🎤 *बोलकर* सामान जोड़ें — टाइप करने की ज़रूरत नहीं
+🔒 महीने का हिसाब *PIN से सुरक्षित* — सिर्फ़ आपके लिए
+☁️ डेटा अपने आप safe — फ़ोन बदलें तो भी कुछ नहीं खोएगा
+
+बस आज की *पहली entry* से शुरुआत करें — फिर रोज़ का हिसाब कभी नहीं छूटेगा।
+
+पहले *90 दिन बिल्कुल मुफ़्त*। कोई भी सवाल हो तो यहीं message करें। 🙏
+— _Live खाता_`;
+    const phone = String(u.profile.phone || '').replace(/^\+/, '').replace(/\D/g, '');
+    if (phone) window.open(`https://wa.me/${phone}?text=${encodeURIComponent(WELCOME_MSG)}`, '_blank');
+    else alert('इस user का फ़ोन नंबर नहीं मिला');
   });
 }
 
@@ -1053,11 +1074,11 @@ function trialSectionHTML(p) {
 }
 
 function engagementSectionHTML(u, p, stage) {
-  const zero = u.bikriCount + u.maalCount + u.kacchaCount + u.udhaarCount === 0;
+  const zero = u.cashCount + u.upiCount + u.kharchaCount + u.udhaarCount === 0;
   const cells = [
-    { cls: 'b', label: 'बिक्री', n: u.bikriCount },
-    { cls: 'm', label: 'माल', n: u.maalCount },
-    { cls: 'k', label: 'कच्चा', n: u.kacchaCount },
+    { cls: 'b', label: 'Cash', n: u.cashCount },
+    { cls: 'm', label: 'UPI', n: u.upiCount },
+    { cls: 'k', label: 'खर्चा', n: u.kharchaCount },
     { cls: 'u', label: 'उधार', n: u.udhaarCount }
   ];
   const cellsHTML = cells.map(c => `
@@ -1134,6 +1155,7 @@ function actionBarHTML(u) {
         </div>
       </button>
     </div>
+    <button class="action-btn action-welcome" style="width:100%;margin-top:8px;${callDisabled};background:rgba(93,202,165,0.14);border:1px solid rgba(93,202,165,0.5);color:#7fe0b0">👋 Welcome message भेजें</button>
   `;
 }
 
@@ -1234,7 +1256,7 @@ function pickTemplate(u) {
 
   // 7. PWA installed but no first entry yet (1+ day since pwaActivatedAt)
   if (p.pwaActivatedAt && !p.firstEntryAt &&
-      !(u.bikriCount > 0 || u.maalCount > 0 || u.kacchaCount > 0 || u.udhaarCount > 0) &&
+      !(u.cashCount > 0 || u.upiCount > 0 || u.kharchaCount > 0 || u.udhaarCount > 0) &&
       daysSince(p.pwaActivatedAt) >= 1) {
     return {
       tag: 'FIRST ENTRY',

@@ -2105,37 +2105,19 @@ body.notif-modal-open { overflow: hidden; }
     <div class="lg-home-cta">खोलें →</div>
   </div>
 </div>
-   <div style="display:flex;align-items:center;gap:10px;margin:14px 0 10px;padding:4px;">
-      <div class="sec-icon" style="width:36px;height:36px;font-size:18px;border-radius:9px;background:linear-gradient(135deg,#1a3a78,#0a2050);border:1px solid #4a90d4;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="filter:hue-rotate(180deg) saturate(1.4);display:inline-block;">📅</span></div>
-      <div class="sec-text"><div class="sec-title" style="color:#d4a850;font-size:13px;" id="month-nav-heading">2026 — महीनेवार</div><div class="sec-sub" style="font-size:9px;">Year Overview</div></div>
-      <span class="sec-badge" style="background:#4a3818;color:#d4a850;border:1px solid #d4a850;font-size:9px;padding:3px 8px;">चालू वर्ष</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
-      <div onclick="monthNavSlide(-1)" id="month-nav-prev" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#cc7a47;flex-shrink:0;">◀</div>
-      <div id="month-nav-track" style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;"></div>
-      <div onclick="monthNavSlide(1)" id="month-nav-next" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#cc7a47;flex-shrink:0;">▶</div>
-    </div>
-    <div id="month-nav-detail" style="display:none;background:#161616;border:1px solid #1e1e1e;border-radius:8px;padding:10px 12px;margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span id="month-detail-title" style="font-size:10px;font-weight:800;color:#d4a850;"></span>
-        <span id="month-detail-entries" style="font-size:8px;color:#2a6a2a;background:#0d1f0d;padding:2px 7px;border-radius:4px;border:1px solid #1a4a1a;"></span>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
-        <div style="background:#0d1f0d;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#2dba4d;font-weight:700;margin-bottom:3px;">बिक्री</div><div id="month-detail-sales" style="font-size:13px;font-weight:800;color:#d4a850;"></div></div>
-        <div style="background:#080f1a;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#4a90d4;font-weight:700;margin-bottom:3px;">गल्ला</div><div id="month-detail-galla" style="font-size:13px;font-weight:800;color:#8ab8e8;"></div></div>
-        <div style="background:#1a1000;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#cc7a47;font-weight:700;margin-bottom:3px;">खर्चा</div><div id="month-detail-expense" style="font-size:13px;font-weight:800;color:#cc7a47;"></div></div>
+    <!-- Mahina Totals (PIN-locked) — replaces open monthly figures -->
+    <div class="lg-home-tile" id="mahina-tile" onclick="openMahina()" style="border:1.5px solid #d4a850;margin-top:14px;">
+      <div class="lg-home-stripe" style="background:linear-gradient(90deg,#d4a850,#e8c870,#cc7a47);"></div>
+      <div class="lg-home-body">
+        <div class="lg-home-icon" style="background:#0d1838;border:2px solid #e8c870;border-radius:15px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;position:relative;font-size:30px;flex-shrink:0;">📊<div style="position:absolute;right:-5px;bottom:-5px;width:23px;height:23px;border-radius:50%;background:#2a1018;border:1.5px solid #e23a3a;display:flex;align-items:center;justify-content:center;font-size:11px;">🔒</div></div>
+        <div class="lg-home-text">
+          <div class="lg-home-title" style="color:#f0c890;">Mahina Totals</div>
+          <div style="font-size:9.5px;font-weight:700;color:#d4a850;letter-spacing:1.5px;margin-top:3px;">MONTHLY · PIN-LOCKED 🔒</div>
+          <div class="lg-home-sub" style="margin-top:4px;">महीनेवार · बिक्री/गल्ला · कैलेंडर</div>
+        </div>
+        <div class="lg-home-cta">खोलें →</div>
       </div>
     </div>
-    <div class="sec-head"><div class="sec-icon sec-icon-gold">💰</div><div class="sec-text"><div class="sec-title" style="color:#d4a850;">बिक्री और गल्ला</div><div class="sec-sub">Sales & Cash Earnings</div></div><div onclick="toggleMahineyFromBtn()" style="background:linear-gradient(135deg,#1a1545 0%,#0d0a30 100%);border:2px solid #d4a850;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 3px 10px rgba(212,168,80,0.2), 0 0 0 1px rgba(122,108,240,0.3);flex-shrink:0;"><span style="font-size:28px;line-height:1;">📆</span><div style="line-height:1.2;"><div style="color:#d4a850;font-size:13px;font-weight:700;">कैलेंडर</div><div style="color:#b0a0e8;font-size:10.5px;font-weight:500;">▼ खोलें</div></div></div></div>
-    <div class="kpi-grid">
-      <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl"><span class="kpi-lbl-text">💰 बिक्री</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl"><span class="kpi-lbl-text">📈 गल्ला/कमाई</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card kpi-amber" onclick="toggleKPI('kharcha')"><div class="kpi-lbl"><span class="kpi-lbl-text">🧾 खर्चा</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card" id="tulna-card" style="background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;"><span id="tulna-label" style="color:#ffffff;font-size:12px;font-weight:600;opacity:1;">आज गल्ला/Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span></span><span id="tulna-badge" style="background:#0d2a1a;color:#3dca6a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #1a4a30;">+0%</span></div><div id="tulna-amount" style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:-0.3px;margin-bottom:4px;">₹0</div><div id="tulna-delta-row" style="display:flex;align-items:center;gap:5px;margin-bottom:5px;"><span id="tulna-arrow" style="color:#3dca6a;font-size:12px;font-weight:700;">▲</span><span id="tulna-sub" style="color:#ffffff;font-size:10px;font-weight:500;opacity:0.9;">कल से ज़्यादा</span></div><div id="tulna-inset" style="background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:3px 7px;"><span id="tulna-kal-ref" style="color:#ffffff;font-size:9px;font-weight:500;opacity:0.75;">कल - ₹0</span></div></div>
-    </div>
-    <div class="kpi-panel" id="panel-bikri"><div class="kpi-panel-inner panel-green"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;text-align:right;">बिक्री</div></div><div id="bikri-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a3a1a;"><div class="ptbl-total-cell" style="background:#0d2a1a;color:#2dba4d;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d2a1a;color:#d4a850;text-align:right;" id="bikri-total">₹0</div></div></div></div>
-    <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
-    <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
     
     <div class="mk-tile" onclick="go('s-suppliers')" style="margin-top:18px;">
       <div class="mk-tile-stripe"></div>
@@ -2234,6 +2216,79 @@ body.notif-modal-open { overflow: hidden; }
 </div>
 
 <!-- Calendar — dedicated screen, opened by one-tap from home -->
+<!-- ===== Mahina Totals screen (relocated monthly figures, PIN-gated) ===== -->
+<div id="s-mahina" class="screen">
+  <div class="header">
+    <div class="header-left" style="gap:10px;">
+      <button onclick="go('s-home')" style="background:#1a1545;border:1.5px solid #4a3878;width:38px;height:38px;border-radius:10px;color:#d4a850;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">←</button>
+      <div style="min-width:0;">
+        <div style="font-size:16px;font-weight:700;color:#f0c890;">📊 Mahina Totals <span style="font-size:12px;">🔒</span></div>
+        <div style="font-size:10px;color:#8aa0d8;">महीने का पूरा हिसाब · सिर्फ़ आपके लिए</div>
+      </div>
+    </div>
+  </div>
+  <div class="pad">
+   <div style="display:flex;align-items:center;gap:10px;margin:14px 0 10px;padding:4px;">
+      <div class="sec-icon" style="width:36px;height:36px;font-size:18px;border-radius:9px;background:linear-gradient(135deg,#1a3a78,#0a2050);border:1px solid #4a90d4;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="filter:hue-rotate(180deg) saturate(1.4);display:inline-block;">📅</span></div>
+      <div class="sec-text"><div class="sec-title" style="color:#d4a850;font-size:13px;" id="month-nav-heading">2026 — महीनेवार</div><div class="sec-sub" style="font-size:9px;">Year Overview</div></div>
+      <span class="sec-badge" style="background:#4a3818;color:#d4a850;border:1px solid #d4a850;font-size:9px;padding:3px 8px;">चालू वर्ष</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
+      <div onclick="monthNavSlide(-1)" id="month-nav-prev" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#cc7a47;flex-shrink:0;">◀</div>
+      <div id="month-nav-track" style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;"></div>
+      <div onclick="monthNavSlide(1)" id="month-nav-next" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#cc7a47;flex-shrink:0;">▶</div>
+    </div>
+    <div id="month-nav-detail" style="display:none;background:#161616;border:1px solid #1e1e1e;border-radius:8px;padding:10px 12px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span id="month-detail-title" style="font-size:10px;font-weight:800;color:#d4a850;"></span>
+        <span id="month-detail-entries" style="font-size:8px;color:#2a6a2a;background:#0d1f0d;padding:2px 7px;border-radius:4px;border:1px solid #1a4a1a;"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
+        <div style="background:#0d1f0d;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#2dba4d;font-weight:700;margin-bottom:3px;">बिक्री</div><div id="month-detail-sales" style="font-size:13px;font-weight:800;color:#d4a850;"></div></div>
+        <div style="background:#080f1a;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#4a90d4;font-weight:700;margin-bottom:3px;">गल्ला</div><div id="month-detail-galla" style="font-size:13px;font-weight:800;color:#8ab8e8;"></div></div>
+        <div style="background:#1a1000;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#cc7a47;font-weight:700;margin-bottom:3px;">खर्चा</div><div id="month-detail-expense" style="font-size:13px;font-weight:800;color:#cc7a47;"></div></div>
+      </div>
+    </div>
+    <div class="sec-head"><div class="sec-icon sec-icon-gold">💰</div><div class="sec-text"><div class="sec-title" style="color:#d4a850;">बिक्री और गल्ला</div><div class="sec-sub">Sales & Cash Earnings</div></div><div onclick="toggleMahineyFromBtn()" style="background:linear-gradient(135deg,#1a1545 0%,#0d0a30 100%);border:2px solid #d4a850;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 3px 10px rgba(212,168,80,0.2), 0 0 0 1px rgba(122,108,240,0.3);flex-shrink:0;"><span style="font-size:28px;line-height:1;">📆</span><div style="line-height:1.2;"><div style="color:#d4a850;font-size:13px;font-weight:700;">कैलेंडर</div><div style="color:#b0a0e8;font-size:10.5px;font-weight:500;">▼ खोलें</div></div></div></div>
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl"><span class="kpi-lbl-text">💰 बिक्री</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
+      <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl"><span class="kpi-lbl-text">📈 गल्ला/कमाई</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
+      <div class="kpi-card kpi-amber" onclick="toggleKPI('kharcha')"><div class="kpi-lbl"><span class="kpi-lbl-text">🧾 खर्चा</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
+      <div class="kpi-card" id="tulna-card" style="background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;"><span id="tulna-label" style="color:#ffffff;font-size:12px;font-weight:600;opacity:1;">आज गल्ला/Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span></span><span id="tulna-badge" style="background:#0d2a1a;color:#3dca6a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #1a4a30;">+0%</span></div><div id="tulna-amount" style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:-0.3px;margin-bottom:4px;">₹0</div><div id="tulna-delta-row" style="display:flex;align-items:center;gap:5px;margin-bottom:5px;"><span id="tulna-arrow" style="color:#3dca6a;font-size:12px;font-weight:700;">▲</span><span id="tulna-sub" style="color:#ffffff;font-size:10px;font-weight:500;opacity:0.9;">कल से ज़्यादा</span></div><div id="tulna-inset" style="background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:3px 7px;"><span id="tulna-kal-ref" style="color:#ffffff;font-size:9px;font-weight:500;opacity:0.75;">कल - ₹0</span></div></div>
+    </div>
+    <div class="kpi-panel" id="panel-bikri"><div class="kpi-panel-inner panel-green"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;text-align:right;">बिक्री</div></div><div id="bikri-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a3a1a;"><div class="ptbl-total-cell" style="background:#0d2a1a;color:#2dba4d;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d2a1a;color:#d4a850;text-align:right;" id="bikri-total">₹0</div></div></div></div>
+    <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">गल्ला/कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
+    <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
+  </div>
+</div>
+
+<!-- ===== Mahina Totals PIN gate ===== -->
+<style>
+.mpin-k{background:#0b1430;border:1.5px solid #2a4078;border-radius:12px;padding:16px 0;text-align:center;color:#e8d8b8;font-size:22px;font-weight:600;cursor:pointer;user-select:none;}
+.mpin-k:active{background:#13234a;}
+.mpin-dot{width:14px;height:14px;border-radius:50%;border:2px solid #2a4078;}
+.mpin-dot.on{background:#e8c870;border-color:#e8c870;}
+.mpin-shake{animation:mpinShake .4s;}
+@keyframes mpinShake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-9px);}40%,80%{transform:translateX(9px);}}
+</style>
+<div id="mahina-pin-modal" style="display:none;position:fixed;inset:0;z-index:11000;background:#070b1c;flex-direction:column;align-items:center;justify-content:flex-start;overflow:auto;">
+  <div style="width:100%;max-width:430px;margin:0 auto;padding:30px 22px 40px;display:flex;flex-direction:column;align-items:center;">
+    <div onclick="mpinClose()" style="align-self:flex-end;color:#8aa0d8;font-size:24px;cursor:pointer;padding:2px 8px;line-height:1;">✕</div>
+    <div id="mpin-icon" style="font-size:42px;margin-top:4px;">🔐</div>
+    <div id="mpin-title" style="color:#f0c890;font-size:19px;font-weight:700;margin-top:12px;text-align:center;">PIN डालें</div>
+    <div id="mpin-sub" style="color:#8aa0d8;font-size:12px;margin-top:6px;text-align:center;line-height:1.5;">Mahina Totals खोलने के लिए</div>
+    <div id="mpin-dots" style="display:flex;gap:14px;margin:24px 0 4px;"></div>
+    <div id="mpin-err" style="color:#ff8a7a;font-size:12px;font-weight:700;min-height:17px;margin-bottom:12px;text-align:center;"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px;width:100%;max-width:300px;">
+      <div class="mpin-k" onclick="mpinKey('1')">1</div><div class="mpin-k" onclick="mpinKey('2')">2</div><div class="mpin-k" onclick="mpinKey('3')">3</div>
+      <div class="mpin-k" onclick="mpinKey('4')">4</div><div class="mpin-k" onclick="mpinKey('5')">5</div><div class="mpin-k" onclick="mpinKey('6')">6</div>
+      <div class="mpin-k" onclick="mpinKey('7')">7</div><div class="mpin-k" onclick="mpinKey('8')">8</div><div class="mpin-k" onclick="mpinKey('9')">9</div>
+      <div class="mpin-k" style="visibility:hidden;"></div><div class="mpin-k" onclick="mpinKey('0')">0</div><div class="mpin-k" onclick="mpinBack()">⌫</div>
+    </div>
+    <div id="mpin-forgot" onclick="mpinForgot()" style="margin-top:22px;color:#5d8fd8;font-size:12px;cursor:pointer;">PIN भूल गए?</div>
+  </div>
+</div>
+
 <div id="s-calendar" class="screen">
   <div class="header" style="border-bottom-color:#7a6cf0;">
     <div class="header-left">
@@ -3801,12 +3856,23 @@ window.loadProfileAndUpdateHeaders = async function() {
   const uid = window._currentAuthUser ? window._currentAuthUser.uid : null;
   if (uid && window._db) {
     try {
-      const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const { doc, getDoc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      try {
+        if (localStorage.getItem('hk_mahina_pin_reset_' + uid) === '1') {
+          await setDoc(doc(window._db, 'users', uid, 'profile', 'info'), { mahinaPinHash: null, mahinaPinSalt: null }, { merge: true });
+          localStorage.removeItem('hk_mahina_pin_reset_' + uid);
+          localStorage.removeItem('hk_mahina_pin_' + uid);
+        }
+      } catch(e2) {}
       const snap = await getDoc(doc(window._db, 'users', uid, 'profile', 'info'));
       if (snap.exists()) {
         const data = snap.data();
         if (data.name) { name = data.name; localStorage.setItem('hk_owner_name', name); }
         if (data.businessName) { businessName = data.businessName; localStorage.setItem('hk_business_name', businessName); }
+        try {
+          if (data.mahinaPinHash && data.mahinaPinSalt) localStorage.setItem('hk_mahina_pin_' + uid, JSON.stringify({ hash: data.mahinaPinHash, salt: data.mahinaPinSalt }));
+          else localStorage.removeItem('hk_mahina_pin_' + uid);
+        } catch(e3) {}
       }
     } catch(e) { console.warn('Profile fetch error:', e); }
   }
@@ -5035,6 +5101,7 @@ function go(id){
   const nid=NM[id];
   if(nid){const n=document.getElementById(nid);n.classList.add('active');const d=document.createElement('div');d.className='nav-dot';n.appendChild(d);}
   if(id==='s-home')loadHome();
+  if(id==='s-mahina'&&window.loadHome)loadHome();
   if(id==='s-monthly')loadMonthly();
   if(id==='s-goal')loadGoalScreen();
   if(id==='s-suppliers')renderSuppliers();
@@ -6861,7 +6928,7 @@ function appLockUnlock() {}
 function appLockToggle() { if (window.alckOpenChangePinFlow) window.alckOpenChangePinFlow(); }
 history.pushState({app:1}, '', location.href);
 (function(){
-  const PARENT={'s-udhaar-customer':'s-udhaar-book','s-udhaar-book':'s-home','s-supplier-profile':'s-suppliers','s-suppliers':'s-home','s-entry':'s-home','s-calendar':'s-home','s-goal':'s-home','s-monthly':'s-home','s-livegalla':'s-home'};
+  const PARENT={'s-mahina':'s-home','s-udhaar-customer':'s-udhaar-book','s-udhaar-book':'s-home','s-supplier-profile':'s-suppliers','s-suppliers':'s-home','s-entry':'s-home','s-calendar':'s-mahina','s-goal':'s-home','s-monthly':'s-home','s-livegalla':'s-home'};
   let exitArmed=false, exitTimer=null;
   function isOpen(el){return el && (el.classList.contains('show')||el.style.display==='flex'||el.style.display==='block');}
   // Close the single topmost open layer (popup/menu). Returns true if one was closed.
@@ -6938,6 +7005,73 @@ function creditKey(d){var st=window.creditState;if(st.items.length)return;if(st.
 function creditBack(){var st=window.creditState;if(st.items.length)return;st.amount=st.amount.slice(0,-1);creditSyncAmount();}
 function creditTri(){var st=window.creditState;if(st.items.length)return;if(st.amount===''||st.amount==='0')return;var n=Math.min(parseInt(st.amount+'000',10),99999);st.amount=String(n);creditSyncAmount();}
 /* ===== Voice → {product, amount} parser (Hindi + romanized, tested in voice-test) ===== */
+/* ===== Mahina Totals — PIN gate (hashed, synced to profile/info, locally cached) ===== */
+function _mahinaUid(){return (window._currentAuthUser&&window._currentAuthUser.uid)||null;}
+function _mahinaKey(){var u=_mahinaUid();return u?('hk_mahina_pin_'+u):null;}
+function _mahinaGetLocal(){var k=_mahinaKey();if(!k)return null;try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function _mahinaSetLocal(o){var k=_mahinaKey();if(!k)return;try{if(o&&o.hash&&o.salt)localStorage.setItem(k,JSON.stringify({hash:o.hash,salt:o.salt}));else localStorage.removeItem(k);}catch(e){}}
+function _mahinaHasPin(){var p=_mahinaGetLocal();return !!(p&&p.hash&&p.salt);}
+function _randSalt(){var a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
+async function _pinDigest(pin,saltHex){var enc=new TextEncoder().encode(String(saltHex)+':'+String(pin));var buf=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
+async function _mahinaSaveSynced(hash,salt){
+  _mahinaSetLocal({hash:hash,salt:salt});
+  var uid=_mahinaUid();
+  if(uid&&window._db){try{var m=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');await m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{mahinaPinHash:hash,mahinaPinSalt:salt},{merge:true});}catch(e){console.warn('mahina pin sync err',e);}}
+}
+window.mpin={mode:'enter',buf:'',first:''};
+function _mpinRender(){var d=document.getElementById('mpin-dots');if(!d)return;var h='';for(var i=0;i<4;i++){h+='<div class="mpin-dot'+(i<window.mpin.buf.length?' on':'')+'"></div>';}d.innerHTML=h;}
+function _mpinErr(msg){var e=document.getElementById('mpin-err');if(e)e.textContent=msg||'';var c=document.getElementById('mahina-pin-modal');if(c){c.classList.add('mpin-shake');setTimeout(function(){c.classList.remove('mpin-shake');},420);}if(navigator.vibrate){try{navigator.vibrate(60);}catch(e2){}}}
+function mpinOpen(mode){
+  window.mpin={mode:mode,buf:'',first:''};
+  var t=document.getElementById('mpin-title'),s=document.getElementById('mpin-sub'),ic=document.getElementById('mpin-icon'),fg=document.getElementById('mpin-forgot'),er=document.getElementById('mpin-err');
+  if(mode==='enter'){t.textContent='PIN डालें';s.textContent='Mahina Totals खोलने के लिए';ic.textContent='🔐';if(fg)fg.style.display='block';}
+  else if(mode==='create2'){t.textContent='PIN दुबारा डालें';s.textContent='पक्का करने के लिए वही 4 अंक';ic.textContent='🔒';if(fg)fg.style.display='none';}
+  else {t.textContent='नया PIN बनाएं';s.textContent='महीने का हिसाब छुपाने के लिए 4 अंक चुनें';ic.textContent='🔒';if(fg)fg.style.display='none';}
+  if(er)er.textContent='';
+  window._mpinForgotArm=false;
+  _mpinRender();
+  document.getElementById('mahina-pin-modal').style.display='flex';
+}
+function mpinClose(){var m=document.getElementById('mahina-pin-modal');if(m)m.style.display='none';window.mpin={mode:'enter',buf:'',first:''};}
+function mpinKey(d){if(window.mpin.buf.length>=4)return;window.mpin.buf+=d;_mpinRender();if(window.mpin.buf.length===4)setTimeout(mpinSubmit,110);}
+function mpinBack(){window.mpin.buf=window.mpin.buf.slice(0,-1);_mpinRender();}
+async function mpinSubmit(){
+  var mode=window.mpin.mode,buf=window.mpin.buf;
+  if(buf.length!==4)return;
+  if(mode==='enter'){
+    var p=_mahinaGetLocal();
+    if(!p){window.mpin.buf='';_mpinRender();return;}
+    var h=await _pinDigest(buf,p.salt);
+    if(h===p.hash){mpinClose();go('s-mahina');}
+    else{window.mpin.buf='';_mpinRender();_mpinErr('गलत PIN — दुबारा कोशिश करें');}
+  } else if(mode==='create'){
+    window.mpin.first=buf;window.mpin.buf='';window.mpin.mode='create2';
+    document.getElementById('mpin-title').textContent='PIN दुबारा डालें';
+    document.getElementById('mpin-sub').textContent='पक्का करने के लिए वही 4 अंक';
+    document.getElementById('mpin-err').textContent='';
+    _mpinRender();
+  } else {
+    if(buf===window.mpin.first){
+      var salt=_randSalt(),hash=await _pinDigest(buf,salt);
+      await _mahinaSaveSynced(hash,salt);
+      mpinClose();toast('✅ PIN सेट हो गया');go('s-mahina');
+    } else {
+      window.mpin.first='';window.mpin.buf='';window.mpin.mode='create';
+      document.getElementById('mpin-title').textContent='नया PIN बनाएं';
+      document.getElementById('mpin-sub').textContent='महीने का हिसाब छुपाने के लिए 4 अंक चुनें';
+      _mpinRender();_mpinErr('PIN match नहीं हुआ — फिर से');
+    }
+  }
+}
+function openMahina(){ if(_mahinaHasPin())mpinOpen('enter'); else mpinOpen('create'); }
+function mpinForgot(){
+  var fg=document.getElementById('mpin-forgot');
+  if(!window._mpinForgotArm){window._mpinForgotArm=true;if(fg){fg.textContent='⚠️ पक्का? दुबारा login होगा — फिर से दबाएँ';fg.style.color='#ff8a7a';}setTimeout(function(){window._mpinForgotArm=false;var f=document.getElementById('mpin-forgot');if(f){f.textContent='PIN भूल गए?';f.style.color='#5d8fd8';}},4500);return;}
+  var uid=_mahinaUid();if(!uid){toast('पहले login करें',true);return;}
+  try{localStorage.setItem('hk_mahina_pin_reset_'+uid,'1');}catch(e){}
+  toast('दुबारा login करके नया PIN बनाएं');
+  setTimeout(function(){ if(window.signOut)window.signOut(); },800);
+}
 window.vcParse=(function(){
   var SIMPLE={
    'जीरो':0,'शून्य':0,'सुन्ना':0,

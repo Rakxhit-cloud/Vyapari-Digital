@@ -2858,6 +2858,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="uc-ss" style="background:linear-gradient(135deg,#0e2417,#0a1a12);border-color:#1d5a3a;"><div class="l" style="color:#5dd88a;">मिल गया</div><div class="v" id="uc-paid">₹0</div></div>
       <div class="uc-ss" style="background:linear-gradient(135deg,#2a2018,#1d150c);border-color:#6a5020;"><div class="l" style="color:#f0c890;">अभी बाकी</div><div class="v" id="uc-out">₹0</div></div>
     </div>
+    <div class="uc-recv" onclick="creditAddToCustomer()" style="background:linear-gradient(135deg,#e23a3a,#b82828);border-color:#ff8a7a;color:#fff;margin-bottom:10px;">➕ नया उधार जोड़ें</div>
     <div class="uc-recv" onclick="ucPayOpen()">💰 Payment आया</div>
     <div id="uc-ledger"></div>
   </div>
@@ -7197,6 +7198,23 @@ function _clRowHtml(n,prod,amt){
     '<input class="cl-prod" maxlength="30" placeholder="सामान / Product" value="'+_cesc(prod||'')+'">'+
     '<input class="cl-amt" maxlength="4" inputmode="numeric" placeholder="\u20b9" value="'+_cesc(amt||'')+'" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');creditListRecalc();"></div>';
 }
+function creditAddToCustomer(){
+  var c=window.ucCust; if(!c){toast('ग्राहक नहीं मिला',true);return;}
+  window.creditListMode='addcust';
+  window.creditAddCustKey=c.key;
+  var rows=document.getElementById('credit-list-rows');
+  rows.innerHTML=_clRowHtml(1,'','');
+  creditListRecalc();
+  rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=false;inp.style.opacity='1';});
+  document.getElementById('credit-list-addrow').style.display='block';
+  var sv=document.getElementById('credit-list-save'); sv.style.display='block'; sv.textContent=c.phone?'💾 Save & WhatsApp भेजें':'💾 उधार Save करें';
+  var wa=document.getElementById('credit-list-wa'); if(wa)wa.style.display='none';
+  var vb=document.getElementById('cl-voice-bar'); if(vb)vb.style.display='block';
+  var vi=document.getElementById('cl-voice-input'); if(vi)vi.value='';
+  var vp=document.getElementById('cl-voice-preview'); if(vp)vp.innerHTML='';
+  var ct=document.querySelector('#credit-list-modal .cl-title'); if(ct)ct.textContent='📝 '+(c.name||'ग्राहक')+' — नया उधार';
+  document.getElementById('credit-list-modal').style.display='flex';
+}
 function creditListOpen(){
   window.creditListMode='popup';
   var st=window.creditState,rows=document.getElementById('credit-list-rows'),h='';
@@ -7207,6 +7225,8 @@ function creditListOpen(){
   rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=false;inp.style.opacity='1';});
   document.getElementById('credit-list-addrow').style.display='block';
   document.getElementById('credit-list-save').style.display='block';
+  document.getElementById('credit-list-save').textContent='💾 List Save करें';
+  var waO=document.getElementById('credit-list-wa'); if(waO)waO.style.display='block';
   var vb=document.getElementById('cl-voice-bar'); if(vb)vb.style.display='block';
   var vi=document.getElementById('cl-voice-input'); if(vi)vi.value='';
   var vp=document.getElementById('cl-voice-preview'); if(vp)vp.innerHTML='';
@@ -7225,6 +7245,14 @@ function creditListRecalc(){
   rows.querySelectorAll('.cl-amt').forEach(function(a){t+=parseInt(a.value||'0',10)||0;});
   document.getElementById('credit-list-total').textContent=_crFmt(t);
 }
+function _sendCreditBill(name,phone,items,t,dstr){
+  var biz=(localStorage.getItem('hk_business_name')||'दुकान');
+  var lines=['नमस्ते '+(name?(name+' जी'):'')+',', biz+' से आपका हिसाब:', '📅 '+fmtDate(dstr||TSTR),''];
+  items.forEach(function(x,i){lines.push((i+1)+'. '+(x.product||'')+' — ₹'+(x.amount||0));});
+  lines.push('————————'); lines.push('कुल: ₹'+t.toLocaleString('en-IN')); lines.push('धन्यवाद 🙏');
+  var url='https://wa.me/'+_waNum(phone)+'?text='+encodeURIComponent(lines.join('\n'));
+  window.open(url,'_blank');
+}
 function creditListSave(){
   var rows=document.getElementById('credit-list-rows'),items=[],t=0,n=0;
   rows.querySelectorAll('.cl-row').forEach(function(row){
@@ -7233,6 +7261,18 @@ function creditListSave(){
     if(p||a){n++;items.push({n:n,product:p.slice(0,30),amount:a});t+=a;}
   });
   if(!items.length){toast('कम से कम एक सामान भरें',true);return;}
+  if(window.creditListMode==='addcust'){
+    var ac=(udhaarCustomers().find(function(x){return x.key===window.creditAddCustKey;}))||window.ucCust;
+    if(!ac){toast('ग्राहक नहीं मिला',true);return;}
+    DB.push(K.UDHAAR,{date:TSTR,custName:ac.name||'',custPhone:ac.phone||'',items:items,amount:t,payments:[],paid:0,ts:Date.now()});
+    if(ac.phone)_sendCreditBill(ac.name,ac.phone,items,t,TSTR);
+    creditListClose();
+    if(typeof openUdhaarProfile==='function')openUdhaarProfile(ac.key);
+    if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
+    if(typeof renderCreditGrid==='function')renderCreditGrid();
+    toast('✅ '+(ac.name||'ग्राहक')+' के खाते में जुड़ा · '+_crFmt(t));
+    return;
+  }
   if(window.creditListMode==='entry'){
     if(!window.creditListEditable){toast('पुरानी list — सिर्फ आज वाली edit होती है',true);return;}
     DB.update(K.UDHAAR,window.creditListEntryId,{items:items,amount:t});
@@ -7426,6 +7466,8 @@ function openEntryList(id){
   rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=!editable;inp.style.opacity=editable?'1':'.65';});
   document.getElementById('credit-list-addrow').style.display=editable?'block':'none';
   document.getElementById('credit-list-save').style.display=editable?'block':'none';
+  if(editable)document.getElementById('credit-list-save').textContent='💾 List Save करें';
+  var waE=document.getElementById('credit-list-wa'); if(waE)waE.style.display='block';
   var vb=document.getElementById('cl-voice-bar'); if(vb)vb.style.display=editable?'block':'none';
   var vi=document.getElementById('cl-voice-input'); if(vi)vi.value='';
   var vp=document.getElementById('cl-voice-preview'); if(vp)vp.innerHTML='';

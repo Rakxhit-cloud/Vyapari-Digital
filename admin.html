@@ -234,8 +234,17 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 </head>
 <body>
 
+<!-- BOOT SPLASH — shown until Firebase resolves the session (prevents PIN/screen flash) -->
+<div class="auth-wrap" id="boot-splash">
+  <div style="text-align:center;">
+    <div style="font-size:40px;margin-bottom:16px;">🔐</div>
+    <div style="width:34px;height:34px;border:3px solid #2a4078;border-top-color:#d4a850;border-radius:50%;margin:0 auto;animation:_spin .8s linear infinite;"></div>
+  </div>
+</div>
+<style>@keyframes _spin{to{transform:rotate(360deg);}}</style>
+
 <!-- AUTH SCREEN -->
-<div class="auth-wrap" id="auth-screen">
+<div class="auth-wrap" id="auth-screen" style="display:none">
   <div class="auth-card">
     <div class="auth-logo">🔐</div>
     <div class="auth-title">Admin Access</div>
@@ -408,21 +417,34 @@ window._extendTrial = async function(uid, additionalDays) {
 // Watch auth state. If signed in as the admin UID, reveal the dashboard.
 // Otherwise show the auth screen. This is the ONLY gate that matters —
 // PIN is just a UX layer on top.
-onAuthStateChanged(auth, (user) => {
+function _routeAuth(user) {
   const isAdmin = user && user.uid === ADMIN_UID;
   window._currentAdminUser = isAdmin ? user : null;
+  const splash = document.getElementById('boot-splash');
+  const authS  = document.getElementById('auth-screen');
+  const otpS   = document.getElementById('otp-screen');
+  const dash   = document.getElementById('dashboard');
+  if (splash) splash.style.display = 'none';
   if (isAdmin && sessionStorage.getItem('_adm_pin_ok') === 'true') {
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('otp-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
+    // Already signed in this session and PIN cleared → straight to dashboard
+    authS.style.display = 'none';
+    otpS.style.display  = 'none';
+    dash.style.display  = 'block';
     if (typeof window.loadUsers === 'function') window.loadUsers();
-  } else if (isAdmin) {
-    // Signed in as admin but PIN not yet entered this session
-    document.getElementById('auth-screen').style.display = 'flex';
-    document.getElementById('otp-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'none';
+  } else {
+    // Not signed in, not admin, or PIN not yet entered this session → PIN gate
+    authS.style.display = 'flex';
+    otpS.style.display  = 'none';
+    dash.style.display  = 'none';
   }
-});
+}
+// Single source of truth: route ONLY after Firebase resolves the session.
+onAuthStateChanged(auth, (user) => { _routeAuth(user); });
+// Safety net: if auth never resolves (network hiccup), fall back to the PIN gate.
+setTimeout(() => {
+  const sp = document.getElementById('boot-splash');
+  if (sp && sp.style.display !== 'none') _routeAuth(window._currentAdminUser || null);
+}, 6000);
 </script>
 
 <script>

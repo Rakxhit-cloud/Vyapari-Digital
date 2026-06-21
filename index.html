@@ -2607,11 +2607,11 @@ body.notif-modal-open { overflow: hidden; }
   .credit-bd{position:fixed;inset:0;background:rgba(4,8,20,.8);z-index:9999;display:none;align-items:flex-start;justify-content:center;padding:26px 13px;overflow-y:auto;}
   .credit-fld{margin-top:12px;}
   .credit-fld label{display:block;font-size:12px;color:#cdd8f8;font-weight:700;margin-bottom:6px;}
-  .credit-inp{width:100%;background:#0b1430;border:1.5px solid #2a4078;border-radius:11px;padding:12px 14px;color:#fff;font-size:15px;}
+  .credit-inp{width:100%;background:#0b1430;border:2px solid #34518f;border-radius:11px;padding:12px 14px;color:#fff;font-size:15px;box-shadow:0 0 11px rgba(93,170,255,.13);}
   .credit-phone-row{display:flex;gap:8px;}
   .credit-pick{flex-shrink:0;width:48px;border:1.5px solid #2a4078;border-radius:11px;background:#13234a;color:#d4a850;font-size:18px;cursor:pointer;}
-  .credit-listbtn{width:100%;margin-top:14px;padding:13px;border-radius:12px;border:1.5px dashed #d4a850;background:rgba(212,168,80,.08);color:#e8c870;font-size:14px;font-weight:800;cursor:pointer;}
-  .credit-listbtn.ready{border-style:solid;border-color:#3ec873;background:rgba(62,200,115,.12);color:#5dd88a;}
+  .credit-listbtn{width:100%;margin-top:14px;padding:13px;border-radius:12px;border:2px dashed #d4a850;background:rgba(212,168,80,.08);color:#e8c870;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 0 13px rgba(212,168,80,.16);}
+  .credit-listbtn.ready{border-style:solid;border-color:#3ec873;background:rgba(62,200,115,.12);color:#5dd88a;box-shadow:0 0 16px rgba(62,200,115,.25);}
   .credit-save{width:100%;margin-top:16px;padding:15px;border-radius:13px;border:1px solid #ff8a7a;background:linear-gradient(135deg,#e23a3a,#ff5a4a);color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
   .credit-del{display:none;width:100%;margin-top:8px;padding:11px;border-radius:11px;border:1px solid #6a2020;background:transparent;color:#ff8a7a;font-size:12px;font-weight:700;cursor:pointer;}
   .cl-card{width:100%;max-width:440px;background:linear-gradient(180deg,#14193e,#0d1230);border:1.5px solid #2c3a6a;border-radius:18px;padding:16px;box-shadow:0 14px 44px rgba(0,0,0,.55);}
@@ -2621,8 +2621,8 @@ body.notif-modal-open { overflow: hidden; }
   .cl-rows{max-height:48vh;overflow-y:auto;padding-right:3px;}
   .cl-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
   .cl-sn{width:22px;font-size:13px;color:#8aa0d8;font-weight:700;flex-shrink:0;}
-  .cl-prod{flex:1;min-width:0;background:#0b1430;border:1.5px solid #2a4078;border-radius:9px;padding:10px;color:#fff;font-size:13px;}
-  .cl-amt{width:72px;background:#0b1430;border:1.5px solid #2a4078;border-radius:9px;padding:10px;color:#f0c890;font-size:13px;font-weight:700;text-align:right;flex-shrink:0;}
+  .cl-prod{flex:1;min-width:0;background:#0b1430;border:2px solid #34518f;border-radius:9px;padding:10px;color:#fff;font-size:13px;box-shadow:0 0 9px rgba(93,170,255,.14);}
+  .cl-amt{width:72px;background:#0b1430;border:2px solid #6f5826;border-radius:9px;padding:10px;color:#f0c890;font-size:13px;font-weight:700;text-align:right;flex-shrink:0;box-shadow:0 0 9px rgba(240,200,144,.16);}
   .cl-addrow{width:100%;margin-top:6px;padding:10px;border:1.5px dashed #2a4078;border-radius:10px;background:transparent;color:#8aa0d8;font-size:12px;font-weight:700;cursor:pointer;}
   .cl-save{display:block;margin:15px auto 2px;padding:13px 42px;border-radius:12px;border:1px solid #5cf09a;background:linear-gradient(135deg,#2bd36e,#1fab53);color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
   .cl-voice{margin:0 0 13px;padding:11px;border:1.5px solid #2a4078;border-radius:12px;background:linear-gradient(180deg,#0d1638,#0a1130);}
@@ -2647,6 +2647,7 @@ body.notif-modal-open { overflow: hidden; }
         <div class="lg-modal-close" onclick="creditClose()">✕</div>
       </div>
       <button class="credit-listbtn" id="credit-list-btn" onclick="creditListBtnTap()">📝 List बनाएं</button>
+      <button id="credit-wa-btn" onclick="creditPopupWhatsApp()" style="display:none;width:100%;margin-top:10px;padding:12px;border-radius:12px;border:2px solid rgba(43,211,110,.6);background:rgba(43,211,110,.13);color:#7fe0a8;font-size:13.5px;font-weight:800;cursor:pointer;box-shadow:0 0 14px rgba(43,211,110,.22);">💬 WhatsApp पर भेजें</button>
       <div class="credit-fld">
         <label>👤 ग्राहक का नाम</label>
         <input class="credit-inp" id="credit-name" maxlength="40" placeholder="जैसे: रमेश जी" autocomplete="off">
@@ -6982,11 +6983,21 @@ function creditSyncListBtn(){
     b.innerHTML='📝 List बनाएं';
     b.classList.remove('ready');
   }
+  var wb=document.getElementById('credit-wa-btn'); if(wb)wb.style.display=st.items.length?'block':'none';
 }
-function creditListBtnTap(){
-  var st=window.creditState;
-  if(st.items.length)creditListView(); else creditListOpen();
+function creditPopupWhatsApp(){
+  var st=window.creditState; if(!st.items.length){toast('पहले List बनाएं',true);return;}
+  var name=(document.getElementById('credit-name').value||'').trim();
+  var phone=(document.getElementById('credit-phone').value||'').trim();
+  var dt=(document.getElementById('credit-date').value||TSTR);
+  if(phone){_sendCreditBill(name,phone,st.items,st.total,dt);return;}
+  var biz=(localStorage.getItem('hk_business_name')||'दुकान');
+  var lines=['नमस्ते '+(name?(name+' जी'):'')+',', biz+' से आपका हिसाब:', '📅 '+fmtDate(dt),''];
+  st.items.forEach(function(x,i){lines.push((i+1)+'. '+(x.product||'')+' — ₹'+(x.amount||0));});
+  lines.push('————————'); lines.push('कुल: ₹'+st.total.toLocaleString('en-IN')); lines.push('धन्यवाद 🙏');
+  window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(lines.join('\n')),'_blank');
 }
+function creditListBtnTap(){ creditListOpen(); }
 function creditListView(){
   window.creditListMode='view';
   var st=window.creditState,rows=document.getElementById('credit-list-rows'),h='';
@@ -7465,7 +7476,7 @@ function openEntryList(id){
   if(!r||r.type==='payment')return;
   window.creditListMode='entry';
   window.creditListEntryId=id;
-  var editable=(r.date===TSTR);
+  var editable=true;
   window.creditListEditable=editable;
   var rows=document.getElementById('credit-list-rows'),h='';
   var items=(r.items&&r.items.length)?r.items:[{product:'',amount:''}];
@@ -7479,7 +7490,7 @@ function openEntryList(id){
   var vb=document.getElementById('cl-voice-bar'); if(vb)vb.style.display=editable?'block':'none';
   var vi=document.getElementById('cl-voice-input'); if(vi)vi.value='';
   var vp=document.getElementById('cl-voice-preview'); if(vp)vp.innerHTML='';
-  var ct=document.querySelector('#credit-list-modal .cl-title'); if(ct)ct.textContent=editable?'📝 List — आज तक editable':'📝 List · पुरानी (सिर्फ देखें)';
+  var ct=document.querySelector('#credit-list-modal .cl-title'); if(ct)ct.textContent='📝 List · edit करें';
   document.getElementById('credit-list-modal').style.display='flex';
 }
 function ucReminder(){

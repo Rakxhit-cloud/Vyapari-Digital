@@ -1791,7 +1791,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="bb-success" id="bb-success-text">Registration complete</div>
     <div class="bb-divider"></div>
     <div class="bb-open-label">बेहतर अनुभव के लिए App खोलें</div>
-    <button class="bb-install-btn" id="bb-install-btn">📥 App Install करें</button>
+    <button class="bb-install-btn" id="bb-install-btn">📥 App Download करें</button>
   </div>
 </div>
 
@@ -3789,35 +3789,13 @@ window.saveName = async function() {
         await m.setDoc(m.doc(window._db, 'users', uid, 'profile', 'info'), { mode: 'full' }, { merge: true });
       } catch(e) { console.warn('mode save err:', e); }
     }
-    // CRITICAL: Branch based on environment
-    // Browser → show "Registration Complete" + install prompt (no homescreen, no PIN)
-    // PWA → launchApp (which triggers PIN setup → homescreen)
-    var isPwaMode = false;
-    try {
-      isPwaMode = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-                  window.navigator.standalone === true ||
-                  document.referrer.indexOf('android-app://') === 0;
-    } catch(e) {}
-    // Trust cached confirmation if live detection failed (boot-time race)
-    if (!isPwaMode) {
-      try {
-        var ts = parseInt(sessionStorage.getItem('hk_pwa_confirmed_at') || '0');
-        if (ts && (Date.now() - ts) < 60000) isPwaMode = true;
-      } catch(e){}
-      if (window._isPwaConfirmed) isPwaMode = true;
-    } else {
-      try { sessionStorage.setItem('hk_pwa_confirmed_at', Date.now().toString()); } catch(e){}
-      window._isPwaConfirmed = true;
-    }
-
-    if (isPwaMode) {
-      // PWA: full app launch with PIN
-      launchApp(uid);
-    } else {
-      // Browser: show registration-complete block screen, NO app launch
-      if (window.showBrowserBlockScreen) {
-        window.showBrowserBlockScreen(true);
-      }
+    // Registration submit ALWAYS happens in the browser (the user installs the
+    // app AFTER registering). Always show the "Registration Complete + App
+    // download" screen here — never launch the app or PIN from registration.
+    // The app (PIN → home) launches ONLY when the installed PWA is opened in
+    // standalone mode (handled at boot in onAuthStateChanged → launchApp).
+    if (window.showBrowserBlockScreen) {
+      window.showBrowserBlockScreen(true);
     }
   }
 };
@@ -3929,17 +3907,9 @@ window.openBizNamePrompt = function() {
 };
 
 window.selectMode = function(mode) {
-  // Mode picker removed — function kept as no-op stub for backward compat.
-  // Forces 'full' mode regardless of input.
-  const uid = auth.currentUser ? auth.currentUser.uid : 'unknown';
-  const phone = auth.currentUser ? (auth.currentUser.phoneNumber || '') : '';
-  const trialStart = Date.now();
-  localStorage.setItem('hk_terms_agreed_' + uid, trialStart.toString());
-  localStorage.setItem('hk_trial_start_' + uid, trialStart.toString());
-  localStorage.setItem('hk_mode_' + uid, 'full');
-  window._fsRegisterUser(uid, phone, trialStart);
-  if(window._db){try{import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>{m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{mode:'full'},{merge:true});});}catch(e){}}
-  launchApp(uid);
+  // Old mode-picker flow fully removed. No-op kept only so any stale reference
+  // cannot throw or revive the old launch path. Registration is handled
+  // entirely by saveName() → showBrowserBlockScreen(true).
 };
 
 // Expose signOut globally for browser block screen

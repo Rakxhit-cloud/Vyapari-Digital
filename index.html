@@ -2646,25 +2646,7 @@ body.notif-modal-open { overflow: hidden; }
         <div class="lg-modal-title" id="credit-modal-title">📕 उधार · नया ग्राहक</div>
         <div class="lg-modal-close" onclick="creditClose()">✕</div>
       </div>
-      <div class="lg-display">
-        <div class="lg-display-amount" id="credit-amount">₹0</div>
-        <div class="lg-display-hint" id="credit-amt-hint">अधिकतम 5 अंक · या नीचे List बनाएं</div>
-      </div>
-      <div class="lg-keypad" id="credit-keypad">
-        <div class="lg-key" onclick="creditKey('1')">1</div>
-        <div class="lg-key" onclick="creditKey('2')">2</div>
-        <div class="lg-key" onclick="creditKey('3')">3</div>
-        <div class="lg-key" onclick="creditKey('4')">4</div>
-        <div class="lg-key" onclick="creditKey('5')">5</div>
-        <div class="lg-key" onclick="creditKey('6')">6</div>
-        <div class="lg-key" onclick="creditKey('7')">7</div>
-        <div class="lg-key" onclick="creditKey('8')">8</div>
-        <div class="lg-key" onclick="creditKey('9')">9</div>
-        <div class="lg-key lg-key-back" onclick="creditBack()">⌫</div>
-        <div class="lg-key" onclick="creditKey('0')">0</div>
-        <div class="lg-key lg-key-tri" onclick="creditTri()">000</div>
-      </div>
-      <button class="credit-listbtn" id="credit-list-btn" onclick="creditListOpen()">📝 List बनाएं</button>
+      <button class="credit-listbtn" id="credit-list-btn" onclick="creditListBtnTap()">📝 List बनाएं</button>
       <div class="credit-fld">
         <label>👤 ग्राहक का नाम</label>
         <input class="credit-inp" id="credit-name" maxlength="40" placeholder="जैसे: रमेश जी" autocomplete="off">
@@ -2680,7 +2662,7 @@ body.notif-modal-open { overflow: hidden; }
         <label>📅 तारीख (Date)</label>
         <input class="credit-inp" id="credit-date" type="date" style="color-scheme:dark;">
       </div>
-      <button class="credit-save" onclick="creditSave()">💾 उधार Save करें</button>
+      <button class="credit-save" onclick="creditSave()">💾 उधार और Profile save करें</button>
       <button class="credit-del" id="credit-del-row" onclick="creditDelEntry()">🗑️ यह entry हटाएं</button>
     </div>
   </div>
@@ -2690,7 +2672,10 @@ body.notif-modal-open { overflow: hidden; }
   <div class="cl-card">
     <div class="cl-head">
       <div class="cl-title">📝 List बनाएं</div>
-      <div class="cl-total">Total: <span id="credit-list-total">₹0</span></div>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div class="cl-total">Total: <span id="credit-list-total">₹0</span></div>
+        <div onclick="creditListClose()" style="width:30px;height:30px;border:1.5px solid #4a3878;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ff8a7a;font-size:15px;font-weight:700;cursor:pointer;flex-shrink:0;">✕</div>
+      </div>
     </div>
     <div class="cl-voice" id="cl-voice-bar">
       <div class="cl-voice-tip">🎤 <b>बोलकर लिखें:</b> कीबोर्ड का mic दबाएँ और एक सामान बोलें — जैसे "<b>2 किलो चीनी 90</b>" या "<b>ढाई सौ ग्राम सूजी</b>"। फिर ➕ दबाएँ, नीचे list में जुड़ जाएगा।</div>
@@ -6980,17 +6965,40 @@ function renderCreditGrid(){
   h+='<div class="lg-cadd" onclick="creditOpen()">+</div>';
   grid.innerHTML=h;
 }
-function creditCurAmt(){var st=window.creditState;return st.items.length?st.total:(parseInt(st.amount||'0',10)||0);}
+function creditCurAmt(){var st=window.creditState;return st.items.length?st.total:0;}
 function creditSyncAmount(){
   var st=window.creditState;
-  document.getElementById('credit-amount').textContent=_crFmt(creditCurAmt());
-  document.getElementById('credit-keypad').style.display=st.items.length?'none':'grid';
-  document.getElementById('credit-amt-hint').textContent=st.items.length?('List से · '+st.items.length+' सामान'):'अधिकतम 5 अंक · या नीचे List बनाएं';
+  var amtEl=document.getElementById('credit-amount'); if(amtEl)amtEl.textContent=_crFmt(creditCurAmt());
+  var kp=document.getElementById('credit-keypad'); if(kp)kp.style.display=st.items.length?'none':'grid';
+  var hint=document.getElementById('credit-amt-hint'); if(hint)hint.textContent=st.items.length?('List से · '+st.items.length+' सामान'):'अधिकतम 5 अंक · या नीचे List बनाएं';
 }
 function creditSyncListBtn(){
   var st=window.creditState,b=document.getElementById('credit-list-btn');
-  if(st.items.length){b.innerHTML='✅ List तैयार ('+st.items.length+' सामान)';b.classList.add('ready');}
-  else{b.innerHTML='📝 List बनाएं';b.classList.remove('ready');}
+  if(!b)return;
+  if(st.items.length){
+    b.innerHTML='<div style="font-size:13px;font-weight:800;color:#5dd88a;margin-bottom:5px;">✅ List तैयार</div><div style="font-size:25px;font-weight:800;color:#fff;line-height:1;">'+_crFmt(st.total)+'</div><div style="font-size:11px;color:#7fc8a0;margin-top:5px;">'+st.items.length+' सामान · देखने के लिए दबाएँ</div>';
+    b.classList.add('ready');
+  } else {
+    b.innerHTML='📝 List बनाएं';
+    b.classList.remove('ready');
+  }
+}
+function creditListBtnTap(){
+  var st=window.creditState;
+  if(st.items.length)creditListView(); else creditListOpen();
+}
+function creditListView(){
+  window.creditListMode='view';
+  var st=window.creditState,rows=document.getElementById('credit-list-rows'),h='';
+  st.items.forEach(function(it,i){h+=_clRowHtml(i+1,it.product,it.amount?String(it.amount):'');});
+  rows.innerHTML=h; creditListRecalc();
+  rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=true;inp.style.opacity='.7';});
+  document.getElementById('credit-list-addrow').style.display='none';
+  document.getElementById('credit-list-save').style.display='none';
+  var wa=document.getElementById('credit-list-wa'); if(wa)wa.style.display='none';
+  var vb=document.getElementById('cl-voice-bar'); if(vb)vb.style.display='none';
+  var ct=document.querySelector('#credit-list-modal .cl-title'); if(ct)ct.textContent='📝 List · सिर्फ देखें';
+  document.getElementById('credit-list-modal').style.display='flex';
 }
 function creditOpen(editId){
   var st=window.creditState; st.editId=editId||null; st.items=[]; st.total=0; st.amount='';
@@ -7322,14 +7330,14 @@ function creditSave(){
   var amt=creditCurAmt();
   var cdate=(document.getElementById('credit-date').value||TSTR);
   if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}
-  if(amt<=0){toast('❌ रकम भरें या List बनाएं',true);return;}
+  if(amt<=0){toast('❌ पहले List बनाएं',true);return;}
   if(st.editId){
     var list=DB.get(K.UDHAAR)||[],r=list.find(function(x){return x.id===st.editId;});
     if(r){var patch=Object.assign({},r,{custName:name,custPhone:phone,date:cdate,items:st.items.slice(),amount:amt});DB.update(K.UDHAAR,st.editId,patch);}
   }else{
     DB.push(K.UDHAAR,{date:cdate,custName:name,custPhone:phone,items:st.items.slice(),amount:amt,payments:[],paid:0,ts:Date.now()});
   }
-  toast('✅ उधार जुड़ गया — '+name);
+  toast('✅ उधार और Profile save हुआ — '+name);
   creditClose(); renderCreditGrid();
 }
 function creditDelEntry(){

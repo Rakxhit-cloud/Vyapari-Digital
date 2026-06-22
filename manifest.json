@@ -1,6 +1,7 @@
 {
   "name": "Live खाता",
   "short_name": "Live खाता",
+  "id": "/index.html",
   "description": "रोज़ का हिसाब, Live रखें — आपका अपना डिजिटल खाता",
   "start_url": "./index.html",
   "scope": "./",

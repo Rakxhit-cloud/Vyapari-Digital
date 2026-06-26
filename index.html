@@ -3789,12 +3789,15 @@ window.saveName = async function() {
         await m.setDoc(m.doc(window._db, 'users', uid, 'profile', 'info'), { mode: 'full' }, { merge: true });
       } catch(e) { console.warn('mode save err:', e); }
     }
-    // Registration submit ALWAYS happens in the browser (the user installs the
-    // app AFTER registering). Always show the "Registration Complete + App
-    // download" screen here — never launch the app or PIN from registration.
-    // The app (PIN → home) launches ONLY when the installed PWA is opened in
-    // standalone mode (handled at boot in onAuthStateChanged → launchApp).
-    if (window.showBrowserBlockScreen) {
+    // Branch on registration source (reliable Play-vs-web signal):
+    //  • Inside the installed Play app (?src=play, persisted as hk_reg_source):
+    //    the user already HAS the app, so skip the "App Download करें" screen and
+    //    go straight in. launchApp() lands a no-PIN user on PIN setup → home.
+    //  • Web/browser registration: install happens AFTER registering, so show the
+    //    "Registration Complete + App Download करें" screen as before.
+    if (getRegSource() === 'play') {
+      launchApp(uid);
+    } else if (window.showBrowserBlockScreen) {
       window.showBrowserBlockScreen(true);
     }
   }
@@ -4036,9 +4039,16 @@ function launchApp(uid) {
   // result in sessionStorage with a 60-second TTL. The TTL bridges the
   // boot-time race window without permanently bypassing the browser-block
   // intent for users who later open the site in a browser tab.
-  var isPwaMode = false;
+  // AUTHORITATIVE SIGNAL: the installed Play app launches with ?src=play, which
+  // getRegSource() persists to localStorage as hk_reg_source. This is reliable and
+  // permanently sidesteps the flaky display-mode:standalone detection below (which
+  // can momentarily return false right after install, causing OTP→PIN→signOut loops).
+  var isPlaySrc = false;
+  try { isPlaySrc = (localStorage.getItem('hk_reg_source') === 'play'); } catch(e){}
+  var isPwaMode = isPlaySrc;
   try {
-    isPwaMode = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    isPwaMode = isPwaMode ||
+                (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
                 window.navigator.standalone === true ||
                 document.referrer.indexOf('android-app://') === 0;
   } catch(e) {}

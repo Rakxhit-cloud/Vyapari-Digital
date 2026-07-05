@@ -2972,7 +2972,7 @@ body.notif-modal-open { overflow: hidden; }
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, deleteUser, PhoneAuthProvider, reauthenticateWithCredential } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, serverTimestamp, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot, serverTimestamp, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 const firebaseConfig = {
   apiKey: "AIzaSyDzhDpkkjXKWRd1EAbgr3AXe6yFHmXJ9W4",
   authDomain: "hisaab-kitaab-9ff45.firebaseapp.com",
@@ -3412,50 +3412,7 @@ window._fsLoadAll = async function(uid) {
         cloudItems.push(clean);
       });
       if (!cloudItems.length) continue;
-      const lsKey = 'hk_' + uid + '_' + colName;
-      let local = [];
-      try { local = JSON.parse(localStorage.getItem(lsKey) || '[]'); } catch(e) { local = []; }
-      const merged = [...local];
-      cloudItems.forEach(ci => {
-        const idx = merged.findIndex(r => r.id === ci.id);
-        if (idx > -1) {
-          // Phase 3 conflict resolution — newest edit wins, never drop data.
-          // Decision order:
-          //   1. Both have updatedAt -> larger updatedAt wins.
-          //   2. Only one has updatedAt -> that one is newer (edited since the
-          //      updatedAt feature shipped) and wins.
-          //   3. Neither has updatedAt (old pre-Phase-3 records) -> fall back to
-          //      the original lgSavedAt comparison (preserves old behavior).
-          //   4. A record present on only one side is always kept (handled by
-          //      the else branch below).
-          const localR = merged[idx];
-          const lU = (typeof localR.updatedAt === 'number') ? localR.updatedAt : null;
-          const cU = (typeof ci.updatedAt === 'number') ? ci.updatedAt : null;
-          let keepLocal;
-          if (lU !== null && cU !== null) {
-            keepLocal = lU > cU;            // rule 1
-          } else if (lU !== null && cU === null) {
-            keepLocal = true;               // rule 2 (local edited more recently)
-          } else if (lU === null && cU !== null) {
-            keepLocal = false;              // rule 2 (cloud edited more recently)
-          } else {
-            // rule 3 — fall back to legacy lgSavedAt comparison
-            keepLocal = (localR.lgSavedAt || 0) > (ci.lgSavedAt || 0);
-          }
-          if (keepLocal) {
-            // Local is newer — keep it and re-push to cloud so they re-converge.
-            if (window._fsWrite) {
-              try { window._fsWrite(uid, colName, localR); } catch(e){}
-            }
-            // do NOT overwrite merged[idx]
-          } else {
-            merged[idx] = ci;               // cloud is newer — take it
-          }
-        } else {
-          merged.push(ci);                  // rule 4 — record only in cloud, keep it
-        }
-      });
-      localStorage.setItem(lsKey, JSON.stringify(merged));
+      window._mergeCloudIntoLocal(uid, colName, cloudItems);
     }
     setSyncStatus('synced', '☁️ Data sync हो गया ✅');
     // ── Refresh UI after cloud data is in localStorage ──
@@ -3471,6 +3428,101 @@ window._fsLoadAll = async function(uid) {
     setSyncStatus('offline', '☁️ Offline — Local data से चल रहा है');
   }
 };
+// ── Shared merge: reconcile one collection's cloud docs into the local cache. ──
+// Used by BOTH _fsLoadAll (initial login load) and the realtime listener below,
+// so the Phase 3 conflict rules (newest updatedAt wins, never drop data) live in
+// exactly ONE place. Returns true if the local cache actually changed.
+window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
+  if (!uid || uid === 'default' || !Array.isArray(cloudItems) || !cloudItems.length) return false;
+  const lsKey = 'hk_' + uid + '_' + colName;
+  let local = [];
+  try { local = JSON.parse(localStorage.getItem(lsKey) || '[]'); } catch(e) { local = []; }
+  const merged = [...local];
+  let changed = false;
+  cloudItems.forEach(ci => {
+    const idx = merged.findIndex(r => r.id === ci.id);
+    if (idx > -1) {
+      // Phase 3 conflict resolution — newest edit wins, never drop data.
+      //   1. Both have updatedAt -> larger updatedAt wins.
+      //   2. Only one has updatedAt -> that one is newer and wins.
+      //   3. Neither has updatedAt (pre-Phase-3) -> legacy lgSavedAt comparison.
+      //   4. A record present on only one side is always kept.
+      const localR = merged[idx];
+      const lU = (typeof localR.updatedAt === 'number') ? localR.updatedAt : null;
+      const cU = (typeof ci.updatedAt === 'number') ? ci.updatedAt : null;
+      let keepLocal;
+      if (lU !== null && cU !== null) { keepLocal = lU > cU; }
+      else if (lU !== null && cU === null) { keepLocal = true; }
+      else if (lU === null && cU !== null) { keepLocal = false; }
+      else { keepLocal = (localR.lgSavedAt || 0) > (ci.lgSavedAt || 0); }
+      if (keepLocal) {
+        // Local is newer — keep it and re-push so cloud re-converges.
+        if (window._fsWrite) { try { window._fsWrite(uid, colName, localR); } catch(e){} }
+      } else {
+        merged[idx] = ci; changed = true;   // cloud is newer — take it
+      }
+    } else {
+      merged.push(ci); changed = true;       // record only in cloud — keep it
+    }
+  });
+  if (changed) localStorage.setItem(lsKey, JSON.stringify(merged));
+  return changed;
+};
+
+// ── Real-time cross-device sync ──
+// onSnapshot listeners on the user's four collections. An entry added or edited
+// on one device appears LIVE on every other logged-in device, no manual refresh.
+// Reuses _mergeCloudIntoLocal for conflict-safe merging, then refreshes whatever
+// screen is currently open via _refreshCurrentScreen().
+// Notes:
+//  • Listeners are paused when the app is backgrounded (visibilitychange) so no
+//    reads are spent while hidden, and reattached (with catch-up) on foreground.
+//  • Deletions are not propagated in real time yet (matches _fsLoadAll) — a
+//    known follow-up.
+window._rtUnsub = window._rtUnsub || [];
+window._rtUid = window._rtUid || null;
+window._startRealtimeSync = function(uid) {
+  if (!uid || uid === 'default') return;
+  window._stopRealtimeSync();          // never stack duplicate listeners
+  window._rtUid = uid;
+  const cols = ['bikri', 'maal', 'udhaar', 'goal'];
+  cols.forEach(colName => {
+    try {
+      const unsub = onSnapshot(
+        collection(db, 'users', uid, colName),
+        snap => {
+          // Skip the local echo of THIS device's own just-made write (it already
+          // rendered locally); only react to confirmed changes from other devices.
+          if (snap.metadata && snap.metadata.hasPendingWrites) return;
+          const cloudItems = [];
+          snap.forEach(d => { const { _syncedAt, ...clean } = d.data(); cloudItems.push(clean); });
+          if (!cloudItems.length) return;
+          const changed = window._mergeCloudIntoLocal(uid, colName, cloudItems);
+          if (changed && typeof window._refreshCurrentScreen === 'function') {
+            window._refreshCurrentScreen();
+          }
+        },
+        err => { console.warn('realtime sync err (' + colName + '):', err); }
+      );
+      window._rtUnsub.push(unsub);
+    } catch(e) { console.warn('startRealtimeSync err:', e); }
+  });
+};
+window._stopRealtimeSync = function() {
+  if (window._rtUnsub && window._rtUnsub.length) {
+    window._rtUnsub.forEach(u => { try { u(); } catch(e){} });
+  }
+  window._rtUnsub = [];
+};
+// Pause listeners while backgrounded; reattach + catch up on foreground.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    window._stopRealtimeSync();
+  } else if (window._rtUid) {
+    window._startRealtimeSync(window._rtUid);
+  }
+});
+
 window._fsRegisterUser = async function(uid, phone, trialStart) {
   if (!uid || uid === 'default') return;
   const profileData = {
@@ -4009,6 +4061,7 @@ onAuthStateChanged(auth, async user => {
       const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
       window._fsRegisterUser(uid, phone, trialStart);
       await window._fsLoadAll(uid);
+      if (window._startRealtimeSync) window._startRealtimeSync(uid);
       launchApp(uid);
     } else if (termsAccepted) {
       // Partial registration: terms accepted, name not yet submitted.
@@ -4261,6 +4314,8 @@ async function saveFCMToken(uid) {
 }
 window.signOut = async function() {
   try { sessionStorage.removeItem('hk_fresh_session'); } catch(e){}
+  window._rtUid = null;
+  if (window._stopRealtimeSync) window._stopRealtimeSync();
   await fbSignOut(auth);
   location.reload();
 };
@@ -5067,6 +5122,50 @@ function go(id){
   if(id==='s-udhaar-customer'&&window.renderUdhaarProfile&&window.ucKey)renderUdhaarProfile(window.ucKey);
   if(id==='s-home'&&window.updateUdhaarTotals)updateUdhaarTotals();
 }
+
+// Re-render whatever screen is currently open, in place (used by realtime sync
+// when another device's change lands). Mirrors go()'s per-screen dispatch. On the
+// Live गल्ला entry screen it refreshes ONLY the saved-entries view (totals+grids),
+// never the keypad / save area / blocker, so in-progress input is never disturbed.
+window._refreshCurrentScreen = function(){
+  try{
+    const active = document.querySelector('.screen.active');
+    if(!active) return;
+    switch(active.id){
+      case 's-home':
+        if(typeof loadHome==='function') loadHome();
+        if(window.updateUdhaarTotals) updateUdhaarTotals();
+        break;
+      case 's-mahina':
+        if(typeof loadHome==='function') loadHome();
+        break;
+      case 's-monthly':
+        if(typeof loadMonthly==='function') loadMonthly();
+        break;
+      case 's-goal':
+        if(typeof loadGoalScreen==='function') loadGoalScreen();
+        break;
+      case 's-suppliers':
+        if(typeof renderSuppliers==='function') renderSuppliers();
+        break;
+      case 's-udhaar-book':
+        if(window.renderUdhaarList) renderUdhaarList();
+        break;
+      case 's-udhaar-customer':
+        if(window.renderUdhaarProfile && window.ucKey) renderUdhaarProfile(window.ucKey);
+        break;
+      case 's-livegalla':
+        // Active-entry screen — refresh saved-entry view only; leave input alone.
+        if(window.lgState && !window.lgState.blocked && typeof lgGetOrCreateRec==='function'){
+          try{ window.lgState.rec = lgGetOrCreateRec(window.lgState.date); }catch(e){}
+          if(typeof lgRenderTotals==='function') lgRenderTotals();
+          if(typeof lgRenderGrid==='function'){ lgRenderGrid('cash'); lgRenderGrid('upi'); lgRenderGrid('expense'); }
+          if(typeof renderCreditGrid==='function') renderCreditGrid();
+        }
+        break;
+    }
+  }catch(e){ console.warn('refreshCurrentScreen err:', e); }
+};
   function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
 document.addEventListener('click',e=>{const m=document.getElementById('more-menu'),b=document.getElementById('n-more');if(m&&b&&!m.contains(e.target)&&!b.contains(e.target))m.style.display='none';});
 // === Premium Success Modal (with Crystal Tinkle audio) ===

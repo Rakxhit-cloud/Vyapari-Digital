@@ -4056,13 +4056,20 @@ onAuthStateChanged(auth, async user => {
     }
 
     if (termsAgreed) {
-      // Fully registered → launch app
+      // Fully registered → launch app.
       const phone = user.phoneNumber || '';
       const trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
       window._fsRegisterUser(uid, phone, trialStart);
-      await window._fsLoadAll(uid);
-      if (window._startRealtimeSync) window._startRealtimeSync(uid);
+      // Launch IMMEDIATELY so the PIN lock (or home) covers the screen the instant
+      // auth resolves — before any network wait. Previously we awaited _fsLoadAll
+      // here, which on a slow network let the splash time out and briefly reveal an
+      // empty main-app before the lock fired. Cloud data now loads in the BACKGROUND
+      // behind the lock; by the time the user enters their PIN it has arrived, and
+      // realtime sync starts once the initial load completes.
       launchApp(uid);
+      window._fsLoadAll(uid).then(() => {
+        if (window._startRealtimeSync) window._startRealtimeSync(uid);
+      }).catch(e => console.warn('background cloud load error:', e));
     } else if (termsAccepted) {
       // Partial registration: terms accepted, name not yet submitted.
       // Resume directly on name screen.
@@ -4148,15 +4155,30 @@ function launchApp(uid) {
   // FIRE PIN LOCK FIRST — before any content renders, so user sees lock immediately
   if (window.alckInit) window.alckInit();
 
-  // Always show main app — Udhaar Book variant removed
+  // Show main-app underneath (splash z-index 99999 still covers it; lock z-index
+  // 999999 sits above the splash). It is NOT yet visible to the user.
   document.getElementById('main-app').style.display = 'block';
 
-  // Splash handoff: at this point either the PIN screen (#app-lock-screen.active)
-  // is covering the main-app, OR the user has no PIN and is about to see home.
-  // Either way, splash can safely fade now — there's no flash window because
-  // whatever should be visible IS now visible (PIN sits on top of main-app via
-  // higher z-index, main-app sits behind it ready for after unlock).
-  window._hideSplashWhenReady();
+  // FLASH-PROOF SPLASH HANDOFF.
+  // The empty-home-with-nav flash happened when alckInit() returned WITHOUT
+  // activating the lock (already-unlocked session, or the _alckInitDone guard) and
+  // main-app got revealed with no data yet. This is network-independent.
+  // Guarantee: only remove the splash once the CORRECT thing is actually on screen —
+  //  • Lock active  → it already covers (higher z-index); safe to drop splash.
+  //  • No lock (already unlocked) → render home from local cache FIRST so it is
+  //    never empty, then drop splash.
+  // We wait one paint frame so the lock/home is truly rendered before the splash
+  // (which sits above main-app) is removed — closing the race entirely.
+  (function _flashProofHandoff(){
+    var lock = document.getElementById('app-lock-screen');
+    var lockActive = !!(lock && lock.classList.contains('active'));
+    if (!lockActive) {
+      try { if (typeof loadHome === 'function') loadHome(); } catch(e){}
+    }
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ window._hideSplashWhenReady(); });
+    });
+  })();
 
   if(window._startHeartbeat) window._startHeartbeat(uid);
   initApp(uid);

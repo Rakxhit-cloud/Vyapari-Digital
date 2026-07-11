@@ -3006,6 +3006,23 @@ function getRegSource() {
 getRegSource();
 window._db = db;
 
+// ═════ ANALYTICS EVENTS (write-only from app; admin reads only) ═════
+// Fire-and-forget. Must NEVER break the app. One tiny log line per event.
+async function logEvent(name, meta) {
+  try {
+    const u = auth.currentUser;
+    if (!u) return;
+    const d = new Date();
+    const day = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    let src = 'web';
+    try { src = (localStorage.getItem('hk_reg_source') === 'play') ? 'play' : 'web'; } catch(e) {}
+    await setDoc(doc(collection(db, 'analytics_events')), {
+      uid: u.uid, event: name, day: day, ts: serverTimestamp(), src: src, meta: meta || {}
+    });
+  } catch (e) { /* analytics must never break the app */ }
+}
+window.logEvent = logEvent;
+
 // ══════════════════════════════════════════════════════════
 // FIRESTORE OFFLINE PERSISTENCE (Session 1 — Reliability)
 // ══════════════════════════════════════════════════════════
@@ -4101,6 +4118,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 function launchApp(uid) {
+  try { if (!window._aoLogged) { window._aoLogged = true; logEvent('app_open'); } } catch(e){}
   // GUARD: launchApp must only run in PWA mode.
   // If somehow called in browser, redirect to "Already Registered" screen.
   //
@@ -4218,6 +4236,7 @@ window.updateTrialBanner = async function updateTrialBanner(uid) {
     trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
   }
   if (!trialStart) return;
+  try { if (!window._tbLogged) { window._tbLogged = true; logEvent('trial_banner_seen'); } } catch(e){}
   const daysLeft = Math.max(0, 90 - Math.floor((Date.now() - trialStart) / (1000*60*60*24)));
   const el = document.getElementById('trial-days-text'), sub = document.getElementById('trial-sub-text');
   if (daysLeft > 30) { el.textContent = '🎉 ' + daysLeft + ' दिन बाकी — Free Trial'; el.style.color = '#4dca4d'; sub.textContent = 'मुफ़्त trial चल रहा है — आराम से उपयोग करें'; }
@@ -4407,6 +4426,7 @@ const DB = {
     item.updatedAt = Date.now();   // Phase 3: last-edit time for conflict merge
     const a = this.get(k); a.push(item); this.set(k, a);
     if (window._fsWrite) window._fsWrite(CURRENT_UID, k, item);
+    try { if (window.logEvent) window.logEvent('entry_added', { type: k }); } catch(e){}
     return item;
   },
   update(k, id, u) {
@@ -5135,6 +5155,7 @@ function go(id){
   }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  try { if (window.logEvent) window.logEvent('screen_view', { screen: id }); } catch(e){}
   document.querySelectorAll('.nav-item').forEach(n=>{n.classList.remove('active');const d=n.querySelector('.nav-dot');if(d)d.remove();});
   const nid=NM[id];
   if(nid){const n=document.getElementById(nid);n.classList.add('active');const d=document.createElement('div');d.className='nav-dot';n.appendChild(d);}

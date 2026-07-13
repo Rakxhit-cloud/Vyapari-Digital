@@ -2968,11 +2968,71 @@ body.notif-modal-open { overflow: hidden; }
 </div>
 </div>
 
+<style id="billphoto-css">
+.bp-photobtn{width:100%;padding:15px;border-radius:12px;border:3px solid #e8c870;background:linear-gradient(135deg,rgba(212,168,80,.26),rgba(212,168,80,.10));color:#e8c870;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 0 16px rgba(212,168,80,.3);cursor:pointer;font-family:inherit;}
+.bp-photobtn svg{width:26px;height:26px;}
+.bp-preview-wrap{margin-bottom:12px;}
+.bp-preview-img{width:100%;max-height:280px;object-fit:contain;border-radius:11px;border:2px solid #34518f;background:#0b1430;display:block;}
+.bp-cta-row{display:flex;gap:9px;margin-top:12px;}
+.bp-retry{flex:1;padding:12px;border-radius:11px;border:2px solid #34518f;background:#0b1430;color:#9fc2f0;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
+.bp-ok{flex:1;padding:12px;border-radius:11px;border:1px solid #2f6a48;background:linear-gradient(135deg,#2f9c5f,#42c07d);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
+.bp-thumbprev{text-align:center;margin-bottom:6px;}
+.bp-thumb-img{max-width:100%;max-height:150px;border-radius:10px;border:2px solid #34518f;}
+.bp-label{display:block;font-size:12.5px;color:#cdd8f0;margin-bottom:6px;font-weight:600;}
+.bp-saveshare{width:100%;margin-top:15px;padding:14px;border-radius:13px;border:1px solid #2bd36e88;background:linear-gradient(135deg,#1f9c55,#2bd36e);color:#062513;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 0 15px rgba(43,211,110,.25);}
+</style>
+
+<!-- ===== उधार chooser (List बनाएं / List Photo) ===== -->
+<div class="credit-bd" id="udhaar-chooser" style="display:none;">
+  <div class="lg-modal-card">
+    <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#e23a3a,#ff6a4a,#d4a850);"></div>
+    <div class="lg-modal-body">
+      <div class="lg-modal-head">
+        <div class="lg-modal-title">📕 उधार · नया ग्राहक</div>
+        <button class="lg-modal-close" onclick="udhaarChooserClose()">✕</button>
+      </div>
+      <button class="credit-listbtn" style="width:100%;margin-bottom:12px;cursor:pointer;font-family:inherit;" onclick="chooserPickList()">📝 List बनाएं</button>
+      <button class="bp-photobtn" onclick="chooserPickPhoto()"><svg viewBox="0 0 24 24" fill="none" stroke="#e8c870" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4" fill="rgba(232,200,112,.28)"/></svg> List Photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== List Photo modal ===== -->
+<div class="credit-bd" id="bill-photo-modal" style="display:none;">
+  <div class="lg-modal-card">
+    <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#e23a3a,#ff6a4a,#d4a850);"></div>
+    <div class="lg-modal-body">
+      <div class="lg-modal-head">
+        <div class="lg-modal-title" id="bp-title">📷 List Photo</div>
+        <button class="lg-modal-close" onclick="billPhotoClose()">✕</button>
+      </div>
+      <div id="bp-capture-stage">
+        <div id="bp-preview-wrap" class="bp-preview-wrap" style="display:none;"><img id="bp-preview-img" class="bp-preview-img" alt="bill"></div>
+        <button id="bp-take-btn" class="bp-photobtn" onclick="billPhotoTake()"><svg viewBox="0 0 24 24" fill="none" stroke="#e8c870" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4" fill="rgba(232,200,112,.28)"/></svg> फोटो लें</button>
+        <div id="bp-confirm-row" class="bp-cta-row" style="display:none;">
+          <button class="bp-retry" onclick="billPhotoTake()">↺ दोबारा</button>
+          <button class="bp-ok" onclick="billPhotoConfirm()">✓ ठीक है</button>
+        </div>
+        <input id="bp-file" type="file" accept="image/*" capture="environment" style="display:none;" onchange="billPhotoFileChosen(event)">
+      </div>
+      <div id="bp-details-stage" style="display:none;">
+        <div class="bp-thumbprev"><img id="bp-thumb-img" class="bp-thumb-img" alt="bill"></div>
+        <div class="credit-fld"><label class="bp-label" style="color:#ffd27a;">🧮 List Total (कुल रकम)</label><input class="credit-inp" id="bp-total" type="number" inputmode="numeric" placeholder="₹ 0" style="border-color:#d4a850;font-weight:800;"></div>
+        <div class="credit-fld"><label class="bp-label">👤 ग्राहक का नाम</label><input class="credit-inp" id="bp-name" placeholder="जैसे: रमेश जी"></div>
+        <div class="credit-fld"><label class="bp-label">📞 Contact नंबर</label><div class="credit-phone-row"><input class="credit-inp" id="bp-phone" inputmode="numeric" placeholder="10 अंकों का नंबर" style="flex:1;"><button class="credit-pick" onclick="billPhotoPickContact()">👥</button></div></div>
+        <div class="credit-fld"><label class="bp-label">📅 तारीख</label><input class="credit-inp" id="bp-date" type="date" style="color-scheme:dark;"></div>
+        <button class="bp-saveshare" onclick="billPhotoSaveShare()">💾 Save करें &amp; WhatsApp भेजें</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, deleteUser, PhoneAuthProvider, reauthenticateWithCredential } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot, serverTimestamp, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getStorage, ref as stRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 const firebaseConfig = {
   apiKey: "AIzaSyDzhDpkkjXKWRd1EAbgr3AXe6yFHmXJ9W4",
   authDomain: "hisaab-kitaab-9ff45.firebaseapp.com",
@@ -2990,6 +3050,7 @@ const appCheck = initializeAppCheck(app, {
 });
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 // Registration source (web vs Play TWA) — first-touch, persisted, written once at signup
 function getRegSource() {
@@ -3005,6 +3066,8 @@ function getRegSource() {
 }
 getRegSource();
 window._db = db;
+window._storage = storage;
+window._st = { ref: stRef, uploadBytes, getDownloadURL };
 
 // ═════ ANALYTICS EVENTS (write-only from app; admin reads only) ═════
 // Fire-and-forget. Must NEVER break the app. One tiny log line per event.
@@ -7126,6 +7189,8 @@ function creditListView(){
   document.getElementById('credit-list-modal').style.display='flex';
 }
 function creditOpen(editId){
+  if(!editId && !window._creditSkipChooser){ udhaarChooserOpen(); return; }
+  window._creditSkipChooser=false;
   var st=window.creditState; st.editId=editId||null; st.items=[]; st.total=0; st.amount='';
   var name='',phone='',cdate=TSTR;
   if(editId){
@@ -7141,6 +7206,110 @@ function creditOpen(editId){
   document.getElementById('credit-modal').style.display='flex';
 }
 function creditClose(){document.getElementById('credit-modal').style.display='none';}
+/* ===== List Photo (bill capture -> Storage + WhatsApp) — Stage 2 ===== */
+window._billPhoto={rawFile:null,blob:null,thumb:null};
+function udhaarChooserOpen(){document.getElementById('udhaar-chooser').style.display='flex';}
+function udhaarChooserClose(){document.getElementById('udhaar-chooser').style.display='none';}
+function chooserPickList(){udhaarChooserClose();window._creditSkipChooser=true;creditOpen();}
+function chooserPickPhoto(){udhaarChooserClose();billPhotoOpen();}
+function billPhotoOpen(){
+  window._billPhoto={rawFile:null,blob:null,thumb:null};
+  document.getElementById('bp-preview-wrap').style.display='none';
+  document.getElementById('bp-confirm-row').style.display='none';
+  document.getElementById('bp-take-btn').style.display='flex';
+  document.getElementById('bp-capture-stage').style.display='block';
+  document.getElementById('bp-details-stage').style.display='none';
+  document.getElementById('bp-total').value='';
+  document.getElementById('bp-name').value='';
+  document.getElementById('bp-phone').value='';
+  document.getElementById('bp-date').value=TSTR;
+  document.getElementById('bp-title').textContent='📷 List Photo';
+  document.getElementById('bill-photo-modal').style.display='flex';
+}
+function billPhotoClose(){document.getElementById('bill-photo-modal').style.display='none';}
+function billPhotoTake(){document.getElementById('bp-file').click();}
+function billPhotoFileChosen(e){
+  var f=e.target.files&&e.target.files[0]; if(!f)return;
+  window._billPhoto.rawFile=f;
+  var img=document.getElementById('bp-preview-img');
+  try{img.src=URL.createObjectURL(f);}catch(x){}
+  document.getElementById('bp-preview-wrap').style.display='block';
+  document.getElementById('bp-take-btn').style.display='none';
+  document.getElementById('bp-confirm-row').style.display='flex';
+  e.target.value='';
+}
+function _bpCompress(file,maxDim,quality){
+  return new Promise(function(resolve,reject){
+    var img=new Image();
+    img.onload=function(){
+      try{
+        var w=img.width,h=img.height,sc=Math.min(1,maxDim/Math.max(w,h));
+        var c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        var td=150,ts=Math.min(1,td/Math.max(w,h));
+        var tc=document.createElement('canvas');tc.width=Math.round(w*ts);tc.height=Math.round(h*ts);
+        tc.getContext('2d').drawImage(img,0,0,tc.width,tc.height);
+        var thumb=tc.toDataURL('image/jpeg',0.6);
+        c.toBlob(function(blob){try{URL.revokeObjectURL(img.src);}catch(x){}resolve({blob:blob,thumb:thumb});},'image/jpeg',quality);
+      }catch(err){reject(err);}
+    };
+    img.onerror=reject;
+    try{img.src=URL.createObjectURL(file);}catch(err){reject(err);}
+  });
+}
+function billPhotoConfirm(){
+  var f=window._billPhoto.rawFile; if(!f){toast('पहले फोटो लें',true);return;}
+  toast('तैयार हो रहा है…');
+  _bpCompress(f,1600,0.8).then(function(r){
+    window._billPhoto.blob=r.blob; window._billPhoto.thumb=r.thumb;
+    document.getElementById('bp-thumb-img').src=r.thumb;
+    document.getElementById('bp-capture-stage').style.display='none';
+    document.getElementById('bp-details-stage').style.display='block';
+    document.getElementById('bp-title').textContent='📷 बिल Confirm करें';
+  }).catch(function(){toast('फोटो process नहीं हुई, दोबारा लें',true);});
+}
+function billPhotoPickContact(){
+  if(!(navigator.contacts&&navigator.contacts.select)){toast('यह सिर्फ Android Chrome में चलता है',true);return;}
+  navigator.contacts.select(['name','tel'],{multiple:false}).then(function(c){
+    if(c&&c[0]){if(c[0].name&&c[0].name[0])document.getElementById('bp-name').value=c[0].name[0];if(c[0].tel&&c[0].tel[0])document.getElementById('bp-phone').value=String(c[0].tel[0]).replace(/[^0-9+]/g,'');}
+  }).catch(function(){});
+}
+function billPhotoSaveShare(){
+  var bp=window._billPhoto;
+  if(!bp||!bp.blob){toast('पहले फोटो लें',true);return;}
+  var total=parseInt(document.getElementById('bp-total').value||'0',10)||0;
+  var name=(document.getElementById('bp-name').value||'').trim();
+  var phone=(document.getElementById('bp-phone').value||'').trim();
+  var date=document.getElementById('bp-date').value||TSTR;
+  if(total<=0){toast('❌ List Total भरें',true);return;}
+  if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}
+  var biz=(localStorage.getItem('hk_business_name')||'दुकान');
+  try{
+    var file=new File([bp.blob],'bill.jpg',{type:'image/jpeg'});
+    var shareData={files:[file],text:'🧾 List Total: ₹'+total.toLocaleString('en-IN')+'\n'+biz+' — Live Khaata'};
+    if(navigator.canShare&&navigator.canShare(shareData)){navigator.share(shareData).catch(function(){});}
+    else if(phone){window.open('https://wa.me/'+_waNum(phone)+'?text='+encodeURIComponent('🧾 '+biz+' — List Total: ₹'+total.toLocaleString('en-IN')),'_blank');}
+  }catch(err){}
+  toast('Save हो रहा है…');
+  _billPhotoUploadSave(bp,total,name,phone,date);
+}
+function _billPhotoUploadSave(bp,total,name,phone,date){
+  var id='bill_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  var path='bills/'+CURRENT_UID+'/'+id+'.jpg';
+  var doPush=function(url){
+    DB.push(K.UDHAAR,{date:date,custName:name,custPhone:phone,items:[],amount:total,billUrl:url||'',billThumb:bp.thumb||'',billPath:path,payments:[],paid:0,ts:Date.now()});
+    billPhotoClose();
+    if(typeof renderCreditGrid==='function')renderCreditGrid();
+    if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
+    toast('✅ उधार save हुआ — '+name);
+  };
+  try{
+    if(window._storage&&window._st&&CURRENT_UID){
+      var r=window._st.ref(window._storage,path);
+      window._st.uploadBytes(r,bp.blob).then(function(){return window._st.getDownloadURL(r);}).then(function(url){doPush(url);}).catch(function(){doPush('');toast('⚠️ फोटो cloud पे नहीं गई — entry save हुई',true);});
+    }else{doPush('');}
+  }catch(e){doPush('');}
+}
 function creditKey(d){var st=window.creditState;if(st.items.length)return;if(st.amount.length>=5)return;if(st.amount===''&&d==='0')return;st.amount+=d;creditSyncAmount();}
 function creditBack(){var st=window.creditState;if(st.items.length)return;st.amount=st.amount.slice(0,-1);creditSyncAmount();}
 function creditTri(){var st=window.creditState;if(st.items.length)return;if(st.amount===''||st.amount==='0')return;var n=Math.min(parseInt(st.amount+'000',10),99999);st.amount=String(n);creditSyncAmount();}

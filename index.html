@@ -2618,12 +2618,15 @@ body.notif-modal-open { overflow: hidden; }
   .cl-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;}
   .cl-title{font-size:16px;font-weight:800;color:#e8c870;}
   .cl-total{background:linear-gradient(135deg,#2a2018,#1d150c);border:1px solid #6a5020;border-radius:10px;padding:7px 13px;font-size:15px;font-weight:800;color:#f0c890;}
-  .cl-rows{max-height:48vh;overflow-y:auto;padding-right:3px;}
+  .cl-rows{max-height:260px;overflow-y:auto;padding-right:3px;}
   .cl-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
   .cl-sn{width:22px;font-size:13px;color:#8aa0d8;font-weight:700;flex-shrink:0;}
   .cl-prod{flex:1;min-width:0;background:#0b1430;border:2px solid #34518f;border-radius:9px;padding:10px;color:#fff;font-size:13px;box-shadow:0 0 9px rgba(93,170,255,.14);}
   .cl-amt{width:72px;background:#0b1430;border:2px solid #6f5826;border-radius:9px;padding:10px;color:#f0c890;font-size:13px;font-weight:700;text-align:right;flex-shrink:0;box-shadow:0 0 9px rgba(240,200,144,.16);}
   .cl-addrow{width:100%;margin-top:6px;padding:10px;border:1.5px dashed #2a4078;border-radius:10px;background:transparent;color:#8aa0d8;font-size:12px;font-weight:700;cursor:pointer;}
+  #cl-cust-fields{border-top:1px dashed rgba(224,168,80,.4);padding-top:12px;margin-top:6px;}
+  #cl-cust-fields .credit-inp{border-color:#e0a850;box-shadow:0 0 10px rgba(224,168,80,.14);}
+  #cl-cust-fields .bp-label{color:#f0c890;}
   .cl-save{display:block;margin:15px auto 2px;padding:13px 42px;border-radius:12px;border:1px solid #5cf09a;background:linear-gradient(135deg,#2bd36e,#1fab53);color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
   .cl-voice{margin:0 0 13px;padding:11px;border:1.5px solid #2a4078;border-radius:12px;background:linear-gradient(180deg,#0d1638,#0a1130);}
   .cl-voice-tip{font-size:11px;color:#8aa0d8;margin-bottom:8px;line-height:1.55;}
@@ -2686,7 +2689,10 @@ body.notif-modal-open { overflow: hidden; }
       <div class="cl-voice-prev" id="cl-voice-preview"></div>
     </div>
     <div class="cl-rows" id="credit-list-rows"></div>
-    <button class="cl-addrow" id="credit-list-addrow" onclick="creditListAddRow()">+ और row जोड़ें (max 40)</button>
+    <div style="display:flex;gap:8px;margin-top:6px;">
+      <button class="cl-addrow" id="credit-list-delrow" onclick="creditListDelRow()" style="flex:0 0 42%;margin-top:0;">− row हटाएं</button>
+      <button class="cl-addrow" id="credit-list-addrow" onclick="creditListAddRow()" style="flex:1;margin-top:0;">+ और row जोड़ें</button>
+    </div>
     <div id="cl-cust-fields" style="display:none;">
       <div class="credit-fld" style="margin-top:14px;"><label class="bp-label">👤 ग्राहक का नाम</label><input class="credit-inp" id="cl-name" placeholder="जैसे: रमेश जी"></div>
       <div class="credit-fld"><label class="bp-label">📞 Contact नंबर</label><div class="credit-phone-row"><input class="credit-inp" id="cl-phone" inputmode="numeric" placeholder="10 अंकों का नंबर" style="flex:1;"><button class="credit-pick" onclick="clPickContact()">👥</button></div></div>
@@ -7579,6 +7585,13 @@ function creditListAddRow(){
   var n=rows.querySelectorAll('.cl-row').length;
   if(n>=40){toast('अधिकतम 40 सामान',true);return;}
   rows.insertAdjacentHTML('beforeend',_clRowHtml(n+1,'',''));
+}
+function creditListDelRow(){
+  var rows=document.getElementById('credit-list-rows');
+  var all=rows.querySelectorAll('.cl-row');
+  if(all.length<=1){toast('कम से कम एक row चाहिए',true);return;}
+  all[all.length-1].remove();
+  creditListRecalc();
 }
 function creditListRecalc(){
   var rows=document.getElementById('credit-list-rows'),t=0;

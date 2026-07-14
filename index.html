@@ -7169,7 +7169,7 @@ function renderCreditGrid(){
   recs.forEach(function(r){
     h+='<div class="lg-cbox" onclick="openEntryList(\''+r.id+'\')"><div class="lg-cbox-amt">'+_crFmt(r.amount)+'</div><div class="lg-cbox-nm">'+_cesc(r.custName||'ग्राहक')+'</div></div>';
   });
-  h+='<div class="lg-cadd" onclick="creditListOpenNew()">+</div>';
+  h+='<div class="lg-cadd" onclick="creditOpen()">+</div>';
   grid.innerHTML=h;
 }
 function creditCurAmt(){var st=window.creditState;return st.items.length?st.total:0;}

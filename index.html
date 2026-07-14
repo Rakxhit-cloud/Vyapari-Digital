@@ -2980,6 +2980,9 @@ body.notif-modal-open { overflow: hidden; }
 .bp-thumb-img{max-width:100%;max-height:150px;border-radius:10px;border:2px solid #34518f;}
 .bp-label{display:block;font-size:12.5px;color:#cdd8f0;margin-bottom:6px;font-weight:600;}
 .bp-saveshare{width:100%;margin-top:15px;padding:14px;border-radius:13px;border:1px solid #2bd36e88;background:linear-gradient(135deg,#1f9c55,#2bd36e);color:#062513;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 0 15px rgba(43,211,110,.25);}
+#credit-modal,#udhaar-chooser,#bill-photo-modal{align-items:center;}
+#credit-modal>.lg-modal-card,#udhaar-chooser>.lg-modal-card,#bill-photo-modal>.lg-modal-card{margin-top:auto;margin-bottom:auto;}
+.bp-back{background:#081223;border:1px solid #2a4078;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#9fc2f0;font-size:16px;cursor:pointer;margin-right:9px;flex:0 0 auto;}
 </style>
 
 <!-- ===== उधार chooser (List बनाएं / List Photo) ===== -->
@@ -3003,7 +3006,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#e23a3a,#ff6a4a,#d4a850);"></div>
     <div class="lg-modal-body">
       <div class="lg-modal-head">
-        <div class="lg-modal-title" id="bp-title">📷 List Photo</div>
+        <div style="display:flex;align-items:center;"><button class="bp-back" onclick="billPhotoBack()">←</button><div class="lg-modal-title" id="bp-title">📷 List Photo</div></div>
         <button class="lg-modal-close" onclick="billPhotoClose()">✕</button>
       </div>
       <div id="bp-capture-stage">
@@ -7104,6 +7107,12 @@ history.pushState({app:1}, '', location.href);
   function closeOneLayer(){
     const dp=document.getElementById('date-popup-overlay');
     if(isOpen(dp)){ if(typeof closeDatePopupDirect==='function')closeDatePopupDirect(); else dp.classList.remove('show'); return true; }
+    var _bpm=document.getElementById('bill-photo-modal');
+    if(isOpen(_bpm)){ if(typeof billPhotoBack==='function')billPhotoBack(); else _bpm.style.display=''; return true; }
+    var _chz=document.getElementById('udhaar-chooser');
+    if(isOpen(_chz)){ _chz.style.display=''; return true; }
+    var _crm=document.getElementById('credit-modal');
+    if(isOpen(_crm)){ if(typeof creditClose==='function')creditClose(); else _crm.style.display=''; return true; }
     const ov=['lg-keypad-modal','lg-box-action','del-acct-overlay','maal-edit-overlay','mk-pop-overlay','supplier-pay-overlay','lg-note-modal','action-popup','confirm-popup','edit-popup','maal-ledger-overlay','install-banner'];
     for(const id of ov){const el=document.getElementById(id);if(isOpen(el)){el.classList.remove('show');el.classList.remove('compact');el.classList.remove('kbd-open');if(el.style.display)el.style.display='';return true;}}
     const more=document.getElementById('more-menu');
@@ -7211,7 +7220,9 @@ window._billPhoto={rawFile:null,blob:null,thumb:null};
 function udhaarChooserOpen(){document.getElementById('udhaar-chooser').style.display='flex';}
 function udhaarChooserClose(){document.getElementById('udhaar-chooser').style.display='none';}
 function chooserPickList(){udhaarChooserClose();window._creditSkipChooser=true;creditOpen();}
-function chooserPickPhoto(){udhaarChooserClose();billPhotoOpen();}
+function chooserPickPhoto(){udhaarChooserClose();_billPhotoReset();document.getElementById('bp-file').click();}
+function _billPhotoReset(){window._billPhoto={rawFile:null,blob:null,thumb:null};var g=function(i){return document.getElementById(i);};if(g('bp-total'))g('bp-total').value='';if(g('bp-name'))g('bp-name').value='';if(g('bp-phone'))g('bp-phone').value='';if(g('bp-date'))g('bp-date').value=TSTR;if(g('bp-preview-wrap'))g('bp-preview-wrap').style.display='none';if(g('bp-confirm-row'))g('bp-confirm-row').style.display='none';var tb=g('bp-take-btn');if(tb)tb.style.display='none';if(g('bp-capture-stage'))g('bp-capture-stage').style.display='block';if(g('bp-details-stage'))g('bp-details-stage').style.display='none';if(g('bp-title'))g('bp-title').textContent='📷 List Photo';}
+function billPhotoBack(){var det=document.getElementById('bp-details-stage');if(det&&det.style.display!=='none'){det.style.display='none';document.getElementById('bp-capture-stage').style.display='block';document.getElementById('bp-title').textContent='📷 List Photo';return true;}billPhotoClose();return true;}
 function billPhotoOpen(){
   window._billPhoto={rawFile:null,blob:null,thumb:null};
   document.getElementById('bp-preview-wrap').style.display='none';
@@ -7234,7 +7245,7 @@ function billPhotoFileChosen(e){
   var img=document.getElementById('bp-preview-img');
   try{img.src=URL.createObjectURL(f);}catch(x){}
   document.getElementById('bp-preview-wrap').style.display='block';
-  document.getElementById('bp-take-btn').style.display='none';
+  document.getElementById('bp-take-btn').style.display='none';document.getElementById('bp-capture-stage').style.display='block';document.getElementById('bp-details-stage').style.display='none';document.getElementById('bp-title').textContent='📷 List Photo';document.getElementById('bill-photo-modal').style.display='flex';
   document.getElementById('bp-confirm-row').style.display='flex';
   e.target.value='';
 }

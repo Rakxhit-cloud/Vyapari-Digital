@@ -1337,6 +1337,12 @@ body.notif-modal-open { overflow: hidden; }
 .lgp-cam.hide { display:none; }
 .lgpa-thumb { width:100%; height:120px; object-fit:cover; border-radius:9px; border:2px solid #34518f; margin-bottom:11px; display:block; cursor:pointer; }
 .lgent-thumb { width:30px; height:30px; border-radius:6px; object-fit:cover; border:1.5px solid #34518f; flex:0 0 auto; cursor:pointer; }
+.lgpa-thumb, #bv-img { background:#0b1430; transition:filter .22s ease; }
+.lgp-blur { filter:blur(7px); }
+#bv-img { min-height:120px; }
+.lgp-spin { position:absolute; top:50%; left:50%; width:26px; height:26px; margin:-13px 0 0 -13px; border:3px solid rgba(212,168,80,.25); border-top-color:#e8c870; border-radius:50%; animation:lgpspin .7s linear infinite; z-index:3; pointer-events:none; }
+@keyframes lgpspin { to { transform:rotate(360deg); } }
+.lgp-wrap { position:relative; }
 /* ===== END LIVE HISAAB BILL PHOTO ===== */
 /* note block inside box-action overlay */
 .lg-box-action-note { background:#081223; border:1px solid #2a4078; border-radius:8px; padding:9px 11px; margin-bottom:13px; text-align:left; font-size:13px; color:#e8d8b8; line-height:1.4; display:flex; align-items:flex-start; gap:6px; }
@@ -5094,7 +5100,7 @@ function lgpConfirmOk() {
   var f = window.lgPhoto.rawFile;
   if (!f) { toast('पहले फोटो लें', true); return; }
   toast('तैयार हो रहा है…');
-  _bpCompress(f, 1600, 0.8, 64, 0.5).then(function (r) {
+  _bpCompress(f, 1600, 0.8, 128, 0.55).then(function (r) {
     window.lgPhoto.blob = r.blob;
     window.lgPhoto.thumb = r.thumb;
     window.lgPhoto.url = '';
@@ -5116,20 +5122,49 @@ function lgpUpload(box, blob, rec) {
       box.billUrl = url;
       box.billPath = path;
       lgPersistRec(rec);
+      try { var w = new Image(); w.src = url; } catch (e) {}
     }).catch(function () {
       toast('⚠️ बिल cloud पे नहीं गया — entry save हुई', true);
     });
   } catch (e) {}
 }
 
-function lgpViewBillSrc(src) {
-  if (!src) return;
+/* Show the cached thumb instantly (blurred), swap to the full image the moment
+   it decodes. Also warms the HTTP cache so the next surface opens instantly. */
+function lgpProgressive(imgEl, thumb, full) {
+  if (!imgEl) return;
+  if (!thumb && !full) {
+    imgEl.removeAttribute('src');
+    imgEl.style.display = 'none';
+    imgEl.classList.remove('lgp-blur');
+    return;
+  }
+  imgEl.style.display = 'block';
+  imgEl.setAttribute('decoding', 'async');
+  if (!full) { imgEl.src = thumb; imgEl.classList.remove('lgp-blur'); return; }
+  if (thumb) { imgEl.src = thumb; imgEl.classList.add('lgp-blur'); }
+  var tok = (imgEl._lgpTok = (imgEl._lgpTok || 0) + 1);
+  var pre = new Image();
+  pre.onload = function () {
+    if (imgEl._lgpTok !== tok) return;      // a newer box was opened; drop this
+    imgEl.src = full;
+    imgEl.classList.remove('lgp-blur');
+  };
+  pre.onerror = function () {
+    if (imgEl._lgpTok !== tok) return;
+    imgEl.classList.remove('lgp-blur');     // offline: keep the thumb, unblurred
+  };
+  if (!thumb) imgEl.classList.remove('lgp-blur');
+  pre.src = full;
+}
+
+function lgpViewBillSrc(full, thumb) {
+  if (!full && !thumb) return;
   window._bvEntry = null;
-  var img = document.getElementById('bv-img');
-  if (img) img.src = src;
   var rs = document.getElementById('bv-resend');
   if (rs) rs.style.display = 'none';
   document.getElementById('bill-viewer').style.display = 'flex';
+  lgpProgressive(document.getElementById('bv-img'), thumb || '', full || '');
 }
 
 function lgpViewBill() {
@@ -5138,7 +5173,7 @@ function lgpViewBill() {
   if (!r) return;
   var b = (r.lgBoxes || []).filter(function (x) { return x.type === c.type; })[c.n - 1];
   if (!b) return;
-  lgpViewBillSrc(b.billUrl || b.billThumb || '');
+  lgpViewBillSrc(b.billUrl || '', b.billThumb || '');
 }
 /* ===== END LIVE HISAAB BILL PHOTO ===== */
 
@@ -5221,11 +5256,7 @@ function lgOpenBoxAction(type, n) {
     }
   }
   const _thEl = document.getElementById('lg-box-action-thumb');
-  if (_thEl) {
-    const _src = box.billThumb || box.billUrl || '';
-    if (_src) { _thEl.src = _src; _thEl.style.display = 'block'; }
-    else { _thEl.removeAttribute('src'); _thEl.style.display = 'none'; }
-  }
+  if (_thEl) lgpProgressive(_thEl, box.billThumb || '', box.billUrl || '');
   document.getElementById('lg-box-action').classList.add('show');
 }
 
@@ -5989,7 +6020,7 @@ function openDatePopup(ds){
           const noteHtml = note ? `<span class="lgent-note">${escHTML(note)}</span>` : `<span class="lgent-note empty">note नहीं</span>`;
           const _bthumb = b.billThumb || b.billUrl || '';
           const _bfull = b.billUrl || b.billThumb || '';
-          const _bimg = _bthumb ? `<img class="lgent-thumb" src="${_bthumb}" data-full="${_bfull}" onclick="lgpViewBillSrc(this.dataset.full)" alt="bill">` : '';
+          const _bimg = _bthumb ? `<img class="lgent-thumb" src="${_bthumb}" data-full="${_bfull}" onclick="lgpViewBillSrc(this.dataset.full, this.src)" decoding="async" alt="bill">` : '';
           return `<div class="lgent-row t-${t}"><span class="lgent-num">${_i + 1}</span><span class="lgent-chip t-${t}">${_lbl[t]}</span>${_bimg}${noteHtml}<span class="lgent-amt">${fmt(b.amount || 0)}</span></div>`;
         }).join('');
         const _scrollable = _boxes.length > 4;

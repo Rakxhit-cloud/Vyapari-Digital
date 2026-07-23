@@ -1321,7 +1321,23 @@ body.notif-modal-open { overflow: hidden; }
 .lg-note-input::placeholder { color:#4a5aa8; }
 /* note indicator dot on boxes that have a note */
 .lg-box { position:relative; }
-.lg-box-notedot { position:absolute; top:4px; right:4px; width:8px; height:8px; background:#f0c040; border-radius:50%; box-shadow:0 0 5px rgba(240,192,64,0.8); z-index:2; }
+.lg-box-notedot { position:absolute; top:3px; right:3px; width:6px; height:6px; background:#f0c040; border-radius:50%; box-shadow:0 0 4px rgba(240,192,64,0.8); z-index:2; }
+/* ===== LIVE HISAAB BILL PHOTO ===== */
+.lg-box-billicon { position:absolute; top:2px; left:2px; font-size:11px; line-height:1; z-index:2; filter:drop-shadow(0 0 3px rgba(0,0,0,0.9)); }
+.lg-box.has-bill .lg-box-num { padding-left:11px; }
+.lg-box.has-note .lg-box-num { padding-right:7px; }
+.lgp-row { display:flex; gap:8px; margin-bottom:10px; align-items:stretch; }
+.lgp-row .lg-display { flex:1; margin-bottom:0; }
+.lgp-cam { flex:0 0 62px; background:#081223; border:2px dashed #d4a850; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:#e8c870; cursor:pointer; }
+.lgp-cam:active { opacity:.7; }
+.lgp-cam svg { width:24px; height:24px; }
+.lgp-cam span { font-size:8.5px; font-weight:800; letter-spacing:.2px; }
+.lgp-cam.has { border-style:solid; border-color:#e8c870; background:#14254a; padding:3px; }
+.lgp-cam.has img { width:100%; height:100%; object-fit:cover; border-radius:7px; }
+.lgp-cam.hide { display:none; }
+.lgpa-thumb { width:100%; height:120px; object-fit:cover; border-radius:9px; border:2px solid #34518f; margin-bottom:11px; display:block; cursor:pointer; }
+.lgent-thumb { width:30px; height:30px; border-radius:6px; object-fit:cover; border:1.5px solid #34518f; flex:0 0 auto; cursor:pointer; }
+/* ===== END LIVE HISAAB BILL PHOTO ===== */
 /* note block inside box-action overlay */
 .lg-box-action-note { background:#081223; border:1px solid #2a4078; border-radius:8px; padding:9px 11px; margin-bottom:13px; text-align:left; font-size:13px; color:#e8d8b8; line-height:1.4; display:flex; align-items:flex-start; gap:6px; }
 .lg-box-action-note.empty { border-style:dashed; border-color:#3a5088; color:#6f80a8; justify-content:center; cursor:pointer; }
@@ -2555,10 +2571,17 @@ body.notif-modal-open { overflow: hidden; }
         <div class="lg-modal-title" id="lg-keypad-title">💵 नकद · एंट्री 1</div>
         <div class="lg-modal-close" onclick="lgCloseKeypad()">✕</div>
       </div>
-      <div class="lg-display" id="lg-keypad-display">
-        <div class="lg-display-amount" id="lg-keypad-amount">₹0</div>
-        <div class="lg-display-hint">अधिकतम 5 अंक · ₹99,999 तक</div>
+      <div class="lgp-row">
+        <div class="lg-display" id="lg-keypad-display">
+          <div class="lg-display-amount" id="lg-keypad-amount">₹0</div>
+          <div class="lg-display-hint">अधिकतम 5 अंक · ₹99,999 तक</div>
+        </div>
+        <div class="lgp-cam" id="lgp-cam" onclick="lgpTake()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#e8c870" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>बिल</span>
+        </div>
       </div>
+      <input id="lgp-file" type="file" accept="image/*" capture="environment" style="display:none;" onchange="lgpFileChosen(event)">
       <div class="lg-note-row" id="lg-note-row">
         <div class="lg-note-label">📝 Note <span>optional</span></div>
         <input type="text" class="lg-note-input" id="lg-note-input" maxlength="80" placeholder="रमेश जी / उधार…" oninput="window.lgKeypad.note=this.value" autocomplete="off">
@@ -2582,11 +2605,30 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 
+<!-- Live Hisaab bill photo confirm -->
+<div class="lg-modal-backdrop" id="lgp-confirm-modal" onclick="if(event.target===this)lgpConfirmClose()">
+  <div class="lg-modal-card">
+    <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#d4a850,#e8c870,#cc7a47);"></div>
+    <div class="lg-modal-body">
+      <div class="lg-modal-head">
+        <div class="lg-modal-title">📷 बिल Confirm करें</div>
+        <div class="lg-modal-close" onclick="lgpConfirmClose()">✕</div>
+      </div>
+      <img id="lgp-preview-img" style="width:100%;height:190px;object-fit:cover;border-radius:11px;border:2px solid #34518f;display:block;background:#0b1430;" alt="bill">
+      <div class="bp-cta-row" style="display:flex;gap:9px;margin-top:12px;">
+        <button class="bp-retry" onclick="lgpTake()">↺ दोबारा</button>
+        <button class="bp-ok" onclick="lgpConfirmOk()">✓ ठीक है</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Box edit/delete mini-overlay -->
 <div class="lg-box-action" id="lg-box-action" onclick="if(event.target===this)lgCloseBoxAction()">
   <div class="lg-box-action-card">
     <div class="lg-box-action-amt" id="lg-box-action-amt">₹0</div>
     <div class="lg-box-action-meta" id="lg-box-action-meta">—</div>
+    <img class="lgpa-thumb" id="lg-box-action-thumb" style="display:none;" onclick="lgpViewBill()" alt="bill">
     <div class="lg-box-action-note" id="lg-box-action-note" onclick="lgEditBox()"></div>
     <div class="lg-box-action-btns">
       <button class="lg-action-btn lg-action-edit" onclick="lgEditBox()">✏️ Edit</button>
@@ -4875,9 +4917,11 @@ function lgRenderGrid(type) {
   allBoxes.forEach((box, idx) => {
     const n = idx + 1;
     const cell = document.createElement('div');
-    cell.className = 'lg-box lg-box-' + type;
-    cell.innerHTML = '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
-    if (box.note && box.note.trim()) {
+    const _hasNote = !!(box.note && box.note.trim());
+    const _hasBill = !!(box.billThumb || box.billUrl);
+    cell.className = 'lg-box lg-box-' + type + (_hasBill ? ' has-bill' : '') + (_hasNote ? ' has-note' : '');
+    cell.innerHTML = (_hasBill ? '<div class="lg-box-billicon">🧾</div>' : '') + '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
+    if (_hasNote) {
       const dot = document.createElement('div');
       dot.className = 'lg-box-notedot';
       cell.appendChild(dot);
@@ -4936,6 +4980,19 @@ function lgOpenKeypad(type, editN) {
   // Sync the note input field to current note state
   const noteInput = document.getElementById('lg-note-input');
   if (noteInput) noteInput.value = window.lgKeypad.note;
+  // ----- bill photo state (cash + upi only) -----
+  window.lgPhoto = { rawFile: null, blob: null, thumb: '', url: '', path: '' };
+  if (editN !== null) {
+    const _pb = (window.lgState.rec.lgBoxes || []).filter(b => b.type === type)[editN - 1];
+    if (_pb) {
+      window.lgPhoto.thumb = _pb.billThumb || '';
+      window.lgPhoto.url   = _pb.billUrl   || '';
+      window.lgPhoto.path  = _pb.billPath  || '';
+    }
+  }
+  const _camEl = document.getElementById('lgp-cam');
+  if (_camEl) { if (type === 'expense') _camEl.classList.add('hide'); else _camEl.classList.remove('hide'); }
+  lgpPaintTile();
   // Title — show entry number
   const r = window.lgState.rec;
   const existingCount = (r.lgBoxes || []).filter(b => b.type === type).length;
@@ -4994,6 +5051,97 @@ function lgUpdateKeypadDisplay() {
   document.getElementById('lg-keypad-commit').textContent = '💾 Box ' + n + ' में ' + display + ' ' + verb;
 }
 
+/* ===== LIVE HISAAB BILL PHOTO ===== */
+window.lgPhoto = { rawFile: null, blob: null, thumb: '', url: '', path: '' };
+
+function lgpPaintTile() {
+  var el = document.getElementById('lgp-cam');
+  if (!el) return;
+  var ph = window.lgPhoto || {};
+  var src = ph.thumb || ph.url || '';
+  if (src) {
+    el.classList.add('has');
+    el.innerHTML = '<img src="' + src + '" alt="bill">';
+  } else {
+    el.classList.remove('has');
+    el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#e8c870" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>बिल</span>';
+  }
+}
+
+function lgpTake() {
+  var f = document.getElementById('lgp-file');
+  if (!f) return;
+  f.value = '';
+  f.click();
+}
+
+function lgpFileChosen(ev) {
+  var f = ev && ev.target && ev.target.files ? ev.target.files[0] : null;
+  if (!f) return;
+  window.lgPhoto.rawFile = f;
+  try {
+    var img = document.getElementById('lgp-preview-img');
+    if (img) img.src = URL.createObjectURL(f);
+  } catch (e) {}
+  document.getElementById('lgp-confirm-modal').classList.add('show');
+}
+
+function lgpConfirmClose() {
+  document.getElementById('lgp-confirm-modal').classList.remove('show');
+}
+
+function lgpConfirmOk() {
+  var f = window.lgPhoto.rawFile;
+  if (!f) { toast('पहले फोटो लें', true); return; }
+  toast('तैयार हो रहा है…');
+  _bpCompress(f, 1600, 0.8, 64, 0.5).then(function (r) {
+    window.lgPhoto.blob = r.blob;
+    window.lgPhoto.thumb = r.thumb;
+    window.lgPhoto.url = '';
+    window.lgPhoto.path = '';
+    lgpConfirmClose();
+    lgpPaintTile();
+  }).catch(function () { toast('फोटो process नहीं हुई, दोबारा लें', true); });
+}
+
+function lgpUpload(box, blob, rec) {
+  try {
+    if (!(window._storage && window._st && CURRENT_UID)) return;
+    var id = 'lgbill_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    var path = 'bills/' + CURRENT_UID + '/' + id + '.jpg';
+    var sref = window._st.ref(window._storage, path);
+    window._st.uploadBytes(sref, blob).then(function () {
+      return window._st.getDownloadURL(sref);
+    }).then(function (url) {
+      box.billUrl = url;
+      box.billPath = path;
+      lgPersistRec(rec);
+    }).catch(function () {
+      toast('⚠️ बिल cloud पे नहीं गया — entry save हुई', true);
+    });
+  } catch (e) {}
+}
+
+function lgpViewBillSrc(src) {
+  if (!src) return;
+  window._bvEntry = null;
+  var img = document.getElementById('bv-img');
+  if (img) img.src = src;
+  var rs = document.getElementById('bv-resend');
+  if (rs) rs.style.display = 'none';
+  document.getElementById('bill-viewer').style.display = 'flex';
+}
+
+function lgpViewBill() {
+  var c = window.lgBoxActionCtx || {};
+  var r = window.lgState && window.lgState.rec;
+  if (!r) return;
+  var b = (r.lgBoxes || []).filter(function (x) { return x.type === c.type; })[c.n - 1];
+  if (!b) return;
+  lgpViewBillSrc(b.billUrl || b.billThumb || '');
+}
+/* ===== END LIVE HISAAB BILL PHOTO ===== */
+
 function lgCommitBox() {
   const amt = parseInt(window.lgKeypad.amount) || 0;
   if (amt <= 0) {
@@ -5005,16 +5153,25 @@ function lgCommitBox() {
   const type = window.lgKeypad.type;
   const editN = window.lgKeypad.editN;
   const note = (window.lgKeypad.note || '').trim().slice(0, 80);
+  const _ph = window.lgPhoto || {};
+  let _tbox = null;
   if (editN !== null) {
     // Edit: find the editN-th box of this type and update its amount + note
     const typeBoxes = r.lgBoxes.filter(b => b.type === type);
     const target = typeBoxes[editN - 1];
-    if (target) { target.amount = amt; target.note = note; }
+    if (target) { target.amount = amt; target.note = note; _tbox = target; }
   } else {
     // Add new box
     const typeBoxes = r.lgBoxes.filter(b => b.type === type);
     const nextN = typeBoxes.length + 1;
-    r.lgBoxes.push({ n: nextN, type: type, amount: amt, note: note, ts: Date.now() });
+    _tbox = { n: nextN, type: type, amount: amt, note: note, ts: Date.now() };
+    r.lgBoxes.push(_tbox);
+  }
+  // Attach bill photo (cash/upi only). Thumb saves immediately so it survives offline.
+  if (_tbox && type !== 'expense') {
+    if (_ph.thumb) _tbox.billThumb = _ph.thumb;
+    if (_ph.url)   _tbox.billUrl   = _ph.url;
+    if (_ph.path)  _tbox.billPath  = _ph.path;
   }
   // If we're editing/adding to a previously-saved day (e.g., from blocker),
   // mark it unsaved again so the user re-commits.
@@ -5028,6 +5185,7 @@ function lgCommitBox() {
     r.lgSavedAt = null;
   }
   lgPersistRec(r);
+  if (_tbox && _ph.blob && type !== 'expense') lgpUpload(_tbox, _ph.blob, r);
   lgCloseKeypad();
   lgRenderTotals();
   lgRenderGrid(type);
@@ -5061,6 +5219,12 @@ function lgOpenBoxAction(type, n) {
       noteEl.className = 'lg-box-action-note empty';
       noteEl.textContent = '📝 + note जोड़ें';
     }
+  }
+  const _thEl = document.getElementById('lg-box-action-thumb');
+  if (_thEl) {
+    const _src = box.billThumb || box.billUrl || '';
+    if (_src) { _thEl.src = _src; _thEl.style.display = 'block'; }
+    else { _thEl.removeAttribute('src'); _thEl.style.display = 'none'; }
   }
   document.getElementById('lg-box-action').classList.add('show');
 }
@@ -5823,7 +5987,10 @@ function openDatePopup(ds){
           const t = (b.type === 'cash' || b.type === 'upi' || b.type === 'expense') ? b.type : 'cash';
           const note = (b.note || '').trim();
           const noteHtml = note ? `<span class="lgent-note">${escHTML(note)}</span>` : `<span class="lgent-note empty">note नहीं</span>`;
-          return `<div class="lgent-row t-${t}"><span class="lgent-num">${_i + 1}</span><span class="lgent-chip t-${t}">${_lbl[t]}</span>${noteHtml}<span class="lgent-amt">${fmt(b.amount || 0)}</span></div>`;
+          const _bthumb = b.billThumb || b.billUrl || '';
+          const _bfull = b.billUrl || b.billThumb || '';
+          const _bimg = _bthumb ? `<img class="lgent-thumb" src="${_bthumb}" data-full="${_bfull}" onclick="lgpViewBillSrc(this.dataset.full)" alt="bill">` : '';
+          return `<div class="lgent-row t-${t}"><span class="lgent-num">${_i + 1}</span><span class="lgent-chip t-${t}">${_lbl[t]}</span>${_bimg}${noteHtml}<span class="lgent-amt">${fmt(b.amount || 0)}</span></div>`;
         }).join('');
         const _scrollable = _boxes.length > 4;
         _entryListHtml = `
@@ -7269,7 +7436,7 @@ function billPhotoFileChosen(e){
   document.getElementById('bp-confirm-row').style.display='flex';
   e.target.value='';
 }
-function _bpCompress(file,maxDim,quality){
+function _bpCompress(file,maxDim,quality,thumbDim,thumbQ){
   return new Promise(function(resolve,reject){
     var img=new Image();
     img.onload=function(){
@@ -7277,10 +7444,10 @@ function _bpCompress(file,maxDim,quality){
         var w=img.width,h=img.height,sc=Math.min(1,maxDim/Math.max(w,h));
         var c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);
         c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-        var td=150,ts=Math.min(1,td/Math.max(w,h));
+        var td=(thumbDim||150),ts=Math.min(1,td/Math.max(w,h));
         var tc=document.createElement('canvas');tc.width=Math.round(w*ts);tc.height=Math.round(h*ts);
         tc.getContext('2d').drawImage(img,0,0,tc.width,tc.height);
-        var thumb=tc.toDataURL('image/jpeg',0.6);
+        var thumb=tc.toDataURL('image/jpeg',(thumbQ||0.6));
         c.toBlob(function(blob){try{URL.revokeObjectURL(img.src);}catch(x){}resolve({blob:blob,thumb:thumb});},'image/jpeg',quality);
       }catch(err){reject(err);}
     };
@@ -7570,7 +7737,7 @@ function creditListClose(){document.getElementById('credit-list-modal').style.di
 function clPickContact(){if(!(navigator.contacts&&navigator.contacts.select)){toast('यह सिर्फ Android Chrome में चलता है',true);return;}navigator.contacts.select(['name','tel'],{multiple:false}).then(function(c){if(c&&c[0]){if(c[0].name&&c[0].name[0])document.getElementById('cl-name').value=c[0].name[0];if(c[0].tel&&c[0].tel[0])document.getElementById('cl-phone').value=String(c[0].tel[0]).replace(/[^0-9+]/g,'');}}).catch(function(){});}
 function creditListOpenNew(){window.creditListMode='newcust';window.creditState.items=[];var rows=document.getElementById('credit-list-rows');rows.innerHTML=_clRowHtml(1,'','');creditListRecalc();rows.querySelectorAll('.cl-prod,.cl-amt').forEach(function(inp){inp.readOnly=false;inp.style.opacity='1';});document.getElementById('credit-list-addrow').style.display='block';document.getElementById('credit-list-save').style.display='none';var waO=document.getElementById('credit-list-wa');if(waO)waO.style.display='none';var cf=document.getElementById('cl-cust-fields');if(cf)cf.style.display='block';if(document.getElementById('cl-name'))document.getElementById('cl-name').value='';if(document.getElementById('cl-phone'))document.getElementById('cl-phone').value='';if(document.getElementById('cl-date'))document.getElementById('cl-date').value=TSTR;var vb=document.getElementById('cl-voice-bar');if(vb)vb.style.display='block';var vi=document.getElementById('cl-voice-input');if(vi)vi.value='';var vp=document.getElementById('cl-voice-preview');if(vp)vp.innerHTML='';var ct=document.querySelector('#credit-list-modal .cl-title');if(ct)ct.textContent='📝 List बनाएं';document.getElementById('credit-list-modal').style.display='flex';}
 function creditListSaveNew(){var rows=document.getElementById('credit-list-rows'),items=[],t=0,n=0;rows.querySelectorAll('.cl-row').forEach(function(row){var p=row.querySelector('.cl-prod').value.trim();var a=parseInt(row.querySelector('.cl-amt').value||'0',10)||0;if(p||a){n++;items.push({n:n,product:p.slice(0,30),amount:a});t+=a;}});if(!items.length){toast('कम से कम एक सामान भरें',true);return;}var name=(document.getElementById('cl-name').value||'').trim();var phone=(document.getElementById('cl-phone').value||'').trim();var date=document.getElementById('cl-date').value||TSTR;if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}DB.push(K.UDHAAR,{date:date,custName:name,custPhone:phone,items:items,amount:t,payments:[],paid:0,ts:Date.now()});if(phone)_sendCreditBill(name,phone,items,t,date);creditListClose();if(typeof renderCreditGrid==='function')renderCreditGrid();if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();toast('✅ उधार save हुआ — '+name+' · '+_crFmt(t));}
-function openBillViewer(id){var r=(DB.get(K.UDHAAR)||[]).find(function(x){return x.id===id;});if(!r){toast('बिल नहीं मिला',true);return;}var src=r.billUrl||r.billThumb||'';if(!src){if(typeof openEntryList==='function')openEntryList(id);return;}window._bvEntry=r;document.getElementById('bv-img').src=src;document.getElementById('bill-viewer').style.display='flex';}
+function openBillViewer(id){var r=(DB.get(K.UDHAAR)||[]).find(function(x){return x.id===id;});if(!r){toast('बिल नहीं मिला',true);return;}var src=r.billUrl||r.billThumb||'';if(!src){if(typeof openEntryList==='function')openEntryList(id);return;}window._bvEntry=r;document.getElementById('bv-img').src=src;var _rs=document.getElementById('bv-resend');if(_rs)_rs.style.display='';document.getElementById('bill-viewer').style.display='flex';}
 function closeBillViewer(){document.getElementById('bill-viewer').style.display='none';}
 function _bvTextShare(r,biz,total){var msg=encodeURIComponent('🧾 '+biz+' — List Total: ₹'+total.toLocaleString('en-IN'));var u=r.custPhone?('https://wa.me/'+_waNum(r.custPhone)+'?text='+msg):('https://api.whatsapp.com/send?text='+msg);window.open(u,'_blank');}
 function billViewerResend(){var r=window._bvEntry;if(!r)return;var biz=(localStorage.getItem('hk_business_name')||'दुकान'),total=r.amount||0,url=r.billUrl||'';if(url&&navigator.canShare){fetch(url).then(function(res){return res.blob();}).then(function(blob){var file=new File([blob],'bill.jpg',{type:blob.type||'image/jpeg'});var sd={files:[file],text:'🧾 List Total: ₹'+total.toLocaleString('en-IN')+String.fromCharCode(10)+biz+' — Live Khaata'};if(navigator.canShare(sd)){navigator.share(sd).catch(function(){});}else{_bvTextShare(r,biz,total);}}).catch(function(){_bvTextShare(r,biz,total);});}else{_bvTextShare(r,biz,total);}}

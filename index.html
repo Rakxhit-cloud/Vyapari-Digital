@@ -3033,6 +3033,11 @@ body.notif-modal-open { overflow: hidden; }
 .bp-thumb-img{max-width:100%;max-height:150px;border-radius:10px;border:2px solid #34518f;}
 .bp-label{display:block;font-size:12.5px;color:#cdd8f0;margin-bottom:6px;font-weight:600;}
 .bp-saveshare{width:100%;margin-top:15px;padding:14px;border-radius:13px;border:1px solid #2bd36e88;background:linear-gradient(135deg,#1f9c55,#2bd36e);color:#062513;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 0 15px rgba(43,211,110,.25);}
+.uc-strip{display:none;align-items:center;gap:9px;background:#131f42;border:1px solid #2a4078;border-radius:9px;padding:9px 11px;margin-bottom:12px;}
+.uc-strip .uc-av{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#e23a3a,#b82828);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex:0 0 auto;}
+.uc-strip .uc-nm{font-size:13px;font-weight:700;color:#fff;line-height:1.2;}
+.uc-strip .uc-ph{font-size:10.5px;color:#8aa0d8;line-height:1.2;}
+.uc-strip .uc-tag{margin-left:auto;font-size:9px;color:#7fe0ad;background:rgba(76,175,125,.14);border:1px solid #2f6a48;border-radius:20px;padding:2px 8px;font-weight:800;white-space:nowrap;}
 #credit-modal,#udhaar-chooser,#bill-photo-modal{align-items:center;}
 #credit-modal>.lg-modal-card,#udhaar-chooser>.lg-modal-card,#bill-photo-modal>.lg-modal-card{margin-top:auto;margin-bottom:auto;}
 .bp-back{background:#081223;border:1px solid #2a4078;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#9fc2f0;font-size:16px;cursor:pointer;margin-right:9px;flex:0 0 auto;}
@@ -3045,8 +3050,9 @@ body.notif-modal-open { overflow: hidden; }
     <div class="lg-modal-body">
       <div class="lg-modal-head">
         <div class="lg-modal-title">📕 उधार · नया ग्राहक</div>
-        <button class="lg-modal-close" onclick="udhaarChooserClose()">✕</button>
+        <button class="lg-modal-close" onclick="udhaarChooserDismiss()">✕</button>
       </div>
+      <div class="uc-strip" id="uc-chooser-strip"></div>
       <button class="credit-listbtn" style="width:100%;margin-bottom:12px;cursor:pointer;font-family:inherit;" onclick="chooserPickList()">📝 List बनाएं</button>
       <button class="bp-photobtn" onclick="chooserPickPhoto()"><svg viewBox="0 0 24 24" fill="none" stroke="#e8c870" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4" fill="rgba(232,200,112,.28)"/></svg> List Photo</button>
     </div>
@@ -3072,12 +3078,13 @@ body.notif-modal-open { overflow: hidden; }
         <input id="bp-file" type="file" accept="image/*" capture="environment" style="display:none;" onchange="billPhotoFileChosen(event)">
       </div>
       <div id="bp-details-stage" style="display:none;">
+        <div class="uc-strip" id="bp-cust-strip"></div>
         <div class="bp-thumbprev"><img id="bp-thumb-img" class="bp-thumb-img" alt="bill"></div>
         <div class="credit-fld"><label class="bp-label" style="color:#ffd27a;">🧮 List Total (कुल रकम)</label><input class="credit-inp" id="bp-total" type="number" inputmode="numeric" placeholder="₹ 0" style="border-color:#d4a850;font-weight:800;"></div>
         <div class="credit-fld"><label class="bp-label">👤 ग्राहक का नाम</label><input class="credit-inp" id="bp-name" placeholder="जैसे: रमेश जी"></div>
         <div class="credit-fld"><label class="bp-label">📞 Contact नंबर</label><div class="credit-phone-row"><input class="credit-inp" id="bp-phone" inputmode="numeric" placeholder="10 अंकों का नंबर" style="flex:1;"><button class="credit-pick" onclick="billPhotoPickContact()">👥</button></div></div>
         <div class="credit-fld"><label class="bp-label">📅 तारीख</label><input class="credit-inp" id="bp-date" type="date" style="color-scheme:dark;"></div>
-        <button class="bp-saveshare" onclick="billPhotoSaveShare()">💾 Save करें &amp; WhatsApp भेजें</button>
+        <button class="bp-saveshare" id="bp-save-btn" onclick="billPhotoSaveShare()">💾 Save करें &amp; WhatsApp भेजें</button>
       </div>
     </div>
   </div>
@@ -7416,7 +7423,7 @@ function creditListView(){
   document.getElementById('credit-list-modal').style.display='flex';
 }
 function creditOpen(editId){
-  if(!editId && !window._creditSkipChooser){ udhaarChooserOpen(); return; }
+  if(!editId && !window._creditSkipChooser){ _ucCtxClear(); udhaarChooserOpen(); return; }
   window._creditSkipChooser=false;
   var st=window.creditState; st.editId=editId||null; st.items=[]; st.total=0; st.amount='';
   var name='',phone='',cdate=TSTR;
@@ -7437,7 +7444,7 @@ function creditClose(){document.getElementById('credit-modal').style.display='no
 window._billPhoto={rawFile:null,blob:null,thumb:null};
 function udhaarChooserOpen(){document.getElementById('udhaar-chooser').style.display='flex';}
 function udhaarChooserClose(){document.getElementById('udhaar-chooser').style.display='none';}
-function chooserPickList(){udhaarChooserClose();creditListOpenNew();}
+function chooserPickList(){udhaarChooserClose();if(window.bpCustCtx){creditAddToCustomerList();}else{creditListOpenNew();}}
 function chooserPickPhoto(){udhaarChooserClose();_billPhotoReset();document.getElementById('bp-file').click();}
 function _billPhotoReset(){window._billPhoto={rawFile:null,blob:null,thumb:null};var g=function(i){return document.getElementById(i);};if(g('bp-total'))g('bp-total').value='';if(g('bp-name'))g('bp-name').value='';if(g('bp-phone'))g('bp-phone').value='';if(g('bp-date'))g('bp-date').value=TSTR;if(g('bp-preview-wrap'))g('bp-preview-wrap').style.display='none';if(g('bp-confirm-row'))g('bp-confirm-row').style.display='none';var tb=g('bp-take-btn');if(tb)tb.style.display='none';if(g('bp-capture-stage'))g('bp-capture-stage').style.display='block';if(g('bp-details-stage'))g('bp-details-stage').style.display='none';if(g('bp-title'))g('bp-title').textContent='📷 List Photo';}
 function billPhotoBack(){var det=document.getElementById('bp-details-stage');if(det&&det.style.display!=='none'){det.style.display='none';document.getElementById('bp-capture-stage').style.display='block';document.getElementById('bp-title').textContent='📷 List Photo';return true;}billPhotoClose();return true;}
@@ -7456,6 +7463,7 @@ function billPhotoOpen(){
   document.getElementById('bill-photo-modal').style.display='flex';
 }
 function billPhotoClose(){document.getElementById('bill-photo-modal').style.display='none';}
+function udhaarChooserDismiss(){udhaarChooserClose();_ucCtxClear();}
 function billPhotoTake(){document.getElementById('bp-file').click();}
 function billPhotoFileChosen(e){
   var f=e.target.files&&e.target.files[0]; if(!f)return;
@@ -7494,7 +7502,9 @@ function billPhotoConfirm(){
     document.getElementById('bp-thumb-img').src=r.thumb;
     document.getElementById('bp-capture-stage').style.display='none';
     document.getElementById('bp-details-stage').style.display='block';
-    document.getElementById('bp-title').textContent='📷 बिल Confirm करें';
+    var _cc=window.bpCustCtx;
+    document.getElementById('bp-title').textContent=_cc?('📷 '+(_cc.name||'ग्राहक')+' — बिल'):'📷 बिल Confirm करें';
+    _bpApplyCustMode();
   }).catch(function(){toast('फोटो process नहीं हुई, दोबारा लें',true);});
 }
 function billPhotoPickContact(){
@@ -7506,12 +7516,13 @@ function billPhotoPickContact(){
 function billPhotoSaveShare(){
   var bp=window._billPhoto;
   if(!bp||!bp.blob){toast('पहले फोटो लें',true);return;}
+  var _cc=window.bpCustCtx;
   var total=parseInt(document.getElementById('bp-total').value||'0',10)||0;
-  var name=(document.getElementById('bp-name').value||'').trim();
-  var phone=(document.getElementById('bp-phone').value||'').trim();
-  var date=document.getElementById('bp-date').value||TSTR;
+  var name=_cc?(_cc.name||''):(document.getElementById('bp-name').value||'').trim();
+  var phone=_cc?(_cc.phone||''):(document.getElementById('bp-phone').value||'').trim();
+  var date=_cc?TSTR:(document.getElementById('bp-date').value||TSTR);
   if(total<=0){toast('❌ List Total भरें',true);return;}
-  if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}
+  if(!_cc&&!name){toast('❌ ग्राहक का नाम भरें',true);return;}
   var biz=(localStorage.getItem('hk_business_name')||'दुकान');
   try{
     var file=new File([bp.blob],'bill.jpg',{type:'image/jpeg'});
@@ -7527,10 +7538,13 @@ function _billPhotoUploadSave(bp,total,name,phone,date){
   var path='bills/'+CURRENT_UID+'/'+id+'.jpg';
   var doPush=function(url){
     DB.push(K.UDHAAR,{date:date,custName:name,custPhone:phone,items:[],amount:total,billUrl:url||'',billThumb:bp.thumb||'',billPath:path,payments:[],paid:0,ts:Date.now()});
+    var _cc=window.bpCustCtx;
     billPhotoClose();
+    if(_cc&&typeof openUdhaarProfile==='function')openUdhaarProfile(_cc.key);
     if(typeof renderCreditGrid==='function')renderCreditGrid();
     if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
-    toast('✅ उधार save हुआ — '+name);
+    toast(_cc?('✅ '+(_cc.name||'ग्राहक')+' के खाते में जुड़ा'):('✅ उधार save हुआ — '+name));
+    _ucCtxClear();
   };
   try{
     if(window._storage&&window._st&&CURRENT_UID){
@@ -7729,7 +7743,62 @@ function _clRowHtml(n,prod,amt){
     '<input class="cl-prod" maxlength="30" placeholder="सामान / Product" value="'+_cesc(prod||'')+'">'+
     '<input class="cl-amt" maxlength="4" inputmode="numeric" placeholder="\u20b9" value="'+_cesc(amt||'')+'" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');creditListRecalc();"></div>';
 }
+/* Red "➕ नया उधार जोड़ें" inside a customer profile -> same chooser,
+   but locked to this customer (no name / phone / date asked again). */
 function creditAddToCustomer(){
+  var c=window.ucCust; if(!c){toast('ग्राहक नहीं मिला',true);return;}
+  window.bpCustCtx=c;
+  window.creditAddCustKey=c.key;
+  var t=document.querySelector('#udhaar-chooser .lg-modal-title');
+  if(t)t.textContent='📕 '+(c.name||'ग्राहक')+' — नया उधार';
+  _ucStripFill(document.getElementById('uc-chooser-strip'),c);
+  udhaarChooserOpen();
+}
+
+function _ucEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function _ucStripFill(el,c){
+  if(!el)return;
+  if(!c){el.style.display='none';el.innerHTML='';return;}
+  var nm=c.name||'ग्राहक';
+  var ini=nm.trim().charAt(0).toUpperCase()||'?';
+  el.innerHTML='<div class="uc-av">'+_ucEsc(ini)+'</div><div><div class="uc-nm">'+_ucEsc(nm)+'</div>'+(c.phone?'<div class="uc-ph">'+_ucEsc(c.phone)+'</div>':'')+'</div><div class="uc-tag">पहले से</div>';
+  el.style.display='flex';
+}
+
+/* Restore the chooser to its "new customer" identity. */
+function _ucCtxClear(){
+  window.bpCustCtx=null;
+  var t=document.querySelector('#udhaar-chooser .lg-modal-title');
+  if(t)t.textContent='📕 उधार · नया ग्राहक';
+  _ucStripFill(document.getElementById('uc-chooser-strip'),null);
+  _ucStripFill(document.getElementById('bp-cust-strip'),null);
+}
+
+/* Show/hide the contact + date fields depending on which path we came from. */
+function _bpApplyCustMode(){
+  var g=function(i){return document.getElementById(i);};
+  var c=window.bpCustCtx;
+  var fld=function(id){var e=g(id);return e?e.closest('.credit-fld'):null;};
+  var nm=fld('bp-name'), ph=fld('bp-phone'), dt=fld('bp-date');
+  var sv=g('bp-save-btn');
+  if(c){
+    if(nm)nm.style.display='none';
+    if(ph)ph.style.display='none';
+    if(dt)dt.style.display='none';
+    if(g('bp-date'))g('bp-date').value=TSTR;
+    _ucStripFill(g('bp-cust-strip'),c);
+    if(sv)sv.textContent=c.phone?'💾 Save करें & WhatsApp भेजें':'💾 उधार Save करें';
+  }else{
+    if(nm)nm.style.display='';
+    if(ph)ph.style.display='';
+    if(dt)dt.style.display='';
+    _ucStripFill(g('bp-cust-strip'),null);
+    if(sv)sv.textContent='💾 Save करें & WhatsApp भेजें';
+  }
+}
+
+function creditAddToCustomerList(){
   var c=window.ucCust; if(!c){toast('ग्राहक नहीं मिला',true);return;}
   window.creditListMode='addcust';
   window.creditAddCustKey=c.key;
@@ -7809,6 +7878,7 @@ function creditListSave(){
     if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
     if(typeof renderCreditGrid==='function')renderCreditGrid();
     toast('✅ '+(ac.name||'ग्राहक')+' के खाते में जुड़ा · '+_crFmt(t));
+    _ucCtxClear();
     return;
   }
   if(window.creditListMode==='entry'){

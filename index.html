@@ -854,6 +854,50 @@ body.notif-modal-open { overflow: hidden; }
   .kpi-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
   .month-grid { grid-template-columns: repeat(6,1fr); }
   .auth-screen { padding: 40px; }
+
+  /* ===== TABLET: one centred app column, every screen ===== */
+  .screen { max-width: 760px; margin-left: auto; margin-right: auto; }
+  .bottom-nav { max-width: 760px; left: 50%; right: auto; transform: translateX(-50%);
+                border-left: 1px solid #2a4078; border-right: 1px solid #2a4078;
+                border-radius: 14px 14px 0 0; }
+
+  /* Tiles scale up so the column fills the screen instead of stranding it */
+  .lg-home-tile { margin: 15px 0; border-radius: 22px; }
+  .lg-home-stripe { height: 6px; }
+  .lg-home-body { padding: 25px 22px; gap: 20px; }
+  .lg-home-icon { width: 90px; height: 90px; font-size: 50px; border-radius: 22px; }
+  .lg-home-title { font-size: 30px; }
+  .lg-home-sub { font-size: 15px; margin-top: 7px; }
+  .lg-home-cta { font-size: 16px; padding: 12px 20px; border-radius: 12px; }
+
+  .mk-tile { border-radius: 22px; }
+  .mk-tile-stripe { height: 6px; }
+  .mk-tile-body { padding: 23px 20px; gap: 19px; }
+  .mk-tile-icon { width: 86px; height: 86px; border-radius: 21px; }
+  .mk-tile-icon svg { width: 54px; height: 54px; }
+  .mk-tile-title { font-size: 29px; }
+  .mk-tile-sub { font-size: 14.5px; margin-top: 7px; }
+  .mk-tile-cta { font-size: 16px; padding: 12px 19px; border-radius: 12px; }
+  .mk-tile-pill { font-size: 14px; padding: 5px 13px; }
+  .mk-tile-dot, .mk-dot { width: 10px; height: 10px; }
+}
+
+/* Portrait tablets have the extra height — go a step larger again */
+@media (min-width: 768px) and (orientation: portrait) {
+  .lg-home-tile { margin: 18px 0; }
+  .lg-home-body { padding: 30px 26px; gap: 24px; }
+  .lg-home-icon { width: 106px; height: 106px; font-size: 58px; border-radius: 25px; }
+  .lg-home-title { font-size: 35px; }
+  .lg-home-sub { font-size: 17px; margin-top: 8px; }
+  .lg-home-cta { font-size: 18px; padding: 15px 23px; }
+
+  .mk-tile-body { padding: 27px 24px; gap: 22px; }
+  .mk-tile-icon { width: 100px; height: 100px; border-radius: 24px; }
+  .mk-tile-icon svg { width: 62px; height: 62px; }
+  .mk-tile-title { font-size: 33px; }
+  .mk-tile-sub { font-size: 16.5px; margin-top: 8px; }
+  .mk-tile-cta { font-size: 18px; padding: 15px 22px; }
+  .mk-tile-pill { font-size: 15px; padding: 6px 14px; }
 } /* ── Splash Screen ── */
 .splash-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #050810 0%, #0a1530 50%, #14254a 100%); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; transition: opacity .3s ease; }
 .splash-screen.hidden { opacity: 0; pointer-events: none; }
@@ -1958,7 +2002,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="ledger-handle"></div>
       <div class="ledger-header">
         <div>
-          <div class="ledger-title">📦 माल की खरीद · सारा</div>
+          <div class="ledger-title">📦 Purchase/Khareed · सारा</div>
           <div class="ledger-sub"><span id="maal-ledger-count">0</span> entries · इस महीने</div>
         </div>
         <div class="ledger-close" onclick="closeMaalLedger()">✕ बंद</div>
@@ -2225,7 +2269,7 @@ body.notif-modal-open { overflow: hidden; }
           </svg>
         </div>
         <div class="mk-tile-text">
-          <div class="mk-tile-title">माल की खरीद<span class="mk-tile-pill"><span class="mk-tile-dot"></span>सप्लायर</span></div>
+          <div class="mk-tile-title">Purchase/Khareed<span class="mk-tile-pill"><span class="mk-tile-dot"></span>सप्लायर</span></div>
           <div class="mk-tile-sub">हर सप्लायर · हर उधार — एक tap में</div>
         </div>
         <div class="mk-tile-cta">खोलें →</div>
@@ -2757,7 +2801,7 @@ body.notif-modal-open { overflow: hidden; }
         </svg>
       </div>
       <div>
-        <div class="mk-htitle">माल की खरीद<span class="mk-pill"><span class="mk-dot"></span>LIVE</span></div>
+        <div class="mk-htitle">Purchase/Khareed<span class="mk-pill"><span class="mk-dot"></span>LIVE</span></div>
         <div class="mk-hsub">हर सप्लायर · हर उधार</div>
       </div>
       <div class="mk-monthchip" id="sup-month-chip">—</div>

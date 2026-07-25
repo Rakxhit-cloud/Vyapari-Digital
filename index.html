@@ -923,7 +923,7 @@ body.notif-modal-open { overflow: hidden; }
 .terms-hero-icon { width: 70px; height: 70px; background: linear-gradient(135deg, #6a4818 0%, #8a5a20 50%, #4a3010 100%); border: 2px solid #d4a850; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 34px; margin-bottom: 14px; box-shadow: 0 4px 12px rgba(212, 168, 80, 0.25); }
 .terms-hero-title { font-size: 22px; font-weight: 500; color: #e8d8b8; margin-bottom: 4px; letter-spacing: -0.3px; }
 .terms-hero-title-en { font-size: 11px; color: #d4a850; margin-bottom: 6px; font-weight: 500; }
-.terms-hero-sub { font-size: 11px; color: #b0a0e8; }
+.terms-hero-sub { font-size: 11px; color: #7fa8d8; }
 .terms-progress { display: flex; gap: 6px; margin-top: 14px; }
 .terms-dot { width: 8px; height: 8px; border-radius: 50%; background: #2a4078; }
 .terms-dot.active { background: #d4a850; width: 24px; border-radius: 4px; }
@@ -931,7 +931,15 @@ body.notif-modal-open { overflow: hidden; }
 .terms-sec-card { background: #0a1530; border: 1px solid #2a4078; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
 .terms-sec-icon { font-size: 18px; margin-bottom: 5px; }
 .terms-sec-title { font-size: 13px; font-weight: 500; color: #d4a850; margin-bottom: 2px; }
-.terms-sec-title-en { font-size: 10px; color: #b0a0e8; margin-bottom: 7px; }
+.terms-sec-title-en { font-size: 10px; color: #7fa8d8; margin-bottom: 7px; }
+.terms-trial-card { border-color: #6a5220; background: linear-gradient(135deg, rgba(240,192,64,0.08), #0a1530); }
+.terms-trial-head { font-size: 12.5px; font-weight: 700; color: #f0d070; margin-bottom: 1px; }
+.terms-trial-head-en { font-size: 10px; color: #c0b890; font-style: italic; margin-bottom: 9px; }
+.terms-trial-row { display: flex; gap: 7px; font-size: 11px; color: #c8d4e8; line-height: 1.55; margin-bottom: 7px; }
+.terms-trial-row:last-child { margin-bottom: 0; }
+.terms-trial-dot { color: #f0c040; flex-shrink: 0; }
+.terms-trial-row b { color: #ffeebb; font-weight: 600; }
+.terms-trial-en { color: #7a8ec0; font-style: italic; }
 .terms-sec-text { font-size: 11px; color: #8aa0d8; line-height: 1.7; }
 .terms-bottom { padding: 14px 20px 20px; width: 100%; }
 .terms-agree-box { display: flex; align-items: flex-start; gap: 10px; background: linear-gradient(135deg, #14254a 0%, #1a3060 100%); border: 1px solid #2a4078; border-radius: 12px; padding: 13px 15px; margin-bottom: 12px; cursor: pointer; }
@@ -939,10 +947,10 @@ body.notif-modal-open { overflow: hidden; }
 .terms-agree-chk.checked { background: #d4a850; border-color: #d4a850; }
 .terms-agree-chk.checked::after { content: '✓'; color: #1a1208; font-size: 14px; font-weight: 700; }
 .terms-agree-lbl { font-size: 12px; color: #e8d8b8; line-height: 1.6; font-weight: 500; }
-.terms-agree-lbl-en { font-size: 10px; color: #b0a0e8; margin-top: 3px; }
+.terms-agree-lbl-en { font-size: 10px; color: #7fa8d8; margin-top: 3px; }
 .terms-agree-main-btn { width: 100%; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border: 2px solid #f0d890; color: #1a1208; font-size: 15px; font-weight: 500; padding: 14px; border-radius: 12px; cursor: pointer; margin-bottom: 4px; box-shadow: 0 2px 0 #8a6818; }
 .terms-agree-main-btn:disabled { opacity: .4; cursor: not-allowed; }
-.terms-agree-main-btn-en { font-size: 11px; color: #b0a0e8; text-align: center; margin-top: 6px; }
+.terms-agree-main-btn-en { font-size: 11px; color: #7fa8d8; text-align: center; margin-top: 6px; }
 /* ── Mode Selection Screen ── */
 .mode-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #050810 0%, #0a1530 50%, #14254a 100%); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
 .mode-screen.hidden { display: none; }
@@ -1753,11 +1761,15 @@ body.notif-modal-open { overflow: hidden; }
       <div class="terms-sec-title-en">About the Service</div>
       <div class="terms-sec-text">Live Khaata एक डिजिटल हिसाब-किताब ऐप है जो छोटे व्यापारियों और दुकानदारों के लिए बनाया गया है। यह ऐप आपकी दैनिक बिक्री, खर्च, माल और उधार का रिकॉर्ड रखने में मदद करता है।</div>
     </div>
-    <div class="terms-sec-card">
+    <div class="terms-sec-card terms-trial-card">
       <div class="terms-sec-icon">🎁</div>
-      <div class="terms-sec-title">2. नि:शुल्क परीक्षण</div>
-      <div class="terms-sec-title-en">Free Trial</div>
-      <div class="terms-sec-text">नए उपयोगकर्ताओं को 3 महीने (90 दिन) का मुफ़्त परीक्षण मिलता है। परीक्षण समाप्त होने के बाद सेवा जारी रखने के लिए सदस्यता शुल्क देना होगा।</div>
+      <div class="terms-sec-title">2. फ्री ट्रायल और सदस्यता</div>
+      <div class="terms-sec-title-en">Free Trial &amp; Subscription</div>
+      <div class="terms-trial-head">90 दिन मुफ़्त, फिर ₹49/महीना।</div>
+      <div class="terms-trial-head-en">Free for 90 days, then ₹49/month.</div>
+      <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span><b>मैनुअल या ऑटो-पे</b> — आप चुनें। हर महीने खुद pay करें, या UPI AutoPay से अपने-आप। <span class="terms-trial-en">Pay manually each month, or turn on UPI AutoPay.</span></span></div>
+      <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span><b>ऑटो-पे आपकी मंज़ूरी से ही चालू होगा</b> — बिना अनुमति कुछ नहीं कटेगा। <span class="terms-trial-en">AutoPay starts only with your approval.</span></span></div>
+      <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span>हर कटौती से <b>24 घंटे पहले सूचना</b>, और mandate आप <b>कभी भी बंद</b> कर सकते हैं। <span class="terms-trial-en">24-hour notice before every debit; cancel anytime.</span></span></div>
     </div>
     <div class="terms-sec-card">
       <div class="terms-sec-icon">🔒</div>
@@ -2087,10 +2099,6 @@ body.notif-modal-open { overflow: hidden; }
       </div>
       <button onclick="openBizNamePrompt()" style="background:#d4a850;color:#1a0a04;border:none;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:700;flex-shrink:0;">+ Add</button>
       <button onclick="dismissBizFallback()" style="background:transparent;color:#8a6020;border:1px solid #4a3818;border-radius:6px;padding:6px 8px;font-size:11px;flex-shrink:0;">✕</button>
-    </div>
-    <div class="trial-banner" id="trial-banner">
-      <div><div class="trial-days" id="trial-days-text">⏳ Free Trial</div><div class="trial-sub" id="trial-sub-text">लोड हो रहा है...</div></div>
-      <div class="trial-badge">मुफ़्त</div>
     </div>
  <div id="notif-permission-modal" style="display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:20px;">
   <div id="notif-modal-backdrop" onclick="dismissNotifBanner()" style="position:absolute;inset:0;background:rgba(5,8,16,0.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);cursor:pointer;"></div>
@@ -4463,13 +4471,10 @@ window.updateTrialBanner = async function updateTrialBanner(uid) {
     trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
   }
   if (!trialStart) return;
-  try { if (!window._tbLogged) { window._tbLogged = true; logEvent('trial_banner_seen'); } } catch(e){}
-  const daysLeft = Math.max(0, 90 - Math.floor((Date.now() - trialStart) / (1000*60*60*24)));
-  const el = document.getElementById('trial-days-text'), sub = document.getElementById('trial-sub-text');
-  if (daysLeft > 30) { el.textContent = '🎉 ' + daysLeft + ' दिन बाकी — Free Trial'; el.style.color = '#4dca4d'; sub.textContent = 'मुफ़्त trial चल रहा है — आराम से उपयोग करें'; }
-  else if (daysLeft > 7) { el.textContent = '⏳ ' + daysLeft + ' दिन बाकी'; el.style.color = '#f0b040'; sub.textContent = 'Trial जल्द खत्म होगा — subscribe करें'; }
-  else if (daysLeft > 0) { el.textContent = '🚨 सिर्फ ' + daysLeft + ' दिन बाकी!'; el.style.color = '#f06060'; sub.textContent = 'आज ही subscribe करें — ₹3/दिन से कम'; }
-  else { el.textContent = '❌ Trial खत्म हो गया'; el.style.color = '#f06060'; sub.textContent = 'Subscribe करें और अपना data सुरक्षित रखें'; }
+  // Trial countdown runs silently in the background. The visible home banner was
+  // removed (see marketing decision); the day-count is kept intact for the
+  // end-of-trial reminder + Play Billing, which arrive at production.
+  window._trialDaysLeft = Math.max(0, 90 - Math.floor((Date.now() - trialStart) / (1000*60*60*24)));
 }
 async function requestNotificationPermission(uid) {
   if (!('Notification' in window)) return;

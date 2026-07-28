@@ -544,9 +544,11 @@ body.notif-modal-open { overflow: hidden; }
 .success-modal-title { color: #fff; font-size: 18px; font-weight: 600; letter-spacing: -0.2px; margin-bottom: 4px; }
 .success-modal-sub { color: #7a8aa8; font-size: 10.5px; margin-top: 12px; letter-spacing: 0.4px; }
 
-.toast { position: fixed; bottom: 95px; left: 50%; transform: translateX(-50%); background: #1a4a2a; border: 1px solid #2d6a3a; color: #4dca4d; padding: 9px 20px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
-.toast.show { opacity: 1; }
-.toast.err { background: #4a1a1a; border-color: #6a2a2a; color: #f06060; }
+.toast { position: fixed; bottom: calc(84px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(14px); display: flex; align-items: center; gap: 9px; max-width: min(88vw, 340px); padding: 11px 15px; border-radius: 13px; font-size: 12.5px; font-weight: 600; line-height: 1.4; text-align: left; z-index: 2000000; opacity: 0; transition: opacity .28s ease, transform .28s cubic-bezier(.2,.8,.2,1); pointer-events: none; box-shadow: 0 10px 30px rgba(0,0,0,.55); background: linear-gradient(180deg,#0f3524,#0c2a1d); border: 1px solid rgba(93,202,165,.5); color: #c4f0dc; }
+.toast::before { content: "\2713"; flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; background: #1d9e75; color: #04140d; box-shadow: 0 0 10px 1px rgba(29,158,117,.7); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.err { background: linear-gradient(180deg,#3a1416,#2c0f11); border-color: rgba(224,120,120,.5); color: #f4cccc; }
+.toast.err::before { content: "!"; background: #d4453f; color: #fff; box-shadow: 0 0 10px 1px rgba(212,69,63,.75); }
 .loading { text-align: center; color: #3a7a3a; padding: 24px; font-size: 12px; }
 .empty { text-align: center; color: #444; padding: 32px 16px; font-size: 12px; line-height: 1.7; }
 .hafta-section-head { display: flex; align-items: center; gap: 6px; margin: 14px 0 10px; }
@@ -4542,9 +4544,6 @@ function eotDismiss(){
   if (el) el.classList.remove('show');
   // Phase 1: dismissing simply closes it — the app keeps working fully.
 }
-/* TEMP TEST HOOK — remove before real deploy. Run in console:  eotTest()  */
-window.eotTest = function(){ window._eotShownThisSession = false; window.maybeShowEndOfTrial(); };
-
 function eotSubscribe(){
   // Phase 1 placeholder — Play Billing is wired in Phase 2. For now, confirm
   // the app remains free and close the screen.
@@ -5732,7 +5731,7 @@ function showSuccessModal(title, sub){
 window.showSuccessModal = showSuccessModal;
 window.playCrystalTinkle = playCrystalTinkle;
 
-function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(()=>t.className='toast',3000);}
+function toast(msg,err=false){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='toast'+(err?' err':'')+' show';clearTimeout(window._toastTimer);window._toastTimer=setTimeout(function(){t.className=t.className.replace(' show','');},3000);}
 function toggleKPI(key){const panel=document.getElementById('panel-'+key);const isOpen=panel.classList.contains('open');document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));if(!isOpen){panel.classList.add('open');}}
 function renderWeeklyTable(containerId,totalId,field,color,dimColor){const bikri=DB.get(K.BIKRI);const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const entry=bikri.find(r=>r.date===ds);let val=null;if(entry){val=field==='profit'?calcEntryProfit(entry):(entry[field]||0);}rows.push({ds,val});}const el=document.getElementById(containerId);let total=0;el.innerHTML=rows.map(r=>{if(r.val!==null)total+=r.val;return`<div class="ptbl-row"><div class="ptbl-cell" style="color:#6090d0;">${fmtDayDate(r.ds)}</div><div class="ptbl-cell" style="color:${r.val!==null?color:dimColor};text-align:right;font-weight:${r.val!==null?700:400};font-style:${r.val!==null?'normal':'italic'};">${r.val!==null?fmt(r.val):'कोई नहीं'}</div></div>`;}).join('');document.getElementById(totalId).textContent=fmt(total);}
 let pressTimer=null,currentEntry=null;

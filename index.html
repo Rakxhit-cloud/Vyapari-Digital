@@ -4542,6 +4542,10 @@ function eotDismiss(){
   if (el) el.classList.remove('show');
   // Phase 1: dismissing simply closes it — the app keeps working fully.
 }
+/* TEMP TEST HOOK — remove before real deploy. Run in console:  eotTest()
+   Forces the end-of-trial screen regardless of actual trial days. */
+window.eotTest = function(){ window._eotShownThisSession = false; maybeShowEndOfTrial(); };
+
 function eotSubscribe(){
   // Phase 1 placeholder — Play Billing is wired in Phase 2. For now, confirm
   // the app remains free and close the screen.

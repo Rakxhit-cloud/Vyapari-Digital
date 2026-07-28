@@ -4542,9 +4542,8 @@ function eotDismiss(){
   if (el) el.classList.remove('show');
   // Phase 1: dismissing simply closes it — the app keeps working fully.
 }
-/* TEMP TEST HOOK — remove before real deploy. Run in console:  eotTest()
-   Forces the end-of-trial screen regardless of actual trial days. */
-window.eotTest = function(){ window._eotShownThisSession = false; maybeShowEndOfTrial(); };
+/* TEMP TEST HOOK — remove before real deploy. Run in console:  eotTest()  */
+window.eotTest = function(){ window._eotShownThisSession = false; window.maybeShowEndOfTrial(); };
 
 function eotSubscribe(){
   // Phase 1 placeholder — Play Billing is wired in Phase 2. For now, confirm
@@ -4552,6 +4551,10 @@ function eotSubscribe(){
   try { toast('सदस्यता सेवा जल्द उपलब्ध होगी — फ़िलहाल app निःशुल्क है'); } catch(e){}
   eotDismiss();
 }
+// Expose to global scope so inline onclick handlers (outside module scope) resolve.
+window.maybeShowEndOfTrial = maybeShowEndOfTrial;
+window.eotDismiss = eotDismiss;
+window.eotSubscribe = eotSubscribe;
 async function requestNotificationPermission(uid) {
   if (!('Notification' in window)) return;
   // If the OS already granted notifications, keep saving the token (harmless).

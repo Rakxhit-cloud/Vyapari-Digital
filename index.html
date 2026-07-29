@@ -7976,8 +7976,16 @@ function clMicTap(){
     window._clHardTimer=setTimeout(function(){ window._clStopping=true; try{rec.stop();}catch(e){} },20000);
   };
   rec.onresult=function(ev){
-    var txt=''; for(var i=0;i<ev.results.length;i++){txt+=ev.results[i][0].transcript;}
-    if(inp){inp.value=txt; creditVoicePreview();}
+    // Build only THIS session's transcript from its final results, then append
+    // to whatever was committed in previous sessions (base). Prevents duplication.
+    var fin='', interim='';
+    for(var i=ev.resultIndex;i<ev.results.length;i++){
+      var r=ev.results[i];
+      if(r.isFinal){ fin+=r[0].transcript; } else { interim+=r[0].transcript; }
+    }
+    if(fin) window._clBase=((window._clBase||'')+' '+fin).replace(/\s+/g,' ').trim();
+    var shown=((window._clBase||'')+' '+interim).replace(/\s+/g,' ').trim();
+    if(inp){inp.value=shown; creditVoicePreview();}
     armIdle(); // fresh words → reset the idle countdown, so pauses don't cut it off
   };
   rec.onspeechstart=function(){ armIdle(); };
@@ -7989,10 +7997,12 @@ function clMicTap(){
     else if(ev.error!=='aborted'){toast('voice नहीं चला — टाइप करें',true);}
   };
   rec.onend=function(){
-    // If the engine auto-ended mid-speech but the user hasn't stopped, restart to keep listening.
+    // If the engine auto-ended mid-speech but the user hasn't stopped, restart to
+    // keep listening. _clBase preserves what was already heard across the restart.
     if(window._clListening && !window._clStopping){ try{rec.start();return;}catch(e){} }
     clearTimers(); window._clListening=false; if(micEl)micEl.classList.remove('listening'); if(inp)inp.placeholder='🎤 बोलें या टाइप करें…';
   };
+  window._clBase='';
   try{ rec.start(); }catch(e){ toast('फिर कोशिश करें',true); }
 }
 function _clRowHtml(n,prod,amt){

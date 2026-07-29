@@ -7959,20 +7959,40 @@ function clMicTap(){
   if(window._clListening){ try{window._clRec.stop();}catch(e){} return; }
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   var rec=new SR(); window._clRec=rec;
-  rec.lang='hi-IN'; rec.interimResults=true; rec.continuous=false; rec.maxAlternatives=1;
-  rec.onstart=function(){ window._clListening=true; if(micEl)micEl.classList.add('listening'); if(inp)inp.placeholder='🔴 सुन रहा हूँ…'; };
+  // continuous=true keeps the mic open through natural mid-phrase pauses.
+  rec.lang='hi-IN'; rec.interimResults=true; rec.continuous=true; rec.maxAlternatives=1;
+  window._clIdleTimer=null; window._clHardTimer=null; window._clStopping=false;
+  function clearTimers(){ if(window._clIdleTimer){clearTimeout(window._clIdleTimer);window._clIdleTimer=null;} if(window._clHardTimer){clearTimeout(window._clHardTimer);window._clHardTimer=null;} }
+  function armIdle(){
+    // Stop ~3.5s after the LAST heard words — long enough for a breath, short enough to feel done.
+    if(window._clIdleTimer)clearTimeout(window._clIdleTimer);
+    window._clIdleTimer=setTimeout(function(){ window._clStopping=true; try{rec.stop();}catch(e){} },3500);
+  }
+  rec.onstart=function(){
+    window._clListening=true; window._clStopping=false;
+    if(micEl)micEl.classList.add('listening'); if(inp)inp.placeholder='🔴 सुन रहा हूँ… (बोलते रहें)';
+    armIdle();
+    // Absolute safety cap: never listen beyond 20s in one go.
+    window._clHardTimer=setTimeout(function(){ window._clStopping=true; try{rec.stop();}catch(e){} },20000);
+  };
   rec.onresult=function(ev){
     var txt=''; for(var i=0;i<ev.results.length;i++){txt+=ev.results[i][0].transcript;}
     if(inp){inp.value=txt; creditVoicePreview();}
+    armIdle(); // fresh words → reset the idle countdown, so pauses don't cut it off
   };
+  rec.onspeechstart=function(){ armIdle(); };
   rec.onerror=function(ev){
-    window._clListening=false; if(micEl)micEl.classList.remove('listening'); if(inp)inp.placeholder='🎤 बोलें या टाइप करें…';
+    clearTimers(); window._clListening=false; if(micEl)micEl.classList.remove('listening'); if(inp)inp.placeholder='🎤 बोलें या टाइप करें…';
     if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){toast('माइक की अनुमति दें',true);}
     else if(ev.error==='no-speech'){toast('कुछ सुनाई नहीं दिया — फिर बोलें',true);}
     else if(ev.error==='network'){toast('voice के लिए internet चाहिए',true);}
     else if(ev.error!=='aborted'){toast('voice नहीं चला — टाइप करें',true);}
   };
-  rec.onend=function(){ window._clListening=false; if(micEl)micEl.classList.remove('listening'); if(inp)inp.placeholder='🎤 बोलें या टाइप करें…'; };
+  rec.onend=function(){
+    // If the engine auto-ended mid-speech but the user hasn't stopped, restart to keep listening.
+    if(window._clListening && !window._clStopping){ try{rec.start();return;}catch(e){} }
+    clearTimers(); window._clListening=false; if(micEl)micEl.classList.remove('listening'); if(inp)inp.placeholder='🎤 बोलें या टाइप करें…';
+  };
   try{ rec.start(); }catch(e){ toast('फिर कोशिश करें',true); }
 }
 function _clRowHtml(n,prod,amt){

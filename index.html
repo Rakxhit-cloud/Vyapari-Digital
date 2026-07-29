@@ -2771,12 +2771,6 @@ body.notif-modal-open { overflow: hidden; }
   .cl-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .cl-rowx{flex:0 0 auto;width:34px;height:38px;border:1.5px solid #6a2430;background:#2a0e12;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#ff8a7a;font-size:15px;font-weight:800;cursor:pointer;}
 .cl-rowx:active{opacity:.6;}
-.cl-mic{flex:0 0 52px;align-self:stretch;min-height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:linear-gradient(180deg,#4a9aee,#2360a8);border:2px solid #6ab0ff;box-shadow:0 0 14px 2px rgba(74,154,238,.6),0 3px 10px rgba(20,60,120,.5),inset 0 1px 3px rgba(255,255,255,.4);}
-.cl-mic:active{transform:scale(.94);}
-.cl-mic svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));}
-.cl-mic.listening{background:linear-gradient(180deg,#42c07d,#2f9c5f);border-color:#6ee0a0;box-shadow:0 0 16px 3px rgba(66,192,125,.7);animation:clMicPulse 1s infinite;}
-@keyframes clMicPulse{0%,100%{opacity:1;}50%{opacity:.6;}}
-.cl-mic.hidden{display:none;}
   .cl-sn{width:22px;font-size:13px;color:#8aa0d8;font-weight:700;flex-shrink:0;}
   .cl-prod{flex:1;min-width:0;background:#0b1430;border:2px solid #34518f;border-radius:9px;padding:10px;color:#fff;font-size:13px;box-shadow:0 0 9px rgba(93,170,255,.14);}
   .cl-amt{width:72px;background:#0b1430;border:2px solid #6f5826;border-radius:9px;padding:10px;color:#f0c890;font-size:13px;font-weight:700;text-align:right;flex-shrink:0;box-shadow:0 0 9px rgba(240,200,144,.16);}
@@ -2843,12 +2837,9 @@ body.notif-modal-open { overflow: hidden; }
     </div>
     <div id="cl-step1">
     <div class="cl-voice" id="cl-voice-bar">
-      <div class="cl-voice-tip">🎤 <b>बोलकर लिखें:</b> कीबोर्ड का mic दबाएँ और एक सामान बोलें — जैसे "<b>2 किलो चीनी 90</b>" या "<b>ढाई सौ ग्राम सूजी</b>"। फिर ➕ दबाएँ, नीचे list में जुड़ जाएगा।</div>
+      <div class="cl-voice-tip">✍️ <b>एक सामान लिखें</b> — जैसे "<b>2 किलो चीनी 90</b>" या "<b>ढाई सौ ग्राम सूजी</b>"। फिर ➕ दबाएँ, नीचे list में जुड़ जाएगा। (कीबोर्ड का mic भी इस्तेमाल कर सकते हैं)</div>
       <div class="cl-voice-row">
-        <div class="cl-mic" id="cl-mic" onclick="clMicTap()" title="बोलें">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none"><defs><linearGradient id="clMicG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf4ff"/><stop offset="0.5" stop-color="#cfe4fb"/><stop offset="1" stop-color="#9fc2e8"/></linearGradient></defs><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="url(#clMicG)" stroke="#f0f8ff" stroke-width="0.6"/><line x1="10" y1="5.4" x2="14" y2="5.4" stroke="#6a9fd0" stroke-width="0.7" stroke-linecap="round"/><line x1="10" y1="7.2" x2="14" y2="7.2" stroke="#6a9fd0" stroke-width="0.7" stroke-linecap="round"/><line x1="10" y1="9" x2="14" y2="9" stroke="#6a9fd0" stroke-width="0.7" stroke-linecap="round"/><rect x="9.6" y="3.4" width="1.4" height="8" rx="0.7" fill="#ffffff" opacity="0.55"/><path d="M6 11a6 6 0 0 0 12 0" stroke="#ffffff" stroke-width="1.6" fill="none" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="20" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round"/><line x1="9" y1="20.5" x2="15" y2="20.5" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </div>
-        <input class="cl-voice-inp" id="cl-voice-input" placeholder="🎤 बोलें या टाइप करें…" autocomplete="off" oninput="creditVoicePreview()" onkeydown="if(event.key==='Enter'){event.preventDefault();creditVoiceAdd();}">
+        <input class="cl-voice-inp" id="cl-voice-input" placeholder="सामान टाइप करें… जैसे चीनी 90" autocomplete="off" oninput="creditVoicePreview()" onkeydown="if(event.key==='Enter'){event.preventDefault();creditVoiceAdd();}">
         <button class="cl-voice-add" onclick="creditVoiceAdd()">➕ जोड़ें</button>
       </div>
       <div class="cl-voice-prev" id="cl-voice-preview"></div>
@@ -7938,73 +7929,6 @@ function creditVoiceAdd(){
   if(navigator.vibrate){try{navigator.vibrate(15);}catch(e){}}
 }
 
-/* ===== In-app voice mic (Option A, hi-IN, graceful fallback) ===== */
-window._clRec=null; window._clListening=false;
-function _clMicSupported(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
-function clMicInit(){
-  var micEl=document.getElementById('cl-mic');
-  if(!micEl)return;
-  if(!_clMicSupported()){
-    // Stripped phone: hide the mic, tell the user to type / use List Photo.
-    micEl.classList.add('hidden');
-    var tip=document.querySelector('#cl-voice-bar .cl-voice-tip');
-    if(tip)tip.innerHTML='⌨️ <b>टाइप करके जोड़ें</b> — जैसे "चीनी 90"। या List Photo से बिल की फोटो लगाएं।';
-    return;
-  }
-  micEl.classList.remove('hidden');
-}
-function clMicTap(){
-  if(!_clMicSupported()){toast('इस फ़ोन में voice नहीं — टाइप करें',true);return;}
-  var micEl=document.getElementById('cl-mic'), inp=document.getElementById('cl-voice-input');
-  if(window._clListening){ try{window._clRec.stop();}catch(e){} return; }
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  var rec=new SR(); window._clRec=rec;
-  // continuous=true keeps the mic open through natural mid-phrase pauses.
-  rec.lang='hi-IN'; rec.interimResults=true; rec.continuous=true; rec.maxAlternatives=1;
-  window._clIdleTimer=null; window._clHardTimer=null; window._clStopping=false;
-  function clearTimers(){ if(window._clIdleTimer){clearTimeout(window._clIdleTimer);window._clIdleTimer=null;} if(window._clHardTimer){clearTimeout(window._clHardTimer);window._clHardTimer=null;} }
-  function armIdle(){
-    // Stop ~3.5s after the LAST heard words — long enough for a breath, short enough to feel done.
-    if(window._clIdleTimer)clearTimeout(window._clIdleTimer);
-    window._clIdleTimer=setTimeout(function(){ window._clStopping=true; try{rec.stop();}catch(e){} },3500);
-  }
-  rec.onstart=function(){
-    window._clListening=true; window._clStopping=false;
-    if(micEl)micEl.classList.add('listening'); if(inp)inp.placeholder='🔴 सुन रहा हूँ… (बोलते रहें)';
-    armIdle();
-    // Absolute safety cap: never listen beyond 20s in one go.
-    window._clHardTimer=setTimeout(function(){ window._clStopping=true; try{rec.stop();}catch(e){} },20000);
-  };
-  rec.onresult=function(ev){
-    // Build only THIS session's transcript from its final results, then append
-    // to whatever was committed in previous sessions (base). Prevents duplication.
-    var fin='', interim='';
-    for(var i=ev.resultIndex;i<ev.results.length;i++){
-      var r=ev.results[i];
-      if(r.isFinal){ fin+=r[0].transcript; } else { interim+=r[0].transcript; }
-    }
-    if(fin) window._clBase=((window._clBase||'')+' '+fin).replace(/\s+/g,' ').trim();
-    var shown=((window._clBase||'')+' '+interim).replace(/\s+/g,' ').trim();
-    if(inp){inp.value=shown; creditVoicePreview();}
-    armIdle(); // fresh words → reset the idle countdown, so pauses don't cut it off
-  };
-  rec.onspeechstart=function(){ armIdle(); };
-  rec.onerror=function(ev){
-    clearTimers(); window._clListening=false; if(micEl)micEl.classList.remove('listening'); if(inp)inp.placeholder='🎤 बोलें या टाइप करें…';
-    if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){toast('माइक की अनुमति दें',true);}
-    else if(ev.error==='no-speech'){toast('कुछ सुनाई नहीं दिया — फिर बोलें',true);}
-    else if(ev.error==='network'){toast('voice के लिए internet चाहिए',true);}
-    else if(ev.error!=='aborted'){toast('voice नहीं चला — टाइप करें',true);}
-  };
-  rec.onend=function(){
-    // If the engine auto-ended mid-speech but the user hasn't stopped, restart to
-    // keep listening. _clBase preserves what was already heard across the restart.
-    if(window._clListening && !window._clStopping){ try{rec.start();return;}catch(e){} }
-    clearTimers(); window._clListening=false; if(micEl)micEl.classList.remove('listening'); if(inp)inp.placeholder='🎤 बोलें या टाइप करें…';
-  };
-  window._clBase='';
-  try{ rec.start(); }catch(e){ toast('फिर कोशिश करें',true); }
-}
 function _clRowHtml(n,prod,amt){
   return '<div class="cl-row"><span class="cl-sn">'+n+'.</span>'+
     '<input class="cl-prod" maxlength="30" placeholder="सामान / Product" value="'+_cesc(prod||'')+'" oninput="creditListRecalc();">'+
@@ -8127,7 +8051,7 @@ function creditListOpen(){
 }
 function creditListClose(){document.getElementById('credit-list-modal').style.display='none';window.creditListMode='popup';}
 function clPickContact(){if(!(navigator.contacts&&navigator.contacts.select)){toast('यह सिर्फ Android Chrome में चलता है',true);return;}navigator.contacts.select(['name','tel'],{multiple:false}).then(function(c){if(c&&c[0]){if(c[0].name&&c[0].name[0])document.getElementById('cl-name').value=c[0].name[0];if(c[0].tel&&c[0].tel[0])document.getElementById('cl-phone').value=String(c[0].tel[0]).replace(/[^0-9+]/g,'');}}).catch(function(){});}
-function creditListOpenNew(){window.creditListMode='newcust';window.creditState.items=[];var rows=document.getElementById('credit-list-rows');rows.innerHTML='';creditListRecalc();document.getElementById('credit-list-save').style.display='none';var waO=document.getElementById('credit-list-wa');if(waO)waO.style.display='none';var cf=document.getElementById('cl-cust-fields');if(cf)cf.style.display='none';clShowStep(1);var cb=document.getElementById('cl-contact-btn');if(cb)cb.style.display='block';var st=document.getElementById('cl-steps');if(st)st.style.display='flex';if(document.getElementById('cl-name'))document.getElementById('cl-name').value='';if(document.getElementById('cl-phone'))document.getElementById('cl-phone').value='';if(document.getElementById('cl-date'))document.getElementById('cl-date').value=TSTR;var vb=document.getElementById('cl-voice-bar');if(vb)vb.style.display='block';var vi=document.getElementById('cl-voice-input');if(vi)vi.value='';var vp=document.getElementById('cl-voice-preview');if(vp)vp.innerHTML='';var ct=document.querySelector('#credit-list-modal .cl-title');if(ct)ct.textContent='📝 List बनाएं';if(typeof clMicInit==='function')clMicInit();document.getElementById('credit-list-modal').style.display='flex';}
+function creditListOpenNew(){window.creditListMode='newcust';window.creditState.items=[];var rows=document.getElementById('credit-list-rows');rows.innerHTML='';creditListRecalc();document.getElementById('credit-list-save').style.display='none';var waO=document.getElementById('credit-list-wa');if(waO)waO.style.display='none';var cf=document.getElementById('cl-cust-fields');if(cf)cf.style.display='none';clShowStep(1);var cb=document.getElementById('cl-contact-btn');if(cb)cb.style.display='block';var st=document.getElementById('cl-steps');if(st)st.style.display='flex';if(document.getElementById('cl-name'))document.getElementById('cl-name').value='';if(document.getElementById('cl-phone'))document.getElementById('cl-phone').value='';if(document.getElementById('cl-date'))document.getElementById('cl-date').value=TSTR;var vb=document.getElementById('cl-voice-bar');if(vb)vb.style.display='block';var vi=document.getElementById('cl-voice-input');if(vi)vi.value='';var vp=document.getElementById('cl-voice-preview');if(vp)vp.innerHTML='';var ct=document.querySelector('#credit-list-modal .cl-title');if(ct)ct.textContent='📝 List बनाएं';document.getElementById('credit-list-modal').style.display='flex';}
 function clShowStep(step){
   var s1=document.getElementById('cl-step1'), cf=document.getElementById('cl-cust-fields');
   var back=document.getElementById('cl-back'), title=document.getElementById('cl-title');

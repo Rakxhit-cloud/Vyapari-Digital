@@ -8333,13 +8333,18 @@ function openBillViewer(id){
   if(_isMaal){
     var t=g('bv-title'); if(t)t.textContent='🧾 '+(r.supplier||'सप्लायर')+' · '+fmtDate(r.date||TSTR);
     var tt=g('bv-total'); if(tt)tt.textContent=_crFmt(r.amount||0);
-    var ud=g('bv-udhaar'); if(ud)ud.style.display='none';
+    // Purchases: show the meta + actions (amount, retake, delete) but not WhatsApp resend.
+    var ud=g('bv-udhaar'); if(ud)ud.style.display='block';
     var _rs=g('bv-resend'); if(_rs)_rs.style.display='none';
+    var _ep=document.querySelector('#bv-udhaar .bv-editpill'); if(_ep)_ep.style.display='none';
+    var _ml=document.querySelector('#bv-udhaar .bv-meta-l'); if(_ml)_ml.firstChild&&(_ml.childNodes[0].nodeValue='खरीद रकम ');
   } else {
     var t=g('bv-title'); if(t)t.textContent='🧾 '+(r.custName||'ग्राहक')+' · '+fmtDate(r.date||TSTR);
     var tt=g('bv-total'); if(tt)tt.textContent=_crFmt(r.amount||0);
     var ud=g('bv-udhaar'); if(ud)ud.style.display='block';
     var _rs=g('bv-resend'); if(_rs)_rs.style.display='';
+    var _ep=document.querySelector('#bv-udhaar .bv-editpill'); if(_ep)_ep.style.display='';
+    var _ml=document.querySelector('#bv-udhaar .bv-meta-l'); if(_ml&&_ml.childNodes[0])_ml.childNodes[0].nodeValue='कुल उधार ';
   }
   _bvDelArm=false; _bvDelPaint();
   g('bill-viewer').style.display='flex';
@@ -8362,23 +8367,31 @@ function bvFileChosen(ev){
 function bvRetakeConfirm(){
   var r=window._bvEntry, nf=window._bvNew&&window._bvNew.file;
   if(!r||!nf){toast('फोटो नहीं मिली',true);return;}
+  var _isMaalEntry=!!(DB.get(K.MAAL)||[]).find(function(x){return x.id===r.id;});
+  var _store=_isMaalEntry?K.MAAL:K.UDHAAR;
+  var _pfx=_isMaalEntry?'ml_':'ud_';
   toast('तैयार हो रहा है…');
   _bpCompress(nf,1600,0.8,128,0.55).then(function(c){
-    DB.update(K.UDHAAR,r.id,{billThumb:c.thumb});
+    DB.update(_store,r.id,{billThumb:c.thumb});
     r.billThumb=c.thumb;
     var im=document.getElementById('bv-img'); if(im){im.classList.remove('lgp-blur');im.src=c.thumb;}
     bvRetakeClose();
     if(!(window._storage&&window._st&&CURRENT_UID)){toast('⚠️ फोटो cloud पे नहीं गई',true);return;}
-    var path=r.billPath||('bills/'+CURRENT_UID+'/ud_'+r.id+'.jpg');
+    var path=r.billPath||('bills/'+CURRENT_UID+'/'+_pfx+r.id+'.jpg');
     var sref=window._st.ref(window._storage,path);
     window._st.uploadBytes(sref,c.blob).then(function(){
       return window._st.getDownloadURL(sref);
     }).then(function(url){
-      DB.update(K.UDHAAR,r.id,{billUrl:url,billPath:path});
+      DB.update(_store,r.id,{billUrl:url,billPath:path});
       r.billUrl=url; r.billPath=path;
       lgpProgressive(document.getElementById('bv-img'), r.billThumb||'', url);
-      if(window.ucCust&&typeof renderUdhaarProfile==='function')renderUdhaarProfile(window.ucCust.key);
-      if(typeof renderCreditGrid==='function')renderCreditGrid();
+      if(_isMaalEntry){
+        if(typeof renderSupplierProfile==='function')renderSupplierProfile();
+        if(typeof renderSuppliers==='function')renderSuppliers();
+      } else {
+        if(window.ucCust&&typeof renderUdhaarProfile==='function')renderUdhaarProfile(window.ucCust.key);
+        if(typeof renderCreditGrid==='function')renderCreditGrid();
+      }
       toast('✅ बिल बदल गया');
     }).catch(function(){toast('⚠️ फोटो cloud पे नहीं गई — दोबारा try करें',true);});
   }).catch(function(){toast('फोटो process नहीं हुई',true);});

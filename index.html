@@ -1633,6 +1633,11 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-chip-settled{color:#5dd88a;background:rgba(62,200,115,0.15);border:0.5px solid #2d7a4a;}
 .mkp-entry{margin-bottom:9px;}
 .mkp-entry .mkp-row{margin-bottom:4px;}
+.mkp-thumb{flex:0 0 auto;width:44px;height:44px;border-radius:8px;overflow:hidden;position:relative;border:1px solid #2a4078;background:#0c1830;margin-right:9px;cursor:pointer;}
+.mkp-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.mkp-thumb-ico{position:absolute;bottom:1px;right:2px;font-size:9px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8));}
+.mkp-amt-edit{cursor:pointer;}
+.mkp-amt-edit:active{opacity:.6;}
 .mkp-edit{background:transparent;border:1px solid #2a4078;color:#8aa0d8;font-size:10.5px;font-weight:600;padding:4px 11px;border-radius:7px;cursor:pointer;margin-left:0;}
 .mkp-edit:active{background:#15233f;}
 .mk-center-overlay{align-items:center !important;}
@@ -6903,6 +6908,8 @@ function openMaalEdit(id){
   _maalEditId=id;
   document.getElementById('me2-name').value=r.name||'';
   document.getElementById('me2-amount').value=r.amount||0;
+  // Purchase entries are photo-based: hide the name field, amount-only editing.
+  var _nmRow=document.getElementById('me2-name'); if(_nmRow){ var _wrap=_nmRow.closest('.mk-edit-fld')||_nmRow.parentElement; if(_wrap)_wrap.style.display='none'; }
   const isNakad=r.pay==='नकद';
   const paid=r.paid||0;
   document.getElementById('me2-sup').innerHTML=`सप्लायर: <b>${escHTML(r.supplier||'—')}</b> · <span style="color:${isNakad?'#5dd88a':'#e89b5a'}">${isNakad?'नकद':'उधार'}</span>`;
@@ -7056,7 +7063,9 @@ function renderSupplierProfile(){
       if(isNakad){chipCls='mkp-chip-nakad';chipTxt='नकद';}
       else if(settled){chipCls='mkp-chip-settled';chipTxt='✓ चुका';}
       else {chipCls='mkp-chip-udhaar';chipTxt='उधार';}
-      rowsHtml+=`<div class="mkp-entry"><div class="mkp-row"><div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt">${fmt(r.amount)}</div><div class="mkp-chip ${chipCls}">${chipTxt}</div></div></div><button class="mkp-edit" onclick="event.stopPropagation();openMaalEdit('${escJS(r.id)}')">✏️ Edit करें</button></div>`;
+      const _hasBill=!!(r.billThumb||r.billUrl);
+      const thumbHtml=_hasBill?`<div class="mkp-thumb" onclick="event.stopPropagation();openBillViewer('${escJS(r.id)}')"><img src="${escHTML(r.billThumb||r.billUrl)}" alt="bill" loading="lazy"><span class="mkp-thumb-ico">🧾</span></div>`:'';
+      rowsHtml+=`<div class="mkp-entry"><div class="mkp-row">${thumbHtml}<div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt mkp-amt-edit" onclick="event.stopPropagation();openMaalEdit('${escJS(r.id)}')">${fmt(r.amount)} ✏️</div><div class="mkp-chip ${chipCls}">${chipTxt}</div></div></div></div>`;
     });
     grp.innerHTML=`<div class="mkp-dhead"><div class="bar"></div><div class="d">${fmtDate(d)}</div><div class="tot">कुल ${fmt(dayTot)}</div></div>${rowsHtml}`;
     wrap.appendChild(grp);
@@ -8314,15 +8323,24 @@ function clBack(){
 function creditListSaveNew(){var rows=document.getElementById('credit-list-rows'),items=[],t=0,n=0;rows.querySelectorAll('.cl-row').forEach(function(row){var p=row.querySelector('.cl-prod').value.trim();var a=parseInt(row.querySelector('.cl-amt').value||'0',10)||0;if(p||a){n++;items.push({n:n,product:p.slice(0,30),amount:a});t+=a;}});if(!items.length){toast('कम से कम एक सामान भरें',true);return;}var name=(document.getElementById('cl-name').value||'').trim();var phone=(document.getElementById('cl-phone').value||'').trim();var date=document.getElementById('cl-date').value||TSTR;if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}DB.push(K.UDHAAR,{date:date,custName:name,custPhone:phone,items:items,amount:t,payments:[],paid:0,ts:Date.now()});if(phone)_sendCreditBill(name,phone,items,t,date);creditListClose();if(typeof renderCreditGrid==='function')renderCreditGrid();if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();toast('✅ उधार save हुआ — '+name+' · '+_crFmt(t));}
 function openBillViewer(id){
   var r=(DB.get(K.UDHAAR)||[]).find(function(x){return x.id===id;});
+  var _isMaal=false;
+  if(!r){ r=(DB.get(K.MAAL)||[]).find(function(x){return x.id===id;}); _isMaal=!!r; }
   if(!r){toast('बिल नहीं मिला',true);return;}
   var src=r.billUrl||r.billThumb||'';
   if(!src){if(typeof openEntryList==='function')openEntryList(id);return;}
   window._bvEntry=r;
   var g=function(i){return document.getElementById(i);};
-  var t=g('bv-title'); if(t)t.textContent='🧾 '+(r.custName||'ग्राहक')+' · '+fmtDate(r.date||TSTR);
-  var tt=g('bv-total'); if(tt)tt.textContent=_crFmt(r.amount||0);
-  var ud=g('bv-udhaar'); if(ud)ud.style.display='block';
-  var _rs=g('bv-resend'); if(_rs)_rs.style.display='';
+  if(_isMaal){
+    var t=g('bv-title'); if(t)t.textContent='🧾 '+(r.supplier||'सप्लायर')+' · '+fmtDate(r.date||TSTR);
+    var tt=g('bv-total'); if(tt)tt.textContent=_crFmt(r.amount||0);
+    var ud=g('bv-udhaar'); if(ud)ud.style.display='none';
+    var _rs=g('bv-resend'); if(_rs)_rs.style.display='none';
+  } else {
+    var t=g('bv-title'); if(t)t.textContent='🧾 '+(r.custName||'ग्राहक')+' · '+fmtDate(r.date||TSTR);
+    var tt=g('bv-total'); if(tt)tt.textContent=_crFmt(r.amount||0);
+    var ud=g('bv-udhaar'); if(ud)ud.style.display='block';
+    var _rs=g('bv-resend'); if(_rs)_rs.style.display='';
+  }
   _bvDelArm=false; _bvDelPaint();
   g('bill-viewer').style.display='flex';
   lgpProgressive(g('bv-img'), r.billThumb||'', r.billUrl||'');
@@ -8390,6 +8408,18 @@ function bvSaveTotal(){
 function bvDelete(){
   var r=window._bvEntry; if(!r)return;
   if(!_bvDelArm){_bvDelArm=true;_bvDelPaint();setTimeout(function(){if(_bvDelArm){_bvDelArm=false;_bvDelPaint();}},4000);return;}
+  // Route deletion to the correct store: purchases live in K.MAAL, credit bills in K.UDHAAR.
+  var _isMaalEntry = !!(DB.get(K.MAAL)||[]).find(function(x){return x.id===r.id;});
+  if(_isMaalEntry){
+    DB.remove(K.MAAL,r.id);
+    _bvDelArm=false;
+    closeBillViewer();
+    if(typeof renderSupplierProfile==='function')renderSupplierProfile();
+    if(typeof renderSuppliers==='function')renderSuppliers();
+    if(typeof loadMaalHome==='function')loadMaalHome();
+    toast('🗑️ खरीद हटाई');
+    return;
+  }
   DB.remove(K.UDHAAR,r.id);
   _bvDelArm=false;
   closeBillViewer();

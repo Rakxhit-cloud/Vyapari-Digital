@@ -5418,7 +5418,7 @@ function lgpConfirmOk() {
   }).catch(function () { toast('फोटो process नहीं हुई, दोबारा लें', true); });
 }
 
-function lgpUpload(box, blob, rec) {
+function lgpUpload(box, blob, rec, onDone) {
   try {
     if (!(window._storage && window._st && CURRENT_UID)) return;
     var id = 'lgbill_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
@@ -5430,6 +5430,7 @@ function lgpUpload(box, blob, rec) {
       box.billUrl = url;
       box.billPath = path;
       lgPersistRec(rec);
+      if (typeof onDone === 'function') { try { onDone(url, path); } catch (e) {} }
       try { var w = new Image(); w.src = url; } catch (e) {}
     }).catch(function () {
       toast('⚠️ बिल cloud पे नहीं गया — entry save हुई', true);
@@ -5572,6 +5573,7 @@ function lgpcFile(sup, phone){
   if (_ph.url)   _maal.billUrl   = _ph.url;
   if (_ph.path)  _maal.billPath  = _ph.path;
   DB.push(K.MAAL, _maal);
+  var _maalId = _maal.id;
   // Mirror a purchase box onto Live Hisaab (visual only; K.MAAL is the source of truth).
   if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
   var pboxes = r.lgBoxes.filter(function(b){return b.type==='purchase';});
@@ -5582,7 +5584,14 @@ function lgpcFile(sup, phone){
   r.lgBoxes.push(pbox);
   if (window.lgState.isToday) { r.lgSaved = false; r.lgSavedAt = null; }
   if (typeof lgPersistRec === 'function') lgPersistRec(r);
-  if (_ph.blob && typeof lgpUpload === 'function') lgpUpload(pbox, _ph.blob, r);
+  if (_ph.blob && typeof lgpUpload === 'function') lgpUpload(pbox, _ph.blob, r, function(url, path){
+    // Also persist the full-res URL onto the K.MAAL record so the supplier
+    // profile's bill viewer shows the large image (not just the small thumb).
+    try {
+      DB.update(K.MAAL, _maalId, { billUrl: url, billPath: path });
+      if (typeof renderSupplierProfile === 'function') renderSupplierProfile();
+    } catch(e) {}
+  });
   lgCloseKeypad();
   if (typeof lgRenderTotals === 'function') lgRenderTotals();
   lgRenderGrid('purchase');

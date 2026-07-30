@@ -1351,6 +1351,31 @@ body.notif-modal-open { overflow: hidden; }
 .lgpur-sup-lbl { font-size:11px; color:#e8c870; font-weight:600; margin-bottom:5px; display:block; }
 .lgpur-sup-inp { width:100%; box-sizing:border-box; background:#0c1830; border:1.5px solid #6a5220; border-radius:10px; padding:11px; font-size:13px; color:#e8dcc4; font-family:inherit; }
 .lgpur-photo-req { font-size:10px; color:#cc7a47; text-align:center; margin:2px 0 10px; }
+.lgpc-sec { font-size:10px; color:#8aa0d8; font-weight:700; margin:2px 0 8px; text-transform:uppercase; letter-spacing:.3px; }
+.lgpc-chips-scroll { max-height:132px; overflow-y:auto; margin-bottom:6px; border:1px solid #24365a; border-radius:11px; background:#0a1424; }
+.lgpc-chips-scroll::-webkit-scrollbar { width:5px; }
+.lgpc-chips-scroll::-webkit-scrollbar-thumb { background:#3a4a68; border-radius:3px; }
+.lgpc-chips { display:grid; grid-template-columns:1fr 1fr; gap:7px; padding:8px; }
+.lgpc-chip { background:linear-gradient(180deg,#221a08,#1a1408); border:1px solid #6a5220; border-radius:12px; padding:11px 10px; font-size:11.5px; color:#e8c870; font-weight:600; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer; }
+.lgpc-chip:active { opacity:.7; }
+.lgpc-empty { padding:14px; text-align:center; font-size:10.5px; color:#5a6a8a; }
+.lgpc-hint { font-size:8.5px; color:#5a6a8a; text-align:center; margin-bottom:12px; }
+.lgpc-div { display:flex; align-items:center; gap:8px; margin:4px 0 12px; color:#5a6a8a; font-size:9px; }
+.lgpc-div::before,.lgpc-div::after { content:""; flex:1; height:1px; background:#24365a; }
+.lgpc-fld { margin-bottom:10px; }
+.lgpc-flbl { font-size:10px; color:#9fb0d8; font-weight:600; margin-bottom:4px; display:block; }
+.lgpc-fin { width:100%; box-sizing:border-box; background:#0c1830; border:1px solid #24365a; border-radius:9px; padding:11px; font-size:12px; color:#e8dcc4; font-family:inherit; }
+.lgpc-save { width:100%; border:none; border-radius:11px; padding:12px; font-size:12px; font-weight:800; color:#fff; background:linear-gradient(135deg,#2f9c5f,#42c07d); margin-top:2px; }
+.lgpc-cf { position:absolute; inset:0; background:rgba(4,6,12,.86); display:none; align-items:center; justify-content:center; padding:22px; border-radius:16px; z-index:5; }
+.lgpc-cf.show { display:flex; }
+.lgpc-cf-box { background:#0e1836; border:1.5px solid #6a5220; border-radius:14px; padding:18px; text-align:center; width:100%; }
+.lgpc-cf-ico { font-size:30px; margin-bottom:8px; }
+.lgpc-cf-t { font-size:15px; font-weight:700; color:#e8c870; margin-bottom:5px; }
+.lgpc-cf-m { font-size:11.5px; color:#c8d4e8; margin-bottom:14px; }
+.lgpc-cf-m b { color:#fff; }
+.lgpc-cf-btns { display:flex; gap:8px; }
+.lgpc-cf-yes { flex:1; background:linear-gradient(135deg,#2f9c5f,#42c07d); border:none; border-radius:9px; padding:12px; color:#fff; font-size:12px; font-weight:800; }
+.lgpc-cf-no { flex:1; background:transparent; border:1px solid #4a5a7a; border-radius:9px; padding:12px; color:#9aa8c4; font-size:12px; font-weight:600; }
 .lg-add:active { opacity:.7; }
 
 /* Compact modal keypad */
@@ -2699,10 +2724,6 @@ body.notif-modal-open { overflow: hidden; }
           <div class="lgpur-tg on-nakad" id="lgpur-tg-nakad" onclick="lgPurSetPay('nakad')">💵 नकद</div>
           <div class="lgpur-tg" id="lgpur-tg-udhaar" onclick="lgPurSetPay('udhaar')">📋 उधार</div>
         </div>
-        <div class="lgpur-sup">
-          <label class="lgpur-sup-lbl">🏪 सप्लायर का नाम</label>
-          <input type="text" class="lgpur-sup-inp" id="lgpur-supplier" maxlength="40" placeholder="जैसे: रमेश ट्रेडर्स" autocomplete="off">
-        </div>
         <div class="lgpur-photo-req" id="lgpur-photo-req">📷 बिल की फोटो ज़रूरी है</div>
       </div>
       <div class="lgp-row">
@@ -2735,6 +2756,41 @@ body.notif-modal-open { overflow: hidden; }
         <div class="lg-key lg-key-tri" onclick="lgKeyTri()">000</div>
       </div>
       <div class="lg-commit-btn" id="lg-keypad-commit" onclick="lgCommitBox()">💾 जोड़ें</div>
+    </div>
+    <!-- Purchase Contact page (page 2) -->
+    <div class="lg-modal-body" id="lgpc-page" style="display:none;">
+      <div class="lg-modal-head">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div onclick="lgpcBack()" style="width:28px;height:28px;border:1.5px solid #3a6ea8;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#9fd4ff;font-size:15px;font-weight:800;cursor:pointer;">←</div>
+          <div class="lg-modal-title">🏪 सप्लायर चुनें</div>
+        </div>
+        <div class="lg-modal-close" onclick="lgCloseKeypad()">✕</div>
+      </div>
+      <div class="lgpc-sec">पहले से सप्लायर — छूकर जोड़ें</div>
+      <div class="lgpc-chips-scroll"><div class="lgpc-chips" id="lgpc-chips"></div></div>
+      <div class="lgpc-hint" id="lgpc-hint">↕ और सप्लायर के लिए scroll करें</div>
+      <div class="lgpc-div">या नया सप्लायर</div>
+      <div class="lgpc-fld">
+        <label class="lgpc-flbl">🏪 सप्लायर का नाम</label>
+        <input type="text" class="lgpc-fin" id="lgpc-new-name" maxlength="40" placeholder="जैसे: रमेश ट्रेडर्स" autocomplete="off">
+      </div>
+      <div class="lgpc-fld">
+        <label class="lgpc-flbl">📞 फ़ोन (optional)</label>
+        <input type="tel" class="lgpc-fin" id="lgpc-new-phone" maxlength="15" placeholder="10 अंकों का नंबर" autocomplete="off">
+      </div>
+      <button class="lgpc-save" onclick="lgpcSaveNew()">💾 नया सप्लायर — save करें</button>
+    </div>
+    <!-- Purchase file confirm (dedicated — does not touch the delete confirm) -->
+    <div class="lgpc-cf" id="lgpc-confirm">
+      <div class="lgpc-cf-box">
+        <div class="lgpc-cf-ico">📦</div>
+        <div class="lgpc-cf-t" id="lgpc-cf-name">—</div>
+        <div class="lgpc-cf-m" id="lgpc-cf-msg">—</div>
+        <div class="lgpc-cf-btns">
+          <button class="lgpc-cf-yes" onclick="lgpcConfirmYes()">हाँ, जोड़ें</button>
+          <button class="lgpc-cf-no" onclick="lgpcConfirmNo()">नहीं</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -5234,9 +5290,17 @@ function lgOpenKeypad(type, editN) {
     var _pbx = (editN !== null) ? (window.lgState.rec.lgBoxes || []).filter(b => b.type === 'purchase')[editN - 1] : null;
     if (_pbx) { window.lgPurPay = _pbx.pay === 'udhaar' ? 'udhaar' : 'nakad'; }
     lgPurSetPay(window.lgPurPay);
-    var _supEl = document.getElementById('lgpur-supplier');
-    if (_supEl) _supEl.value = (_pbx && _pbx.supplier) ? _pbx.supplier : '';
   }
+  // Purchase uses a two-page flow: commit button becomes "Contact जोड़ें →".
+  var _cmt = document.getElementById('lg-keypad-commit');
+  if (_cmt) {
+    if (type === 'purchase') { _cmt.innerHTML = 'Contact जोड़ें →'; _cmt.style.background = 'linear-gradient(180deg,#f0d288,#cc9a44)'; _cmt.style.color = '#2a1c06'; }
+    else { _cmt.innerHTML = '💾 जोड़ें'; _cmt.style.background = ''; _cmt.style.color = ''; }
+  }
+  // Always start on page 1 (hide contact page + confirm) when (re)opening.
+  var _pg = document.getElementById('lgpc-page'); if (_pg) _pg.style.display = 'none';
+  var _kb = document.querySelector('#lg-keypad-modal .lg-modal-body:not(#lgpc-page)'); if (_kb) _kb.style.display = '';
+  var _cf = document.getElementById('lgpc-confirm'); if (_cf) _cf.classList.remove('show');
   lgpPaintTile();
   // Title — show entry number
   const r = window.lgState.rec;
@@ -5426,22 +5490,84 @@ function lgPurSetPay(pay){
   if (n) n.className = 'lgpur-tg' + (window.lgPurPay === 'nakad' ? ' on-nakad' : '');
   if (u) u.className = 'lgpur-tg' + (window.lgPurPay === 'udhaar' ? ' on-udhaar' : '');
 }
-function lgCommitPurchase(amt){
+// Page 1 -> Contact page: validate photo + amount, then show supplier chips.
+function lgpcGoContact(amt){
   var _ph = window.lgPhoto || {};
-  var sup = (document.getElementById('lgpur-supplier').value || '').trim().slice(0,40);
   if (!(_ph.thumb || _ph.url)) { toast('❌ बिल की फोटो ज़रूरी है', true); return; }
+  if (!(amt > 0)) { toast('❌ अंक डालें', true); return; }
+  window._lgpcAmt = amt;
+  // Build supplier chips from distinct K.MAAL suppliers.
+  var seen = {}, sups = [];
+  (DB.get(K.MAAL) || []).forEach(function(m){
+    var nm = (m.supplier || '').trim();
+    if (!nm) return;
+    var k = mkSupKey(nm);
+    if (!seen[k]) { seen[k] = 1; sups.push(nm); }
+  });
+  sups.sort(function(a,b){return a.localeCompare(b);});
+  var wrap = document.getElementById('lgpc-chips');
+  var hint = document.getElementById('lgpc-hint');
+  if (wrap) {
+    if (sups.length === 0) {
+      wrap.innerHTML = '<div class="lgpc-empty">अभी कोई सप्लायर नहीं — नीचे नया जोड़ें</div>';
+      if (hint) hint.style.display = 'none';
+    } else {
+      wrap.innerHTML = sups.map(function(nm){
+        return '<div class="lgpc-chip" onclick="lgpcPickChip(this)" data-sup="'+_cesc(nm)+'">'+_cesc(nm)+'</div>';
+      }).join('');
+      if (hint) hint.style.display = (sups.length > 6) ? 'block' : 'none';
+    }
+  }
+  // clear new-supplier fields
+  var nn = document.getElementById('lgpc-new-name'); if (nn) nn.value = '';
+  var np = document.getElementById('lgpc-new-phone'); if (np) np.value = '';
+  // swap views
+  var kb = document.querySelector('#lg-keypad-modal .lg-modal-body:not(#lgpc-page)'); if (kb) kb.style.display = 'none';
+  var pg = document.getElementById('lgpc-page'); if (pg) pg.style.display = '';
+}
+function lgpcBack(){
+  var pg = document.getElementById('lgpc-page'); if (pg) pg.style.display = 'none';
+  var kb = document.querySelector('#lg-keypad-modal .lg-modal-body:not(#lgpc-page)'); if (kb) kb.style.display = '';
+  var cf = document.getElementById('lgpc-confirm'); if (cf) cf.classList.remove('show');
+}
+// Tap an existing supplier chip -> confirm dialog.
+function lgpcPickChip(el){
+  var nm = el.getAttribute('data-sup') || '';
+  window._lgpcPickName = nm;
+  window._lgpcPickPhone = '';
+  var pay = (window.lgPurPay === 'udhaar') ? 'उधार' : 'नकद';
+  document.getElementById('lgpc-cf-name').textContent = nm;
+  document.getElementById('lgpc-cf-msg').innerHTML = '₹'+(window._lgpcAmt||0).toLocaleString('en-IN')+' की <b>'+pay+'</b> खरीद इनके खाते में जोड़ें?';
+  document.getElementById('lgpc-confirm').classList.add('show');
+}
+function lgpcConfirmNo(){ document.getElementById('lgpc-confirm').classList.remove('show'); }
+function lgpcConfirmYes(){
+  document.getElementById('lgpc-confirm').classList.remove('show');
+  lgpcFile(window._lgpcPickName, window._lgpcPickPhone);
+}
+// Save a brand-new supplier from the manual fields.
+function lgpcSaveNew(){
+  var nm = (document.getElementById('lgpc-new-name').value || '').trim().slice(0,40);
+  var ph = (document.getElementById('lgpc-new-phone').value || '').replace(/[^0-9]/g,'').slice(0,15);
+  if (!nm) { toast('❌ सप्लायर का नाम भरें', true); return; }
+  lgpcFile(nm, ph);
+}
+// The single write path: files one K.MAAL record + mirrors the Live Hisaab box.
+function lgpcFile(sup, phone){
+  sup = (sup || '').trim().slice(0,40);
   if (!sup) { toast('❌ सप्लायर का नाम भरें', true); return; }
+  var amt = window._lgpcAmt || 0;
+  var _ph = window.lgPhoto || {};
   var pay = (window.lgPurPay === 'udhaar') ? 'उधार' : 'नकद';
   var note = (window.lgKeypad.note || '').trim().slice(0,80);
   var r = window.lgState.rec;
-  var date = r.date;
-  var _maal = { date: date, supplier: sup, name: '', amount: amt, pay: pay, note: note, src: 'livehisaab' };
+  var _maal = { date: r.date, supplier: sup, name: '', amount: amt, pay: pay, note: note, src: 'livehisaab' };
+  if (phone) _maal.supplierPhone = phone;
   if (_ph.thumb) _maal.billThumb = _ph.thumb;
   if (_ph.url)   _maal.billUrl   = _ph.url;
   if (_ph.path)  _maal.billPath  = _ph.path;
   DB.push(K.MAAL, _maal);
-  // Mirror a purchase box onto today's Live Hisaab (visual record only — the K.MAAL
-  // record is the financial source of truth for the supplier ledger).
+  // Mirror a purchase box onto Live Hisaab (visual only; K.MAAL is the source of truth).
   if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
   var pboxes = r.lgBoxes.filter(function(b){return b.type==='purchase';});
   var pbox = { n: pboxes.length+1, type:'purchase', amount:amt, note:('सप्लायर: '+sup).slice(0,80), pay: window.lgPurPay, supplier: sup, ts: Date.now() };
@@ -5466,8 +5592,8 @@ function lgCommitBox() {
     toast('❌ अंक डालें', true);
     return;
   }
-  // ---- Purchase branch: photo + amount + supplier required, writes to K.MAAL ----
-  if (window.lgKeypad.type === 'purchase') { lgCommitPurchase(amt); return; }
+  // ---- Purchase branch: photo + amount required, then go to Contact page ----
+  if (window.lgKeypad.type === 'purchase') { lgpcGoContact(amt); return; }
   const r = window.lgState.rec;
   if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
   const type = window.lgKeypad.type;

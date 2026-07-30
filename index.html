@@ -2452,10 +2452,6 @@ body.notif-modal-open { overflow: hidden; }
   </div>
   <div style="height:4px;background:linear-gradient(90deg,#4dca4d,#f0b040,#f06060,#a855f7,#50a0f0);"></div>
   <div class="fw">
-    <div class="entry-mode-toggle" style="padding:4px;margin-bottom:14px;">
-      <div class="entry-mode-btn active-quick" id="mode-btn-quick" onclick="setEntryMode('quick')" style="border-radius:10px;">⚡ तुरंत</div>
-      <div class="entry-mode-btn" id="mode-btn-full" onclick="setEntryMode('full')" style="border-radius:10px;">📋 पूरा</div>
-    </div>
     <div id="quick-entry-form">
       <div style="text-align:center;margin-bottom:4px;font-size:16px;font-weight:500;color:#e8d8b8;">📋 आज का हिसाब दर्ज करें</div>
       <div style="text-align:center;margin-bottom:14px;font-size:11px;color:#b0a0e8;">Today's Entry · सिर्फ 2 अंक डालें</div>
@@ -2513,12 +2509,6 @@ body.notif-modal-open { overflow: hidden; }
         </div>
       </div>
       <button class="sbtn" onclick="saveQuickEntry()" style="background:linear-gradient(135deg, #d4a850 0%, #e8c870 100%);border:2px solid #f0d890;color:#1a1208;font-size:15px;font-weight:500;padding:15px;border-radius:12px;box-shadow:0 2px 0 #8a6818;">💾 एंट्री सेव करें · Save Entry</button>
-      <div style="text-align:center;margin-top:10px;">
-        <div style="background:#0a1530;border:1px solid #2a4078;border-radius:10px;padding:11px;cursor:pointer;" onclick="setEntryMode('full')">
-          <div style="font-size:11px;color:#8aa0d8;">✏️ UPI, नकद, नोट्स भी डालना है?</div>
-          <div style="font-size:12px;color:#d4a850;font-weight:500;margin-top:3px;">पूरा मोड में जाएं →</div>
-        </div>
-      </div>
     </div>
     <div id="full-entry-form" style="display:none;">
     <div class="fcard">
@@ -3128,7 +3118,7 @@ body.notif-modal-open { overflow: hidden; }
 
 <div class="bottom-nav">
   <div class="nav-item active" id="n-home" onclick="go('s-home')"><div class="nav-icon">🏠</div><div class="nav-lbl">होम</div><div class="nav-dot"></div></div>
-  <div class="nav-item" id="n-entry" onclick="go('s-entry')"><div class="nav-icon">📝</div><div class="nav-lbl">एंट्री</div></div>
+  <div class="nav-item" id="n-entry" onclick="go('s-entry')"><div class="nav-icon">⚡</div><div class="nav-lbl">तुरंत एंट्री</div></div>
   <div class="nav-item" id="n-more" onclick="toggleMore()"><div class="nav-icon">⋯</div><div class="nav-lbl">और</div></div>
 </div>
 </div>
@@ -6428,14 +6418,19 @@ function closeDatePopupDirect(){
 })();
 let entryMode='quick';
 function setEntryMode(mode){
+  // पूरा (full) mode removed — entry is always the quick form now. Any legacy call
+  // is coerced to 'quick' so nothing can land on the retired full form.
+  mode='quick';
   entryMode=mode;
-  document.getElementById('quick-entry-form').style.display=mode==='quick'?'block':'none';if(mode==='quick'&&window.qStripInit)qStripInit();
-  document.getElementById('full-entry-form').style.display=mode==='full'?'block':'none';
-  document.getElementById('mode-btn-quick').className='entry-mode-btn'+(mode==='quick'?' active-quick':'');
-  document.getElementById('mode-btn-full').className='entry-mode-btn'+(mode==='full'?' active-full':'');
-  document.getElementById('entry-header-title').textContent=mode==='quick'?'⚡ तुरंत एंट्री':'📝 नई एंट्री';
-  document.getElementById('entry-header-sub').textContent=mode==='quick'?'Quick Entry · 30 सेकंड में':'आज की बिक्री दर्ज करें';
-  if(mode==='quick'){let t;if(window.pickedEntryDate){t=parseLocalDate(window.pickedEntryDate);}else{t=new Date();}document.getElementById('q-date-display').textContent=t.toLocaleDateString('hi-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});}
+  var qf=document.getElementById('quick-entry-form'); if(qf)qf.style.display='block';
+  if(window.qStripInit)qStripInit();
+  var ff=document.getElementById('full-entry-form'); if(ff)ff.style.display='none';
+  var mbq=document.getElementById('mode-btn-quick'); if(mbq)mbq.className='entry-mode-btn active-quick';
+  var mbf=document.getElementById('mode-btn-full'); if(mbf)mbf.className='entry-mode-btn';
+  var eht=document.getElementById('entry-header-title'); if(eht)eht.textContent='⚡ तुरंत एंट्री';
+  var ehs=document.getElementById('entry-header-sub'); if(ehs)ehs.textContent='Quick Entry · 30 सेकंड में';
+  var t;if(window.pickedEntryDate){t=parseLocalDate(window.pickedEntryDate);}else{t=new Date();}
+  var qd=document.getElementById('q-date-display'); if(qd)qd.textContent=t.toLocaleDateString('hi-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
 }
 function quickCalc(){
   const c=parseFloat(document.getElementById('q-cash').value)||0;

@@ -4431,7 +4431,16 @@ function launchApp(uid) {
   // can momentarily return false right after install, causing OTP→PIN→signOut loops).
   var isPlaySrc = false;
   try { isPlaySrc = (localStorage.getItem('hk_reg_source') === 'play'); } catch(e){}
-  var isPwaMode = isPlaySrc;
+  // FRESH-SESSION TRUST: if the user verified OTP in THIS session (hk_fresh_session),
+  // we deliberately reached launchApp from the registration/login flow. During the
+  // first seconds after a fresh install, display-mode:standalone can momentarily read
+  // false and hk_reg_source may be 'web' (TWA launch query stripped at packaging),
+  // which previously bounced a brand-new user to the "already registered" screen and
+  // left the app frozen until relaunch. A confirmed fresh session means we are
+  // legitimately in-app, so treat it as PWA-confirmed and proceed.
+  var isFreshSession = false;
+  try { isFreshSession = (sessionStorage.getItem('hk_fresh_session') === '1'); } catch(e){}
+  var isPwaMode = isPlaySrc || isFreshSession;
   try {
     isPwaMode = isPwaMode ||
                 (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||

@@ -1339,6 +1339,18 @@ body.notif-modal-open { overflow: hidden; }
 .lg-add-cash    { border:2px solid #8aef7a; color:#8aef7a; }
 .lg-add-upi     { border:2px solid #5dcaff; color:#5dcaff; }
 .lg-add-expense { border:2px solid #cc7a47; color:#cc7a47; }
+.lg-box-purchase { background:#1a1408; border:2px solid #6a5220; }
+.lg-box-purchase .lg-box-num { color:#c9a24b; }
+.lg-box-purchase .lg-box-amt { color:#e8c870; }
+.lg-add-purchase { border:2px solid #c9a24b; color:#e8c870; }
+.lgpur-toggle { display:flex; gap:8px; margin-bottom:12px; }
+.lgpur-tg { flex:1; border-radius:9px; padding:10px; text-align:center; font-size:12px; font-weight:700; border:1.5px solid #24365a; background:#0c1830; color:#8aa0d8; cursor:pointer; }
+.lgpur-tg.on-nakad { background:#0f2e22; border-color:#2f6a48; color:#7fef7b; }
+.lgpur-tg.on-udhaar { background:#2a0e12; border-color:#c04a42; color:#ff8a7a; }
+.lgpur-sup { margin-bottom:12px; }
+.lgpur-sup-lbl { font-size:11px; color:#e8c870; font-weight:600; margin-bottom:5px; display:block; }
+.lgpur-sup-inp { width:100%; box-sizing:border-box; background:#0c1830; border:1.5px solid #6a5220; border-radius:10px; padding:11px; font-size:13px; color:#e8dcc4; font-family:inherit; }
+.lgpur-photo-req { font-size:10px; color:#cc7a47; text-align:center; margin:2px 0 10px; }
 .lg-add:active { opacity:.7; }
 
 /* Compact modal keypad */
@@ -2651,6 +2663,20 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lg-box-grid" id="lg-grid-expense"></div>
     </div>
 
+    <!-- Purchase / खरीद section (5th block — photo-first, files into supplier ledger) -->
+    <div style="margin-bottom:18px;">
+      <div class="lg-cat-head">
+        <div class="lg-cat-head-left">
+          <span style="font-size:22px;">📦</span>
+          <span style="font-size:17px;color:#c9a24b;font-weight:700;">Purchase / खरीद</span>
+          <div class="lg-pill" style="background:#221a08;border:1px solid #6a5220;color:#e8c870;"><span class="lg-dot" style="background:#e8c870;"></span>LIVE</div>
+        </div>
+        <div style="font-size:11px;color:#c9a24b;font-weight:500;" id="lg-pur-meta">₹0 · 0 एंट्री</div>
+      </div>
+      <div class="lg-cat-sub">माल की खरीद · बिल की फोटो से</div>
+      <div class="lg-box-grid" id="lg-grid-purchase"></div>
+    </div>
+
     <!-- Manual Save / Closing button (or "saved" banner when done) -->
     <div id="lg-save-area">
       <button class="lg-save-btn" onclick="lgConfirmClosing()">💾 Closing करें / Save</button>
@@ -2667,6 +2693,17 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lg-modal-head">
         <div class="lg-modal-title" id="lg-keypad-title">💵 नकद · एंट्री 1</div>
         <div class="lg-modal-close" onclick="lgCloseKeypad()">✕</div>
+      </div>
+      <div id="lgpur-fields" style="display:none;">
+        <div class="lgpur-toggle">
+          <div class="lgpur-tg on-nakad" id="lgpur-tg-nakad" onclick="lgPurSetPay('nakad')">💵 नकद</div>
+          <div class="lgpur-tg" id="lgpur-tg-udhaar" onclick="lgPurSetPay('udhaar')">📋 उधार</div>
+        </div>
+        <div class="lgpur-sup">
+          <label class="lgpur-sup-lbl">🏪 सप्लायर का नाम</label>
+          <input type="text" class="lgpur-sup-inp" id="lgpur-supplier" maxlength="40" placeholder="जैसे: रमेश ट्रेडर्स" autocomplete="off">
+        </div>
+        <div class="lgpur-photo-req" id="lgpur-photo-req">📷 बिल की फोटो ज़रूरी है</div>
       </div>
       <div class="lgp-row">
         <div class="lg-display" id="lg-keypad-display">
@@ -5063,6 +5100,7 @@ function lgRenderDay(date, blocked) {
   lgRenderGrid('cash');
   lgRenderGrid('upi');
   lgRenderGrid('expense');
+  lgRenderGrid('purchase');
   lgRenderSaveArea();
   if(typeof renderCreditGrid==='function')renderCreditGrid();
 }
@@ -5099,7 +5137,7 @@ function lgRenderGrid(type) {
   const totalAmt = allBoxes.reduce((s,b) => s + b.amount, 0);
 
   // Update meta line
-  const metaEl = document.getElementById(type === 'cash' ? 'lg-cash-meta' : type === 'upi' ? 'lg-upi-meta' : 'lg-exp-meta');
+  const metaEl = document.getElementById(type === 'cash' ? 'lg-cash-meta' : type === 'upi' ? 'lg-upi-meta' : type === 'purchase' ? 'lg-pur-meta' : 'lg-exp-meta');
   metaEl.textContent = fmt(totalAmt) + ' · ' + allBoxes.length + ' एंट्री';
 
   // Make scrollable if more than threshold rows
@@ -5188,12 +5226,23 @@ function lgOpenKeypad(type, editN) {
   }
   const _camEl = document.getElementById('lgp-cam');
   if (_camEl) { if (type === 'expense') _camEl.classList.add('hide'); else _camEl.classList.remove('hide'); }
+  // Purchase: show नकद/उधार toggle + supplier field; prefill on edit.
+  var _purF = document.getElementById('lgpur-fields');
+  if (_purF) _purF.style.display = (type === 'purchase') ? 'block' : 'none';
+  if (type === 'purchase') {
+    window.lgPurPay = 'nakad';
+    var _pbx = (editN !== null) ? (window.lgState.rec.lgBoxes || []).filter(b => b.type === 'purchase')[editN - 1] : null;
+    if (_pbx) { window.lgPurPay = _pbx.pay === 'udhaar' ? 'udhaar' : 'nakad'; }
+    lgPurSetPay(window.lgPurPay);
+    var _supEl = document.getElementById('lgpur-supplier');
+    if (_supEl) _supEl.value = (_pbx && _pbx.supplier) ? _pbx.supplier : '';
+  }
   lgpPaintTile();
   // Title — show entry number
   const r = window.lgState.rec;
   const existingCount = (r.lgBoxes || []).filter(b => b.type === type).length;
   const entryNum = editN !== null ? editN : (existingCount + 1);
-  const labels = { cash: '💵 नकद', upi: '📱 UPI', expense: '🧾 खर्चा' };
+  const labels = { cash: '💵 नकद', upi: '📱 UPI', expense: '🧾 खर्चा', purchase: '📦 खरीद' };
   const action = editN !== null ? 'सुधारें' : 'एंट्री';
   document.getElementById('lg-keypad-title').textContent = labels[type] + ' · ' + action + ' ' + entryNum;
 
@@ -5371,12 +5420,54 @@ function lgpViewBill() {
 }
 /* ===== END LIVE HISAAB BILL PHOTO ===== */
 
+function lgPurSetPay(pay){
+  window.lgPurPay = (pay === 'udhaar') ? 'udhaar' : 'nakad';
+  var n = document.getElementById('lgpur-tg-nakad'), u = document.getElementById('lgpur-tg-udhaar');
+  if (n) n.className = 'lgpur-tg' + (window.lgPurPay === 'nakad' ? ' on-nakad' : '');
+  if (u) u.className = 'lgpur-tg' + (window.lgPurPay === 'udhaar' ? ' on-udhaar' : '');
+}
+function lgCommitPurchase(amt){
+  var _ph = window.lgPhoto || {};
+  var sup = (document.getElementById('lgpur-supplier').value || '').trim().slice(0,40);
+  if (!(_ph.thumb || _ph.url)) { toast('❌ बिल की फोटो ज़रूरी है', true); return; }
+  if (!sup) { toast('❌ सप्लायर का नाम भरें', true); return; }
+  var pay = (window.lgPurPay === 'udhaar') ? 'उधार' : 'नकद';
+  var note = (window.lgKeypad.note || '').trim().slice(0,80);
+  var r = window.lgState.rec;
+  var date = r.date;
+  var _maal = { date: date, supplier: sup, name: '', amount: amt, pay: pay, note: note, src: 'livehisaab' };
+  if (_ph.thumb) _maal.billThumb = _ph.thumb;
+  if (_ph.url)   _maal.billUrl   = _ph.url;
+  if (_ph.path)  _maal.billPath  = _ph.path;
+  DB.push(K.MAAL, _maal);
+  // Mirror a purchase box onto today's Live Hisaab (visual record only — the K.MAAL
+  // record is the financial source of truth for the supplier ledger).
+  if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
+  var pboxes = r.lgBoxes.filter(function(b){return b.type==='purchase';});
+  var pbox = { n: pboxes.length+1, type:'purchase', amount:amt, note:('सप्लायर: '+sup).slice(0,80), pay: window.lgPurPay, supplier: sup, ts: Date.now() };
+  if (_ph.thumb) pbox.billThumb = _ph.thumb;
+  if (_ph.url)   pbox.billUrl   = _ph.url;
+  if (_ph.path)  pbox.billPath  = _ph.path;
+  r.lgBoxes.push(pbox);
+  if (window.lgState.isToday) { r.lgSaved = false; r.lgSavedAt = null; }
+  if (typeof lgPersistRec === 'function') lgPersistRec(r);
+  if (_ph.blob && typeof lgpUpload === 'function') lgpUpload(pbox, _ph.blob, r);
+  lgCloseKeypad();
+  if (typeof lgRenderTotals === 'function') lgRenderTotals();
+  lgRenderGrid('purchase');
+  if (typeof lgRenderSaveArea === 'function') lgRenderSaveArea();
+  if (typeof renderSuppliers === 'function') renderSuppliers();
+  if (typeof loadMaalHome === 'function') loadMaalHome();
+  toast('✓ खरीद '+sup+' के खाते में जुड़ गई');
+}
 function lgCommitBox() {
   const amt = parseInt(window.lgKeypad.amount) || 0;
   if (amt <= 0) {
     toast('❌ अंक डालें', true);
     return;
   }
+  // ---- Purchase branch: photo + amount + supplier required, writes to K.MAAL ----
+  if (window.lgKeypad.type === 'purchase') { lgCommitPurchase(amt); return; }
   const r = window.lgState.rec;
   if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
   const type = window.lgKeypad.type;

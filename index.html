@@ -2836,12 +2836,12 @@ body.notif-modal-open { overflow: hidden; }
 .ucchip-scroll::-webkit-scrollbar{width:5px;}
 .ucchip-scroll::-webkit-scrollbar-thumb{background:#5a2a34;border-radius:3px;}
 .ucchip-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:9px;}
-.ucchip{background:linear-gradient(180deg,#1e0e16,#160a10);border:1px solid #6a2430;border-radius:12px;padding:11px 9px;font-size:12px;color:#ff9a8a;font-weight:600;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
-.ucchip:active{opacity:.65;}
-.ucchip-empty{padding:16px;text-align:center;font-size:11px;color:#8a7078;}
+.ucchip{background:linear-gradient(160deg,#e23a4a,#b3202f);border:1px solid #ff6a72;border-radius:13px;padding:13px 9px;font-size:12.5px;color:#fff;font-weight:700;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;box-shadow:0 3px 9px rgba(200,40,50,.32),inset 0 1px 2px rgba(255,255,255,.18);}
+.ucchip:active{transform:scale(.96);box-shadow:0 1px 4px rgba(200,40,50,.4);}
+.ucchip-empty{padding:16px;text-align:center;font-size:11px;color:#8a7078;grid-column:1/-1;}
 .ucchip-hint{font-size:9px;color:#8a7078;text-align:center;margin-bottom:10px;}
-.ucnew-btn{width:100%;border:1.5px dashed #c04a42;background:#170b10;border-radius:12px;padding:13px;font-size:13px;font-weight:700;color:#ff9a8a;cursor:pointer;margin-top:2px;}
-.ucnew-btn:active{opacity:.7;}
+.ucnew-btn{width:100%;border:none;border-radius:13px;padding:14px;font-size:13.5px;font-weight:800;color:#04140d;cursor:pointer;margin-top:4px;background:linear-gradient(180deg,#f0d288,#e0b358 46%,#cc9a44);box-shadow:0 4px 13px rgba(200,150,60,.34),inset 0 1px 2px rgba(255,255,255,.4);}
+.ucnew-btn:active{transform:scale(.98);}
 .credit-phone-row{display:flex;gap:8px;}
   .credit-pick{flex-shrink:0;width:48px;border:1.5px solid #2a4078;border-radius:11px;background:#13234a;color:#d4a850;font-size:18px;cursor:pointer;}
   .credit-listbtn{width:100%;margin-top:14px;padding:13px;border-radius:12px;border:2px dashed #d4a850;background:rgba(212,168,80,.08);color:#e8c870;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 0 13px rgba(212,168,80,.16);}
@@ -8384,21 +8384,15 @@ function ucChipTap(flow,key){
   document.getElementById('ucfile-yes').style.background=hasPhone?'linear-gradient(135deg,#2f9c5f,#42c07d)':'linear-gradient(135deg,#d4a850,#e8c870)';
   document.getElementById('ucfile-yes').style.color=hasPhone?'#fff':'#2a1c06';
   document.getElementById('ucfile-msg').innerHTML='₹'+pack.total.toLocaleString('en-IN')+' का उधार इनके खाते में जोड़ें'+(hasPhone?' और <b>WhatsApp भेजें</b>?':'?<br><small style="color:#8a97b8;">(नंबर नहीं है — WhatsApp नहीं जाएगा)</small>');
-  document.getElementById('ucfile-confirm').style.display='flex';
+  var _uc=document.getElementById('ucfile-confirm');_uc.style.display='flex';_uc.style.alignItems='center';
 }
 function ucFileNo(){document.getElementById('ucfile-confirm').style.display='none';}
 function ucFileYes(){
   document.getElementById('ucfile-confirm').style.display='none';
   var p=window._ucPick; if(!p)return;
   var c=p.cust, phone=(c.phone||'').trim(), date=TSTR;
-  DB.push(K.UDHAAR,{date:date,custName:c.name||'ग्राहक',custPhone:phone,items:p.items,amount:p.total,payments:[],paid:0,ts:Date.now()});
   if(phone&&String(phone).replace(/[^0-9]/g,'').length>=7)_sendCreditBill(c.name,phone,p.items,p.total,date);
-  if(p.flow==='bp'){ if(typeof billPhotoClose==='function')billPhotoClose(); }
-  else { if(typeof creditListClose==='function')creditListClose(); }
-  if(typeof renderCreditGrid==='function')renderCreditGrid();
-  if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
-  if(typeof renderUdhaarList==='function')renderUdhaarList();
-  toast('✅ उधार जुड़ गया — '+(c.name||'ग्राहक')+' · '+_crFmt(p.total));
+  _ucFile(p.flow, c.name||'ग्राहक', phone, p.items, p.total, date, c.key);
 }
 function ucNewOpen(flow){
   window._ucFlow=flow;
@@ -8407,7 +8401,7 @@ function ucNewOpen(flow){
   document.getElementById('ucnew-name').value='';
   document.getElementById('ucnew-phone').value='';
   document.getElementById('ucnew-date').value=TSTR;
-  document.getElementById('ucnew-modal').style.display='flex';
+  var _un=document.getElementById('ucnew-modal');_un.style.display='flex';_un.style.alignItems='center';
 }
 function ucNewClose(){document.getElementById('ucnew-modal').style.display='none';}
 function ucNewPickContact(){
@@ -8422,15 +8416,29 @@ function ucNewSave(){
   if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}
   var pack=_ucCollectItems();
   if(!pack.items.length||pack.total<=0){toast('पहले सामान/रकम भरें',true);return;}
-  DB.push(K.UDHAAR,{date:date,custName:name,custPhone:phone,items:pack.items,amount:pack.total,payments:[],paid:0,ts:Date.now()});
   if(phone)_sendCreditBill(name,phone,pack.items,pack.total,date);
   ucNewClose();
+  _ucFile(flow, name, phone, pack.items, pack.total, date, null);
+}
+function _ucFile(flow, name, phone, items, total, date, custKey){
+  var rec={date:date,custName:name,custPhone:phone,items:items,amount:total,payments:[],paid:0,ts:Date.now()};
+  var bp=(flow==='bp')?window._billPhoto:null;
+  if(bp&&bp.thumb){ rec.billThumb=bp.thumb; rec.billPath='bills/'+CURRENT_UID+'/bill_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)+'.jpg'; }
+  var id=DB.push(K.UDHAAR,rec);
+  var recId=(rec&&rec.id)?rec.id:id;
+  if(bp&&bp.blob&&window._storage&&window._st&&CURRENT_UID){
+    var sref=window._st.ref(window._storage,rec.billPath);
+    window._st.uploadBytes(sref,bp.blob).then(function(){return window._st.getDownloadURL(sref);}).then(function(url){
+      try{ DB.update(K.UDHAAR,recId,{billUrl:url}); if(typeof renderUdhaarProfile==='function'&&custKey)renderUdhaarProfile(custKey); }catch(e){}
+    }).catch(function(){});
+  }
   if(flow==='bp'){ if(typeof billPhotoClose==='function')billPhotoClose(); }
   else { if(typeof creditListClose==='function')creditListClose(); }
   if(typeof renderCreditGrid==='function')renderCreditGrid();
   if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
   if(typeof renderUdhaarList==='function')renderUdhaarList();
-  toast('✅ उधार save हुआ — '+name+' · '+_crFmt(pack.total));
+  if(custKey&&typeof renderUdhaarProfile==='function')renderUdhaarProfile(custKey);
+  toast('✅ उधार जुड़ गया — '+name+' · '+_crFmt(total));
 }
 function creditListSaveNew(){var rows=document.getElementById('credit-list-rows'),items=[],t=0,n=0;rows.querySelectorAll('.cl-row').forEach(function(row){var p=row.querySelector('.cl-prod').value.trim();var a=parseInt(row.querySelector('.cl-amt').value||'0',10)||0;if(p||a){n++;items.push({n:n,product:p.slice(0,30),amount:a});t+=a;}});if(!items.length){toast('कम से कम एक सामान भरें',true);return;}var name=(document.getElementById('cl-name').value||'').trim();var phone=(document.getElementById('cl-phone').value||'').trim();var date=document.getElementById('cl-date').value||TSTR;if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}DB.push(K.UDHAAR,{date:date,custName:name,custPhone:phone,items:items,amount:t,payments:[],paid:0,ts:Date.now()});if(phone)_sendCreditBill(name,phone,items,t,date);creditListClose();if(typeof renderCreditGrid==='function')renderCreditGrid();if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();toast('✅ उधार save हुआ — '+name+' · '+_crFmt(t));}
 function openBillViewer(id){
@@ -9188,7 +9196,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
 </script>
 
-<div class="credit-bd" id="ucnew-modal" style="display:none;" onclick="if(event.target===this)ucNewClose()">
+<div class="credit-bd" id="ucnew-modal" style="display:none;align-items:center;" onclick="if(event.target===this)ucNewClose()">
   <div class="lg-modal-card" style="max-width:330px;">
     <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#e23a3a,#ff6a4a,#d4a850);"></div>
     <div class="lg-modal-body">
@@ -9200,7 +9208,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     </div>
   </div>
 </div>
-<div class="credit-bd" id="ucfile-confirm" style="display:none;">
+<div class="credit-bd" id="ucfile-confirm" style="display:none;align-items:center;">
   <div class="lg-modal-card" style="max-width:320px;">
     <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#2f9c5f,#42c07d,#7fe0a8);"></div>
     <div class="lg-modal-body" style="text-align:center;">

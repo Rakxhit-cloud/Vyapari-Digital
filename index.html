@@ -2651,20 +2651,6 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lg-box-grid" id="lg-grid-cash"></div>
     </div>
 
-    <!-- उधार बिक्री section (Credit → separate udhaar ledger, totals untouched) -->
-    <div style="margin-bottom:18px;">
-      <div class="lg-cat-head">
-        <div class="lg-cat-head-left">
-          <span style="font-size:22px;">📕</span>
-          <span style="font-size:17px;color:#ff8a7a;font-weight:700;">उधार बिक्री</span>
-          <div class="lg-pill lg-pill-red"><span class="lg-dot lg-dot-red"></span>LIVE</div>
-        </div>
-        <div style="font-size:11px;color:#ff8a7a;font-weight:500;" id="lg-credit-meta">₹0 · 0 एंट्री</div>
-      </div>
-      <div class="lg-cat-sub">Credit Sales · ग्राहक का उधार — उधार Book में जाता है</div>
-      <div class="lg-box-grid" id="lg-grid-credit"></div>
-    </div>
-
     <!-- UPI बिक्री section -->
     <div style="margin-bottom:18px;">
       <div class="lg-cat-head">
@@ -3055,6 +3041,19 @@ body.notif-modal-open { overflow: hidden; }
     <div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#2a1212,#1d0e0e);border:1px solid #c23030;border-radius:12px;padding:12px 14px;margin-bottom:14px;">
       <span style="font-size:12px;color:#ff8a7a;font-weight:700;">↩ कुल मिलना है (Receivable)</span>
       <span id="ub-total" style="font-size:18px;color:#f0c890;font-weight:800;">₹0</span>
+    </div>
+    <!-- आज का उधार — moved from Live हिसाब (credit never feeds daily totals) -->
+    <div style="border:1px solid #6a2430;border-radius:12px;padding:12px;margin-bottom:14px;background:linear-gradient(180deg,rgba(232,69,69,.06),rgba(16,28,58,.4));">
+      <div class="lg-cat-head">
+        <div class="lg-cat-head-left">
+          <span style="font-size:20px;">📕</span>
+          <span style="font-size:15px;color:#ff8a7a;font-weight:700;">आज का उधार</span>
+          <div class="lg-pill lg-pill-red"><span class="lg-dot lg-dot-red"></span>LIVE</div>
+        </div>
+        <div style="font-size:11px;color:#ff8a7a;font-weight:500;" id="lg-credit-meta">₹0 · 0 एंट्री</div>
+      </div>
+      <div class="lg-cat-sub">आज ग्राहक को दिया उधार</div>
+      <div class="lg-box-grid" id="lg-grid-credit"></div>
     </div>
     <input id="ub-search" placeholder="🔍 नाम से ग्राहक खोजें…" style="width:100%;background:#0b1430;border:1.5px solid #2a4078;border-radius:12px;padding:12px 14px;color:#cdd8f8;font-size:13px;margin-bottom:12px;" oninput="if(window.renderUdhaarList)window.renderUdhaarList()"/>
     <div id="ub-list">
@@ -5867,7 +5866,7 @@ function go(id){
   if(id==='s-monthly')loadMonthly();
   if(id==='s-goal')loadGoalScreen();
   if(id==='s-suppliers')renderSuppliers();
-  if(id==='s-udhaar-book'&&window.renderUdhaarList)renderUdhaarList();
+  if(id==='s-udhaar-book'){ if(window.renderUdhaarList)renderUdhaarList(); if(typeof renderCreditGrid==='function')renderCreditGrid(); }
   if(id==='s-udhaar-customer'&&window.renderUdhaarProfile&&window.ucKey)renderUdhaarProfile(window.ucKey);
   if(id==='s-home'&&window.updateUdhaarTotals)updateUdhaarTotals();
 }
@@ -5899,6 +5898,7 @@ window._refreshCurrentScreen = function(){
         break;
       case 's-udhaar-book':
         if(window.renderUdhaarList) renderUdhaarList();
+        if(typeof renderCreditGrid==='function') renderCreditGrid();
         break;
       case 's-udhaar-customer':
         if(window.renderUdhaarProfile && window.ucKey) renderUdhaarProfile(window.ucKey);

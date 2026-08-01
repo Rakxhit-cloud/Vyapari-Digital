@@ -3111,6 +3111,27 @@ body.notif-modal-open { overflow: hidden; }
     <div class="uc-recv" onclick="creditAddToCustomer()" style="background:linear-gradient(135deg,#e23a3a,#b82828);border-color:#ff8a7a;color:#fff;margin-bottom:10px;">➕ नया उधार जोड़ें</div>
     <div class="uc-recv" onclick="ucPayOpen()">💰 Payment आया</div>
     <div id="uc-ledger"></div>
+    <div id="uc-selbar" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:2000030;background:linear-gradient(180deg,#1a0e14,#12090e);border-top:1px solid #6a2430;padding:12px 16px calc(12px + env(safe-area-inset-bottom));align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button onclick="ucExitSelect()" style="width:32px;height:32px;border:1px solid #4a5a7a;background:transparent;border-radius:9px;color:#cfe0f4;font-size:15px;">✕</button>
+        <span id="uc-selcount" style="font-size:14px;font-weight:700;color:#fff;">0 चुने</span>
+      </div>
+      <button onclick="ucDeleteSelected()" style="background:linear-gradient(135deg,#e23a3a,#b82828);border:none;border-radius:10px;padding:11px 20px;color:#fff;font-size:14px;font-weight:800;">🗑️ हटाएँ</button>
+    </div>
+    <div class="credit-bd" id="uc-seldel-confirm" style="display:none;align-items:center;z-index:2000040;">
+      <div class="lg-modal-card" style="max-width:320px;">
+        <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#e23a3a,#ff6a4a,#d4a850);"></div>
+        <div class="lg-modal-body" style="text-align:center;">
+          <div style="font-size:32px;margin-bottom:8px;">🗑️</div>
+          <div style="font-size:15px;font-weight:700;color:#ff8a7a;margin-bottom:5px;">एंट्री हटाएँ?</div>
+          <div style="font-size:12.5px;color:#c8d4e8;margin-bottom:15px;" id="uc-seldel-msg">—</div>
+          <div style="display:flex;gap:9px;">
+            <button onclick="ucDeleteSelectedYes()" style="flex:1;background:linear-gradient(135deg,#e23a3a,#b82828);border:none;border-radius:10px;padding:13px;color:#fff;font-size:13px;font-weight:800;">हाँ, हटाएँ</button>
+            <button onclick="ucDeleteSelectedNo()" style="flex:1;background:transparent;border:1px solid #4a5a7a;border-radius:10px;padding:13px;color:#9aa8c4;font-size:13px;font-weight:600;">नहीं</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <!-- पैसे मिले popup -->
@@ -3306,6 +3327,7 @@ body.notif-modal-open { overflow: hidden; }
         <div class="ucchip-scroll"><div class="ucchip-grid" id="bp-chips"></div></div>
         <div class="ucchip-hint" id="bp-chips-hint">↕ और ग्राहक के लिए scroll करें</div>
         <button class="ucnew-btn" onclick="ucNewOpen('bp')">➕ नया ग्राहक जोड़ें</button>
+        <button class="bp-saveshare" id="bp-direct-save" style="display:none;margin-top:4px;" onclick="bpDirectSave()">💾 Save करें & WhatsApp भेजें</button>
         <input type="hidden" id="bp-name"><input type="hidden" id="bp-phone"><input type="hidden" id="bp-date">
       </div>
     </div>
@@ -8237,23 +8259,38 @@ function _ucCtxClear(){
 function _bpApplyCustMode(){
   var g=function(i){return document.getElementById(i);};
   var c=window.bpCustCtx;
-  var fld=function(id){var e=g(id);return e?e.closest('.credit-fld'):null;};
-  var nm=fld('bp-name'), ph=fld('bp-phone'), dt=fld('bp-date');
-  var sv=g('bp-save-btn');
+  // chips + नया ग्राहक section (the whole "pick a customer" UI)
+  var secEls=[g('bp-chips'),g('bp-chips-hint')];
+  var chipSec=g('bp-chips')?g('bp-chips').closest('.ucchip-scroll'):null;
+  var chipLbl=null; // the "पहले से ग्राहक" label — hide via sibling walk
+  var scrollWrap=g('bp-chips')?g('bp-chips').closest('.ucchip-scroll'):null;
+  var newBtn=document.querySelector('#bp-details-stage .ucnew-btn');
+  var directSave=g('bp-direct-save');
   if(c){
-    if(nm)nm.style.display='none';
-    if(ph)ph.style.display='none';
-    if(dt)dt.style.display='none';
-    if(g('bp-date'))g('bp-date').value=TSTR;
+    // Customer already fixed (from profile) — hide the chip picker + नया ग्राहक,
+    // show a direct Save+Share button under the amount.
+    if(scrollWrap)scrollWrap.style.display='none';
+    var _lbl=document.querySelector('#bp-details-stage .ucchip-sec'); if(_lbl)_lbl.style.display='none';
+    var _hint=g('bp-chips-hint'); if(_hint)_hint.style.display='none';
+    if(newBtn)newBtn.style.display='none';
     _ucStripFill(g('bp-cust-strip'),c);
-    if(sv)sv.textContent=c.phone?'💾 Save करें & WhatsApp भेजें':'💾 उधार Save करें';
+    if(directSave){directSave.style.display='block';directSave.textContent=c.phone?'💾 Save करें & WhatsApp भेजें':'💾 उधार Save करें';}
   }else{
-    if(nm)nm.style.display='';
-    if(ph)ph.style.display='';
-    if(dt)dt.style.display='';
+    if(scrollWrap)scrollWrap.style.display='';
+    var _lbl2=document.querySelector('#bp-details-stage .ucchip-sec'); if(_lbl2)_lbl2.style.display='';
+    if(newBtn)newBtn.style.display='';
     _ucStripFill(g('bp-cust-strip'),null);
-    if(sv)sv.textContent='💾 Save करें & WhatsApp भेजें';
+    if(directSave)directSave.style.display='none';
   }
+}
+function bpDirectSave(){
+  // Save+share for the locked-customer photo path (customer known from profile).
+  var c=window.bpCustCtx; if(!c){toast('ग्राहक नहीं मिला',true);return;}
+  window._ucFlow='bp';
+  var tot=parseInt((document.getElementById('bp-total').value||'0'),10)||0;
+  if(tot<=0){toast('पहले रकम भरें',true);return;}
+  var phone=(c.phone||'').trim();
+  _ucFile('bp', c.name||'ग्राहक', phone, [], tot, TSTR, c.key);
 }
 
 function creditAddToCustomerList(){
@@ -8747,7 +8784,70 @@ function renderUdhaarList(){
 }
 function openUdhaarProfile(key){window.ucKey=key;go('s-udhaar-customer');renderUdhaarProfile(key);}
 function _udDate(ds){if(!ds)return '';var p=String(ds).split('-');if(p.length<3)return ds;var m=['जन','फर','मार्च','अप्रैल','मई','जून','जुल','अग','सित','अक्टू','नव','दिस'];return parseInt(p[2])+' '+(m[parseInt(p[1])-1]||'')+' '+p[0];}
+/* ===== Multi-select delete inside a customer profile (long-press) ===== */
+window._ucSel={on:false,ids:{},key:null,timer:null};
+function ucRowPressStart(id){
+  if(window._ucSel.timer)clearTimeout(window._ucSel.timer);
+  window._ucSel.timer=setTimeout(function(){ ucEnterSelect(id); if(navigator.vibrate){try{navigator.vibrate(18);}catch(e){}} },500);
+}
+function ucRowPressEnd(){ if(window._ucSel.timer){clearTimeout(window._ucSel.timer);window._ucSel.timer=null;} }
+function ucEnterSelect(id){
+  window._ucSel.on=true; window._ucSel.ids={}; if(id)window._ucSel.ids[id]=1;
+  window._ucSel.key=(window.ucCust?window.ucCust.key:null);
+  _ucPaintSel();
+}
+function ucExitSelect(){ window._ucSel.on=false; window._ucSel.ids={}; _ucPaintSel(); }
+function ucRowTap(ev,id,openFn){
+  if(window._ucSel.on){
+    ev.stopPropagation();
+    if(window._ucSel.ids[id])delete window._ucSel.ids[id]; else window._ucSel.ids[id]=1;
+    if(Object.keys(window._ucSel.ids).length===0){ ucExitSelect(); return; }
+    _ucPaintSel(); return;
+  }
+  if(typeof openFn==='function')openFn();
+}
+function _ucPaintSel(){
+  var rows=document.querySelectorAll('#uc-ledger .uc-entry-row');
+  rows.forEach(function(r){
+    var id=r.getAttribute('data-eid'), sel=window._ucSel.on&&window._ucSel.ids[id];
+    r.style.outline=sel?'2px solid #ff6a6a':'';
+    r.style.outlineOffset=sel?'-1px':'';
+    r.style.background=sel?'linear-gradient(135deg,#2a1220,#1a0e18)':'linear-gradient(135deg,#0d1632,#0b1228)';
+    var ck=r.querySelector('.uc-selck');
+    if(window._ucSel.on){
+      if(!ck){ck=document.createElement('div');ck.className='uc-selck';ck.style.cssText='position:absolute;top:6px;right:8px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;';r.appendChild(ck);}
+      ck.style.background=sel?'#e23a3a':'rgba(255,255,255,.08)';
+      ck.style.border=sel?'none':'1.5px solid #4a5a7a';
+      ck.style.color='#fff';
+      ck.textContent=sel?'✓':'';
+    }else if(ck){ck.remove();}
+  });
+  var bar=document.getElementById('uc-selbar');
+  if(bar){
+    var n=Object.keys(window._ucSel.ids).length;
+    bar.style.display=window._ucSel.on?'flex':'none';
+    var cnt=document.getElementById('uc-selcount'); if(cnt)cnt.textContent=n+' चुने';
+  }
+}
+function ucDeleteSelected(){
+  var ids=Object.keys(window._ucSel.ids); if(!ids.length)return;
+  var cfm=document.getElementById('uc-seldel-confirm');
+  document.getElementById('uc-seldel-msg').textContent=ids.length+' एंट्री हटाएँ? यह वापस नहीं होगा।';
+  cfm.style.display='flex';
+}
+function ucDeleteSelectedYes(){
+  document.getElementById('uc-seldel-confirm').style.display='none';
+  var ids=Object.keys(window._ucSel.ids), key=window._ucSel.key;
+  ids.forEach(function(id){ try{DB.remove(K.UDHAAR,id);}catch(e){} });
+  ucExitSelect();
+  if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
+  if(typeof renderUdhaarList==='function')renderUdhaarList();
+  if(key&&typeof renderUdhaarProfile==='function')renderUdhaarProfile(key);
+  toast('🗑️ '+ids.length+' एंट्री हटाई');
+}
+function ucDeleteSelectedNo(){document.getElementById('uc-seldel-confirm').style.display='none';}
 function renderUdhaarProfile(key){
+  window._ucSel={on:false,ids:{},key:null,timer:null};
   var c=udhaarCustomers().find(function(x){return x.key===key;});
   if(!c){go('s-udhaar-book');return;}
   window.ucCust=c;
@@ -8791,7 +8891,7 @@ function renderUdhaarProfile(key){
         var _th=_hb?('<img src="'+(t.billThumb||'')+'" onclick="event.stopPropagation();openBillViewer(\''+t.id+'\')" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1.5px solid #34518f;flex-shrink:0;cursor:pointer;">'):'';
         var _sl=_hb?'🧾 बिल देखें ›':'सूची देखें ›';
         var _oc=_hb?('openBillViewer(\''+t.id+'\')'):('openEntryList(\''+t.id+'\')');
-        lh+='<div onclick="'+_oc+'" style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;">'+_th+
+        lh+='<div class="uc-entry-row" data-eid="'+t.id+'" onclick="ucRowTap(event,\''+t.id+'\',function(){'+_oc+'})" ontouchstart="ucRowPressStart(\''+t.id+'\')" ontouchend="ucRowPressEnd()" ontouchmove="ucRowPressEnd()" oncontextmenu="event.preventDefault();ucEnterSelect(\''+t.id+'\');return false;" style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;position:relative;">'+_th+
           '<span style="font-size:13px;color:#ff8a7a;font-weight:700;flex-shrink:0;">'+sn+'.</span>'+
           '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+_title+'</div><div style="font-size:10px;color:#7fa0d8;margin-top:3px;">'+_sl+'</div></div>'+
           '<div style="text-align:right;margin-left:4px;"><div style="color:#ff8a7a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(226,58,58,.15);border:1px solid #c23030;color:#ff8a7a;">उधार लिया</span></div></div>';
@@ -8804,6 +8904,8 @@ function openEntryList(id){
   var r=(DB.get(K.UDHAAR)||[]).find(function(x){return x.id===id;});
   if(!r||r.type==='payment')return;
   window.creditListMode='entry';var _cf=document.getElementById('cl-cust-fields');if(_cf)_cf.style.display='none';
+  var _ecb=document.getElementById('cl-contact-btn'); if(_ecb)_ecb.style.display='none';
+  var _est=document.getElementById('cl-steps'); if(_est)_est.style.display='none';
   window.creditListEntryId=id;
   var editable=true;
   window.creditListEditable=editable;

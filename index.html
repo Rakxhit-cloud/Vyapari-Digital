@@ -8348,8 +8348,9 @@ window._ucFlow=null;
 function _ucCollectItems(){
   if(window._ucFlow==='bp'){
     var tot=parseInt((document.getElementById('bp-total').value||'0'),10)||0;
-    var its=(window._billPhoto&&window._billPhoto.items)?window._billPhoto.items:[{n:1,product:'बिल फोटो',amount:tot}];
-    return {items:its,total:tot};
+    // Photo entries carry NO typed line items — the bill image + total ARE the record.
+    // (Storing a synthetic 'बिल फोटो' row previously leaked into the List editor.)
+    return {items:[],total:tot};
   }
   var rows=document.getElementById('credit-list-rows'),items=[],t=0,n=0;
   rows.querySelectorAll('.cl-row').forEach(function(row){var p=row.querySelector('.cl-prod').value.trim();var a=parseInt(row.querySelector('.cl-amt').value||'0',10)||0;if(p||a){n++;items.push({n:n,product:p.slice(0,30),amount:a});t+=a;}});
@@ -8774,12 +8775,13 @@ function renderUdhaarProfile(key){
         var it='';
         if(t.items&&t.items.length)it=t.items.map(function(x){return _cesc(x.product||'')+(x.amount?(' ₹'+x.amount):'');}).filter(Boolean).join(' · ');
         var _hb=(t.billThumb||t.billUrl);
+        var _title=it||(_hb?'🧾 बिल':'उधार');
         var _th=_hb?('<img src="'+(t.billThumb||'')+'" onclick="event.stopPropagation();openBillViewer(\''+t.id+'\')" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1.5px solid #34518f;flex-shrink:0;cursor:pointer;">'):'';
         var _sl=_hb?'🧾 बिल देखें ›':'सूची देखें ›';
         var _oc=_hb?('openBillViewer(\''+t.id+'\')'):('openEntryList(\''+t.id+'\')');
         lh+='<div onclick="'+_oc+'" style="background:linear-gradient(135deg,#0d1632,#0b1228);border:1px solid #213357;border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;">'+_th+
           '<span style="font-size:13px;color:#ff8a7a;font-weight:700;flex-shrink:0;">'+sn+'.</span>'+
-          '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(it||'उधार')+'</div><div style="font-size:10px;color:#7fa0d8;margin-top:3px;">'+_sl+'</div></div>'+
+          '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+_title+'</div><div style="font-size:10px;color:#7fa0d8;margin-top:3px;">'+_sl+'</div></div>'+
           '<div style="text-align:right;margin-left:4px;"><div style="color:#ff8a7a;font-weight:800;font-size:15.5px;">'+fmt(t.amount)+'</div><span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(226,58,58,.15);border:1px solid #c23030;color:#ff8a7a;">उधार लिया</span></div></div>';
       }
     });
@@ -9196,7 +9198,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 
 </script>
 
-<div class="credit-bd" id="ucnew-modal" style="display:none;align-items:center;" onclick="if(event.target===this)ucNewClose()">
+<div class="credit-bd" id="ucnew-modal" style="display:none;align-items:center;z-index:2000010;" onclick="if(event.target===this)ucNewClose()">
   <div class="lg-modal-card" style="max-width:330px;">
     <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#e23a3a,#ff6a4a,#d4a850);"></div>
     <div class="lg-modal-body">
@@ -9208,7 +9210,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     </div>
   </div>
 </div>
-<div class="credit-bd" id="ucfile-confirm" style="display:none;align-items:center;">
+<div class="credit-bd" id="ucfile-confirm" style="display:none;align-items:center;z-index:2000020;">
   <div class="lg-modal-card" style="max-width:320px;">
     <div class="lg-modal-stripe" style="background:linear-gradient(90deg,#2f9c5f,#42c07d,#7fe0a8);"></div>
     <div class="lg-modal-body" style="text-align:center;">

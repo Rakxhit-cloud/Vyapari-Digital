@@ -8375,7 +8375,7 @@ function ucChipTap(flow,key){
   var c=custs.find(function(x){return x.key===key;}); if(!c)return;
   window._ucFlow=flow;
   var pack=_ucCollectItems();
-  if(!pack.items.length||pack.total<=0){toast('पहले सामान/रकम भरें',true);return;}
+  if(pack.total<=0||(window._ucFlow!=='bp'&&!pack.items.length)){toast('पहले सामान/रकम भरें',true);return;}
   window._ucPick={flow:flow,cust:c,items:pack.items,total:pack.total};
   var hasPhone=!!(c.phone&&String(c.phone).replace(/[^0-9]/g,'').length>=7);
   document.getElementById('ucfile-ico').textContent=hasPhone?'💬':'📕';
@@ -8392,13 +8392,14 @@ function ucFileYes(){
   document.getElementById('ucfile-confirm').style.display='none';
   var p=window._ucPick; if(!p)return;
   var c=p.cust, phone=(c.phone||'').trim(), date=TSTR;
-  if(phone&&String(phone).replace(/[^0-9]/g,'').length>=7)_sendCreditBill(c.name,phone,p.items,p.total,date);
+  // List बनाएं (non-photo): send the text bill link. Photo flow shares the image inside _ucFile.
+  if(p.flow!=='bp'&&phone&&String(phone).replace(/[^0-9]/g,'').length>=7)_sendCreditBill(c.name,phone,p.items,p.total,date);
   _ucFile(p.flow, c.name||'ग्राहक', phone, p.items, p.total, date, c.key);
 }
 function ucNewOpen(flow){
   window._ucFlow=flow;
   var pack=_ucCollectItems();
-  if(!pack.items.length||pack.total<=0){toast('पहले सामान/रकम भरें',true);return;}
+  if(pack.total<=0||(window._ucFlow!=='bp'&&!pack.items.length)){toast('पहले सामान/रकम भरें',true);return;}
   document.getElementById('ucnew-name').value='';
   document.getElementById('ucnew-phone').value='';
   document.getElementById('ucnew-date').value=TSTR;
@@ -8416,8 +8417,8 @@ function ucNewSave(){
   var date=document.getElementById('ucnew-date').value||TSTR;
   if(!name){toast('❌ ग्राहक का नाम भरें',true);return;}
   var pack=_ucCollectItems();
-  if(!pack.items.length||pack.total<=0){toast('पहले सामान/रकम भरें',true);return;}
-  if(phone)_sendCreditBill(name,phone,pack.items,pack.total,date);
+  if(pack.total<=0||(window._ucFlow!=='bp'&&!pack.items.length)){toast('पहले सामान/रकम भरें',true);return;}
+  if(flow!=='bp'&&phone)_sendCreditBill(name,phone,pack.items,pack.total,date);
   ucNewClose();
   _ucFile(flow, name, phone, pack.items, pack.total, date, null);
 }
@@ -8425,6 +8426,17 @@ function _ucFile(flow, name, phone, items, total, date, custKey){
   var rec={date:date,custName:name,custPhone:phone,items:items,amount:total,payments:[],paid:0,ts:Date.now()};
   var bp=(flow==='bp')?window._billPhoto:null;
   if(bp&&bp.thumb){ rec.billThumb=bp.thumb; rec.billPath='bills/'+CURRENT_UID+'/bill_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)+'.jpg'; }
+  // Photo flow: fire the native app-picker to share the actual bill IMAGE (user
+  // chooses WhatsApp/app + contact). This replaces the text-only wa.me link.
+  if(bp&&bp.blob){
+    try{
+      var biz=(localStorage.getItem('hk_business_name')||'दुकान');
+      var file=new File([bp.blob],'bill.jpg',{type:'image/jpeg'});
+      var shareData={files:[file],text:'🧾 List Total: ₹'+total.toLocaleString('en-IN')+String.fromCharCode(10)+biz+' — Live Khaata'};
+      if(navigator.canShare&&navigator.canShare(shareData)){ navigator.share(shareData).catch(function(){}); }
+      else if(phone&&typeof _sendCreditBill==='function'){ _sendCreditBill(name,phone,items,total,date); }
+    }catch(e){ if(phone&&typeof _sendCreditBill==='function')_sendCreditBill(name,phone,items,total,date); }
+  }
   var id=DB.push(K.UDHAAR,rec);
   var recId=(rec&&rec.id)?rec.id:id;
   if(bp&&bp.blob&&window._storage&&window._st&&CURRENT_UID){

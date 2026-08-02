@@ -3866,6 +3866,21 @@ window._fsLoadAll = async function(uid) {
 // Used by BOTH _fsLoadAll (initial login load) and the realtime listener below,
 // so the Phase 3 conflict rules (newest updatedAt wins, never drop data) live in
 // exactly ONE place. Returns true if the local cache actually changed.
+// Ids deleted locally in the last few seconds — the realtime onSnapshot merge must
+// NOT re-add these while Firestore deletes are still propagating (multi-delete race).
+window._recentlyDeleted = window._recentlyDeleted || {};
+window._markDeleted = function(id){
+  if(!id) return;
+  window._recentlyDeleted[id] = Date.now();
+  // auto-expire after 12s (well past cloud round-trip)
+  setTimeout(function(){ try{ delete window._recentlyDeleted[id]; }catch(e){} }, 12000);
+};
+window._isRecentlyDeleted = function(id){
+  var t = window._recentlyDeleted[id];
+  if(!t) return false;
+  if(Date.now()-t > 12000){ delete window._recentlyDeleted[id]; return false; }
+  return true;
+};
 window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
   if (!uid || uid === 'default' || !Array.isArray(cloudItems) || !cloudItems.length) return false;
   const lsKey = 'hk_' + uid + '_' + colName;
@@ -3874,6 +3889,9 @@ window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
   const merged = [...local];
   let changed = false;
   cloudItems.forEach(ci => {
+    // Suppress entries the user just deleted on this device — don't resurrect them
+    // while the Firestore delete is still in flight.
+    if (window._isRecentlyDeleted && window._isRecentlyDeleted(ci.id)) { return; }
     const idx = merged.findIndex(r => r.id === ci.id);
     if (idx > -1) {
       // Phase 3 conflict resolution — newest edit wins, never drop data.
@@ -4886,6 +4904,7 @@ const DB = {
     if (i > -1) { a[i] = { ...a[i], ...u, updatedAt: Date.now() }; this.set(k, a); if (window._fsWrite) window._fsWrite(CURRENT_UID, k, a[i]); }
   },
   remove(k, id) {
+    if (window._markDeleted) window._markDeleted(id);
     this.set(k, this.get(k).filter(r => r.id !== id));
     if (window._fsDelete) window._fsDelete(CURRENT_UID, k, id);
   }
@@ -8840,11 +8859,21 @@ function ucDeleteSelected(){
 }
 function ucDeleteSelectedYes(){
   document.getElementById('uc-seldel-confirm').style.display='none';
-  var ids=Object.keys(window._ucSel.ids), key=window._ucSel.key;
+  var ids=Object.keys(window._ucSel.ids).filter(function(x){return !!x;}), key=window._ucSel.key;
+  var n=ids.length;
   // Capture this customer's name/phone BEFORE deleting (to preserve an empty profile).
   var custName='ग्राहक', custPhone='';
   try{ var _c=(udhaarCustomers().find(function(x){return x.key===key;})); if(_c){custName=_c.name||'ग्राहक';custPhone=_c.phone||'';} }catch(e){}
-  ids.forEach(function(id){ try{DB.remove(K.UDHAAR,id);}catch(e){} });
+  // Mark every id deleted up-front (so any in-flight merge already suppresses them),
+  // then remove them all from local in one pass, then persist once.
+  ids.forEach(function(id){ if(window._markDeleted)window._markDeleted(id); });
+  var idset={}; ids.forEach(function(id){ idset[id]=1; });
+  try{
+    var arr=(DB.get(K.UDHAAR)||[]).filter(function(r){ return !(r&&idset[r.id]); });
+    DB.set(K.UDHAAR, arr);
+  }catch(e){}
+  // Fire cloud deletes for each id (DB.remove would re-filter; we already set local).
+  ids.forEach(function(id){ try{ if(window._fsDelete)window._fsDelete(CURRENT_UID,K.UDHAAR,id); }catch(e){} });
   // If deleting emptied the customer entirely, leave a zero placeholder so the
   // profile + chip persist (customers are derived from K.UDHAAR records).
   try{
@@ -8855,7 +8884,7 @@ function ucDeleteSelectedYes(){
   if(typeof updateUdhaarTotals==='function')updateUdhaarTotals();
   if(typeof renderUdhaarList==='function')renderUdhaarList();
   if(key&&typeof renderUdhaarProfile==='function')renderUdhaarProfile(key);
-  toast('🗑️ '+ids.length+' एंट्री हटाई');
+  toast('🗑️ '+n+' एंट्री हटाई');
 }
 function ucDeleteSelectedNo(){document.getElementById('uc-seldel-confirm').style.display='none';}
 function renderUdhaarProfile(key){

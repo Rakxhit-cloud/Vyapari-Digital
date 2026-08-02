@@ -8789,7 +8789,7 @@ function _udDate(ds){if(!ds)return '';var p=String(ds).split('-');if(p.length<3)
 window._ucSel={on:false,ids:{},key:null,timer:null};
 function ucRowPressStart(id){
   if(window._ucSel.timer)clearTimeout(window._ucSel.timer);
-  window._ucSel.timer=setTimeout(function(){ ucEnterSelect(id); if(navigator.vibrate){try{navigator.vibrate(18);}catch(e){}} },500);
+  window._ucSel.timer=setTimeout(function(){ window._ucSel.justEntered=true; setTimeout(function(){window._ucSel.justEntered=false;},400); ucEnterSelect(id); if(navigator.vibrate){try{navigator.vibrate(18);}catch(e){}} },500);
 }
 function ucRowPressEnd(){ if(window._ucSel.timer){clearTimeout(window._ucSel.timer);window._ucSel.timer=null;} }
 function ucEnterSelect(id){
@@ -8797,10 +8797,12 @@ function ucEnterSelect(id){
   window._ucSel.key=(window.ucCust?window.ucCust.key:null);
   _ucPaintSel();
 }
-function ucExitSelect(){ window._ucSel.on=false; window._ucSel.ids={}; _ucPaintSel(); }
+function ucExitSelect(){ window._ucSel.on=false; window._ucSel.ids={}; window._ucSel.justEntered=false; _ucPaintSel(); }
 function ucRowTap(ev,id,openFn){
   if(window._ucSel.on){
     ev.stopPropagation();
+    // Ignore the click that immediately follows the long-press that entered select mode.
+    if(window._ucSel.justEntered){ window._ucSel.justEntered=false; return; }
     if(window._ucSel.ids[id])delete window._ucSel.ids[id]; else window._ucSel.ids[id]=1;
     if(Object.keys(window._ucSel.ids).length===0){ ucExitSelect(); return; }
     _ucPaintSel(); return;

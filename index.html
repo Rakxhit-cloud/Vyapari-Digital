@@ -8899,7 +8899,7 @@ function udhaarCustomers(){
     if(r.type==='payment')c.paid+=Number(r.amount||0); else c.credit+=Number(r.amount||0);
     c.txns.push(r); if((r.ts||0)>c.last)c.last=r.ts||0;
   });
-  return Object.keys(map).map(function(k){var c=map[k];c.outstanding=c.credit-c.paid;return c;});
+  return Object.keys(map).map(function(k){var c=map[k];c.outstanding=c.credit-c.paid;c.kept=c.txns.some(function(t){return t&&t.placeholder;});return c;});
 }
 function udhaarTotalReceivable(){return udhaarCustomers().reduce(function(s,c){return s+Math.max(0,c.outstanding);},0);}
 function updateUdhaarTotals(){
@@ -8960,7 +8960,7 @@ function renderUdhaarList(){
   var box=document.getElementById('ub-list'); if(!box)return;
   var sEl=document.getElementById('ub-search');
   var q=((sEl&&sEl.value)||'').trim().toLowerCase();
-  var custs=udhaarCustomers().filter(function(c){return c.credit>0;});
+  var custs=udhaarCustomers().filter(function(c){return c.credit>0||c.kept;});
   custs.sort(function(a,b){return b.last-a.last;});
   if(q)custs=custs.filter(function(c){return c.name.toLowerCase().indexOf(q)>-1||(c.phone||'').indexOf(q)>-1;});
   if(!custs.length){
@@ -9050,6 +9050,12 @@ function ucDeleteSelectedYes(){
     var arr=(DB.get(K.UDHAAR)||[]).filter(function(r){ return !(r&&idset[r.id]); });
     DB.set(K.UDHAAR, arr);
   }catch(e){}
+  // If this emptied the customer entirely, keep the profile alive with a zero
+  // placeholder (profiles persist until deleted via profile multi-select).
+  try{
+    var still=(DB.get(K.UDHAAR)||[]).some(function(r){return r&&!r.placeholder&&_custKey(r.custName,r.custPhone)===key;});
+    if(!still){ DB.push(K.UDHAAR,{date:TSTR,custName:custName,custPhone:custPhone,items:[],amount:0,payments:[],paid:0,placeholder:true,ts:Date.now()}); }
+  }catch(e){}
   // Fire cloud deletes for each id (DB.remove would re-filter; we already set local).
   ids.forEach(function(id){ try{ if(window._fsDelete)window._fsDelete(CURRENT_UID,K.UDHAAR,id); }catch(e){} });
   ucExitSelect();
@@ -9069,7 +9075,7 @@ function renderUdhaarProfile(key){
   var first=((c.name||'?').trim().charAt(0)||'?').toUpperCase();
   document.getElementById('uc-name').textContent=c.name;
   document.getElementById('uc-avatar').textContent=first;
-  var nCredit=c.txns.filter(function(t){return t.type!=='payment';}).length;
+  var nCredit=c.txns.filter(function(t){return t.type!=='payment'&&!t.placeholder;}).length;
   document.getElementById('uc-meta').textContent=nCredit+' उधार · CREDIT LEDGER';
   document.getElementById('uc-credit').textContent=fmt(c.credit);
   document.getElementById('uc-paid').textContent=fmt(c.paid);
@@ -9086,7 +9092,7 @@ function renderUdhaarProfile(key){
     cbox.innerHTML='<div style="font-size:12px;color:#94a0c4;text-align:center;padding:6px;">📞 कोई नंबर नहीं — entry edit करके जोड़ें</div>';
   }
   var byDate={};
-  c.txns.forEach(function(t){ (byDate[t.date]=byDate[t.date]||[]).push(t);});
+  c.txns.forEach(function(t){ if(t&&t.placeholder)return; (byDate[t.date]=byDate[t.date]||[]).push(t);});
   var dates=Object.keys(byDate).sort(function(a,b){return a<b?1:(a>b?-1:0);}),lh='';
   dates.forEach(function(d){
     var day=byDate[d].slice().sort(function(a,b){return (a.ts||0)-(b.ts||0);});

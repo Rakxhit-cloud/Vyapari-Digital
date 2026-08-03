@@ -1351,8 +1351,9 @@ body.notif-modal-open { overflow: hidden; }
 .lgpur-sup-lbl { font-size:11px; color:#e8c870; font-weight:600; margin-bottom:5px; display:block; }
 .lgpur-sup-inp { width:100%; box-sizing:border-box; background:#0c1830; border:1.5px solid #6a5220; border-radius:10px; padding:11px; font-size:13px; color:#e8dcc4; font-family:inherit; }
 .lgpur-photo-req { font-size:10px; color:#cc7a47; text-align:center; margin:2px 0 10px; }
-.lgp-upload-strip { border:1.5px solid #3a6ea8; background:linear-gradient(180deg,#0e1c30,#0a1626); border-radius:11px; padding:11px; text-align:center; font-size:12.5px; font-weight:700; color:#7fc4ff; margin:2px 0 4px; cursor:pointer; }
-.lgp-upload-strip:active { opacity:.7; }
+.lgp-upload-strip { display:flex; align-items:center; justify-content:center; gap:10px; border:1.5px solid #c0902f; background:linear-gradient(180deg,#181005,#0e0903); border-radius:12px; padding:15px; text-align:center; font-size:14px; font-weight:800; color:#f5d68a; margin:4px 0 4px; cursor:pointer; box-shadow:0 4px 11px rgba(0,0,0,.55), inset 0 1px 2px rgba(240,200,120,.2); }
+.lgp-upload-strip .lgp-up-em { font-size:22px; line-height:1; }
+.lgp-upload-strip:active { transform:scale(.98); box-shadow:0 2px 6px rgba(0,0,0,.5), inset 0 1px 2px rgba(240,200,120,.2); }
 .lgpc-sec { font-size:10px; color:#8aa0d8; font-weight:700; margin:2px 0 8px; text-transform:uppercase; letter-spacing:.3px; }
 .lgpc-chips-scroll { max-height:132px; overflow-y:auto; margin-bottom:6px; border:1px solid #24365a; border-radius:11px; background:#0a1424; }
 .lgpc-chips-scroll::-webkit-scrollbar { width:5px; }
@@ -2731,7 +2732,7 @@ body.notif-modal-open { overflow: hidden; }
       </div>
       <input id="lgp-file" type="file" accept="image/*" capture="environment" style="display:none;" onchange="lgpFileChosen(event)">
       <input id="lgp-file-upload" type="file" accept="image/*" style="display:none;" onchange="lgpFileChosen(event)">
-      <div class="lgp-upload-strip" onclick="lgpUploadPick()">📁 गैलरी से बिल चुनें</div>
+      <div class="lgp-upload-strip" onclick="lgpUploadPick()"><span class="lgp-up-em">🖼️</span> Upload from Gallery</div>
       <div class="lg-note-row" id="lg-note-row">
         <div class="lg-note-label">📝 Note <span>optional</span></div>
         <input type="text" class="lg-note-input" id="lg-note-input" maxlength="80" placeholder="रमेश जी / उधार…" oninput="window.lgKeypad.note=this.value" autocomplete="off">

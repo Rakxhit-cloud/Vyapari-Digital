@@ -2767,7 +2767,10 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lgpc-div">या नया सप्लायर</div>
       <div class="lgpc-fld">
         <label class="lgpc-flbl">🏪 सप्लायर का नाम</label>
-        <input type="text" class="lgpc-fin" id="lgpc-new-name" maxlength="40" placeholder="जैसे: रमेश ट्रेडर्स" autocomplete="off">
+        <div style="display:flex;gap:7px;">
+          <input type="text" class="lgpc-fin" id="lgpc-new-name" maxlength="40" placeholder="जैसे: रमेश ट्रेडर्स" autocomplete="off" style="flex:1;">
+          <button type="button" onclick="lgpcPickContact()" style="width:44px;flex-shrink:0;background:#132a4e;border:1px solid #3a6ea8;border-radius:9px;color:#9fd4ff;font-size:15px;cursor:pointer;">📇</button>
+        </div>
       </div>
       <div class="lgpc-fld">
         <label class="lgpc-flbl">📞 फ़ोन (optional)</label>
@@ -2979,7 +2982,7 @@ body.notif-modal-open { overflow: hidden; }
         <div class="mk-baki" id="sup-baki-strip"><span class="l">⚠ सप्लायर बाकी</span><span class="v" id="sup-baki">₹0</span></div>
       </div>
     </div>
-    <div class="mk-sec"><div class="bar"></div><div class="t">सप्लायर</div><div class="c" id="sup-count">0</div><div class="mk-addbtn" onclick="openMaalEntry('')"><span class="pl">+</span> नया</div></div>
+    <div class="mk-sec"><div class="bar"></div><div class="t">सप्लायर</div><div class="c" id="sup-count">0</div><div class="mk-addbtn" onclick="lgOpenPurchaseFor('')"><span class="pl">+</span> नया</div></div>
     <div class="mk-sub2">हर सप्लायर का खरीद + उधार हिसाब</div>
     <div class="mk-search"><span class="mk-search-ico">🔍</span><input type="text" id="sup-search" placeholder="नाम से सप्लायर खोजें…" oninput="renderSuppliers()"><span class="mk-search-clear" id="sup-search-clear" onclick="document.getElementById('sup-search').value='';renderSuppliers();" style="display:none;">✕</span></div>
     <div id="sup-list"></div>
@@ -2993,7 +2996,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="mk-av" id="mkp-av">?</div>
       <div><div class="mkp-name" id="mkp-name">—</div><div class="mkp-meta" id="mkp-meta">—</div></div>
     </div>
-    <div class="mkp-newrow"><div class="mkp-new" id="mkp-new" onclick="openMaalEntry(_mkProfileName||'')"><span class="pl">+</span> नई एंट्री</div></div>
+    <div class="mkp-newrow"><div class="mkp-new" id="mkp-new" onclick="lgOpenPurchaseFor(_mkProfileName||'')"><span class="pl">+</span> नई एंट्री</div></div>
   </div>
   <div class="mk-stripe"></div>
   <div class="fw">
@@ -5338,6 +5341,26 @@ function lgRenderSaveArea() {
 
 // ---------------- KEYPAD ----------------
 
+function lgOpenPurchaseFor(supplier){
+  // Ensure today's Live हिसाब record exists (purchase mirrors a box onto it).
+  try{
+    if(!window.lgState.rec){
+      window.lgState.date=TSTR; window.lgState.isToday=true;
+      window.lgState.rec=lgGetOrCreateRec(TSTR);
+    }
+  }catch(e){}
+  // Supplier lock: if a supplier name is given (entry from a profile), file directly to them.
+  window.lgPurSupCtx=(supplier&&supplier.trim())?supplier.trim():null;
+  // Prefill the supplier's phone (if we know it) for the direct-file path.
+  window.lgPurSupPhone='';
+  if(window.lgPurSupCtx){
+    try{
+      var _m=(DB.get(K.MAAL)||[]).filter(function(r){return r&&mkSupKey(r.supplier)===mkSupKey(window.lgPurSupCtx)&&r.supplierPhone;});
+      if(_m.length)window.lgPurSupPhone=_m[0].supplierPhone||'';
+    }catch(e){}
+  }
+  lgOpenKeypad('purchase', null);
+}
 function lgOpenKeypad(type, editN) {
   window.lgKeypad.type = type;
   window.lgKeypad.editN = editN; // null = adding new; otherwise editing the Nth box of this type
@@ -5406,6 +5429,7 @@ function lgOpenKeypad(type, editN) {
 }
 
 function lgCloseKeypad() {
+  window.lgPurSupCtx=null; window.lgPurSupPhone='';
   document.getElementById('lg-keypad-modal').classList.remove('show');
 }
 
@@ -5583,6 +5607,8 @@ function lgpcGoContact(amt){
   if (!(_ph.thumb || _ph.url)) { toast('❌ बिल की फोटो ज़रूरी है', true); return; }
   if (!(amt > 0)) { toast('❌ अंक डालें', true); return; }
   window._lgpcAmt = amt;
+  // Supplier locked (entry from a supplier profile) — skip the contact page, file directly.
+  if (window.lgPurSupCtx) { lgpcFile(window.lgPurSupCtx, window.lgPurSupPhone||''); return; }
   // Build supplier chips from distinct K.MAAL suppliers.
   var seen = {}, sups = [];
   (DB.get(K.MAAL) || []).forEach(function(m){
@@ -5631,6 +5657,10 @@ function lgpcConfirmNo(){ document.getElementById('lgpc-confirm').classList.remo
 function lgpcConfirmYes(){
   document.getElementById('lgpc-confirm').classList.remove('show');
   lgpcFile(window._lgpcPickName, window._lgpcPickPhone);
+}
+function lgpcPickContact(){
+  if(!(navigator.contacts&&navigator.contacts.select)){toast('यह सिर्फ Android Chrome में चलता है',true);return;}
+  navigator.contacts.select(['name','tel'],{multiple:false}).then(function(c){if(c&&c[0]){if(c[0].name&&c[0].name[0])document.getElementById('lgpc-new-name').value=c[0].name[0];if(c[0].tel&&c[0].tel[0])document.getElementById('lgpc-new-phone').value=String(c[0].tel[0]).replace(/[^0-9+]/g,'');}}).catch(function(){});
 }
 // Save a brand-new supplier from the manual fields.
 function lgpcSaveNew(){
@@ -6924,7 +6954,7 @@ function renderSuppliers(){
       <div class="mk-card-top"><div class="mk-av">${escHTML(av)}</div><div><div class="mk-name">${escHTML(g.name)}</div><div class="mk-meta">${g.count} खरीद · आखिरी ${fmtRelDate(g.last)}</div></div></div>
       <div class="mk-tots"><div class="mk-t mk-t-nakad"><div class="mk-t-lbl">नकद</div><div class="mk-t-val">${fmt(g.mNak)}</div></div><div class="mk-t mk-t-udhaar"><div class="mk-t-lbl">उधार</div><div class="mk-t-val">${fmt(g.mUdh)}</div></div></div>${bakiHtml}`;
     const sname=(g.name==='बिना नाम')?'':g.name;
-    card.querySelector('.mk-card-plus').onclick=(e)=>{e.stopPropagation();openMaalEntry(sname);};
+    card.querySelector('.mk-card-plus').onclick=(e)=>{e.stopPropagation();lgOpenPurchaseFor(sname);};
     card.style.cursor='pointer';
     card.setAttribute('data-sk', mkSupKey(g.name));
     card.setAttribute('data-sname', g.name);
@@ -6938,6 +6968,8 @@ function renderSuppliers(){
   });
 }
 function openMaalEntry(supplier){
+  // Old नई खरीद form retired — route to the Live हिसाब purchase flow.
+  if(typeof lgOpenPurchaseFor==='function'){ lgOpenPurchaseFor(supplier||''); return; }
   const ov=document.getElementById('mk-pop-overlay');
   document.getElementById('me-name').value='';
   document.getElementById('me-amount').value='';

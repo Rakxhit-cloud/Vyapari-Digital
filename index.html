@@ -5939,7 +5939,7 @@ function _lgpAddPageFiles(files){
   var take = files.slice(0, room);
   if(files.length>room) toast('सिर्फ '+room+' पेज और जोड़े गए ('+LGP_MAX_PAGES+' की सीमा)', true);
   toast('पेज तैयार हो रहे हैं…');
-  var jobs = take.map(function(f){ return _bpCompress(f, 1600, 0.8, 200, 0.6); });
+  var jobs = take.map(function(f){ return _bpCompress(f, 1600, 0.8, 400, 0.7); });
   Promise.all(jobs).then(function(results){
     results.forEach(function(r){ window.lgPhoto.pages.push({ blob:r.blob, thumb:r.thumb, dataUrl:null }); });
     _lgpRenderPdfConfirm();
@@ -6065,8 +6065,8 @@ function lgpUploadPdf(blob, onDone, onErr){
       return window._st.getDownloadURL(sref);
     }).then(function(url){
       if(typeof onDone==='function') onDone(url, path);
-    }).catch(function(){ if(onErr)onErr(); });
-  }catch(e){ if(onErr)onErr(); }
+    }).catch(function(e){ if(onErr)onErr(e); });
+  }catch(e){ if(onErr)onErr(e); }
 }
 function lgpUpload(box, blob, rec, onDone) {
   try {
@@ -6257,10 +6257,11 @@ function lgpcFile(sup, phone){
           pbox.billPdfUrl = url; pbox.billPdfPath = path;
           if (typeof lgPersistRec === 'function') lgPersistRec(r);
           if (typeof renderSupplierProfile === 'function') renderSupplierProfile();
+          if (typeof loadMaalHome === 'function') loadMaalHome();
           toast('✓ '+_ph.pages.length+'-पेज बिल सेव हो गया');
         } catch(e) {}
-      }, function(){ toast('PDF अपलोड नहीं हुआ — बाद में दोबारा जोड़ें', true); });
-    }).catch(function(){ toast('PDF नहीं बन पाया', true); });
+      }, function(err){ toast('PDF upload fail: '+(err&&err.code?err.code:(err&&err.message?err.message:'unknown')), true); });
+    }).catch(function(err){ toast('PDF build fail: '+(err&&err.message?err.message:'unknown'), true); });
   } else if (_ph.blob && typeof lgpUpload === 'function') lgpUpload(pbox, _ph.blob, r, function(url, path){
     try {
       DB.update(K.MAAL, _maalId, { billUrl: url, billPath: path });
@@ -9258,6 +9259,18 @@ function openBillViewer(id){
     var _pdfRow=g('bv-pdf-row'); var _isPdfBill=!!(r.isPdf||r.billPdfUrl);
     if(_pdfRow)_pdfRow.style.display=_isPdfBill?'flex':'none';
     var _cam=document.querySelector('#bv-udhaar .bv-a-cam'); if(_cam)_cam.style.display=_isPdfBill?'none':'';
+    // PDF cover: show the first-page thumb contained (not stretched), with a page hint.
+    var _bvi=g('bv-img');
+    if(_isPdfBill && _bvi){
+      _bvi.style.objectFit='contain'; _bvi.style.maxHeight='40vh'; _bvi.style.background='#0b1430';
+      var _pc=r.pageCount||''; 
+      var _hint=g('bv-pdf-hint');
+      if(!_hint){ _hint=document.createElement('div'); _hint.id='bv-pdf-hint'; _hint.style.cssText='text-align:center;font-size:12px;color:#f0c878;font-weight:700;margin:6px 0 2px;'; _bvi.parentNode.parentNode.insertBefore(_hint, _bvi.parentNode.nextSibling); }
+      _hint.style.display='block'; _hint.textContent='📄 '+_pc+' पेज का बिल — पूरा देखने के लिए नीचे "सारे पेज खोलें" दबाएँ';
+    } else {
+      var _bvi2=g('bv-img'); if(_bvi2){_bvi2.style.objectFit='';_bvi2.style.maxHeight='';}
+      var _h2=g('bv-pdf-hint'); if(_h2)_h2.style.display='none';
+    }
   } else {
     var t=g('bv-title'); if(t)t.textContent='🧾 '+(r.custName||'ग्राहक')+' · '+fmtDate(r.date||TSTR);
     var tt=g('bv-total'); if(tt)tt.textContent=_crFmt(r.amount||0);

@@ -1459,7 +1459,7 @@ body.notif-modal-open { overflow: hidden; }
 .lg-box.has-note .lg-box-num { padding-right:7px; }
 .lgp-row { display:flex; gap:8px; margin-bottom:10px; align-items:stretch; }
 .lgp-row .lg-display { flex:1; margin-bottom:0; }
-.lgp-cam { flex:0 0 62px; background:#081223; border:2px dashed #d4a850; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:#e8c870; cursor:pointer; }
+.lgp-cam { flex:0 0 62px; background:#081223; border:2px dashed #d4a850; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:#e8c870; cursor:pointer;  position:relative; overflow:hidden;}
 .lgp-cam:active { opacity:.7; }
 .lgp-cam svg { width:24px; height:24px; }
 .lgp-cam span { font-size:8.5px; font-weight:800; letter-spacing:.2px; }
@@ -5898,7 +5898,8 @@ function lgpPaintTile() {
   var src = ph.thumb || ph.url || '';
   if (src) {
     el.classList.add('has');
-    el.innerHTML = '<img src="' + src + '" alt="bill">';
+    var _pdfBadge = (ph.isPdf && ph.pages && ph.pages.length>1) ? '<span style="position:absolute;bottom:0;left:0;right:0;background:rgba(192,40,40,.92);color:#fff;font-size:8px;font-weight:800;text-align:center;padding:1px 0;">📄 '+ph.pages.length+' पेज</span>' : '';
+    el.innerHTML = '<img src="' + src + '" alt="bill">' + _pdfBadge;
   } else {
     el.classList.remove('has');
     el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#e8c870" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>बिल</span>';
@@ -6025,6 +6026,22 @@ function lgpConfirmClose() {
 }
 
 function lgpConfirmOk() {
+  // Multi-page PDF mode: pages already compressed; just confirm & paint (PDF built at save).
+  if (window.lgPhoto.isPdf && window.lgPhoto.pages && window.lgPhoto.pages.length) {
+    if (window.lgPhoto.pages.length === 1) {
+      // single page left -> treat as a normal single image
+      var only = window.lgPhoto.pages[0];
+      window.lgPhoto.isPdf = false;
+      window.lgPhoto.blob = only.blob; window.lgPhoto.thumb = only.thumb;
+      window.lgPhoto.url = ''; window.lgPhoto.path = ''; window.lgPhoto.pages = [];
+    } else {
+      window.lgPhoto.thumb = (window.lgPhoto.pages[0] && window.lgPhoto.pages[0].thumb) || '';
+      window.lgPhoto.pageCount = window.lgPhoto.pages.length;
+    }
+    lgpConfirmClose();
+    lgpPaintTile();
+    return;
+  }
   var f = window.lgPhoto.rawFile;
   if (!f) { toast('पहले फोटो लें', true); return; }
   toast('तैयार हो रहा है…');

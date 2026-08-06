@@ -9290,15 +9290,16 @@ function bvOpenPdf(){
 }
 function bvSharePdf(){
   var r=window._bvEntry; if(!r||!r.billPdfUrl){toast('PDF अभी तैयार नहीं है',true);return;}
-  toast('PDF तैयार हो रहा है…');
-  fetch(r.billPdfUrl).then(function(resp){return resp.blob();}).then(function(blob){
+  var url=r.billPdfUrl;
+  toast('जाँच हो रही है…');
+  fetch(url).then(function(resp){return resp.blob();}).then(function(blob){
     var file=new File([blob],'bill.pdf',{type:'application/pdf'});
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      return navigator.share({files:[file],title:'बिल'});
-    } else {
-      try{ window.open(r.billPdfUrl,'_blank'); }catch(e){ location.href=r.billPdfUrl; }
-    }
-  }).catch(function(){ try{ window.open(r.billPdfUrl,'_blank'); }catch(e){} });
+    var hasShare    = !!navigator.share;
+    var hasCanShare = !!navigator.canShare;
+    var canFiles    = hasCanShare ? navigator.canShare({files:[file]}) : false;
+    toast('share:'+hasShare+' canShare:'+hasCanShare+' files:'+canFiles+' size:'+Math.round(blob.size/1024)+'KB', true);
+    if(canFiles){ navigator.share({files:[file],title:'बिल'}).catch(function(e){ toast('share threw: '+(e&&e.name?e.name:'?'),true); }); }
+  }).catch(function(e){ toast('fetch fail: '+(e&&e.message?e.message:'?'),true); });
 }
 
 /* ===== bill viewer actions (udhaar photo entries only) ===== */

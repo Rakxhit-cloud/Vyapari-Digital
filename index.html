@@ -5554,28 +5554,28 @@ function lgUpdateMaalPurchaseExpense(maalId,newAmount,newNote,fb){
 function lgAutoSavePastDays() {
   if (!CURRENT_UID || CURRENT_UID === 'default') return [];
   const list = DB.get(K.BIKRI);
+  // Respect the recent-saved marker so a day finalized in the last hour is not
+  // re-saved / re-notified when a cloud sync momentarily clobbers lgSaved.
+  let recentlySaved = {};
+  try { recentlySaved = JSON.parse(localStorage.getItem('hk_lg_recent_saves_' + CURRENT_UID) || '{}'); } catch(e){}
+  const now = Date.now();
   const autoSaved = [];
   list.forEach(r => {
     if (!r.date || !(r.date < TSTR)) return;
     if (!Array.isArray(r.lgBoxes) || r.lgBoxes.length === 0) return;
     if (r.lgSaved === true) return;
-    // This past day has entries but was never closed → finalize it silently.
+    const ts = recentlySaved[r.date] || 0;
+    if (ts && (now - ts) < 3600000) return;
     r.lgSaved = true;
     r.lgSavedAt = Date.now();
-    // Mirror the recent-saves marker the rest of the code relies on.
-    try {
-      const key = 'hk_lg_recent_saves_' + CURRENT_UID;
-      let recent = {};
-      try { recent = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e){}
-      recent[r.date] = Date.now();
-      Object.keys(recent).forEach(k => {
-        if ((Date.now() - recent[k]) > 3600000) delete recent[k];
-      });
-      localStorage.setItem(key, JSON.stringify(recent));
-    } catch(e){}
+    recentlySaved[r.date] = Date.now();
     lgPersistRec(r);
     autoSaved.push(r.date);
   });
+  try {
+    Object.keys(recentlySaved).forEach(k => { if ((Date.now() - recentlySaved[k]) > 3600000) delete recentlySaved[k]; });
+    localStorage.setItem('hk_lg_recent_saves_' + CURRENT_UID, JSON.stringify(recentlySaved));
+  } catch(e){}
   autoSaved.sort();
   return autoSaved;
 }
@@ -9291,15 +9291,18 @@ function bvOpenPdf(){
 function bvSharePdf(){
   var r=window._bvEntry; if(!r||!r.billPdfUrl){toast('PDF अभी तैयार नहीं है',true);return;}
   var url=r.billPdfUrl;
-  toast('जाँच हो रही है…');
+  var phone=r.supplierPhone||r.custPhone||'';
+  var waLink = phone
+    ? ('https://wa.me/'+_waNum(phone)+'?text='+encodeURIComponent('📄 बिल: '+url))
+    : ('https://api.whatsapp.com/send?text='+encodeURIComponent('📄 बिल: '+url));
+  toast('तैयार हो रहा है…');
   fetch(url).then(function(resp){return resp.blob();}).then(function(blob){
     var file=new File([blob],'bill.pdf',{type:'application/pdf'});
-    var hasShare    = !!navigator.share;
-    var hasCanShare = !!navigator.canShare;
-    var canFiles    = hasCanShare ? navigator.canShare({files:[file]}) : false;
-    toast('share:'+hasShare+' canShare:'+hasCanShare+' files:'+canFiles+' size:'+Math.round(blob.size/1024)+'KB', true);
-    if(canFiles){ navigator.share({files:[file],title:'बिल'}).catch(function(e){ toast('share threw: '+(e&&e.name?e.name:'?'),true); }); }
-  }).catch(function(e){ toast('fetch fail: '+(e&&e.message?e.message:'?'),true); });
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      return navigator.share({files:[file],title:'बिल'}).catch(function(){});
+    }
+    window.open(waLink,'_blank');
+  }).catch(function(){ window.open(waLink,'_blank'); });
 }
 
 /* ===== bill viewer actions (udhaar photo entries only) ===== */

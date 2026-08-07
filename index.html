@@ -9291,18 +9291,18 @@ function bvOpenPdf(){
 function bvSharePdf(){
   var r=window._bvEntry; if(!r||!r.billPdfUrl){toast('PDF अभी तैयार नहीं है',true);return;}
   var url=r.billPdfUrl;
-  var phone=r.supplierPhone||r.custPhone||'';
-  var waLink = phone
-    ? ('https://wa.me/'+_waNum(phone)+'?text='+encodeURIComponent('📄 बिल: '+url))
-    : ('https://api.whatsapp.com/send?text='+encodeURIComponent('📄 बिल: '+url));
+  var who=r.supplier||r.custName||'';
+  var cap='📄 बिल'+(who?(' — '+who):'')+'\nकुल: '+_crFmt(r.amount||0);
   toast('तैयार हो रहा है…');
-  fetch(url).then(function(resp){return resp.blob();}).then(function(blob){
+  fetch(url).then(function(resp){ if(!resp.ok) throw new Error('http '+resp.status); return resp.blob(); }).then(function(blob){
     var file=new File([blob],'bill.pdf',{type:'application/pdf'});
     if(navigator.canShare && navigator.canShare({files:[file]})){
-      return navigator.share({files:[file],title:'बिल'}).catch(function(){});
+      navigator.share({files:[file], text:cap, title:'बिल'}).catch(function(){});
+    } else {
+      toast('इस फ़ोन से सीधा फ़ाइल शेयर नहीं होता — PDF खोलकर WhatsApp चुनें',true);
+      try{ window.open(url,'_blank'); }catch(e){}
     }
-    window.open(waLink,'_blank');
-  }).catch(function(){ window.open(waLink,'_blank'); });
+  }).catch(function(e){ toast('PDF load नहीं हुआ ('+(e&&e.message?e.message:'?')+') — CORS सेट करें',true); });
 }
 
 /* ===== bill viewer actions (udhaar photo entries only) ===== */

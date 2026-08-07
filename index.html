@@ -1709,6 +1709,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="alck-key del" data-k="del">⌫</div>
     </div>
     <div class="alck-recovery" id="alck-recovery-link" onclick="alckStartRecovery()">PIN भूल गए?</div>
+    <div class="alck-recovery" id="alck-switch-account-link" onclick="alckSwitchAccount()" style="margin-top:9px;color:#7a90c8;">📱 दूसरे नंबर से लॉगिन करें</div>
   </div>
 
   <div class="alck-card" id="alck-mode-lockout" style="display:none;">
@@ -4661,6 +4662,7 @@ function launchApp(uid) {
   if (nameEl) nameEl.classList.add('hidden');
 
   // FIRE PIN LOCK FIRST — before any content renders, so user sees lock immediately
+  try { if (window._alckSetUid) window._alckSetUid(uid); } catch(e){}
   if (window.alckInit) window.alckInit();
 
   // Show main-app underneath (splash z-index 99999 still covers it; lock z-index
@@ -7917,15 +7919,48 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
 (function(){
   'use strict';
 
-  const PIN_HASH_KEY = 'hk_pin_hash';
-  const PIN_SALT_KEY = 'hk_pin_salt';
-  const ATTEMPTS_KEY = 'hk_pin_attempts';
-  const LOCKOUT_UNTIL_KEY = 'hk_pin_lockout_until';
-  const LAST_ACTIVITY_KEY = 'hk_pin_last_activity';
-  const BIO_ENABLED_KEY = 'hk_pin_bio_enabled';
+  let PIN_HASH_KEY = 'hk_pin_hash';
+  let PIN_SALT_KEY = 'hk_pin_salt';
+  let ATTEMPTS_KEY = 'hk_pin_attempts';
+  let LOCKOUT_UNTIL_KEY = 'hk_pin_lockout_until';
+  let LAST_ACTIVITY_KEY = 'hk_pin_last_activity';
+  let BIO_ENABLED_KEY = 'hk_pin_bio_enabled';
+  let BIO_CREDID_KEY = 'hk_pin_bio_credid';
+  let BIO_USERID_KEY = 'hk_pin_user_id';
+  let BIO_OFFERED_KEY = 'hk_pin_bio_offered';
   const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
   const LOCKOUT_DURATION = 20 * 60 * 1000; // 20 minutes
   const MAX_ATTEMPTS = 3;
+
+  // Per-account PIN scoping. Called from launchApp(uid) before the lock inits.
+  // Repoints every PIN/bio key to a uid-suffixed name and does a one-time
+  // migration of any legacy GLOBAL pin so existing users keep their PIN while
+  // different accounts on the same device never collide.
+  function _applyUidScope(uid){
+    var sfx = uid ? ('_' + uid) : '';
+    var bases = {
+      PIN_HASH_KEY:'hk_pin_hash', PIN_SALT_KEY:'hk_pin_salt', ATTEMPTS_KEY:'hk_pin_attempts',
+      LOCKOUT_UNTIL_KEY:'hk_pin_lockout_until', LAST_ACTIVITY_KEY:'hk_pin_last_activity',
+      BIO_ENABLED_KEY:'hk_pin_bio_enabled', BIO_CREDID_KEY:'hk_pin_bio_credid',
+      BIO_USERID_KEY:'hk_pin_user_id', BIO_OFFERED_KEY:'hk_pin_bio_offered'
+    };
+    try {
+      if (sfx && !localStorage.getItem('hk_pin_hash' + sfx) && localStorage.getItem('hk_pin_hash')) {
+        Object.keys(bases).forEach(function(k){ var g=bases[k], v=localStorage.getItem(g); if (v!==null) localStorage.setItem(g+sfx, v); });
+        Object.keys(bases).forEach(function(k){ localStorage.removeItem(bases[k]); });
+      }
+    } catch(e){}
+    PIN_HASH_KEY      = bases.PIN_HASH_KEY + sfx;
+    PIN_SALT_KEY      = bases.PIN_SALT_KEY + sfx;
+    ATTEMPTS_KEY      = bases.ATTEMPTS_KEY + sfx;
+    LOCKOUT_UNTIL_KEY = bases.LOCKOUT_UNTIL_KEY + sfx;
+    LAST_ACTIVITY_KEY = bases.LAST_ACTIVITY_KEY + sfx;
+    BIO_ENABLED_KEY   = bases.BIO_ENABLED_KEY + sfx;
+    BIO_CREDID_KEY    = bases.BIO_CREDID_KEY + sfx;
+    BIO_USERID_KEY    = bases.BIO_USERID_KEY + sfx;
+    BIO_OFFERED_KEY   = bases.BIO_OFFERED_KEY + sfx;
+  }
+  window._alckSetUid = _applyUidScope;
 
   let currentMode = 'unlock'; // 'unlock' | 'setup-new' | 'setup-confirm' | 'change-old' | 'change-new' | 'change-confirm' | 'recovery-otp' | 'recovery-new' | 'recovery-confirm' | 'lockout'
   let pinBuffer = [];
@@ -8005,10 +8040,10 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     try {
       const challenge = new Uint8Array(32);
       crypto.getRandomValues(challenge);
-      const userId = new TextEncoder().encode(localStorage.getItem('hk_pin_user_id') || (function(){
+      const userId = new TextEncoder().encode(localStorage.getItem(BIO_USERID_KEY) || (function(){
         const arr = new Uint8Array(16); crypto.getRandomValues(arr);
         const id = Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
-        localStorage.setItem('hk_pin_user_id', id);
+        localStorage.setItem(BIO_USERID_KEY, id);
         return id;
       })());
       const cred = await navigator.credentials.create({
@@ -8022,7 +8057,7 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
         }
       });
       if (cred && cred.id) {
-        localStorage.setItem('hk_pin_bio_credid', cred.id);
+        localStorage.setItem(BIO_CREDID_KEY, cred.id);
         localStorage.setItem(BIO_ENABLED_KEY, '1');
         return true;
       }
@@ -8030,7 +8065,7 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     return false;
   }
   async function verifyBiometric() {
-    const credId = localStorage.getItem('hk_pin_bio_credid');
+    const credId = localStorage.getItem(BIO_CREDID_KEY);
     if (!credId) return false;
     try {
       const challenge = new Uint8Array(32);
@@ -8217,7 +8252,7 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
       localStorage.removeItem(ATTEMPTS_KEY);
       localStorage.removeItem(LOCKOUT_UNTIL_KEY);
       localStorage.removeItem(BIO_ENABLED_KEY);
-      localStorage.removeItem('hk_pin_bio_credid');
+      localStorage.removeItem(BIO_CREDID_KEY);
       try { sessionStorage.removeItem('alck_unlocked_session'); } catch(e){}
       window._alckInitDone = false;
     } catch(e) {}
@@ -8231,6 +8266,21 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
       try { await window.firebaseSignOut(); } catch(e) {}
     }
     if (typeof toast === 'function') toast('📱 OTP verify करके नया PIN set करें');
+  };
+
+  // Full account switch: sign out and return to phone/OTP so ANY number can log in.
+  // Unlike recovery, this does NOT wipe the current account's PIN — logging back
+  // into that account still uses its own (uid-scoped) PIN.
+  window.alckSwitchAccount = async function(){
+    if (!confirm('दूसरे नंबर से लॉगिन करें?\n\nआप OTP से दोबारा लॉगिन करेंगे। इस account का data cloud में सुरक्षित रहेगा।')) return;
+    try {
+      var s = document.getElementById('app-lock-screen');
+      if (s) s.classList.remove('active');
+      document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(function(el){ el.style.visibility='visible'; });
+    } catch(e){}
+    try { sessionStorage.removeItem('alck_unlocked_session'); } catch(e){}
+    window._alckInitDone = false;
+    if (window.firebaseSignOut) { try { await window.firebaseSignOut(); } catch(e){} }
   };
 
   window.alckOpenChangePinFlow = async function() {
@@ -8298,10 +8348,10 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
 
     // Offer biometric setup on a successful PIN unlock — but NOT immediately after
     // first-time PIN creation (skipBioOffer), so PIN setup finishes uninterrupted.
-    if (!skipBioOffer && localStorage.getItem(BIO_ENABLED_KEY) !== '1' && localStorage.getItem('hk_pin_bio_offered') !== '1') {
+    if (!skipBioOffer && localStorage.getItem(BIO_ENABLED_KEY) !== '1' && localStorage.getItem(BIO_OFFERED_KEY) !== '1') {
       const supported = await isBioSupported();
       if (supported) {
-        localStorage.setItem('hk_pin_bio_offered', '1');
+        localStorage.setItem(BIO_OFFERED_KEY, '1');
         setTimeout(async () => {
           if (confirm('🔐 Fingerprint से unlock करना है?\n\nAgli baar PIN ke jagah fingerprint use kar sakte hain.')) {
             const ok = await setupBiometric();

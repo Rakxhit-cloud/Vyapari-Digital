@@ -9291,11 +9291,16 @@ function bvOpenPdf(){
 function bvSharePdf(){
   var r=window._bvEntry; if(!r||!r.billPdfUrl){toast('PDF अभी तैयार नहीं है',true);return;}
   var url=r.billPdfUrl;
-  var who=r.supplier||r.custName||'';
-  var cap='📄 बिल'+(who?(' — '+who):'')+'\nकुल: '+_crFmt(r.amount||0);
+  var who=(r.supplier||r.custName||'bill').toString().replace(/[\/\\:*?"<>|]+/g,'').replace(/\s+/g,' ').trim()||'bill';
+  var _mons=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var ds='';
+  if(r.date && /^\d{4}-\d{2}-\d{2}/.test(''+r.date)){ var _p=(''+r.date).split('-'); ds=_p[2].slice(0,2)+'-'+_mons[(parseInt(_p[1],10)||1)-1]+'-'+_p[0]; }
+  var amt='₹'+Number(r.amount||0).toLocaleString('en-IN');
+  var fname=who+(ds?('_'+ds):'')+'_'+amt+'.pdf';
+  var cap='📄 बिल — '+who+(ds?(' · '+ds):'')+'\nकुल: '+amt;
   toast('तैयार हो रहा है…');
   fetch(url).then(function(resp){ if(!resp.ok) throw new Error('http '+resp.status); return resp.blob(); }).then(function(blob){
-    var file=new File([blob],'bill.pdf',{type:'application/pdf'});
+    var file=new File([blob],fname,{type:'application/pdf'});
     if(navigator.canShare && navigator.canShare({files:[file]})){
       navigator.share({files:[file], text:cap, title:'बिल'}).catch(function(){});
     } else {

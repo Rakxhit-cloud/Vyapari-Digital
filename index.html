@@ -1800,7 +1800,6 @@ body.notif-modal-open { overflow: hidden; }
     </div>
     <button class="auth-btn" id="send-otp-btn" onclick="sendOTP()">📨 OTP भेजें</button>
     <div class="auth-hint">आपके नंबर पर एक OTP भेजा जाएगा<br>यह नंबर आपकी दुकान की पहचान बनेगा</div>
-    <div id="recaptcha-container"></div>
   </div>
 </div>
 
@@ -2130,6 +2129,7 @@ body.notif-modal-open { overflow: hidden; }
   <div class="more-item" style="border-bottom:none;" onclick="toggleMore();openDeleteAccount();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3a0a0a 0%,#220505 100%);border:1.5px solid #c0392b;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🗑️</div> <span style="color:#ff7a7a;font-weight:500;">मेरा खाता और डेटा मिटाएं</span></div>
 </div>
 <div id="del-recaptcha-container"></div>
+<div id="recaptcha-container"></div>
 <div id="success-modal-overlay">
   <div class="success-modal-card">
     <div class="success-modal-strip"></div>
@@ -4190,6 +4190,34 @@ window.sendOTP = async function() {
   }
 };
 
+// Native-style recovery: the number is already known, so go STRAIGHT to the OTP
+// screen (masked number) and send the code — never show the number-entry screen.
+window.startRecoveryOtp = async function(phone10){
+  var last4 = String(phone10 || '').slice(-4);
+  var sub = document.getElementById('otp-sub');
+  try {
+    document.getElementById('screen-phone').classList.add('hidden');
+    document.getElementById('screen-terms').classList.add('hidden');
+    var _nm = document.getElementById('screen-name'); if (_nm) _nm.classList.add('hidden');
+    document.getElementById('screen-otp').classList.remove('hidden');
+    if (sub) sub.textContent = 'xxxxxx' + last4 + ' पर OTP भेज रहे हैं…';
+    ['o1','o2','o3','o4','o5','o6'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    var _pin = document.getElementById('phone-input'); if (_pin) _pin.value = phone10;
+    setupRecaptcha();
+    confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone10, recaptchaVerifier);
+    if (sub) sub.textContent = 'xxxxxx' + last4 + ' पर OTP भेजा गया — OTP डालें';
+    var _o1 = document.getElementById('o1'); if (_o1) _o1.focus();
+    startResendTimer();
+  } catch (err) {
+    console.error('recovery OTP error:', err);
+    // Fall back to the number screen so the user can retry or edit the number.
+    document.getElementById('screen-otp').classList.add('hidden');
+    document.getElementById('screen-phone').classList.remove('hidden');
+    var errEl2 = document.getElementById('phone-error');
+    if (errEl2) { errEl2.textContent = '❌ OTP नहीं भेज सका। दोबारा कोशिश करें।'; errEl2.classList.add('show'); }
+  }
+};
+
 window.verifyOTP = async function() {
   const otp = ['o1','o2','o3','o4','o5','o6'].map(id => document.getElementById(id).value).join('');
   const errEl = document.getElementById('otp-error'), succEl = document.getElementById('otp-success'), loader = document.getElementById('otp-loader');
@@ -4606,9 +4634,7 @@ onAuthStateChanged(auth, async user => {
       var _rp = localStorage.getItem('hk_recovery_phone') || '';
       if (_rp && _rp.length === 10) {
         localStorage.removeItem('hk_recovery_phone');
-        var _pin = document.getElementById('phone-input');
-        if (_pin) _pin.value = _rp;
-        setTimeout(function(){ try { if (window.sendOTP) window.sendOTP(); } catch(e){} }, 350);
+        if (window.startRecoveryOtp) window.startRecoveryOtp(_rp);
       }
     } catch(e){}
   }

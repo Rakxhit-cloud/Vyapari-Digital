@@ -3389,7 +3389,7 @@ body.notif-modal-open { overflow: hidden; }
           <div class="bv-meta-r" id="bv-total">₹0</div>
         </div>
         <div class="bv-pdf-row" id="bv-pdf-row" style="display:none;gap:9px;margin-bottom:9px;">
-          <button class="bv-pdf-open" onclick="bvOpenPdf()">📄 सारे पेज खोलें</button>
+          <button class="bv-pdf-open" onclick="bvOpenPdf()">📄 PDF देखें</button>
           <button class="bv-pdf-share" onclick="bvSharePdf()">💬 WhatsApp भेजें</button>
         </div>
         <div class="bv-acts">
@@ -5991,19 +5991,20 @@ function _lgpAddPageFiles(files){
 function _lgpRenderPdfConfirm(){
   var n = window.lgPhoto.pages.length;
   var titleEl = document.querySelector('#lgp-confirm-modal .lg-modal-title');
-  if(titleEl) titleEl.textContent = '📄 बिल · '+n+' पेज';
+  if(titleEl) titleEl.textContent = (n>1 ? ('📄 बिल · '+n+' पेज') : '📷 बिल Confirm करें');
   var single = document.getElementById('lgp-preview-img');
   var wrap = document.getElementById('lgp-pdf-wrap');
-  if(single) single.style.display='none';
+  if(single){ single.style.display='block'; single.src = (window.lgPhoto.pages[0] && window.lgPhoto.pages[0].thumb) || ''; }
   if(wrap){
     wrap.style.display='block';
-    var strip='<div class="lgp-pdf-banner"><span style="font-size:20px;">📄</span><span>Multi-page बिल — '+n+' पेज एक PDF में सेव होंगे</span></div>';
+    var strip='';
+    if(n>1) strip+='<div class="lgp-pdf-banner"><span style="font-size:20px;">📄</span><span>'+n+' पेज एक PDF में सेव होंगे</span></div>';
     strip+='<div class="lgp-page-strip">';
     window.lgPhoto.pages.forEach(function(p,i){
       strip+='<div class="lgp-page"><div class="lgp-page-img" style="background-image:url(\''+(p.thumb||'')+'\');"></div><div class="lgp-page-lbl">पेज '+(i+1)+'</div><div class="lgp-page-del" onclick="lgpRemovePage('+i+')">✕</div></div>';
     });
     if(window.lgPhoto.pages.length < LGP_MAX_PAGES){
-      strip+='<div class="lgp-page lgp-page-add" onclick="lgpAddMorePages()"><div class="lgp-page-img">＋</div><div class="lgp-page-lbl">और</div></div>';
+      strip+='<div class="lgp-page lgp-page-add" onclick="lgpAddMorePages()"><div class="lgp-page-img">＋</div><div class="lgp-page-lbl">और फोटो</div></div>';
     }
     strip+='</div>';
     wrap.innerHTML=strip;
@@ -6011,22 +6012,21 @@ function _lgpRenderPdfConfirm(){
 }
 function lgpRemovePage(i){
   window.lgPhoto.pages.splice(i,1);
-  if(window.lgPhoto.pages.length===0){ window.lgPhoto.isPdf=false; lgpConfirmClose(); return; }
-  if(window.lgPhoto.pages.length===1){
-    var only=window.lgPhoto.pages[0];
-    window.lgPhoto.isPdf=false;
-    window.lgPhoto.blob=only.blob; window.lgPhoto.thumb=only.thumb;
-    window.lgPhoto.url=''; window.lgPhoto.path=''; window.lgPhoto.pages=[];
-    var wrap=document.getElementById('lgp-pdf-wrap'); if(wrap)wrap.style.display='none';
-    var single=document.getElementById('lgp-preview-img'); if(single){single.style.display='block';single.src=only.thumb||'';}
-    var titleEl=document.querySelector('#lgp-confirm-modal .lg-modal-title'); if(titleEl)titleEl.textContent='📷 बिल Confirm करें';
-    return;
-  }
+  if(window.lgPhoto.pages.length===0){ window.lgPhoto.isPdf=false; window.lgPhoto.rawFile=null; lgpConfirmClose(); return; }
   _lgpRenderPdfConfirm();
 }
 function lgpAddMorePages(){
-  window._lgpAppend=true;
-  var f=document.getElementById('lgp-file-upload'); if(f){f.value='';f.click();}
+  if(window.lgPhoto.pages && window.lgPhoto.pages.length >= LGP_MAX_PAGES){ toast('ज़्यादा से ज़्यादा '+LGP_MAX_PAGES+' पेज', true); return; }
+  // Open the CAMERA now (must be inside this tap to satisfy the browser gesture rule).
+  window._lgpAppend = true;
+  var f = document.getElementById('lgp-file'); if(f){ f.value=''; f.click(); }
+  // If we're still on the first single capture, promote it to page 1 in the background.
+  if(!(window.lgPhoto.pages && window.lgPhoto.pages.length) && window.lgPhoto.rawFile){
+    var rf = window.lgPhoto.rawFile; window.lgPhoto.rawFile = null;
+    window.lgPhoto.isPdf = true;
+    if(!window.lgPhoto.pages) window.lgPhoto.pages = [];
+    _lgpAddPageFiles([rf]);
+  }
 }
 function lgpBuildPdf(){
   return new Promise(function(resolve,reject){
@@ -6056,12 +6056,31 @@ function lgpBuildPdf(){
 function lgpFileChosen(ev) {
   var f = ev && ev.target && ev.target.files ? ev.target.files[0] : null;
   if (!f) return;
+  // Adding more pages (via camera), or already building a multi-page bill: append as a page.
+  if (window._lgpAppend || (window.lgPhoto.isPdf && window.lgPhoto.pages && window.lgPhoto.pages.length)) {
+    window._lgpAppend = false;
+    window.lgPhoto.isPdf = true;
+    if (!window.lgPhoto.pages) window.lgPhoto.pages = [];
+    document.getElementById('lgp-confirm-modal').classList.add('show');
+    _lgpAddPageFiles([f]);
+    return;
+  }
+  // First single capture: show the preview + a "+ और फोटो" square to capture more.
   window.lgPhoto.rawFile = f;
   try {
     var img = document.getElementById('lgp-preview-img');
-    if (img) img.src = URL.createObjectURL(f);
+    if (img) { img.style.display='block'; img.src = URL.createObjectURL(f); }
   } catch (e) {}
+  var titleEl = document.querySelector('#lgp-confirm-modal .lg-modal-title');
+  if (titleEl) titleEl.textContent = '📷 बिल Confirm करें';
   document.getElementById('lgp-confirm-modal').classList.add('show');
+  _lgpRenderSingleAddMore();
+}
+function _lgpRenderSingleAddMore(){
+  var wrap = document.getElementById('lgp-pdf-wrap');
+  if(!wrap) return;
+  wrap.style.display='block';
+  wrap.innerHTML = '<div class="lgp-page-strip"><div class="lgp-page lgp-page-add" onclick="lgpAddMorePages()"><div class="lgp-page-img">＋</div><div class="lgp-page-lbl">और फोटो</div></div></div>';
 }
 
 function lgpConfirmClose() {
@@ -9382,7 +9401,7 @@ function openBillViewer(id){
       var _pc=r.pageCount||''; 
       var _hint=g('bv-pdf-hint');
       if(!_hint){ _hint=document.createElement('div'); _hint.id='bv-pdf-hint'; _hint.style.cssText='text-align:center;font-size:12px;color:#f0c878;font-weight:700;margin:6px 0 2px;'; _bvi.parentNode.parentNode.insertBefore(_hint, _bvi.parentNode.nextSibling); }
-      _hint.style.display='block'; _hint.textContent='📄 '+_pc+' पेज का बिल — पूरा देखने के लिए नीचे "सारे पेज खोलें" दबाएँ';
+      _hint.style.display='block'; _hint.textContent='📄 '+_pc+' पेज का बिल — पूरा देखने के लिए नीचे "PDF देखें" दबाएँ';
     } else {
       var _bvi2=g('bv-img'); if(_bvi2){_bvi2.style.objectFit='';_bvi2.style.maxHeight='';}
       var _h2=g('bv-pdf-hint'); if(_h2)_h2.style.display='none';
@@ -9402,7 +9421,16 @@ function openBillViewer(id){
 function closeBillViewer(){document.getElementById('bill-viewer').style.display='none';_bvDelArm=false;_bvDelPaint();}
 function bvOpenPdf(){
   var r=window._bvEntry; if(!r||!r.billPdfUrl){toast('PDF अभी तैयार नहीं है',true);return;}
-  try{ window.open(r.billPdfUrl,'_blank'); }catch(e){ location.href=r.billPdfUrl; }
+  var url=r.billPdfUrl;
+  var who=(r.supplier||r.custName||'bill').toString().replace(/[\/\\:*?"<>|]+/g,'').replace(/\s+/g,' ').trim()||'bill';
+  var _mons=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var ds=''; if(r.date && /^\d{4}-\d{2}-\d{2}/.test(''+r.date)){ var _p=(''+r.date).split('-'); ds=_p[2].slice(0,2)+'-'+_mons[(parseInt(_p[1],10)||1)-1]+'-'+_p[0]; }
+  var fname=who+(ds?('_'+ds):'')+'_₹'+Number(r.amount||0).toLocaleString('en-IN')+'.pdf';
+  toast('PDF खुल रहा है…');
+  try{ window.open(url,'_blank'); }catch(e){ location.href=url; }
+  fetch(url).then(function(resp){return resp.blob();}).then(function(blob){
+    try{ var obj=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=obj; a.download=fname; document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ try{URL.revokeObjectURL(obj);}catch(e){} },60000); }catch(e){}
+  }).catch(function(){});
 }
 function bvSharePdf(){
   var r=window._bvEntry; if(!r||!r.billPdfUrl){toast('PDF अभी तैयार नहीं है',true);return;}

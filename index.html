@@ -7088,7 +7088,7 @@ function setMaalLedgerFilter(f,el){
 }
 function maalLedgerSearch(v){MAAL_LEDGER_SEARCH=(v||'').toLowerCase();renderMaalLedger();}
 function renderMaalLedger(){
-  const rows=DB.get(K.MAAL);
+  const rows=(DB.get(K.MAAL)||[]).filter(r=>r&&!r.placeholder);
   const monthRows=rows.filter(r=>inMonth(r.date,MAAL_LEDGER_MI));
   let pending=0,paid=0,total=monthRows.length;
   monthRows.forEach(r=>{const isP=r.pay==='उधार'&&(r.paid||0)<(r.amount||0);if(isP)pending++;else paid++;});
@@ -7584,6 +7584,7 @@ function renderSuppliers(){
   rows.forEach(r=>{
     const key=mkSupKey(r.supplier);
     if(!groups[key])groups[key]={name:(r.supplier||'').trim()||'बिना नाम',mNak:0,mUdh:0,baki:0,count:0,last:''};
+    if(r.placeholder)return;
     const g=groups[key],a=r.amount||0,inMonth=(r.date||'').startsWith(ym);
     if(inMonth){if(r.pay==='नकद')g.mNak+=a;else g.mUdh+=a;mTot+=a;if(r.pay==='नकद')mNak+=a;else mUdh+=a;}
     if(r.pay==='उधार')g.baki+=Math.max(0,a-(r.paid||0));
@@ -7612,7 +7613,7 @@ function renderSuppliers(){
     const av=(g.name[0]||'?').toUpperCase();
     const bakiHtml=g.baki>0?`<div class="mk-card-baki"><span class="l">⚠ अभी बाकी</span><span class="v">${fmt(g.baki)}</span></div>`:'';
     card.innerHTML=`<div class="mk-card-plus">+</div>
-      <div class="mk-card-top"><div class="mk-av">${escHTML(av)}</div><div><div class="mk-name">${escHTML(g.name)}</div><div class="mk-meta">${g.count} खरीद · आखिरी ${fmtRelDate(g.last)}</div></div></div>
+      <div class="mk-card-top"><div class="mk-av">${escHTML(av)}</div><div><div class="mk-name">${escHTML(g.name)}</div><div class="mk-meta">${g.count} खरीद${g.count?(' · आखिरी '+fmtRelDate(g.last)):''}</div></div></div>
       <div class="mk-tots"><div class="mk-t mk-t-nakad"><div class="mk-t-lbl">नकद</div><div class="mk-t-val">${fmt(g.mNak)}</div></div><div class="mk-t mk-t-udhaar"><div class="mk-t-lbl">उधार</div><div class="mk-t-val">${fmt(g.mUdh)}</div></div></div>${bakiHtml}`;
     const sname=(g.name==='बिना नाम')?'':g.name;
     card.querySelector('.mk-card-plus').onclick=(e)=>{e.stopPropagation();lgOpenPurchaseFor(sname);};
@@ -7792,6 +7793,7 @@ function deleteMaalEntry(){
   const _dfb=_dr?{date:_dr.date,oldAmount:_dr.amount,oldNote:('माल — '+(_dr.supplier||'')+(_dr.name?' · '+_dr.name:'')).slice(0,80)}:null;
   lgRemoveMaalExpenses(id,_dfb);      // remove linked खर्चा (purchase + any payments)
   DB.remove(K.MAAL,id);
+  if(_dr && typeof _mkKeepProfile==='function')_mkKeepProfile(_dr.supplier,_dr.supplierPhone);
   showSuccessModal('एंट्री हटा दी','🗑️ एंट्री और इसका खर्चा हटा दिया');
   closeMaalEdit();
   renderSuppliers();
@@ -7842,12 +7844,26 @@ function _mkPaint(){
 }
 function mkDelete(){ var n=Object.keys(window._mkSel.ids).length; if(!n)return; document.getElementById('mk-seldel-msg').textContent=n+' एंट्री हटाएँ? यह वापस नहीं होगा।'; document.getElementById('mk-seldel-confirm').style.display='flex'; }
 function mkDeleteNo(){document.getElementById('mk-seldel-confirm').style.display='none';}
+// Keep an emptied supplier profile alive with a zero placeholder (profiles are
+// removed only via profile multi-select, never by deleting the entries inside).
+function _mkKeepProfile(supplier, phone){
+  try{
+    var k=mkSupKey(supplier);
+    var still=(DB.get(K.MAAL)||[]).some(function(r){return r&&!r.placeholder&&mkSupKey(r.supplier)===k;});
+    if(!still){ DB.push(K.MAAL,{date:TSTR,supplier:(supplier||''),supplierPhone:phone||'',name:'',amount:0,pay:'नकद',placeholder:true,ts:Date.now()}); }
+  }catch(e){}
+}
 function mkDeleteYes(){
   document.getElementById('mk-seldel-confirm').style.display='none';
   var ids=Object.keys(window._mkSel.ids), n=ids.length, idset={}; ids.forEach(function(x){idset[x]=1;});
+  // Capture affected suppliers (name+phone) BEFORE deleting so we can keep any
+  // profile that this empties.
+  var affected={};
+  (DB.get(K.MAAL)||[]).forEach(function(r){ if(r&&idset[r.id]){ var _k=mkSupKey(r.supplier); if(!affected[_k])affected[_k]={name:(r.supplier||''),phone:r.supplierPhone||''}; else if(!affected[_k].phone && r.supplierPhone)affected[_k].phone=r.supplierPhone; } });
   ids.forEach(function(id){ if(window._markDeleted)window._markDeleted(id); });
   try{ DB.set(K.MAAL,(DB.get(K.MAAL)||[]).filter(function(r){return !(r&&idset[r.id]);})); }catch(e){}
   ids.forEach(function(id){ try{ if(window._fsDelete)window._fsDelete(CURRENT_UID,K.MAAL,id); }catch(e){} });
+  Object.keys(affected).forEach(function(_k){ _mkKeepProfile(affected[_k].name, affected[_k].phone); });
   mkExitSelect();
   if(typeof renderSupplierProfile==='function')renderSupplierProfile();
   if(typeof renderSuppliers==='function')renderSuppliers();
@@ -7901,7 +7917,8 @@ function renderSupplierProfile(){
   var _mb=document.getElementById('mk-selbar'); if(_mb)_mb.style.display='none';
   if(_mkProfileName===null)return;
   const targetKey=mkSupKey(_mkProfileName);
-  const rows=(DB.get(K.MAAL)||[]).filter(r=>mkSupKey(r.supplier)===targetKey);
+  const allRows=(DB.get(K.MAAL)||[]).filter(r=>mkSupKey(r.supplier)===targetKey);
+  const rows=allRows.filter(r=>!r.placeholder);
   const displayName=_mkProfileName||'बिना नाम';
   const setT=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
   setT('mkp-name',displayName);
@@ -7910,11 +7927,11 @@ function renderSupplierProfile(){
   let nak=0,udh=0,baki=0;
   rows.forEach(r=>{const a=r.amount||0;if(r.pay==='नकद')nak+=a;else{udh+=a;baki+=Math.max(0,a-(r.paid||0));}});
   setT('mkp-nakad',fmt(nak));setT('mkp-udhaar',fmt(udh));setT('mkp-baki',fmt(baki));
-  setT('mkp-meta',rows.length+' खरीद · आखिरी '+fmtRelDate(rows.map(r=>r.date||'').sort().slice(-1)[0]||''));
+  setT('mkp-meta',rows.length?(rows.length+' खरीद · आखिरी '+fmtRelDate(rows.map(r=>r.date||'').sort().slice(-1)[0]||'')):'0 खरीद');
   // contact bar (phone + Call + WhatsApp) — from the latest entry that has a saved number
   const _cel=document.getElementById('mkp-contact');
   if(_cel){
-    const _wp=rows.filter(r=>r.supplierPhone&&String(r.supplierPhone).trim())
+    const _wp=allRows.filter(r=>r.supplierPhone&&String(r.supplierPhone).trim())
       .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||((b.ts||0)-(a.ts||0)));
     if(_wp.length){
       const _ph=String(_wp[0].supplierPhone).trim();
@@ -9560,7 +9577,9 @@ function bvDelete(){
   // Route deletion to the correct store: purchases live in K.MAAL, credit bills in K.UDHAAR.
   var _isMaalEntry = !!(DB.get(K.MAAL)||[]).find(function(x){return x.id===r.id;});
   if(_isMaalEntry){
+    var _bvSup=r.supplier, _bvSp=r.supplierPhone;
     DB.remove(K.MAAL,r.id);
+    if(typeof _mkKeepProfile==='function')_mkKeepProfile(_bvSup,_bvSp);
     _bvDelArm=false;
     closeBillViewer();
     if(typeof renderSupplierProfile==='function')renderSupplierProfile();

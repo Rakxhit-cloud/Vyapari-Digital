@@ -4199,6 +4199,10 @@ window.verifyOTP = async function() {
   btn.disabled = true; btn.textContent = '⏳ जाँच रहे हैं...'; loader.classList.add('show');
   try {
     const cred = await confirmationResult.confirm(otp);
+    // Tear down the invisible reCAPTCHA now that OTP is verified. Left in the DOM,
+    // Firebase's body-level reCAPTCHA overlay can be resurfaced by the lock's
+    // visibility toggle and silently capture taps over the home screen.
+    if (recaptchaVerifier) { try { recaptchaVerifier.clear(); } catch(e){} recaptchaVerifier = null; }
     // CRITICAL: Mark this as a fresh authenticated PWA session in progress.
     // Downstream code paths (showAlreadyRegisteredScreen, showBrowserBlockScreen,
     // pwaGate timer) check this flag and refuse to auto-sign-out the user
@@ -4596,6 +4600,17 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('screen-terms').classList.add('hidden');
     document.getElementById('main-app').style.display = 'none';
     window._hideSplashWhenReady();
+    // Recovery / re-login of a known number: prefill it and auto-request the OTP
+    // so the user goes straight to OTP entry instead of re-typing their number.
+    try {
+      var _rp = localStorage.getItem('hk_recovery_phone') || '';
+      if (_rp && _rp.length === 10) {
+        localStorage.removeItem('hk_recovery_phone');
+        var _pin = document.getElementById('phone-input');
+        if (_pin) _pin.value = _rp;
+        setTimeout(function(){ try { if (window.sendOTP) window.sendOTP(); } catch(e){} }, 350);
+      }
+    } catch(e){}
   }
 });
 
@@ -8246,6 +8261,8 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     // After successful re-auth, mark a recovery flag so launchApp triggers PIN re-setup
     try {
       localStorage.setItem('hk_pin_recovery_pending', '1');
+      // Remember the known number so the phone screen can auto-request the OTP.
+      try { localStorage.setItem('hk_recovery_phone', (phone||'').replace(/\D/g,'').slice(-10)); } catch(e){}
       // Clear PIN data so re-setup will be forced
       localStorage.removeItem(PIN_HASH_KEY);
       localStorage.removeItem(PIN_SALT_KEY);
@@ -8330,6 +8347,24 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     try { sessionStorage.setItem('alck_unlocked_session', '1'); } catch(e){}
     localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
     deactivateLockScreen();
+    // Firebase's invisible reCAPTCHA appends a hidden full-screen overlay to <body>.
+    // deactivateLockScreen() force-sets visibility:visible on every body child, which
+    // can resurface that overlay on top of home where it silently swallows taps
+    // (pinch-zoom still works). Neutralize any such stray overlay.
+    try {
+      document.querySelectorAll('body > div').forEach(function(el){
+        var id = el.id || '';
+        if (id === 'main-app' || id === 'app-lock-screen' || id.indexOf('screen-') === 0) return;
+        var isRc = (typeof el.className === 'string' && el.className.indexOf('grecaptcha') !== -1)
+                || (el.querySelector && el.querySelector('iframe[src*="recaptcha"], iframe[title*="recaptcha"]'));
+        var cs = window.getComputedStyle(el);
+        var z = parseInt(cs.zIndex || '0', 10);
+        if (isRc || (cs.position === 'fixed' && z >= 1000000000)) {
+          el.style.visibility = 'hidden';
+          el.style.pointerEvents = 'none';
+        }
+      });
+    } catch(e){}
 
     // NOTE: There was previously a redundant PWA-mode check here that called
     // showBrowserBlockScreen() if it detected non-PWA mode. That check was
@@ -8431,9 +8466,6 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
         try { var _sm = document.getElementById('success-modal-overlay'); if (_sm) { _sm.classList.remove('show'); _sm.style.pointerEvents = 'none'; } } catch(e){}
         if (typeof toast === 'function') toast('🔐 PIN set हो गया');
         try { if (typeof loadHome === 'function') loadHome(); } catch(e){}
-        // Self-diagnostic: if anything other than the home is on top after reveal,
-        // report it so we can pinpoint any remaining blocker.
-        setTimeout(function(){ try { var cx=Math.round(window.innerWidth/2), cy=Math.round(window.innerHeight/2); var top=document.elementFromPoint(cx,cy); if (top && !top.closest('#main-app') && typeof toast==='function') { toast('⚠️ ऊपर: '+(top.id||top.className||top.tagName), true); } } catch(e){} }, 1200);
       } else {
         flashError();
         setTimeout(() => {

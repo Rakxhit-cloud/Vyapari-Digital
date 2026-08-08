@@ -1645,8 +1645,8 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-entry .mkp-row{margin-bottom:4px;}
 .mkp-thumb{flex:0 0 auto;width:44px;height:44px;border-radius:8px;overflow:hidden;position:relative;border:1px solid #2a4078;background:#0c1830;margin-right:9px;cursor:pointer;}
 .mkp-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.bv-pdf-open{flex:1;background:linear-gradient(135deg,#e23a3a,#b82828);border:none;border-radius:10px;padding:12px;color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;}
-.bv-pdf-share{flex:1;background:linear-gradient(135deg,#2f9c5f,#42c07d);border:none;border-radius:10px;padding:12px;color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;}
+.bv-pdf-open{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#ec4a4a 0%,#d23232 55%,#b82828 100%);border:none;border-radius:12px;padding:12px;color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:0 5px 14px rgba(226,58,58,.30),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 7px rgba(0,0,0,.22);text-shadow:0 1px 2px rgba(0,0,0,.45),0 0 1px rgba(0,0,0,.35);}
+.bv-pdf-share{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#49c98a 0%,#37ab6e 55%,#2f9c5f 100%);border:none;border-radius:12px;padding:12px;color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:0 5px 14px rgba(66,192,125,.28),inset 0 1px 0 rgba(255,255,255,.30),inset 0 -2px 7px rgba(0,0,0,.20);text-shadow:0 1px 2px rgba(0,0,0,.45),0 0 1px rgba(0,0,0,.35);}.bv-pdf-chip{width:24px;height:24px;border-radius:7px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}.bv-pdf-open:active,.bv-pdf-share:active{transform:translateY(1px);filter:brightness(.96);}
 .mkp-thumb-ico{position:absolute;bottom:1px;right:2px;font-size:9px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8));}
 .mkp-pdf-badge{position:absolute;left:0;right:0;bottom:0;background:rgba(192,40,40,.92);color:#fff;font-size:7px;font-weight:800;text-align:center;padding:1px 0;letter-spacing:.2px;}
 .mkp-amt-edit{cursor:pointer;}
@@ -3389,7 +3389,7 @@ body.notif-modal-open { overflow: hidden; }
           <div class="bv-meta-r" id="bv-total">₹0</div>
         </div>
         <div class="bv-pdf-row" id="bv-pdf-row" style="display:none;gap:9px;margin-bottom:9px;">
-          <button class="bv-pdf-open" onclick="bvOpenPdf()">📄 PDF देखें</button>
+          <button class="bv-pdf-open" onclick="bvOpenPdf()"><span class="bv-pdf-chip"><svg width="15" height="19" viewBox="0 0 32 40"><path d="M4 2 h18 l8 8 v28 a2 2 0 0 1-2 2 H4 a2 2 0 0 1-2-2 V4 a2 2 0 0 1 2-2 z" fill="#fff" stroke="#c62828" stroke-width="2.4"/><path d="M22 2 v8 h8" fill="none" stroke="#c62828" stroke-width="2.4" stroke-linejoin="round"/><rect x="4.5" y="25" width="23" height="9.5" rx="1.6" fill="#e23a3a"/><text x="16" y="32" text-anchor="middle" font-family="Arial" font-weight="700" font-size="7" fill="#fff">PDF</text></svg></span><span>PDF देखें</span></button>
           <button class="bv-pdf-share" onclick="bvSharePdf()">💬 WhatsApp भेजें</button>
         </div>
         <div class="bv-acts">

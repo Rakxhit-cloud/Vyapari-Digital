@@ -8422,10 +8422,18 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
       if (pin === firstPinForConfirm) {
         await savePin(pin);
         try { localStorage.removeItem('hk_pin_recovery_pending'); } catch(e){}
-        if (typeof showSuccessModal === 'function') showSuccessModal('PIN Set हो गया', '🔐 Lock activated');
-        // Go directly into app. Skip the fingerprint offer here so first-time PIN
-        // creation completes cleanly — the bio offer surfaces on the NEXT unlock.
+        // Reveal home FIRST so it is immediately interactive. A full-screen
+        // success-modal-overlay used to be shown here right as home appeared;
+        // together with the lock's visibility toggle it could sit on top of home
+        // and swallow taps until restart. Use a non-blocking toast instead, and
+        // defensively clear the overlay so nothing intercepts input.
         await onUnlockSuccess(true);
+        try { var _sm = document.getElementById('success-modal-overlay'); if (_sm) { _sm.classList.remove('show'); _sm.style.pointerEvents = 'none'; } } catch(e){}
+        if (typeof toast === 'function') toast('🔐 PIN set हो गया');
+        try { if (typeof loadHome === 'function') loadHome(); } catch(e){}
+        // Self-diagnostic: if anything other than the home is on top after reveal,
+        // report it so we can pinpoint any remaining blocker.
+        setTimeout(function(){ try { var cx=Math.round(window.innerWidth/2), cy=Math.round(window.innerHeight/2); var top=document.elementFromPoint(cx,cy); if (top && !top.closest('#main-app') && typeof toast==='function') { toast('⚠️ ऊपर: '+(top.id||top.className||top.tagName), true); } } catch(e){} }, 1200);
       } else {
         flashError();
         setTimeout(() => {

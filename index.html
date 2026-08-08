@@ -3916,17 +3916,45 @@ window._fsLoadAll = async function(uid) {
 // Ids deleted locally in the last few seconds — the realtime onSnapshot merge must
 // NOT re-add these while Firestore deletes are still propagating (multi-delete race).
 window._recentlyDeleted = window._recentlyDeleted || {};
+// Persistent tombstones: a deleted id is remembered across app restarts (in
+// localStorage, per-uid) so a later cloud merge can NEVER resurrect it — even if
+// the cloud delete was delayed, failed, or the doc was orphaned by an older app
+// version that deleted locally without deleting from Firestore. Auto-expire 90d.
+window._TOMB_TTL = 90 * 24 * 60 * 60 * 1000;
+window._tombCache = null; window._tombCacheUid = null;
+function _tombUid(){ return (typeof CURRENT_UID !== 'undefined' && CURRENT_UID) ? CURRENT_UID : 'default'; }
+function _tombLoad(){
+  var uid = _tombUid();
+  if(window._tombCache === null || window._tombCacheUid !== uid){
+    window._tombCacheUid = uid;
+    try { window._tombCache = JSON.parse(localStorage.getItem('hk_' + uid + '_deleted') || '{}'); }
+    catch(e){ window._tombCache = {}; }
+  }
+  return window._tombCache;
+}
+function _tombSave(){
+  var uid = window._tombCacheUid || _tombUid();
+  try {
+    var now = Date.now(), m = window._tombCache || {}, out = {};
+    Object.keys(m).forEach(function(k){ if(now - m[k] < window._TOMB_TTL) out[k] = m[k]; });
+    window._tombCache = out;
+    localStorage.setItem('hk_' + uid + '_deleted', JSON.stringify(out));
+  } catch(e){}
+}
 window._markDeleted = function(id){
   if(!id) return;
   window._recentlyDeleted[id] = Date.now();
-  // auto-expire after 12s (well past cloud round-trip)
   setTimeout(function(){ try{ delete window._recentlyDeleted[id]; }catch(e){} }, 12000);
+  try { var m = _tombLoad(); m[String(id)] = Date.now(); _tombSave(); } catch(e){}
 };
 window._isRecentlyDeleted = function(id){
   var t = window._recentlyDeleted[id];
-  if(!t) return false;
-  if(Date.now()-t > 12000){ delete window._recentlyDeleted[id]; return false; }
-  return true;
+  if(t){ if(Date.now()-t <= 12000) return true; delete window._recentlyDeleted[id]; }
+  try {
+    var m = _tombLoad(), pt = m[String(id)];
+    if(pt){ if(Date.now()-pt < window._TOMB_TTL) return true; delete m[String(id)]; _tombSave(); }
+  } catch(e){}
+  return false;
 };
 window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
   if (!uid || uid === 'default' || !Array.isArray(cloudItems) || !cloudItems.length) return false;
@@ -3938,7 +3966,13 @@ window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
   cloudItems.forEach(ci => {
     // Suppress entries the user just deleted on this device — don't resurrect them
     // while the Firestore delete is still in flight.
-    if (window._isRecentlyDeleted && window._isRecentlyDeleted(ci.id)) { return; }
+    if (window._isRecentlyDeleted && window._isRecentlyDeleted(ci.id)) {
+      // Tombstoned locally but still present in the cloud — re-fire the cloud
+      // delete to clean up the orphan so it stops coming back (here and on other
+      // devices), then skip re-adding it.
+      if (window._fsDelete) { try { window._fsDelete(uid, colName, ci.id); } catch(e){} }
+      return;
+    }
     const idx = merged.findIndex(r => r.id === ci.id);
     if (idx > -1) {
       // Phase 3 conflict resolution — newest edit wins, never drop data.

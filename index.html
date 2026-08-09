@@ -4584,8 +4584,35 @@ setTimeout(() => {
   }
 }, 4000);
 
+// ── Track 2: reinstall detection via native install-nonce ──
+// The native TWA stores a random nonce in Android app storage (wiped on
+// uninstall) and appends it to the launch URL as ?inst=<nonce>. Web storage
+// survives uninstall (Chrome), so a nonce MISMATCH means the app was reinstalled
+// → we force OTP re-verification. No ?inst (browser / pre-Track-2 TWA) = no-op.
+(function(){
+  try {
+    var m = (location.search || '').match(/[?&]inst=([^&]+)/);
+    if (!m) return;
+    var inst = decodeURIComponent(m[1]);
+    var KEY = 'hk_install_nonce', stored = null;
+    try { stored = localStorage.getItem(KEY); } catch(e){}
+    if (stored === null) {
+      try { localStorage.setItem(KEY, inst); } catch(e){}          // first run on this install
+    } else if (stored !== inst) {
+      window._reinstallDetected = true;                            // native nonce changed = reinstall
+      try { localStorage.setItem(KEY, inst); } catch(e){}
+    }
+  } catch(e){}
+})();
+
 onAuthStateChanged(auth, async user => {
   window._currentAuthUser = user;
+  // Track 2: on a detected reinstall, sign out so this fires again with null and
+  // routes to the phone/OTP screen (standard fresh-install onboarding).
+  if (window._reinstallDetected) {
+    window._reinstallDetected = false;
+    if (user) { try { await fbSignOut(auth); return; } catch(e){} }
+  }
   // NOTE: Splash hide moved out of here — it now hides only when PIN/auth/home
   // is actually visible. See window._hideSplashWhenReady() below.
   if (user) {

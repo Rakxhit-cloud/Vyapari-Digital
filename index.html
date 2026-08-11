@@ -3085,37 +3085,37 @@ body.notif-modal-open { overflow: hidden; }
 <div class="stmt-sheet" id="stmt-sheet">
   <div class="stmt-grab"></div>
   <div id="stmt-step-choose">
-    <div class="stmt-title">\U0001F4C4 Statement \u092c\u0928\u093e\u090f\u0902</div>
-    <div class="stmt-sub" id="stmt-sub">\u2014</div>
-    <div class="stmt-opt" onclick="stmtGoDate()"><div class="oic">\U0001F4C5</div><div class="ot"><div class="a">Date-wise</div><div class="b">\u0915\u094b\u0908 \u092d\u0940 date range \u091a\u0941\u0928\u0947\u0902</div></div><div class="go">\u203a</div></div>
-    <div class="stmt-opt" onclick="stmtGoMonth()"><div class="oic">\U0001F5D3\uFE0F</div><div class="ot"><div class="a">Month-wise</div><div class="b">\u092a\u0942\u0930\u0947 \u092e\u0939\u0940\u0928\u0947 \u0915\u093e statement</div></div><div class="go">\u203a</div></div>
+    <div class="stmt-title">📄 Statement बनाएं</div>
+    <div class="stmt-sub" id="stmt-sub">—</div>
+    <div class="stmt-opt" onclick="stmtGoDate()"><div class="oic">📅</div><div class="ot"><div class="a">Date-wise</div><div class="b">कोई भी date range चुनें</div></div><div class="go">›</div></div>
+    <div class="stmt-opt" onclick="stmtGoMonth()"><div class="oic">🗓️</div><div class="ot"><div class="a">Month-wise</div><div class="b">पूरे महीने का statement</div></div><div class="go">›</div></div>
   </div>
   <div id="stmt-step-month" class="stmt-hide">
-    <div class="stmt-backrow"><div class="bb" onclick="stmtBack()">\u2190</div><div class="bt">\u092e\u0939\u0940\u0928\u093e \u091a\u0941\u0928\u0947\u0902</div></div>
+    <div class="stmt-backrow"><div class="bb" onclick="stmtBack()">←</div><div class="bt">महीना चुनें</div></div>
     <div class="stmt-mgrid" id="stmt-mgrid"></div>
-    <button class="stmt-cta" id="stmt-cta-month" onclick="stmtConfirmMonth()">\u2705 Statement \u092c\u0928\u093e\u090f\u0902</button>
+    <button class="stmt-cta" id="stmt-cta-month" onclick="stmtConfirmMonth()">✅ Statement बनाएं</button>
   </div>
   <div id="stmt-step-date" class="stmt-hide">
-    <div class="stmt-backrow"><div class="bb" onclick="stmtBack()">\u2190</div><div class="bt">Date range \u091a\u0941\u0928\u0947\u0902</div></div>
-    <div class="stmt-calhead"><div class="mn" id="stmt-cal-mn">\u2014</div><div class="nv"><span onclick="stmtCalNav(-1)">\u2039</span><span onclick="stmtCalNav(1)">\u203a</span></div></div>
+    <div class="stmt-backrow"><div class="bb" onclick="stmtBack()">←</div><div class="bt">Date range चुनें</div></div>
+    <div class="stmt-calhead"><div class="mn" id="stmt-cal-mn">—</div><div class="nv"><span onclick="stmtCalNav(-1)">‹</span><span onclick="stmtCalNav(1)">›</span></div></div>
     <div class="stmt-dow"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
     <div class="stmt-cal" id="stmt-cal"></div>
-    <div class="stmt-tip" id="stmt-tip">\u0936\u0941\u0930\u0942 \u0914\u0930 \u0906\u0916\u093f\u0930\u0940 date \u091a\u0941\u0928\u0947\u0902</div>
-    <button class="stmt-cta" id="stmt-cta-date" onclick="stmtConfirmDate()">\u2705 Statement \u092c\u0928\u093e\u090f\u0902</button>
+    <div class="stmt-tip" id="stmt-tip">शुरू और आखिरी date चुनें</div>
+    <button class="stmt-cta" id="stmt-cta-date" onclick="stmtConfirmDate()">✅ Statement बनाएं</button>
   </div>
 </div>
 <div class="stmt-cscrim" id="stmt-cscrim" onclick="stmtCardClose()"></div>
 <div class="stmt-card" id="stmt-card">
-  <div class="stmt-badge">\u2705</div>
-  <div class="stmt-ctitle">Statement \u0924\u0948\u092f\u093e\u0930</div>
-  <div class="stmt-cauto">\U0001F4E5 \u0905\u092a\u0928\u0947-\u0906\u092a Download \u0939\u094b \u0917\u092f\u093e \u2713</div>
-  <div class="stmt-cdetail" id="stmt-card-detail">\u2014</div>
+  <div class="stmt-badge">✅</div>
+  <div class="stmt-ctitle">Statement तैयार</div>
+  <div class="stmt-cauto">📥 अपने-आप Download हो गया ✓</div>
+  <div class="stmt-cdetail" id="stmt-card-detail">—</div>
   <div class="stmt-cbtns">
-    <button class="v" onclick="stmtCardAct('view')">\U0001F441</button>
-    <button class="dl" onclick="stmtCardAct('dl')">\U0001F4E5 Download</button>
-    <button class="wa" onclick="stmtCardAct('wa')">\U0001F4AC \u092d\u0947\u091c\u0947\u0902</button>
+    <button class="v" onclick="stmtCardAct('view')">👁</button>
+    <button class="dl" onclick="stmtCardAct('dl')">📥 Download</button>
+    <button class="wa" onclick="stmtCardAct('wa')">💬 भेजें</button>
   </div>
-  <div class="stmt-cclose" onclick="stmtCardClose()">\u092c\u0902\u0926 \u0915\u0930\u0947\u0902</div>
+  <div class="stmt-cclose" onclick="stmtCardClose()">बंद करें</div>
 </div>
 
 <div class="mk-pop-overlay" id="mk-pop-overlay" onclick="mkPopBgClose(event)">

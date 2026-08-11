@@ -3019,8 +3019,103 @@ body.notif-modal-open { overflow: hidden; }
       <div class="mkp-ss mkp-ss-udhaar"><div class="mkp-ss-lbl">उधार</div><div class="mkp-ss-val" id="mkp-udhaar">₹0</div></div>
       <div class="mkp-ss mkp-ss-baki"><div class="mkp-ss-lbl">अभी बाकी</div><div class="mkp-ss-val" id="mkp-baki">₹0</div></div>
     </div>
+    <div class="stmt-open-btn" id="stmt-open-btn" onclick="stmtFlowOpen()"><span class="stmt-ob-ic">📄</span><span class="stmt-ob-tx">Statement<small>Download · भेजें</small></span></div>
     <div id="mkp-groups"></div>
   </div>
+</div>
+
+<style id="stmt-flow-css">
+.stmt-hide{display:none !important;}
+.stmt-open-btn{margin:12px 0 2px;display:inline-flex;gap:9px;align-items:center;cursor:pointer;background:linear-gradient(135deg,#16224a,#101c3d);border:1px solid #c9a24b;border-radius:12px;padding:10px 15px;box-shadow:0 3px 12px rgba(201,162,75,.16);}
+.stmt-open-btn .stmt-ob-ic{font-size:17px;}
+.stmt-open-btn .stmt-ob-tx{font-size:13.5px;font-weight:700;color:#f0c890;line-height:1.15;}
+.stmt-open-btn .stmt-ob-tx small{display:block;font-size:10px;color:#8aa0d8;font-weight:500;margin-top:1px;}
+.stmt-scrim,.stmt-cscrim{position:fixed;inset:0;background:rgba(4,8,20,.66);opacity:0;pointer-events:none;transition:opacity .22s;z-index:9000;}
+.stmt-scrim.show,.stmt-cscrim.show{opacity:1;pointer-events:auto;}
+.stmt-cscrim{z-index:9020;}
+.stmt-sheet{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:linear-gradient(180deg,#0e1834,#0a1228);border-top:1px solid #2a3c6a;border-radius:22px 22px 0 0;padding:8px 18px 26px;z-index:9010;transform:translateY(100%);transition:transform .28s cubic-bezier(.3,.9,.35,1);box-shadow:0 -12px 40px rgba(0,0,0,.5);font-family:'Noto Sans Devanagari','Poppins',sans-serif;}
+.stmt-sheet.show{transform:translateY(0);}
+.stmt-grab{width:40px;height:4px;border-radius:3px;background:#33436a;margin:6px auto 14px;}
+.stmt-title{font-size:17px;font-weight:800;color:#fff;text-align:center;}
+.stmt-sub{font-size:12px;color:#8aa0d8;text-align:center;margin:4px 0 18px;}
+.stmt-opt{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,#13203f,#0f1a34);border:1px solid #2a3a66;border-radius:14px;padding:15px;margin-bottom:11px;cursor:pointer;}
+.stmt-opt:active{transform:scale(.98);}
+.stmt-opt .oic{width:44px;height:44px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:21px;background:linear-gradient(135deg,rgba(201,162,75,.2),rgba(201,162,75,.06));border:1px solid rgba(201,162,75,.4);}
+.stmt-opt .ot{flex:1;} .stmt-opt .ot .a{font-size:15px;font-weight:800;color:#fff;}
+.stmt-opt .ot .b{font-size:11.5px;color:#8aa0d8;margin-top:2px;} .stmt-opt .go{color:#f0c890;font-size:20px;font-weight:800;}
+.stmt-backrow{display:flex;align-items:center;gap:9px;margin-bottom:14px;}
+.stmt-backrow .bb{width:34px;height:34px;border-radius:9px;background:#16224a;border:1px solid #2a3a66;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;cursor:pointer;}
+.stmt-backrow .bt{font-size:16px;font-weight:800;color:#fff;}
+.stmt-mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.stmt-mcell{background:#12203f;border:1px solid #2a3a66;border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;}
+.stmt-mcell.sel{background:linear-gradient(135deg,#c9a24b,#a5811f);border-color:#f4dd9a;}
+.stmt-mcell .mm{font-size:15px;font-weight:800;color:#e8eefc;} .stmt-mcell.sel .mm{color:#1a1206;}
+.stmt-mcell .yy{font-size:10.5px;color:#8aa0d8;} .stmt-mcell.sel .yy{color:#4a3410;}
+.stmt-mcell .cnt{font-size:9.5px;color:#6b7aa5;margin-top:3px;} .stmt-mcell.sel .cnt{color:#5a4410;}
+.stmt-empty{color:#8aa0d8;text-align:center;padding:20px;font-size:13px;}
+.stmt-calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.stmt-calhead .mn{font-size:15px;font-weight:800;color:#fff;}
+.stmt-calhead .nv{display:flex;gap:8px;}
+.stmt-calhead .nv span{width:30px;height:30px;border-radius:8px;background:#16224a;border:1px solid #2a3a66;color:#cdd8f8;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;}
+.stmt-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:5px;}
+.stmt-dow span{text-align:center;font-size:10px;color:#6b7aa5;font-weight:700;}
+.stmt-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.stmt-cd{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;color:#c6d2f0;border-radius:8px;cursor:pointer;border:1px solid transparent;}
+.stmt-cd.mut{color:#3a4666;cursor:default;}
+.stmt-cd.has{background:#13234a;border-color:#2c3c66;font-weight:700;color:#fff;}
+.stmt-cd.r1{background:rgba(201,162,75,.28);border-color:#c9a24b;}
+.stmt-cd.rEdge{background:#c9a24b;color:#1a1206;font-weight:800;border-color:#f4dd9a;}
+.stmt-tip{text-align:center;font-size:11.5px;color:#f0c890;margin-top:12px;min-height:16px;}
+.stmt-cta{margin-top:16px;width:100%;background:linear-gradient(135deg,#e84545,#c9a24b);border:none;border-radius:13px;padding:15px;color:#fff;font-size:15px;font-weight:800;font-family:'Noto Sans Devanagari','Poppins',sans-serif;cursor:pointer;box-shadow:0 8px 22px rgba(232,69,69,.3);opacity:.5;pointer-events:none;transition:opacity .2s;}
+.stmt-cta.on{opacity:1;pointer-events:auto;}
+.stmt-card{position:fixed;left:16px;right:16px;bottom:30px;max-width:448px;margin:0 auto;z-index:9030;background:linear-gradient(180deg,#12203f,#0d1730);border:1px solid #2a3c6a;border-radius:18px;padding:18px 16px 16px;box-shadow:0 18px 50px rgba(0,0,0,.55);transform:translateY(18px) scale(.97);opacity:0;pointer-events:none;transition:.26s cubic-bezier(.3,.9,.35,1);font-family:'Noto Sans Devanagari','Poppins',sans-serif;}
+.stmt-card.show{transform:none;opacity:1;pointer-events:auto;}
+.stmt-badge{width:48px;height:48px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:24px;background:linear-gradient(135deg,#1f7a4c,#0e3a24);border:1.5px solid #4cd88a;box-shadow:0 0 22px rgba(76,216,138,.35);}
+.stmt-ctitle{font-size:17px;font-weight:800;color:#fff;text-align:center;}
+.stmt-cauto{font-size:11.5px;color:#7ee0a4;text-align:center;margin-top:3px;font-weight:600;}
+.stmt-cdetail{font-size:11.5px;color:#c6d2f0;text-align:center;background:#0c1530;border:1px solid #23335c;border-radius:9px;padding:8px 10px;margin:12px 0 14px;}
+.stmt-cbtns{display:flex;gap:9px;}
+.stmt-cbtns button{flex:1;border:none;border-radius:11px;padding:12px 8px;font-size:13.5px;font-weight:800;font-family:'Noto Sans Devanagari','Poppins',sans-serif;cursor:pointer;}
+.stmt-cbtns .v{flex:0 0 auto;width:52px;background:#16224a;border:1px solid #2a3a66;color:#cdd8f8;font-size:18px;}
+.stmt-cbtns .wa{background:linear-gradient(135deg,#2bd36e,#1fad55);color:#fff;box-shadow:0 6px 18px rgba(43,211,110,.28);}
+.stmt-cbtns .dl{background:#16224a;border:1px solid #2a3a66;color:#e8eefc;}
+.stmt-cclose{text-align:center;margin-top:12px;font-size:12px;color:#6b7aa5;cursor:pointer;}
+</style>
+<div class="stmt-scrim" id="stmt-scrim" onclick="stmtFlowClose()"></div>
+<div class="stmt-sheet" id="stmt-sheet">
+  <div class="stmt-grab"></div>
+  <div id="stmt-step-choose">
+    <div class="stmt-title">\U0001F4C4 Statement \u092c\u0928\u093e\u090f\u0902</div>
+    <div class="stmt-sub" id="stmt-sub">\u2014</div>
+    <div class="stmt-opt" onclick="stmtGoDate()"><div class="oic">\U0001F4C5</div><div class="ot"><div class="a">Date-wise</div><div class="b">\u0915\u094b\u0908 \u092d\u0940 date range \u091a\u0941\u0928\u0947\u0902</div></div><div class="go">\u203a</div></div>
+    <div class="stmt-opt" onclick="stmtGoMonth()"><div class="oic">\U0001F5D3\uFE0F</div><div class="ot"><div class="a">Month-wise</div><div class="b">\u092a\u0942\u0930\u0947 \u092e\u0939\u0940\u0928\u0947 \u0915\u093e statement</div></div><div class="go">\u203a</div></div>
+  </div>
+  <div id="stmt-step-month" class="stmt-hide">
+    <div class="stmt-backrow"><div class="bb" onclick="stmtBack()">\u2190</div><div class="bt">\u092e\u0939\u0940\u0928\u093e \u091a\u0941\u0928\u0947\u0902</div></div>
+    <div class="stmt-mgrid" id="stmt-mgrid"></div>
+    <button class="stmt-cta" id="stmt-cta-month" onclick="stmtConfirmMonth()">\u2705 Statement \u092c\u0928\u093e\u090f\u0902</button>
+  </div>
+  <div id="stmt-step-date" class="stmt-hide">
+    <div class="stmt-backrow"><div class="bb" onclick="stmtBack()">\u2190</div><div class="bt">Date range \u091a\u0941\u0928\u0947\u0902</div></div>
+    <div class="stmt-calhead"><div class="mn" id="stmt-cal-mn">\u2014</div><div class="nv"><span onclick="stmtCalNav(-1)">\u2039</span><span onclick="stmtCalNav(1)">\u203a</span></div></div>
+    <div class="stmt-dow"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+    <div class="stmt-cal" id="stmt-cal"></div>
+    <div class="stmt-tip" id="stmt-tip">\u0936\u0941\u0930\u0942 \u0914\u0930 \u0906\u0916\u093f\u0930\u0940 date \u091a\u0941\u0928\u0947\u0902</div>
+    <button class="stmt-cta" id="stmt-cta-date" onclick="stmtConfirmDate()">\u2705 Statement \u092c\u0928\u093e\u090f\u0902</button>
+  </div>
+</div>
+<div class="stmt-cscrim" id="stmt-cscrim" onclick="stmtCardClose()"></div>
+<div class="stmt-card" id="stmt-card">
+  <div class="stmt-badge">\u2705</div>
+  <div class="stmt-ctitle">Statement \u0924\u0948\u092f\u093e\u0930</div>
+  <div class="stmt-cauto">\U0001F4E5 \u0905\u092a\u0928\u0947-\u0906\u092a Download \u0939\u094b \u0917\u092f\u093e \u2713</div>
+  <div class="stmt-cdetail" id="stmt-card-detail">\u2014</div>
+  <div class="stmt-cbtns">
+    <button class="v" onclick="stmtCardAct('view')">\U0001F441</button>
+    <button class="dl" onclick="stmtCardAct('dl')">\U0001F4E5 Download</button>
+    <button class="wa" onclick="stmtCardAct('wa')">\U0001F4AC \u092d\u0947\u091c\u0947\u0902</button>
+  </div>
+  <div class="stmt-cclose" onclick="stmtCardClose()">\u092c\u0902\u0926 \u0915\u0930\u0947\u0902</div>
 </div>
 
 <div class="mk-pop-overlay" id="mk-pop-overlay" onclick="mkPopBgClose(event)">
@@ -10465,5 +10560,136 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     </div>
   </div>
 </div>
+<script id="stmt-flow-js">
+/* ===== Statement flow (P1: UI + real row-gathering, stub generation) ===== */
+(function(){
+  var HI_M=['\u091c\u0928\u0935\u0930\u0940','\u092b\u093c\u0930\u0935\u0930\u0940','\u092e\u093e\u0930\u094d\u091a','\u0905\u092a\u094d\u0930\u0948\u0932','\u092e\u0908','\u091c\u0942\u0928','\u091c\u0941\u0932\u093e\u0908','\u0905\u0917\u0938\u094d\u0924','\u0938\u093f\u0924\u0902\u092c\u0930','\u0905\u0915\u094d\u091f\u0942\u092c\u0930','\u0928\u0935\u0902\u092c\u0930','\u0926\u093f\u0938\u0902\u092c\u0930'];
+  var EN_M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var _stY,_stM,_stStart,_stEnd,_stMonthSel;
+  function pad2(n){return String(n).padStart(2,'0');}
+  function supRows(){
+    var nm=(typeof _mkProfileName!=='undefined')?_mkProfileName:'';
+    var kf=(typeof mkSupKey==='function');var k=kf?mkSupKey(nm):nm;
+    return (DB.get(K.MAAL)||[]).filter(function(r){return r&&!r.placeholder&&(kf?mkSupKey(r.supplier)===k:r.supplier===nm);});
+  }
+  function stShow(step){['choose','month','date'].forEach(function(s){var el=document.getElementById('stmt-step-'+s);if(el)el.classList.toggle('stmt-hide',s!==step);});}
+  window.stmtFlowOpen=function(){
+    stShow('choose');
+    document.getElementById('stmt-scrim').classList.add('show');
+    document.getElementById('stmt-sheet').classList.add('show');
+    var nm=(typeof _mkProfileName!=='undefined')?(_mkProfileName||'\u2014'):'\u2014';
+    document.getElementById('stmt-sub').textContent=nm+' \u00b7 \u0915\u093f\u0938 \u0905\u0935\u0927\u093f \u0915\u093e \u0939\u093f\u0938\u093e\u092c?';
+  };
+  window.stmtFlowClose=function(){
+    document.getElementById('stmt-scrim').classList.remove('show');
+    document.getElementById('stmt-sheet').classList.remove('show');
+  };
+  window.stmtBack=function(){stShow('choose');};
+  window.stmtGoMonth=function(){
+    _stMonthSel=null;
+    var rows=supRows(),by={};
+    rows.forEach(function(r){var ym=(r.date||'').slice(0,7);if(ym)by[ym]=(by[ym]||0)+1;});
+    var yms=Object.keys(by).sort().reverse();
+    var host=document.getElementById('stmt-mgrid');host.innerHTML='';
+    if(!yms.length){host.innerHTML='<div class="stmt-empty">\u0915\u094b\u0908 \u0916\u0930\u0940\u0926 \u0928\u0939\u0940\u0902</div>';}
+    yms.forEach(function(ym){
+      var y=+ym.slice(0,4),m=+ym.slice(5,7)-1;
+      var cell=document.createElement('div');cell.className='stmt-mcell';
+      cell.innerHTML='<div class="mm">'+HI_M[m]+'</div><div class="yy">'+y+'</div><div class="cnt">'+by[ym]+' \u0916\u0930\u0940\u0926</div>';
+      cell.onclick=function(){
+        Array.prototype.forEach.call(host.children,function(c){c.classList.remove('sel');});
+        cell.classList.add('sel');_stMonthSel={y:y,m:m,label:EN_M[m]+' '+y};
+        document.getElementById('stmt-cta-month').classList.add('on');
+      };
+      host.appendChild(cell);
+    });
+    document.getElementById('stmt-cta-month').classList.remove('on');
+    stShow('month');
+  };
+  window.stmtConfirmMonth=function(){
+    if(!_stMonthSel)return;
+    var pre=_stMonthSel.y+'-'+pad2(_stMonthSel.m+1);
+    var res=gather(function(d){return d.slice(0,7)===pre;});
+    finishStub(_stMonthSel.label,res);
+  };
+  window.stmtGoDate=function(){
+    var rows=supRows(),latest=rows.map(function(r){return r.date||'';}).sort().slice(-1)[0]||'';
+    var d=latest?new Date(latest):new Date();
+    _stY=d.getFullYear();_stM=d.getMonth();_stStart=null;_stEnd=null;
+    buildCal();stShow('date');
+  };
+  window.stmtCalNav=function(dir){_stM+=dir;if(_stM<0){_stM=11;_stY--;}if(_stM>11){_stM=0;_stY++;}buildCal();};
+  function ymd(dd){return _stY+'-'+pad2(_stM+1)+'-'+pad2(dd);}
+  function buildCal(){
+    var rows=supRows(),has={};
+    rows.forEach(function(r){var dt=r.date||'';if(dt.slice(0,7)===(_stY+'-'+pad2(_stM+1)))has[+dt.slice(8,10)]=1;});
+    document.getElementById('stmt-cal-mn').textContent=EN_M[_stM]+' '+_stY;
+    var first=new Date(_stY,_stM,1).getDay(),days=new Date(_stY,_stM+1,0).getDate();
+    var cal=document.getElementById('stmt-cal');cal.innerHTML='';
+    var i;for(i=0;i<first;i++){var e=document.createElement('div');e.className='stmt-cd mut';cal.appendChild(e);}
+    for(var dd=1;dd<=days;dd++){(function(dd){
+      var c=document.createElement('div');c.className='stmt-cd'+(has[dd]?' has':'');c.textContent=dd;c.setAttribute('data-d',dd);
+      c.onclick=function(){pickDay(dd);};cal.appendChild(c);
+    })(dd);}
+    paintCal();paintTip();
+    document.getElementById('stmt-cta-date').classList.remove('on');
+  }
+  function pickDay(dd){
+    var v=ymd(dd);
+    if(_stStart===null||(_stStart!==null&&_stEnd!==null)){_stStart=v;_stEnd=null;}
+    else if(v<_stStart){_stEnd=_stStart;_stStart=v;}
+    else{_stEnd=v;}
+    paintCal();paintTip();
+    document.getElementById('stmt-cta-date').classList.toggle('on',!!(_stStart&&_stEnd));
+  }
+  function paintCal(){
+    Array.prototype.forEach.call(document.querySelectorAll('#stmt-cal .stmt-cd[data-d]'),function(c){
+      var v=ymd(+c.getAttribute('data-d'));c.classList.remove('r1','rEdge');
+      if(_stStart&&_stEnd){if(v===_stStart||v===_stEnd)c.classList.add('rEdge');else if(v>_stStart&&v<_stEnd)c.classList.add('r1');}
+      else if(v===_stStart)c.classList.add('rEdge');
+    });
+  }
+  function fmtD(v){var p=v.split('-');return (+p[2])+' '+EN_M[(+p[1])-1];}
+  function paintTip(){
+    var t=document.getElementById('stmt-tip');
+    if(_stStart&&_stEnd)t.textContent='\U0001F4C5 '+fmtD(_stStart)+' \u2013 '+fmtD(_stEnd)+' '+_stY;
+    else if(_stStart)t.textContent='\u0936\u0941\u0930\u0942: '+fmtD(_stStart)+' \u00b7 \u0905\u092c \u0906\u0916\u093f\u0930\u0940 date \u091a\u0941\u0928\u0947\u0902';
+    else t.textContent='\u0936\u0941\u0930\u0942 \u0914\u0930 \u0906\u0916\u093f\u0930\u0940 date \u091a\u0941\u0928\u0947\u0902';
+  }
+  window.stmtConfirmDate=function(){
+    if(!(_stStart&&_stEnd))return;
+    var s=_stStart,e=_stEnd;
+    var res=gather(function(d){return d>=s&&d<=e;});
+    finishStub(fmtD(s)+' \u2013 '+fmtD(e)+' '+_stY,res);
+  };
+  function gather(inRange){
+    var rows=supRows().filter(function(r){return inRange(r.date||'');});
+    var purchased=0,paid=0,payable=0;
+    rows.forEach(function(r){
+      var a=r.amount||0;purchased+=a;
+      if(r.pay==='\u0928\u0915\u0926'){paid+=a;}else{paid+=(r.paid||0);payable+=Math.max(0,a-(r.paid||0));}
+    });
+    return {bills:rows.length,purchased:purchased,paid:paid,payable:payable,rows:rows};
+  }
+  function finishStub(label,res){
+    stmtFlowClose();
+    var nm=(typeof _mkProfileName!=='undefined')?(_mkProfileName||'\u2014'):'\u2014';
+    document.getElementById('stmt-card-detail').textContent=nm+' \u00b7 '+label+' \u00b7 '+res.bills+' bills \u00b7 Balance \u20b9'+(res.payable).toLocaleString('en-IN');
+    setTimeout(function(){
+      document.getElementById('stmt-cscrim').classList.add('show');
+      document.getElementById('stmt-card').classList.add('show');
+    },160);
+  }
+  window.stmtCardClose=function(){
+    document.getElementById('stmt-cscrim').classList.remove('show');
+    document.getElementById('stmt-card').classList.remove('show');
+  };
+  window.stmtCardAct=function(kind){
+    var m=(kind==='wa')?'\U0001F4AC WhatsApp \u2014 P2 \u092e\u0947\u0902 wire \u0939\u094b\u0917\u093e':((kind==='dl')?'\U0001F4E5 Download \u2014 P2 \u092e\u0947\u0902 wire \u0939\u094b\u0917\u093e':'\U0001F441 Preview \u2014 P2 \u092e\u0947\u0902 wire \u0939\u094b\u0917\u093e');
+    if(typeof toast==='function')toast(m);
+  };
+})();
+
+</script>
 </body>
 </html>

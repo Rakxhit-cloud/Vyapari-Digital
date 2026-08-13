@@ -3118,6 +3118,66 @@ body.notif-modal-open { overflow: hidden; }
   <div class="stmt-cclose" onclick="stmtCardClose()">बंद करें</div>
 </div>
 
+<style id="np-flow-css">
+.np-modal{position:fixed;inset:0;z-index:9500;background:rgba(4,8,20,.7);display:none;align-items:flex-start;justify-content:center;overflow-y:auto;font-family:'Noto Sans Devanagari','Poppins',sans-serif;}
+.np-modal.show{display:flex;}
+.np-sheet{width:100%;max-width:440px;min-height:100%;background:linear-gradient(180deg,#0a1530,#0a1228);padding:0 0 30px;}
+.np-hd{display:flex;align-items:center;gap:10px;padding:16px;border-bottom:1px solid #1c2b52;position:sticky;top:0;background:#0a1530;z-index:2;}
+.np-ic{font-size:20px;}
+.np-t{flex:1;font-size:15px;font-weight:800;color:#fff;}
+.np-t small{display:block;font-size:11px;color:#8aa0d8;font-weight:500;}
+.np-x{width:36px;height:36px;border-radius:10px;background:#16224a;border:1px solid #26365f;display:flex;align-items:center;justify-content:center;color:#eaf0ff;font-size:17px;cursor:pointer;}
+#np-s1,#np-s2{padding:16px;}
+.np-cam{border:2px dashed #c9a24b;border-radius:20px;background:linear-gradient(160deg,#141d38,#0d1528);padding:34px 18px;text-align:center;cursor:pointer;box-shadow:0 4px 20px rgba(201,162,75,.14);}
+.np-ci{width:74px;height:74px;border-radius:20px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:38px;background:linear-gradient(135deg,rgba(201,162,75,.24),rgba(201,162,75,.06));border:1px solid rgba(201,162,75,.45);}
+.np-ca{font-size:19px;font-weight:800;color:#fff;}
+.np-cb{font-size:12.5px;color:#8aa0d8;margin-top:8px;line-height:1.5;}
+.np-gal{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#241808,#1a1206);border:1px solid #6a4420;border-radius:14px;padding:14px;color:#f0c890;font-size:14px;font-weight:700;cursor:pointer;}
+.np-hint{margin-top:18px;background:#0e1834;border:1px solid #223052;border-radius:12px;padding:12px 14px;font-size:11.5px;color:#8aa0d8;text-align:center;}
+.np-imgwrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid #2a3c6a;background:#0b142c;min-height:150px;display:flex;align-items:center;justify-content:center;}
+.np-img{width:100%;max-height:230px;object-fit:contain;display:block;background:#0b142c;}
+.np-retake{position:absolute;right:8px;bottom:8px;background:rgba(10,21,48,.86);border:1px solid #c9a24b;color:#f0c890;font-size:12px;font-weight:700;padding:7px 12px;border-radius:9px;cursor:pointer;}
+.np-chips{display:flex;gap:10px;margin:14px 0 4px;}
+.np-chip{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;border-radius:13px;font-size:14px;font-weight:800;cursor:pointer;border:1.5px solid;}
+.np-chip.nakad{background:#0e2a1c;border-color:#1f6a44;color:#7ee0a4;}
+.np-chip.udhaar{background:#241808;border-color:#8a5a1a;color:#f0b878;}
+.np-chip.off{background:#0d1528;border-color:#22314f;color:#5a6a8f;}
+.np-fld{background:#0e1834;border:1px solid #223052;border-radius:13px;padding:12px 14px;margin-top:11px;}
+.np-fld.big{border-color:#c9a24b;background:linear-gradient(135deg,#141d38,#0d1528);}
+.np-lbl{font-size:11px;color:#8aa0d8;font-weight:600;margin-bottom:6px;}
+.np-opt{color:#6b7aa5;font-weight:500;}
+.np-amt{display:flex;align-items:center;gap:4px;}
+.np-amt span{font-size:26px;color:#f0c890;font-weight:800;}
+.np-in{width:100%;background:transparent;border:none;outline:none;color:#fff;font-family:'Poppins';}
+.np-fld.big .np-in{font-size:30px;font-weight:800;color:#f0c890;}
+.np-in.txt{font-size:16px;font-weight:600;}
+.np-cap{font-size:10px;color:#6b7aa5;margin-top:4px;}
+.np-cta{margin-top:18px;background:linear-gradient(135deg,#e84545,#c9a24b);border-radius:14px;padding:16px;text-align:center;color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 22px rgba(232,69,69,.3);}
+</style>
+<div class="np-modal" id="np-modal">
+  <div class="np-sheet">
+    <div class="np-hd"><span class="np-ic">📦</span><div class="np-t">खरीद · नई एंट्री<small id="np-sub">बिल स्कैन करें</small></div><div class="np-x" onclick="npClose()">✕</div></div>
+    <div id="np-s1">
+      <div class="np-cam" onclick="npCapture()"><div class="np-ci">📷</div><div class="np-ca">बिल स्कैन करें</div><div class="np-cb">फोटो खींचिए — जानकारी अगली स्क्रीन पर जाँच लें</div></div>
+      <div class="np-gal" onclick="npGallery()">🖼️ Gallery से चुनें</div>
+      <div class="np-hint">📄 एक बिल = एक एंट्री · बिल की फोटो ज़रूरी है</div>
+    </div>
+    <div id="np-s2" style="display:none;">
+      <div class="np-imgwrap"><img id="np-img" class="np-img" style="display:none;" alt="bill"><div class="np-retake" onclick="npRetake()">🔄 दुबारा</div></div>
+      <div class="np-chips">
+        <div class="np-chip nakad" id="np-chip-nakad" onclick="npSetType('nakad')">💵 नकद</div>
+        <div class="np-chip udhaar off" id="np-chip-udhaar" onclick="npSetType('udhaar')">📋 उधार</div>
+      </div>
+      <div class="np-fld big"><div class="np-lbl">बिल टोटल</div><div class="np-amt"><span>₹</span><input id="np-total" class="np-in" inputmode="numeric" oninput="npTotalInput(this)" placeholder="0"></div><div class="np-cap">अधिकतम ₹99,99,999 तक</div></div>
+      <div class="np-fld"><div class="np-lbl">बिल नंबर <span class="np-opt">optional</span></div><input id="np-billno" class="np-in txt" placeholder="जैसे: T000647" maxlength="40"></div>
+      <div class="np-fld" id="np-due-wrap" style="display:none;"><div class="np-lbl">Due date <span class="np-opt">optional</span></div><input id="np-due" class="np-in txt" placeholder="DD/MM/YYYY" maxlength="20"></div>
+      <div class="np-cta" onclick="npProceed()">आगे बढ़ें →</div>
+    </div>
+    <input id="np-file" type="file" accept="image/*" capture="environment" style="display:none;" onchange="npPhotoChosen(event)">
+    <input id="np-file-gal" type="file" accept="image/*" style="display:none;" onchange="npPhotoChosen(event)">
+  </div>
+</div>
+
 <div class="mk-pop-overlay" id="mk-pop-overlay" onclick="mkPopBgClose(event)">
   <div class="mk-pop" id="mk-pop">
     <div class="mk-pop-grab"></div>
@@ -5977,7 +6037,7 @@ function lgOpenPurchaseFor(supplier){
       if(_m.length)window.lgPurSupPhone=_m[0].supplierPhone||'';
     }catch(e){}
   }
-  lgOpenKeypad('purchase', null);
+  npOpen();
 }
 function lgOpenKeypad(type, editN) {
   window.lgKeypad.type = type;
@@ -6402,6 +6462,7 @@ function lgpcGoContact(amt){
   var pg = document.getElementById('lgpc-page'); if (pg) pg.style.display = '';
 }
 function lgpcBack(){
+  if(window._npFlow){ npReopenPreview(); return; }
   var pg = document.getElementById('lgpc-page'); if (pg) pg.style.display = 'none';
   var kb = document.querySelector('#lg-keypad-modal .lg-modal-body:not(#lgpc-page)'); if (kb) kb.style.display = '';
   var cf = document.getElementById('lgpc-confirm'); if (cf) cf.classList.remove('show');
@@ -6442,6 +6503,8 @@ function lgpcFile(sup, phone){
   var note = (window.lgKeypad.note || '').trim().slice(0,80);
   var r = window.lgState.rec;
   var _maal = { date: r.date, supplier: sup, name: '', amount: amt, pay: pay, note: note, src: 'livehisaab' };
+  if(window._lgpcBillNo)_maal.billNo=window._lgpcBillNo;
+  if(window._lgpcDueDate)_maal.dueDate=window._lgpcDueDate;
   if (phone) _maal.supplierPhone = phone;
   var _isPdf = !!(_ph.isPdf && _ph.pages && _ph.pages.length>1);
   if (_isPdf) {
@@ -10839,6 +10902,70 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     }
   };
 })();
+
+</script>
+<script id="np-flow-js">
+/* ===== New Purchase Entry flow (Step 1: camera -> preview -> reuse supplier-pick) ===== */
+function npShow(scr){
+  var a=document.getElementById('np-s1'),b=document.getElementById('np-s2');
+  if(a)a.style.display=(scr==='s1')?'block':'none';
+  if(b)b.style.display=(scr==='s2')?'block':'none';
+}
+function npOpen(){
+  window.lgPhoto={rawFile:null,blob:null,thumb:'',url:'',path:'',pages:[],isPdf:false,pageCount:0};
+  window._lgpcBillNo='';window._lgpcDueDate='';window.lgPurPay='nakad';
+  window.lgKeypad=window.lgKeypad||{};window.lgKeypad.note='';
+  window._npFlow=false;
+  var t=document.getElementById('np-total');if(t)t.value='';
+  var bn=document.getElementById('np-billno');if(bn)bn.value='';
+  var du=document.getElementById('np-due');if(du)du.value='';
+  var im=document.getElementById('np-img');if(im){im.src='';im.style.display='none';}
+  npSetType('nakad');
+  npShow('s1');
+  document.getElementById('np-modal').classList.add('show');
+}
+function npClose(){document.getElementById('np-modal').classList.remove('show');window._npFlow=false;}
+function npCapture(){var f=document.getElementById('np-file');if(f){f.value='';f.click();}}
+function npGallery(){var f=document.getElementById('np-file-gal');if(f){f.value='';f.click();}}
+function npPhotoChosen(ev){
+  var f=ev&&ev.target&&ev.target.files?ev.target.files[0]:null;if(!f)return;
+  if(typeof toast==='function')toast('\u0924\u0948\u092f\u093e\u0930 \u0939\u094b \u0930\u0939\u093e \u0939\u0948\u2026');
+  _bpCompress(f,1600,0.8,128,0.55).then(function(r){
+    window.lgPhoto={rawFile:f,blob:r.blob,thumb:r.thumb,url:'',path:'',pages:[],isPdf:false,pageCount:0};
+    var img=document.getElementById('np-img');
+    if(img){try{img.src=URL.createObjectURL(f);}catch(e){img.src=r.thumb||'';}img.style.display='block';}
+    npShow('s2');
+  }).catch(function(){if(typeof toast==='function')toast('\u092b\u094b\u091f\u094b process \u0928\u0939\u0940\u0902 \u0939\u0941\u0908, \u0926\u094b\u092c\u093e\u0930\u093e \u0932\u0947\u0902',true);});
+}
+function npRetake(){npCapture();}
+function npSetType(t){
+  window.lgPurPay=t;
+  var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');
+  if(cn)cn.classList.toggle('off',t!=='nakad');
+  if(cu)cu.classList.toggle('off',t!=='udhaar');
+  var dw=document.getElementById('np-due-wrap');if(dw)dw.style.display=(t==='udhaar')?'block':'none';
+}
+function npTotalInput(el){
+  var v=(el.value||'').replace(/[^0-9]/g,'').slice(0,7);
+  el.value=v?Number(v).toLocaleString('en-IN'):'';
+}
+function npProceed(){
+  var amt=parseInt(((document.getElementById('np-total').value)||'').replace(/[^0-9]/g,''))||0;
+  if(!(window.lgPhoto&&window.lgPhoto.thumb)){if(typeof toast==='function')toast('\u274c \u092c\u093f\u0932 \u0915\u0940 \u092b\u094b\u091f\u094b \u091c\u093c\u0930\u0942\u0930\u0940 \u0939\u0948',true);return;}
+  if(!(amt>0)){if(typeof toast==='function')toast('\u274c \u092c\u093f\u0932 \u091f\u094b\u091f\u0932 \u0921\u093e\u0932\u0947\u0902',true);return;}
+  window._lgpcBillNo=((document.getElementById('np-billno').value)||'').trim().slice(0,40);
+  window._lgpcDueDate=(window.lgPurPay==='udhaar')?(((document.getElementById('np-due').value)||'').trim().slice(0,20)):'';
+  window.lgKeypad=window.lgKeypad||{};window.lgKeypad.note='';
+  window._npFlow=true;
+  document.getElementById('np-modal').classList.remove('show');
+  if(!window.lgPurSupCtx){document.getElementById('lg-keypad-modal').classList.add('show');}
+  lgpcGoContact(amt);
+}
+function npReopenPreview(){
+  document.getElementById('lg-keypad-modal').classList.remove('show');
+  document.getElementById('np-modal').classList.add('show');
+  npShow('s2');
+}
 
 </script>
 </body>

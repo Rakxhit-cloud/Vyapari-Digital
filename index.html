@@ -6273,15 +6273,7 @@ function lgpBuildPdf(){
 function lgpFileChosen(ev) {
   var f = ev && ev.target && ev.target.files ? ev.target.files[0] : null;
   if (!f) return;
-  // Adding more pages (via camera), or already building a multi-page bill: append as a page.
-  if (window._lgpAppend || (window.lgPhoto.isPdf && window.lgPhoto.pages && window.lgPhoto.pages.length)) {
-    window._lgpAppend = false;
-    window.lgPhoto.isPdf = true;
-    if (!window.lgPhoto.pages) window.lgPhoto.pages = [];
-    document.getElementById('lgp-confirm-modal').classList.add('show');
-    _lgpAddPageFiles([f]);
-    return;
-  }
+  // Single bill only — multi-page creation removed (Step 2A).
   // First single capture: show the preview + a "+ और फोटो" square to capture more.
   window.lgPhoto.rawFile = f;
   try {
@@ -6291,7 +6283,7 @@ function lgpFileChosen(ev) {
   var titleEl = document.querySelector('#lgp-confirm-modal .lg-modal-title');
   if (titleEl) titleEl.textContent = '📷 बिल Confirm करें';
   document.getElementById('lgp-confirm-modal').classList.add('show');
-  _lgpRenderSingleAddMore();
+  var _w=document.getElementById('lgp-pdf-wrap'); if(_w){_w.style.display='none';_w.innerHTML='';}
 }
 function _lgpRenderSingleAddMore(){
   var wrap = document.getElementById('lgp-pdf-wrap');

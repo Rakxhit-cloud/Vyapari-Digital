@@ -6181,89 +6181,6 @@ function lgpFilesChosen(ev){
   window._lgpAppend=false; window.lgPhoto.isPdf=false; window.lgPhoto.pages=[];
   lgpFileChosen({target:{files:[files[0]]}});
 }
-function _lgpEnterPdfMode(){
-  window.lgPhoto.isPdf = true;
-  if(!window.lgPhoto.pages) window.lgPhoto.pages = [];
-  document.getElementById('lgp-confirm-modal').classList.add('show');
-  _lgpRenderPdfConfirm();
-}
-function _lgpAddPageFiles(files){
-  var room = LGP_MAX_PAGES - window.lgPhoto.pages.length;
-  if(room<=0){ toast('ज़्यादा से ज़्यादा '+LGP_MAX_PAGES+' पेज', true); return; }
-  var take = files.slice(0, room);
-  if(files.length>room) toast('सिर्फ '+room+' पेज और जोड़े गए ('+LGP_MAX_PAGES+' की सीमा)', true);
-  toast('पेज तैयार हो रहे हैं…');
-  var jobs = take.map(function(f){ return _bpCompress(f, 1600, 0.8, 400, 0.7); });
-  Promise.all(jobs).then(function(results){
-    results.forEach(function(r){ window.lgPhoto.pages.push({ blob:r.blob, thumb:r.thumb, dataUrl:null }); });
-    _lgpRenderPdfConfirm();
-  }).catch(function(){ toast('कुछ पेज process नहीं हुए', true); });
-}
-function _lgpRenderPdfConfirm(){
-  var n = window.lgPhoto.pages.length;
-  var titleEl = document.querySelector('#lgp-confirm-modal .lg-modal-title');
-  if(titleEl) titleEl.textContent = (n>1 ? ('📄 बिल · '+n+' पेज') : '📷 बिल Confirm करें');
-  var single = document.getElementById('lgp-preview-img');
-  var wrap = document.getElementById('lgp-pdf-wrap');
-  if(single){ single.style.display='block'; single.src = (window.lgPhoto.pages[0] && window.lgPhoto.pages[0].thumb) || ''; }
-  if(wrap){
-    wrap.style.display='block';
-    var strip='';
-    if(n>1) strip+='<div class="lgp-pdf-banner"><span style="font-size:20px;">📄</span><span>'+n+' पेज एक PDF में सेव होंगे</span></div>';
-    strip+='<div class="lgp-page-strip">';
-    window.lgPhoto.pages.forEach(function(p,i){
-      strip+='<div class="lgp-page"><div class="lgp-page-img" style="background-image:url(\''+(p.thumb||'')+'\');"></div><div class="lgp-page-lbl">पेज '+(i+1)+'</div><div class="lgp-page-del" onclick="lgpRemovePage('+i+')">✕</div></div>';
-    });
-    if(window.lgPhoto.pages.length < LGP_MAX_PAGES){
-      strip+='<div class="lgp-page lgp-page-add" onclick="lgpAddMorePages()"><div class="lgp-page-img">＋</div><div class="lgp-page-lbl">और फोटो</div></div>';
-    }
-    strip+='</div>';
-    wrap.innerHTML=strip;
-  }
-}
-function lgpRemovePage(i){
-  window.lgPhoto.pages.splice(i,1);
-  if(window.lgPhoto.pages.length===0){ window.lgPhoto.isPdf=false; window.lgPhoto.rawFile=null; lgpConfirmClose(); return; }
-  _lgpRenderPdfConfirm();
-}
-function lgpAddMorePages(){
-  if(window.lgPhoto.pages && window.lgPhoto.pages.length >= LGP_MAX_PAGES){ toast('ज़्यादा से ज़्यादा '+LGP_MAX_PAGES+' पेज', true); return; }
-  // Open the CAMERA now (must be inside this tap to satisfy the browser gesture rule).
-  window._lgpAppend = true;
-  var f = document.getElementById('lgp-file'); if(f){ f.value=''; f.click(); }
-  // If we're still on the first single capture, promote it to page 1 in the background.
-  if(!(window.lgPhoto.pages && window.lgPhoto.pages.length) && window.lgPhoto.rawFile){
-    var rf = window.lgPhoto.rawFile; window.lgPhoto.rawFile = null;
-    window.lgPhoto.isPdf = true;
-    if(!window.lgPhoto.pages) window.lgPhoto.pages = [];
-    _lgpAddPageFiles([rf]);
-  }
-}
-function lgpBuildPdf(){
-  return new Promise(function(resolve,reject){
-    try{
-      var jsPDFctor = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : null;
-      if(!jsPDFctor){ reject(new Error('jsPDF not loaded')); return; }
-      var pages = window.lgPhoto.pages || [];
-      if(!pages.length){ reject(new Error('no pages')); return; }
-      var toDataUrl=function(blob){ return new Promise(function(res,rej){ var fr=new FileReader(); fr.onload=function(){res(fr.result);}; fr.onerror=rej; fr.readAsDataURL(blob); }); };
-      Promise.all(pages.map(function(p){ return p.dataUrl ? Promise.resolve(p.dataUrl) : toDataUrl(p.blob); })).then(function(urls){
-        var doc=new jsPDFctor({unit:'pt',format:'a4',compress:true});
-        var pw=doc.internal.pageSize.getWidth(), phh=doc.internal.pageSize.getHeight();
-        var loadDims=function(u){ return new Promise(function(res){ var im=new Image(); im.onload=function(){res({u:u,w:im.naturalWidth,h:im.naturalHeight});}; im.onerror=function(){res({u:u,w:pw,h:phh});}; im.src=u; }); };
-        Promise.all(urls.map(loadDims)).then(function(dims){
-          dims.forEach(function(d,i){
-            if(i>0) doc.addPage();
-            var scale=Math.min(pw/d.w, phh/d.h);
-            var w=d.w*scale, h=d.h*scale, x=(pw-w)/2, y=(phh-h)/2;
-            doc.addImage(d.u,'JPEG',x,y,w,h,undefined,'FAST');
-          });
-          resolve(doc.output('blob'));
-        });
-      }).catch(reject);
-    }catch(e){ reject(e); }
-  });
-}
 function lgpFileChosen(ev) {
   var f = ev && ev.target && ev.target.files ? ev.target.files[0] : null;
   if (!f) return;
@@ -6279,34 +6196,11 @@ function lgpFileChosen(ev) {
   document.getElementById('lgp-confirm-modal').classList.add('show');
   var _w=document.getElementById('lgp-pdf-wrap'); if(_w){_w.style.display='none';_w.innerHTML='';}
 }
-function _lgpRenderSingleAddMore(){
-  var wrap = document.getElementById('lgp-pdf-wrap');
-  if(!wrap) return;
-  wrap.style.display='block';
-  wrap.innerHTML = '<div class="lgp-page-strip"><div class="lgp-page lgp-page-add" onclick="lgpAddMorePages()"><div class="lgp-page-img">＋</div><div class="lgp-page-lbl">और फोटो</div></div></div>';
-}
-
 function lgpConfirmClose() {
   document.getElementById('lgp-confirm-modal').classList.remove('show');
 }
 
 function lgpConfirmOk() {
-  // Multi-page PDF mode: pages already compressed; just confirm & paint (PDF built at save).
-  if (window.lgPhoto.isPdf && window.lgPhoto.pages && window.lgPhoto.pages.length) {
-    if (window.lgPhoto.pages.length === 1) {
-      // single page left -> treat as a normal single image
-      var only = window.lgPhoto.pages[0];
-      window.lgPhoto.isPdf = false;
-      window.lgPhoto.blob = only.blob; window.lgPhoto.thumb = only.thumb;
-      window.lgPhoto.url = ''; window.lgPhoto.path = ''; window.lgPhoto.pages = [];
-    } else {
-      window.lgPhoto.thumb = (window.lgPhoto.pages[0] && window.lgPhoto.pages[0].thumb) || '';
-      window.lgPhoto.pageCount = window.lgPhoto.pages.length;
-    }
-    lgpConfirmClose();
-    lgpPaintTile();
-    return;
-  }
   var f = window.lgPhoto.rawFile;
   if (!f) { toast('पहले फोटो लें', true); return; }
   toast('तैयार हो रहा है…');
@@ -6320,19 +6214,6 @@ function lgpConfirmOk() {
   }).catch(function () { toast('फोटो process नहीं हुई, दोबारा लें', true); });
 }
 
-function lgpUploadPdf(blob, onDone, onErr){
-  try{
-    if(!(window._storage && window._st && CURRENT_UID)){ if(onErr)onErr(); return; }
-    var id='bill_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
-    var path='bills/'+CURRENT_UID+'/'+id+'.pdf';
-    var sref=window._st.ref(window._storage, path);
-    window._st.uploadBytes(sref, blob, {contentType:'application/pdf'}).then(function(){
-      return window._st.getDownloadURL(sref);
-    }).then(function(url){
-      if(typeof onDone==='function') onDone(url, path);
-    }).catch(function(e){ if(onErr)onErr(e); });
-  }catch(e){ if(onErr)onErr(e); }
-}
 function lgpUpload(box, blob, rec, onDone) {
   try {
     if (!(window._storage && window._st && CURRENT_UID)) return;
@@ -6493,16 +6374,9 @@ function lgpcFile(sup, phone){
   if(window._lgpcBillNo)_maal.billNo=window._lgpcBillNo;
   if(window._lgpcDueDate)_maal.dueDate=window._lgpcDueDate;
   if (phone) _maal.supplierPhone = phone;
-  var _isPdf = !!(_ph.isPdf && _ph.pages && _ph.pages.length>1);
-  if (_isPdf) {
-    _maal.billThumb = (_ph.pages[0] && _ph.pages[0].thumb) || '';
-    _maal.pageCount = _ph.pages.length;
-    _maal.isPdf = true;
-  } else {
-    if (_ph.thumb) _maal.billThumb = _ph.thumb;
-    if (_ph.url)   _maal.billUrl   = _ph.url;
-    if (_ph.path)  _maal.billPath  = _ph.path;
-  }
+  if (_ph.thumb) _maal.billThumb = _ph.thumb;
+  if (_ph.url)   _maal.billUrl   = _ph.url;
+  if (_ph.path)  _maal.billPath  = _ph.path;
   DB.push(K.MAAL, _maal);
   var _maalId = _maal.id;
   // Mirror a purchase box onto Live Hisaab (visual only; K.MAAL is the source of truth).
@@ -6515,22 +6389,7 @@ function lgpcFile(sup, phone){
   r.lgBoxes.push(pbox);
   if (window.lgState.isToday) { r.lgSaved = false; r.lgSavedAt = null; }
   if (typeof lgPersistRec === 'function') lgPersistRec(r);
-  if (_isPdf) {
-    pbox.billThumb = _maal.billThumb; pbox.isPdf = true; pbox.pageCount = _ph.pages.length;
-    toast('📄 PDF बन रहा है…');
-    lgpBuildPdf().then(function(pdfBlob){
-      lgpUploadPdf(pdfBlob, function(url, path){
-        try {
-          DB.update(K.MAAL, _maalId, { billPdfUrl: url, billPdfPath: path });
-          pbox.billPdfUrl = url; pbox.billPdfPath = path;
-          if (typeof lgPersistRec === 'function') lgPersistRec(r);
-          if (typeof renderSupplierProfile === 'function') renderSupplierProfile();
-          if (typeof loadMaalHome === 'function') loadMaalHome();
-          toast('✓ '+_ph.pages.length+'-पेज बिल सेव हो गया');
-        } catch(e) {}
-      }, function(err){ toast('PDF upload fail: '+(err&&err.code?err.code:(err&&err.message?err.message:'unknown')), true); });
-    }).catch(function(err){ toast('PDF build fail: '+(err&&err.message?err.message:'unknown'), true); });
-  } else if (_ph.blob && typeof lgpUpload === 'function') lgpUpload(pbox, _ph.blob, r, function(url, path){
+  if (_ph.blob && typeof lgpUpload === 'function') lgpUpload(pbox, _ph.blob, r, function(url, path){
     try {
       DB.update(K.MAAL, _maalId, { billUrl: url, billPath: path });
       if (typeof renderSupplierProfile === 'function') renderSupplierProfile();

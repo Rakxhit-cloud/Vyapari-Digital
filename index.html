@@ -2742,7 +2742,7 @@ body.notif-modal-open { overflow: hidden; }
         </div>
       </div>
       <input id="lgp-file" type="file" accept="image/*" capture="environment" style="display:none;" onchange="lgpFileChosen(event)">
-      <input id="lgp-file-upload" type="file" accept="image/*" multiple style="display:none;" onchange="lgpFilesChosen(event)">
+      <input id="lgp-file-upload" type="file" accept="image/*" style="display:none;" onchange="lgpFilesChosen(event)">
       <div class="lgp-upload-strip" onclick="lgpUploadPick()"><span class="lgp-up-em">🖼️</span> Upload from Gallery</div>
       <div class="lg-note-row" id="lg-note-row">
         <div class="lg-note-label">📝 Note <span>optional</span></div>
@@ -6178,14 +6178,8 @@ var LGP_MAX_PAGES = 12;
 function lgpFilesChosen(ev){
   var files = ev && ev.target && ev.target.files ? Array.prototype.slice.call(ev.target.files) : [];
   if(!files.length) return;
-  var appending = !!window._lgpAppend; window._lgpAppend=false;
-  if(!appending && files.length===1 && !(window.lgPhoto.pages && window.lgPhoto.pages.length)){
-    window.lgPhoto.isPdf=false; window.lgPhoto.pages=[];
-    lgpFileChosen({target:{files:[files[0]]}});
-    return;
-  }
-  _lgpEnterPdfMode();
-  _lgpAddPageFiles(files);
+  window._lgpAppend=false; window.lgPhoto.isPdf=false; window.lgPhoto.pages=[];
+  lgpFileChosen({target:{files:[files[0]]}});
 }
 function _lgpEnterPdfMode(){
   window.lgPhoto.isPdf = true;

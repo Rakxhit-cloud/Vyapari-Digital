@@ -6040,6 +6040,7 @@ function lgOpenPurchaseFor(supplier){
   npOpen();
 }
 function lgOpenKeypad(type, editN) {
+  if (type === 'purchase' && (editN === null || typeof editN === 'undefined')) { window.lgPurSupCtx = null; window.lgPurSupPhone = ''; npOpen(); return; }
   window.lgKeypad.type = type;
   window.lgKeypad.editN = editN; // null = adding new; otherwise editing the Nth box of this type
   // If editing, prefill with existing amount

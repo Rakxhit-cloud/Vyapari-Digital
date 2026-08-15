@@ -10796,7 +10796,7 @@ function npPhotoChosen(ev){
     var img=document.getElementById('np-img');
     if(img){try{img.src=URL.createObjectURL(f);}catch(e){img.src=r.thumb||'';}img.style.display='block';}
     npShow('s2');
-    npRunScan(r.blob);
+    npRunScan(f);
   }).catch(function(){if(typeof toast==='function')toast('\u092b\u094b\u091f\u094b process \u0928\u0939\u0940\u0902 \u0939\u0941\u0908, \u0926\u094b\u092c\u093e\u0930\u093e \u0932\u0947\u0902',true);});
 }
 function npRetake(){npCapture();}
@@ -10806,7 +10806,8 @@ function npClearAuto(k){npShowAuto(k,false);}
 function npScanReset(){var sb=document.getElementById('np-scanbar');if(sb)sb.style.display='none';var fb=document.getElementById('np-fallback');if(fb)fb.style.display='none';['total','billno','due'].forEach(function(k){npShowAuto(k,false);});var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');}
 function npScanUI(state){var sb=document.getElementById('np-scanbar'),fb=document.getElementById('np-fallback'),cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');if(state==='reading'){if(sb)sb.style.display='flex';if(fb)fb.style.display='none';if(cn)cn.classList.add('reading');if(cu)cu.classList.add('reading');}else{if(sb)sb.style.display='none';if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');if(state==='fail'){if(fb)fb.style.display='flex';}else{if(fb)fb.style.display='none';}}}
 function npApplyScan(p){var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}}
-function npRunScan(blob){if(!window._fsScanBill||!blob){return;}npScanUI('reading');_blobToB64(blob).then(function(b64){return window._fsScanBill(b64);}).then(function(res){var p=res&&res.data&&res.data.parsed;if(p&&(p.total>0||p.billNo||p.dueDate)){npApplyScan(p);npScanUI('done');}else{npScanUI('fail');}}).catch(function(){npScanUI('fail');});}
+var NP_OCR_MAXDIM=2400,NP_OCR_QUALITY=0.9;
+function npRunScan(file){if(!window._fsScanBill||!file){return;}npScanUI('reading');_bpCompress(file,NP_OCR_MAXDIM,NP_OCR_QUALITY,32,0.4).then(function(r){return _blobToB64(r.blob);}).then(function(b64){return window._fsScanBill(b64);}).then(function(res){var p=res&&res.data&&res.data.parsed;if(p&&(p.total>0||p.billNo||p.dueDate)){npApplyScan(p);npScanUI('done');}else{npScanUI('fail');}}).catch(function(){npScanUI('fail');});}
 function npSetType(t){
   window.lgPurPay=t;
   var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');

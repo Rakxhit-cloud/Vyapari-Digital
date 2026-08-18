@@ -10772,7 +10772,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 /* ===== New Purchase Entry flow (Step 1: camera -> preview -> reuse supplier-pick) ===== */
 function npShow(scr){
   var a=document.getElementById('np-s1'),b=document.getElementById('np-s2');
-  if(a)a.style.display=(scr==='s1')?'block':'none';
+  if(a)a.style.display=(scr==='s1')?'flex':'none';
   if(b)b.style.display=(scr==='s2')?'block':'none';
 }
 function npOpen(){

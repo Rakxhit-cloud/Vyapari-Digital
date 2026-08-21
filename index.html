@@ -4039,18 +4039,28 @@ window._fsWrite = async function(uid, colName, item) {
 
 window._fsDelete = async function(uid, colName, docId) {
   if (!uid || uid === 'default') return;
+  // Tombstone travels with the delete so OTHER devices learn this id is gone
+  // (their add-only merge never drops a locally-cached row on its own).
+  const tomb = { id: String(docId), col: colName, ts: Date.now() };
   if (!navigator.onLine) {
-    if (window.WriteQueue) window.WriteQueue.enqueue('delete', colName, docId, null);
+    if (window.WriteQueue) {
+      window.WriteQueue.enqueue('delete', colName, docId, null);
+      window.WriteQueue.enqueue('set', 'tomb', tomb.id, tomb);
+    }
     setSyncStatus('offline', '☁️ Offline — Cloud पर बाद में sync होगा');
     return;
   }
   try {
     setSyncStatus('syncing', '☁️ Sync हो रहा है...');
     await deleteDoc(doc(db, 'users', uid, colName, String(docId)));
+    await setDoc(doc(db, 'users', uid, 'tomb', tomb.id), { ...tomb, _syncedAt: serverTimestamp() });
     setSyncStatus('synced', '☁️ Cloud Sync ✅');
   } catch(e) {
     console.warn('FS delete error:', e);
-    if (window.WriteQueue) window.WriteQueue.enqueue('delete', colName, docId, null);
+    if (window.WriteQueue) {
+      window.WriteQueue.enqueue('delete', colName, docId, null);
+      window.WriteQueue.enqueue('set', 'tomb', tomb.id, tomb);
+    }
     setSyncStatus('error', '☁️ Sync पीछे हो रहा है — data safe है');
     setTimeout(() => setSyncStatus('offline', '☁️ Background sync में है'), 4000);
   }
@@ -4060,6 +4070,17 @@ window._fsLoadAll = async function(uid) {
   if (!uid || uid === 'default') return;
   setSyncStatus('syncing', '☁️ Cloud से data लोड हो रहा है...');
   try {
+    // ── Load cloud tombstones FIRST so the merge can't re-add a deleted
+    //    record, and strip any already-deleted rows from the local cache. ──
+    try {
+      const tombSnap = await getDocs(collection(db, 'users', uid, 'tomb'));
+      tombSnap.forEach(d => {
+        const t = d.data() || {};
+        const tid = String(t.id || d.id);
+        if (window._markDeleted) window._markDeleted(tid, true);
+        if (window._applyTombLocally) window._applyTombLocally(uid, tid, t.col);
+      });
+    } catch(tombErr) { console.warn('tomb load err:', tombErr); }
     const cols = ['bikri', 'maal', 'udhaar', 'goal'];
     for (const colName of cols) {
       const snap = await getDocs(collection(db, 'users', uid, colName));
@@ -4118,10 +4139,12 @@ function _tombSave(){
     localStorage.setItem('hk_' + uid + '_deleted', JSON.stringify(out));
   } catch(e){}
 }
-window._markDeleted = function(id){
+window._markDeleted = function(id, _skipTimer){
   if(!id) return;
-  window._recentlyDeleted[id] = Date.now();
-  setTimeout(function(){ try{ delete window._recentlyDeleted[id]; }catch(e){} }, 12000);
+  if(!_skipTimer){
+    window._recentlyDeleted[id] = Date.now();
+    setTimeout(function(){ try{ delete window._recentlyDeleted[id]; }catch(e){} }, 12000);
+  }
   try { var m = _tombLoad(); m[String(id)] = Date.now(); _tombSave(); } catch(e){}
 };
 window._isRecentlyDeleted = function(id){
@@ -4132,6 +4155,24 @@ window._isRecentlyDeleted = function(id){
     if(pt){ if(Date.now()-pt < window._TOMB_TTL) return true; delete m[String(id)]; _tombSave(); }
   } catch(e){}
   return false;
+};
+
+// Strip a tombstoned id from the local cache so a delete made on another
+// device actually disappears here. col narrows the search; omitted = all.
+window._applyTombLocally = function(uid, id, col){
+  if(!uid || uid==='default' || !id) return false;
+  var cols = col ? [col] : ['bikri','maal','udhaar','goal'];
+  var removed = false;
+  cols.forEach(function(c){
+    var lsKey = 'hk_' + uid + '_' + c, arr;
+    try { arr = JSON.parse(localStorage.getItem(lsKey) || '[]'); } catch(e){ arr = []; }
+    if(!Array.isArray(arr) || !arr.length) return;
+    var next = arr.filter(function(r){ return !(r && String(r.id) === String(id)); });
+    if(next.length !== arr.length){
+      try { localStorage.setItem(lsKey, JSON.stringify(next)); removed = true; } catch(e){}
+    }
+  });
+  return removed;
 };
 window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
   if (!uid || uid === 'default' || !Array.isArray(cloudItems) || !cloudItems.length) return false;
@@ -4217,6 +4258,29 @@ window._startRealtimeSync = function(uid) {
       window._rtUnsub.push(unsub);
     } catch(e) { console.warn('startRealtimeSync err:', e); }
   });
+  // ── Live delete-propagation: a tombstone written on any device removes
+  //    the matching record here in real time. ──
+  try {
+    const tombUnsub = onSnapshot(
+      collection(db, 'users', uid, 'tomb'),
+      snap => {
+        if (snap.metadata && snap.metadata.hasPendingWrites) return;
+        let changed = false;
+        snap.docChanges().forEach(chg => {
+          if (chg.type === 'removed') return;
+          const t = chg.doc.data() || {};
+          const tid = String(t.id || chg.doc.id);
+          if (window._markDeleted) window._markDeleted(tid, true);
+          if (window._applyTombLocally && window._applyTombLocally(uid, tid, t.col)) changed = true;
+        });
+        if (changed && typeof window._refreshCurrentScreen === 'function') {
+          window._refreshCurrentScreen();
+        }
+      },
+      err => { console.warn('realtime tomb sync err:', err); }
+    );
+    window._rtUnsub.push(tombUnsub);
+  } catch(e) { console.warn('startRealtimeSync tomb err:', e); }
 };
 window._stopRealtimeSync = function() {
   if (window._rtUnsub && window._rtUnsub.length) {

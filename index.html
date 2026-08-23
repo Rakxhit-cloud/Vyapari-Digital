@@ -1631,7 +1631,12 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-dhead .tot{margin-left:auto;font-size:10.5px;color:#9ad0c0;background:#0d1838;border:1px solid #2a4078;padding:3px 10px;border-radius:10px;font-weight:600;}
 .mkp-row{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1px solid #243a68;border-radius:12px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:flex-start;gap:11px;box-shadow:0 2px 8px rgba(0,0,0,0.22);}
 .mkp-num{width:24px;height:24px;border-radius:7px;background:#0a1530;border:1px solid #2a4078;color:#9ab0e0;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-.mkp-pay{margin-top:7px;background:linear-gradient(135deg,#3a2410,#241608);border:1px solid #cc7a47;color:#f0b878;font-size:11px;font-weight:700;padding:6px 11px;border-radius:8px;cursor:pointer;}
+.mkp-pay{display:inline-block;margin-top:8px;background:linear-gradient(135deg,#d8a94e,#c48f2f);border:none;color:#1a1206;font-size:12.5px;font-weight:800;letter-spacing:.3px;padding:7px 24px;border-radius:9px;cursor:pointer;box-shadow:0 2px 8px rgba(212,168,80,.22);}
+.mkp-dates{display:flex;flex-direction:column;gap:5px;padding-top:1px;}
+.mkp-drow{display:flex;align-items:baseline;gap:8px;}
+.mkp-dlbl{font-size:10px;color:#7d90c4;font-weight:600;width:74px;flex-shrink:0;}
+.mkp-dval{font-size:13.5px;color:#eaf0fb;font-weight:600;letter-spacing:.2px;}
+.mkp-dval.due{color:#f0b878;}
 .mkp-mid{flex:1;min-width:0;}
 .mkp-item{font-size:13.5px;font-weight:600;color:#f0f2f6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mkp-note{font-size:10.5px;color:#8aa0d8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -8080,7 +8085,7 @@ function renderSupplierProfile(){
       const remaining=isNakad?0:Math.max(0,(r.amount||0)-(r.paid||0));
       const settled=!isNakad&&(r.amount||0)>0&&(r.paid||0)>=(r.amount||0);
       const noteHtml=(r.note&&r.note.trim())?`<div class="mkp-note">📝 ${escHTML(r.note.trim())}</div>`:'';
-      const payHtml=(!isNakad&&remaining>0)?`<button class="mkp-pay" onclick="event.stopPropagation();openSupplierPayOverlay('${escJS(r.id)}')">💳 चुकाएं · ${fmt(remaining)} बाकी</button>`:'';
+      const payHtml=(!isNakad&&remaining>0)?`<button class="mkp-pay" onclick="event.stopPropagation();openSupplierPayOverlay('${escJS(r.id)}')">Pay</button>`:'';
       let chipCls,chipTxt;
       if(isNakad){chipCls='mkp-chip-nakad';chipTxt='Cash';}
       else if(settled){chipCls='mkp-chip-settled';chipTxt='✓ चुका';}
@@ -8088,7 +8093,7 @@ function renderSupplierProfile(){
       const _hasBill=!!(r.billThumb||r.billUrl);
       const _isPdfEntry=!!(r.isPdf||r.billPdfUrl||(r.pageCount>1));
       const thumbHtml=_hasBill?`<div class="mkp-thumb" onclick="event.stopPropagation();openBillViewer('${escJS(r.id)}')"><img src="${escHTML(r.billThumb||r.billUrl)}" alt="bill" loading="lazy"><span class="mkp-thumb-ico">${_isPdfEntry?'📄':'🧾'}</span>${_isPdfEntry?`<span class="mkp-pdf-badge">${r.pageCount||''} पेज</span>`:''}</div>`:'';
-      rowsHtml+=`<div class="mkp-entry mk-entry-row" data-eid="${escHTML(r.id)}" onclick="mkRowTap(event,'${escJS(r.id)}')" ontouchstart="mkRowPressStart('${escJS(r.id)}')" ontouchend="mkRowPressEnd()" ontouchmove="mkRowPressEnd()" oncontextmenu="event.preventDefault();mkEnterSelect('${escJS(r.id)}');return false;" style="position:relative;"><div class="mkp-row">${thumbHtml}<div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-item">${escHTML(r.name)||'—'}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt mkp-amt-edit" onclick="event.stopPropagation();openMaalEdit('${escJS(r.id)}')">${fmt(r.amount)} ✏️</div><div class="mkp-chip ${chipCls}">${chipTxt}</div></div></div></div>`;
+      rowsHtml+=`<div class="mkp-entry mk-entry-row" data-eid="${escHTML(r.id)}" onclick="mkRowTap(event,'${escJS(r.id)}')" ontouchstart="mkRowPressStart('${escJS(r.id)}')" ontouchend="mkRowPressEnd()" ontouchmove="mkRowPressEnd()" oncontextmenu="event.preventDefault();mkEnterSelect('${escJS(r.id)}');return false;" style="position:relative;"><div class="mkp-row">${thumbHtml}<div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-dates"><div class="mkp-drow"><span class="mkp-dlbl">Invoice Date</span><span class="mkp-dval">${(r.invoiceDate||'').trim()?escHTML((r.invoiceDate||'').trim()):'—'}</span></div>${!isNakad?`<div class="mkp-drow"><span class="mkp-dlbl">Due Date</span><span class="mkp-dval due">${(r.dueDate||'').trim()?escHTML((r.dueDate||'').trim()):'—'}</span></div>`:''}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt mkp-amt-edit" onclick="event.stopPropagation();openMaalEdit('${escJS(r.id)}')">${fmt(r.amount)} ✏️</div><div class="mkp-chip ${chipCls}">${chipTxt}</div></div></div></div>`;
     });
     grp.innerHTML=`<div class="mkp-dhead"><div class="bar"></div><div class="d">${fmtDate(d)}</div><div class="tot">कुल ${fmt(dayTot)}</div></div>${rowsHtml}`;
     wrap.appendChild(grp);

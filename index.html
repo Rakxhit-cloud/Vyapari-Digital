@@ -3158,6 +3158,40 @@ body.notif-modal-open { overflow: hidden; }
 .np-fld{background:#0e1834;border:1px solid #223052;border-radius:13px;padding:12px 14px;margin-top:11px;}
 .np-date-row{display:flex;gap:11px;}
 .np-date-row .np-fld{flex:1;margin-top:11px;}
+/* ---- Mark Payment flow ---- */
+.spay-head-rt{display:flex;gap:16px;align-items:center;}
+.spay-thumb{position:relative;width:50px;height:50px;border-radius:10px;overflow:hidden;border:1.5px solid #3a5a9a;background:#0c1830 center/cover no-repeat;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);flex-shrink:0;transition:transform .16s cubic-bezier(.34,1.45,.5,1);}
+.spay-thumb:active{transform:scale(.93);}
+.spay-thumb .exp{position:absolute;bottom:-3px;right:-3px;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#d4a850,#a5811f);color:#1a1206;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #101c38;}
+.spay-lbl{font-size:11px;color:#c8b6f0;font-weight:700;letter-spacing:.3px;margin:16px 2px 9px;}
+.spay-amt-wrap{position:relative;background:linear-gradient(135deg,#0e1a38,#0b1530);border:1.5px solid #2f6a48;border-radius:14px;box-shadow:inset 0 2px 8px rgba(0,0,0,.35),0 0 0 3px rgba(62,200,115,.06);}
+.spay-cur{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px;font-weight:700;color:#6a7fa8;}
+.spay-amt-in{width:100%;background:transparent;border:none;outline:none;color:#e8c878;font-size:26px;font-weight:800;text-align:center;padding:16px 70px;font-family:'Poppins';-moz-appearance:textfield;}
+.spay-amt-in::-webkit-outer-spin-button,.spay-amt-in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.spay-full{position:absolute;right:9px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,#c9a24b,#a5811f);border:none;color:#1a1206;font-size:11.5px;font-weight:800;padding:8px 14px;border-radius:9px;cursor:pointer;box-shadow:0 2px 8px rgba(201,162,75,.3);}
+.spay-amt-labels{display:flex;justify-content:space-between;margin:10px 4px 0;font-size:11.5px;}
+.spay-amt-labels span:first-child{color:#e89b5a;font-weight:700;}.spay-amt-labels span:last-child{color:#5dd88a;font-weight:700;}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pm-chip{position:relative;background:linear-gradient(135deg,#12203f,#0c1730);border:1.5px solid #26385f;border-radius:14px;padding:14px 12px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:transform .16s cubic-bezier(.34,1.45,.5,1),border-color .16s,box-shadow .16s;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
+.pm-chip:active{transform:scale(.96);}
+.pm-chip .pmic{width:40px;height:40px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:19px;background:linear-gradient(135deg,rgba(150,170,220,.14),rgba(150,170,220,.04));border:1px solid #2e4066;transition:all .16s;}
+.pm-chip .pmtx{font-size:14px;font-weight:700;color:#c3d0ec;line-height:1.1;}
+.pm-chip.sel{border-color:#d4a850;background:linear-gradient(135deg,#33260f,#241a08);box-shadow:0 0 0 1px #d4a850 inset,0 6px 20px rgba(212,168,80,.22);}
+.pm-chip.sel .pmtx{color:#f0c890;}
+.pm-chip.sel .pmic{background:linear-gradient(135deg,rgba(212,168,80,.28),rgba(212,168,80,.08));border-color:#d4a850;}
+.pm-chip .pmtick{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#d4a850,#a5811f);color:#1a1206;font-size:12px;font-weight:800;display:none;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4);}
+.pm-chip.sel .pmtick{display:flex;}
+.spay-reveal{margin-top:14px;background:linear-gradient(160deg,#20345c 0%,#172945 100%);border:1px solid #4f72b0;border-radius:14px;padding:14px;display:none;box-shadow:0 8px 24px rgba(0,0,0,.36),inset 0 1px 0 rgba(160,195,245,.14);}
+.spay-reveal.show{display:block;}
+.spay-row2{display:flex;gap:10px;}.spay-row2>div{flex:1;}
+.spay-flbl{font-size:10.5px;color:#adc2ec;font-weight:600;margin-bottom:6px;}
+.spay-fin{width:100%;background:#0f1f42;border:1px solid #37589a;border-radius:10px;padding:11px 12px;color:#f4f6fa;font-size:14px;outline:none;}
+.spay-fin::placeholder{color:#455583;}
+.spay-subpills{display:flex;gap:8px;margin-bottom:11px;}
+.spay-subpill{flex:1;text-align:center;padding:10px 6px;border-radius:10px;background:#0f1f42;border:1px solid #37589a;color:#9fb4de;font-size:12.5px;font-weight:800;cursor:pointer;transition:all .14s;}
+.spay-subpill.on{background:linear-gradient(135deg,#2456bd,#163b86);border-color:#6fb0f0;color:#e6f1ff;box-shadow:0 0 0 1px #6fb0f0 inset,0 3px 12px rgba(74,144,212,.34);}
+.spay-subpill .sph{display:block;font-size:8.5px;font-weight:600;color:#6f86bc;margin-top:2px;}
+.spay-subpill.on .sph{color:#bcd6f8;}
 .np-fld.big{border-color:#c9a24b;background:linear-gradient(135deg,#141d38,#0d1528);}
 .np-lbl{font-size:11px;color:#8aa0d8;font-weight:600;margin-bottom:6px;}
 .np-opt{color:#6b7aa5;font-weight:500;}
@@ -3450,23 +3484,42 @@ body.notif-modal-open { overflow: hidden; }
   <div class="mk-pop" style="max-width:480px;">
     <div class="mk-pop-grab"></div>
     <div class="mk-pop-head">
-      <div><div class="mk-pop-title" style="color:#d4a850;">💳 उधार चुकाएं</div><div class="mk-pop-sub">Pay Supplier</div></div>
-      <div class="mk-pop-x" onclick="closeSupplierPayOverlay()">✕</div>
+      <div><div class="mk-pop-title" style="color:#f0b878;">💳 Mark Payment</div><div class="mk-pop-sub">Supplier को चुकाया · भुगतान दर्ज करें</div></div>
+      <div class="spay-head-rt"><div class="spay-thumb" id="spay-thumb" onclick="spayViewBill()" style="display:none;"><span class="exp">⤢</span></div><div class="mk-pop-x" onclick="closeSupplierPayOverlay()">✕</div></div>
     </div>
     <div class="spay-info" id="supplier-pay-info"></div>
-    <div class="mk-fld" style="margin-top:14px;">
-      <div class="mk-fld-lbl" style="color:#d4a850;">💰 कितना चुका रहे हैं? · Amount paying</div>
-      <input type="number" id="supplier-pay-amount" placeholder="₹ 0" inputmode="numeric" class="mk-in mk-amt" style="text-align:center;border-color:#3ec873;">
-      <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:11px;">
-        <span style="color:#e89b5a;font-weight:700;" id="supplier-pay-remaining-lbl">बाकी: ₹0</span>
-        <span style="color:#5dd88a;font-weight:700;" id="supplier-pay-after-lbl">चुकाने के बाद: ₹0</span>
+    <div class="spay-lbl">💰 AMOUNT PAYING · कितना चुका रहे हैं?</div>
+    <div class="spay-amt-wrap">
+      <span class="spay-cur">₹</span>
+      <input type="number" id="supplier-pay-amount" placeholder="0" inputmode="numeric" class="spay-amt-in">
+      <button type="button" class="spay-full" onclick="spayFull()">FULL</button>
+    </div>
+    <div class="spay-amt-labels"><span id="supplier-pay-remaining-lbl">बाकी: ₹0</span><span id="supplier-pay-after-lbl">After: ₹0</span></div>
+    <div class="spay-lbl">💳 PAYMENT MODE · कैसे चुकाया?</div>
+    <div class="pm-grid">
+      <div class="pm-chip sel" data-m="Cash" onclick="spayPickMode(this)"><span class="pmic">💵</span><span class="pmtx">Cash</span><span class="pmtick">✓</span></div>
+      <div class="pm-chip" data-m="UPI" onclick="spayPickMode(this)"><span class="pmic">📱</span><span class="pmtx">UPI</span><span class="pmtick">✓</span></div>
+      <div class="pm-chip" data-m="Cheque" onclick="spayPickMode(this)"><span class="pmic">🧾</span><span class="pmtx">Cheque</span><span class="pmtick">✓</span></div>
+      <div class="pm-chip" data-m="Bank" onclick="spayPickMode(this)"><span class="pmic">🏦</span><span class="pmtx">Bank Transfer</span><span class="pmtick">✓</span></div>
+    </div>
+    <div class="spay-reveal" id="spay-rv-chq">
+      <div class="spay-row2">
+        <div><div class="spay-flbl">Cheque No.</div><input class="spay-fin" id="spay-chq-no" placeholder="123456" inputmode="numeric"></div>
+        <div><div class="spay-flbl">Cheque Date</div><input class="spay-fin" id="spay-chq-date" placeholder="DD/MM/YYYY"></div>
       </div>
     </div>
-    <div style="display:flex;gap:9px;margin-top:6px;">
-      <div class="spay-btn spay-btn-pay" onclick="saveSupplierPayment()">✅ Payment दर्ज करें</div>
-      <div class="spay-btn spay-btn-full" onclick="settleSupplierFull()">🎉 पूरा चुक गया</div>
+    <div class="spay-reveal" id="spay-rv-bank">
+      <div class="spay-flbl">Transfer type · कौन सा?</div>
+      <div class="spay-subpills">
+        <div class="spay-subpill on" data-t="NEFT" onclick="spayPickRail(this)">NEFT<span class="sph">सामान्य</span></div>
+        <div class="spay-subpill" data-t="RTGS" onclick="spayPickRail(this)">RTGS<span class="sph">₹2L+</span></div>
+        <div class="spay-subpill" data-t="IMPS" onclick="spayPickRail(this)">IMPS<span class="sph">तुरंत</span></div>
+      </div>
+      <div class="spay-flbl">Ref / UTR No. <span style="color:#6f86bc;">optional</span></div>
+      <input class="spay-fin" id="spay-bank-ref" placeholder="Transaction reference">
     </div>
-    <div class="spay-btn spay-btn-cancel" onclick="closeSupplierPayOverlay()">✕ रद्द करें · Cancel</div>
+    <div class="spay-btn spay-btn-pay" onclick="saveSupplierPayment()" style="margin-top:18px;">✅ Mark Payment · दर्ज करें</div>
+    <div class="spay-btn spay-btn-cancel" onclick="closeSupplierPayOverlay()">Cancel · रद्द करें</div>
   </div>
 </div>
 
@@ -8105,29 +8158,45 @@ function openSupplierPayOverlay(id){
   const r=DB.get(K.MAAL).find(x=>x.id===id);if(!r)return;
   _supplierPayId=id;
   const remaining=(r.amount||0)-(r.paid||0);
-  document.getElementById('supplier-pay-info').innerHTML=`सप्लायर: <span>${r.supplier||'—'}</span><br>माल: <span>${r.name||'—'}</span><br>कुल उधार: <span>${fmt(r.amount)}</span><br>पहले चुका: <span>${fmt(r.paid||0)}</span>`;
-  document.getElementById('supplier-pay-amount').value='';
+  document.getElementById('supplier-pay-info').innerHTML=`Supplier: <span>${r.supplier||'—'}</span><br>Bill No: <span>${r.billNo||'—'}</span><br>Balance due: <span style="color:#f0b878;">${fmt(remaining)}</span>`;
+  var _th=document.getElementById('spay-thumb');
+  if(_th){var _src=r.billThumb||r.billUrl||'';if(_src){_th.style.backgroundImage="url('"+_src+"')";_th.style.display='';window._spayBill={url:r.billUrl||'',thumb:r.billThumb||''};}else{_th.style.display='none';window._spayBill=null;}}
+  var _a=document.getElementById('supplier-pay-amount');_a.value='';
   document.getElementById('supplier-pay-remaining-lbl').textContent='बाकी: '+fmt(remaining);
-  document.getElementById('supplier-pay-after-lbl').textContent='चुकाने के बाद: '+fmt(remaining);
-  document.getElementById('supplier-pay-amount').oninput=function(){
-    const v=Math.min(parseFloat(this.value)||0,remaining);
-    document.getElementById('supplier-pay-after-lbl').textContent='चुकाने के बाद: '+fmt(remaining-v);
-  };
+  document.getElementById('supplier-pay-after-lbl').textContent='After: '+fmt(remaining);
+  _a.oninput=function(){var v=Math.min(parseFloat(String(this.value).replace(/,/g,''))||0,remaining);document.getElementById('supplier-pay-after-lbl').textContent='After: '+fmt(remaining-v);};
+  document.querySelectorAll('#supplier-pay-overlay .pm-chip').forEach(function(c){c.classList.toggle('sel',c.dataset.m==='Cash');});
+  document.getElementById('spay-rv-chq').classList.remove('show');
+  document.getElementById('spay-rv-bank').classList.remove('show');
+  document.querySelectorAll('#supplier-pay-overlay .spay-subpill').forEach(function(pp){pp.classList.toggle('on',pp.dataset.t==='NEFT');});
+  ['spay-chq-no','spay-chq-date','spay-bank-ref'].forEach(function(fid){var f=document.getElementById(fid);if(f)f.value='';});
   document.getElementById('supplier-pay-overlay').classList.add('show');
 }
 function closeSupplierPayOverlay(){document.getElementById('supplier-pay-overlay').classList.remove('show');_supplierPayId=null;}
+function spayPickMode(el){
+  document.querySelectorAll('#supplier-pay-overlay .pm-chip').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  document.getElementById('spay-rv-chq').classList.toggle('show',el.dataset.m==='Cheque');
+  document.getElementById('spay-rv-bank').classList.toggle('show',el.dataset.m==='Bank');
+}
+function spayPickRail(el){el.parentNode.querySelectorAll('.spay-subpill').forEach(function(pp){pp.classList.remove('on');});el.classList.add('on');}
+function spayFull(){if(!_supplierPayId)return;const r=DB.get(K.MAAL).find(x=>x.id===_supplierPayId);if(!r)return;var rem=(r.amount||0)-(r.paid||0);var a=document.getElementById('supplier-pay-amount');a.value=rem;if(a.oninput)a.oninput();}
+function spayViewBill(){if(window._spayBill&&(window._spayBill.url||window._spayBill.thumb)){lgpViewBillSrc(window._spayBill.url,window._spayBill.thumb);}}
 function saveSupplierPayment(){
   if(!_supplierPayId)return;
   const r=DB.get(K.MAAL).find(x=>x.id===_supplierPayId);if(!r)return;
-  const amt=parseFloat(document.getElementById('supplier-pay-amount').value)||0;
+  const amt=parseFloat(String(document.getElementById('supplier-pay-amount').value).replace(/,/g,''))||0;
   if(!amt){toast('❌ रकम डालें',true);return;}
   const newPaid=Math.min((r.paid||0)+amt,r.amount||0);
   const paidDelta=newPaid-(r.paid||0);
-  // Note: 'pay' field preserved as original — historical truth.
-  // Status (DUE/PARTIAL/SETTLED) is derived from paid vs amount in popup.
-  DB.update(K.MAAL,_supplierPayId,{paid:newPaid});
-  if(paidDelta>0){const _t=new Date();const _ds=_t.getFullYear()+'-'+String(_t.getMonth()+1).padStart(2,'0')+'-'+String(_t.getDate()).padStart(2,'0');lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80),r.id,'payment');}
-  showSuccessModal('Payment दर्ज', '💵 Payment recorded');
+  var modeEl=document.querySelector('#supplier-pay-overlay .pm-chip.sel');var mode=modeEl?modeEl.dataset.m:'Cash';
+  var upd={paid:newPaid,payMode:mode};var railLbl='';
+  if(mode==='Bank'){var rEl=document.querySelector('#supplier-pay-overlay .spay-subpill.on');var rail=rEl?rEl.dataset.t:'NEFT';railLbl=rail;upd.payRail=rail;var ref=(document.getElementById('spay-bank-ref').value||'').trim();if(ref)upd.payRef=ref.slice(0,40);}
+  else if(mode==='Cheque'){var cn=(document.getElementById('spay-chq-no').value||'').trim();var cd=(document.getElementById('spay-chq-date').value||'').trim();if(cn)upd.chequeNo=cn.slice(0,20);if(cd)upd.chequeDate=cd.slice(0,20);}
+  DB.update(K.MAAL,_supplierPayId,upd);
+  var _lbl=(mode==='Bank'?(railLbl||'Bank'):mode);
+  if(paidDelta>0){const _t=new Date();const _ds=_t.getFullYear()+'-'+String(_t.getMonth()+1).padStart(2,'0')+'-'+String(_t.getDate()).padStart(2,'0');lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')+' · '+_lbl).slice(0,80),r.id,'payment');}
+  showSuccessModal('Payment दर्ज', '💵 '+_lbl+' payment recorded');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
   renderSuppliers();
@@ -10704,11 +10773,12 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
       var det=(r.name&&String(r.name).trim())?esc(r.name):'Purchase';
       var clip=(r.billUrl||r.billThumb||r.billPath||r.isPdf)?(' <span class="lk-clip">\uD83D\uDCCE'+((r.isPdf&&r.pageCount)?(' '+r.pageCount+'pg'):'')+'</span>'):'';
       var bn=r.billNo?esc(r.billNo):'\u2014';
+      var _pm=(!cash&&r.payMode)?(r.payMode==='Bank'?(r.payRail||'Bank'):r.payMode):'';
       var _bi=biso(r),_dcell=_bi?fmtRowDate(_bi):((r.invoiceDate&&String(r.invoiceDate).trim())?esc(String(r.invoiceDate).trim()):fmtRowDate(r.date));
       body+='<tr><td class="lk-dt">'+_dcell+'</td><td class="lk-bn">'+bn+'</td>'
         +'<td class="lk-de"><b>'+det+'</b>'+clip+'</td>'
         +'<td class="lk-num">'+fmtN(a)+'</td>'
-        +'<td class="lk-num lk-paid">'+(pd?fmtN(pd):'\u2014')+'</td>'
+        +'<td class="lk-num lk-paid">'+(pd?(fmtN(pd)+(_pm?'<span class="lk-pm"> \u00b7 '+esc(_pm)+'</span>':'')):'\u2014')+'</td>'
         +'<td class="lk-num"><span class="lk-bal">'+fmtN(bal)+'</span><div class="lk-st s-'+cls+'">'+st+'</div></td></tr>';
     });
     var css='<style>'
@@ -10733,7 +10803,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
       +'.lk-tb tbody tr:nth-child(even) td{background:#fbfaf7;}'
       +'.lk-dt{color:#6b7180;white-space:nowrap;}.lk-bn{color:#16224a;font-weight:600;white-space:nowrap;}'
       +'.lk-de b{font-weight:600;}.lk-clip{color:#c0902f;font-size:11px;}'
-      +'.lk-num{text-align:right;white-space:nowrap;}.lk-paid{color:#2f7a52;font-weight:600;}'
+      +'.lk-num{text-align:right;white-space:nowrap;}.lk-paid{color:#2f7a52;font-weight:600;}.lk-pm{color:#8a94a6;font-weight:600;font-size:9.5px;}'
       +'.lk-bal{font-weight:700;color:#0a1530;}'
       +'.lk-st{font-size:8.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 6px;border-radius:5px;margin-top:4px;display:inline-block;}'
       +'.s-cash{background:#e8f3ec;color:#2f7a52;border:1px solid #bfe0cd;}'

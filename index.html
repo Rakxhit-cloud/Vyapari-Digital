@@ -10693,7 +10693,9 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
   /* ---------- build the statement DOM (English chrome, purchase register) ---------- */
   function buildStmtHTML(supplier,phone,label,res){
     var shop=shopName(),sph=shopPhone();
-    var rows=res.rows.slice().sort(function(x,y){var dx=(x.date||''),dy=(y.date||'');if(dx!==dy)return dx<dy?-1:1;return (x.ts||0)-(y.ts||0);});
+    // Bill (invoice) date is the true transaction date; recording date is only a fallback.
+    function biso(r){var s=(r.invoiceDate||'').trim();if(!s)return '';var pp=s.split(/[\/\-]/);if(pp.length!==3)return '';var d=+pp[0],mo=+pp[1],y=+pp[2];if(!d||!mo||!y)return '';if(y<100)y+=2000;return y+'-'+('0'+mo).slice(-2)+'-'+('0'+d).slice(-2);}
+    var rows=res.rows.slice().sort(function(x,y){var dx=biso(x)||(x.date||''),dy=biso(y)||(y.date||'');if(dx!==dy)return dx<dy?-1:1;return (x.ts||0)-(y.ts||0);});
     var body='';
     rows.forEach(function(r){
       var a=r.amount||0,cash=(r.pay==='\u0928\u0915\u0926'),pd=cash?a:(r.paid||0),bal=Math.max(0,a-pd);
@@ -10702,7 +10704,8 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
       var det=(r.name&&String(r.name).trim())?esc(r.name):'Purchase';
       var clip=(r.billUrl||r.billThumb||r.billPath||r.isPdf)?(' <span class="lk-clip">\uD83D\uDCCE'+((r.isPdf&&r.pageCount)?(' '+r.pageCount+'pg'):'')+'</span>'):'';
       var bn=r.billNo?esc(r.billNo):'\u2014';
-      body+='<tr><td class="lk-dt">'+fmtRowDate(r.date)+'</td><td class="lk-bn">'+bn+'</td>'
+      var _bi=biso(r),_dcell=_bi?fmtRowDate(_bi):((r.invoiceDate&&String(r.invoiceDate).trim())?esc(String(r.invoiceDate).trim()):fmtRowDate(r.date));
+      body+='<tr><td class="lk-dt">'+_dcell+'</td><td class="lk-bn">'+bn+'</td>'
         +'<td class="lk-de"><b>'+det+'</b>'+clip+'</td>'
         +'<td class="lk-num">'+fmtN(a)+'</td>'
         +'<td class="lk-num lk-paid">'+(pd?fmtN(pd):'\u2014')+'</td>'
@@ -10757,7 +10760,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
       +'<div class="as">'+res.bills+' bills'+(phone?(' \u00b7 '+esc(phone)):'')+'</div></div>'
       +'<div><div class="cap">Balance Payable</div><div class="amt">'+inr(res.payable)+'</div></div></div>';
     var table='<div class="lk-wrap"><table class="lk-tb"><thead><tr>'
-      +'<th>Date</th><th>Bill No.</th><th>Details</th><th class="tr">Amount</th><th class="tr">Paid</th><th class="tr">Balance</th>'
+      +'<th>Bill Date</th><th>Bill No.</th><th>Details</th><th class="tr">Amount</th><th class="tr">Paid</th><th class="tr">Balance</th>'
       +'</tr></thead><tbody>'+body+'</tbody></table></div>';
     var sum='<div class="lk-sum"><div class="c"><div class="k">Total purchased</div><div class="v">'+inr(res.purchased)+'</div></div>'
       +'<div class="c"><div class="k">Total paid</div><div class="v">'+inr(res.paid)+'</div></div>'

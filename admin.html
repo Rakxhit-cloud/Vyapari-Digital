@@ -1111,20 +1111,19 @@ function openProfile(uid) {
   // Bind Welcome (post-install greeting) button
   const _wb = card.querySelector('.action-welcome');
   if (_wb) _wb.addEventListener('click', () => {
-    const WELCOME_MSG = `नमस्ते 🙏 *Live खाता* में आपका स्वागत है!
+    const WELCOME_MSG = `नमस्ते 🙏 Welcome to *Live Khaata*
 
-अब आपकी दुकान का पूरा हिसाब आपके फ़ोन में — आसान, सुरक्षित और पूरी तरह हिंदी में।
+आपकी दुकान का पूरा हिसाब — *Sales, Purchase और Expense* — एक ही app में, fast और organised.
 
-✅ हर बिक्री और खर्चा — सिर्फ़ एक tap में
-📕 *उधार Book* — हर ग्राहक का उधार याद रखें, बिल सीधे WhatsApp पर भेजें
-🎤 *बोलकर* सामान जोड़ें — टाइप करने की ज़रूरत नहीं
-🔒 महीने का हिसाब *PIN से सुरक्षित* — सिर्फ़ आपके लिए
-☁️ डेटा अपने आप safe — फ़ोन बदलें तो भी कुछ नहीं खोएगा
+📸 बिल की photo खींचिए — amount, date और bill number अपने आप capture
+🧾 Cash व UPI sales और रोज़ का expense — एक tap में record
+🛒 हर supplier का purchase record, bills securely सुरक्षित
+📄 Professional statement बनाइए और WhatsApp पर share कीजिए
+🔒 PIN security और cloud backup — phone बदलें, तो भी data सुरक्षित
 
-बस आज की *पहली entry* से शुरुआत करें — फिर रोज़ का हिसाब कभी नहीं छूटेगा।
+*पहले 90 दिन निःशुल्क।* अपनी पहली entry से आज ही शुरुआत कीजिए।
 
-पहले *90 दिन बिल्कुल मुफ़्त*। कोई भी सवाल हो तो यहीं message करें। 🙏
-— _Live खाता_`;
+— *Live Khaata* · _अब हिसाब चलेगा LIVE_ 🔴`;
     const phone = String(u.profile.phone || '').replace(/^\+/, '').replace(/\D/g, '');
     if (phone) window.open(`https://wa.me/${phone}?text=${encodeURIComponent(WELCOME_MSG)}`, '_blank');
     else alert('इस user का फ़ोन नंबर नहीं मिला');

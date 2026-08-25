@@ -8145,7 +8145,7 @@ function renderSupplierProfile(){
       const payHtml=(!isNakad&&remaining>0)?`<button class="mkp-pay" onclick="event.stopPropagation();openSupplierPayOverlay('${escJS(r.id)}')">Pay</button>`:'';
       let chipCls,chipTxt;
       if(isNakad){chipCls='mkp-chip-nakad';chipTxt='Cash';}
-      else if(settled){chipCls='mkp-chip-settled';chipTxt='✓ Paid';}
+      else if(settled){chipCls='mkp-chip-settled';chipTxt='✓ Settled';}
       else {chipCls='mkp-chip-udhaar';chipTxt='Credit';}
       const _mLbl=r.payMode?(r.payMode==='Bank'?(r.payRail||'Bank'):r.payMode):'';
       const pmHtml=_mLbl?`<div class="mkp-pm">${escHTML(_mLbl)}</div>`:'';

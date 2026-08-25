@@ -3192,6 +3192,9 @@ body.notif-modal-open { overflow: hidden; }
 .spay-subpill.on{background:linear-gradient(135deg,#2456bd,#163b86);border-color:#6fb0f0;color:#e6f1ff;box-shadow:0 0 0 1px #6fb0f0 inset,0 3px 12px rgba(74,144,212,.34);}
 .spay-subpill .sph{display:block;font-size:8.5px;font-weight:600;color:#6f86bc;margin-top:2px;}
 .spay-subpill.on .sph{color:#bcd6f8;}
+.spay-go{margin-top:20px;background:linear-gradient(135deg,#1f8f52,#116b39);border:none;border-radius:14px;padding:16px;text-align:center;color:#fff;font-size:15.5px;font-weight:800;cursor:pointer;box-shadow:0 8px 22px rgba(31,143,82,.32),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .16s cubic-bezier(.34,1.45,.5,1);}
+.spay-go:active{transform:scale(.97);}
+.spay-cx{margin-top:10px;text-align:center;color:#7d8bb0;font-size:12.5px;font-weight:600;padding:11px;cursor:pointer;}
 .np-fld.big{border-color:#c9a24b;background:linear-gradient(135deg,#141d38,#0d1528);}
 .np-lbl{font-size:11px;color:#8aa0d8;font-weight:600;margin-bottom:6px;}
 .np-opt{color:#6b7aa5;font-weight:500;}
@@ -3518,8 +3521,8 @@ body.notif-modal-open { overflow: hidden; }
       <div class="spay-flbl">Ref / UTR No. <span style="color:#6f86bc;">optional</span></div>
       <input class="spay-fin" id="spay-bank-ref" placeholder="Transaction reference">
     </div>
-    <div class="spay-btn spay-btn-pay" onclick="saveSupplierPayment()" style="margin-top:18px;">✅ Mark Payment · दर्ज करें</div>
-    <div class="spay-btn spay-btn-cancel" onclick="closeSupplierPayOverlay()">Cancel · रद्द करें</div>
+    <div class="spay-go" onclick="saveSupplierPayment()">✅ Mark Payment · दर्ज करें</div>
+    <div class="spay-cx" onclick="closeSupplierPayOverlay()">Cancel</div>
   </div>
 </div>
 
@@ -10773,12 +10776,12 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
       var det=(r.name&&String(r.name).trim())?esc(r.name):'Purchase';
       var clip=(r.billUrl||r.billThumb||r.billPath||r.isPdf)?(' <span class="lk-clip">\uD83D\uDCCE'+((r.isPdf&&r.pageCount)?(' '+r.pageCount+'pg'):'')+'</span>'):'';
       var bn=r.billNo?esc(r.billNo):'\u2014';
-      var _pm=(!cash&&r.payMode)?(r.payMode==='Bank'?(r.payRail||'Bank'):r.payMode):'';
+      var _pm='';if(!cash&&r.payMode){if(r.payMode==='Bank'){_pm=(r.payRail||'Bank');if(r.payRef)_pm+=' '+r.payRef;}else if(r.payMode==='Cheque'){_pm='Cheque'+(r.chequeNo?' #'+r.chequeNo:'');}else{_pm=r.payMode;}}
       var _bi=biso(r),_dcell=_bi?fmtRowDate(_bi):((r.invoiceDate&&String(r.invoiceDate).trim())?esc(String(r.invoiceDate).trim()):fmtRowDate(r.date));
       body+='<tr><td class="lk-dt">'+_dcell+'</td><td class="lk-bn">'+bn+'</td>'
         +'<td class="lk-de"><b>'+det+'</b>'+clip+'</td>'
         +'<td class="lk-num">'+fmtN(a)+'</td>'
-        +'<td class="lk-num lk-paid">'+(pd?(fmtN(pd)+(_pm?'<span class="lk-pm"> \u00b7 '+esc(_pm)+'</span>':'')):'\u2014')+'</td>'
+        +'<td class="lk-num lk-paid">'+(pd?(fmtN(pd)+(_pm?'<div class="lk-pm">'+esc(_pm)+'</div>':'')):'\u2014')+'</td>'
         +'<td class="lk-num"><span class="lk-bal">'+fmtN(bal)+'</span><div class="lk-st s-'+cls+'">'+st+'</div></td></tr>';
     });
     var css='<style>'

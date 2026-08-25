@@ -1637,6 +1637,7 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-dlbl{font-size:10px;color:#7d90c4;font-weight:600;width:74px;flex-shrink:0;}
 .mkp-dval{font-size:13.5px;color:#eaf0fb;font-weight:600;letter-spacing:.2px;}
 .mkp-dval.due{color:#f0b878;}
+.mkp-pm{font-size:9.5px;color:#8ea4d6;font-weight:600;margin-top:3px;text-align:right;letter-spacing:.2px;}
 .mkp-mid{flex:1;min-width:0;}
 .mkp-item{font-size:13.5px;font-weight:600;color:#f0f2f6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mkp-note{font-size:10.5px;color:#8aa0d8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -8144,12 +8145,14 @@ function renderSupplierProfile(){
       const payHtml=(!isNakad&&remaining>0)?`<button class="mkp-pay" onclick="event.stopPropagation();openSupplierPayOverlay('${escJS(r.id)}')">Pay</button>`:'';
       let chipCls,chipTxt;
       if(isNakad){chipCls='mkp-chip-nakad';chipTxt='Cash';}
-      else if(settled){chipCls='mkp-chip-settled';chipTxt='✓ चुका';}
+      else if(settled){chipCls='mkp-chip-settled';chipTxt='✓ Paid';}
       else {chipCls='mkp-chip-udhaar';chipTxt='Credit';}
+      const _mLbl=r.payMode?(r.payMode==='Bank'?(r.payRail||'Bank'):r.payMode):'';
+      const pmHtml=_mLbl?`<div class="mkp-pm">${escHTML(_mLbl)}</div>`:'';
       const _hasBill=!!(r.billThumb||r.billUrl);
       const _isPdfEntry=!!(r.isPdf||r.billPdfUrl||(r.pageCount>1));
       const thumbHtml=_hasBill?`<div class="mkp-thumb" onclick="event.stopPropagation();openBillViewer('${escJS(r.id)}')"><img src="${escHTML(r.billThumb||r.billUrl)}" alt="bill" loading="lazy"><span class="mkp-thumb-ico">${_isPdfEntry?'📄':'🧾'}</span>${_isPdfEntry?`<span class="mkp-pdf-badge">${r.pageCount||''} पेज</span>`:''}</div>`:'';
-      rowsHtml+=`<div class="mkp-entry mk-entry-row" data-eid="${escHTML(r.id)}" onclick="mkRowTap(event,'${escJS(r.id)}')" ontouchstart="mkRowPressStart('${escJS(r.id)}')" ontouchend="mkRowPressEnd()" ontouchmove="mkRowPressEnd()" oncontextmenu="event.preventDefault();mkEnterSelect('${escJS(r.id)}');return false;" style="position:relative;"><div class="mkp-row">${thumbHtml}<div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-dates"><div class="mkp-drow"><span class="mkp-dlbl">Invoice Date</span><span class="mkp-dval">${(r.invoiceDate||'').trim()?escHTML((r.invoiceDate||'').trim()):'—'}</span></div>${!isNakad?`<div class="mkp-drow"><span class="mkp-dlbl">Due Date</span><span class="mkp-dval due">${(r.dueDate||'').trim()?escHTML((r.dueDate||'').trim()):'—'}</span></div>`:''}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt mkp-amt-edit" onclick="event.stopPropagation();openMaalEdit('${escJS(r.id)}')">${fmt(r.amount)} ✏️</div><div class="mkp-chip ${chipCls}">${chipTxt}</div></div></div></div>`;
+      rowsHtml+=`<div class="mkp-entry mk-entry-row" data-eid="${escHTML(r.id)}" onclick="mkRowTap(event,'${escJS(r.id)}')" ontouchstart="mkRowPressStart('${escJS(r.id)}')" ontouchend="mkRowPressEnd()" ontouchmove="mkRowPressEnd()" oncontextmenu="event.preventDefault();mkEnterSelect('${escJS(r.id)}');return false;" style="position:relative;"><div class="mkp-row">${thumbHtml}<div class="mkp-num">${i+1}</div><div class="mkp-mid"><div class="mkp-dates"><div class="mkp-drow"><span class="mkp-dlbl">Invoice Date</span><span class="mkp-dval">${(r.invoiceDate||'').trim()?escHTML((r.invoiceDate||'').trim()):'—'}</span></div>${!isNakad?`<div class="mkp-drow"><span class="mkp-dlbl">Due Date</span><span class="mkp-dval due">${(r.dueDate||'').trim()?escHTML((r.dueDate||'').trim()):'—'}</span></div>`:''}</div>${noteHtml}${payHtml}</div><div class="mkp-rt"><div class="mkp-amt mkp-amt-edit" onclick="event.stopPropagation();openMaalEdit('${escJS(r.id)}')">${fmt(r.amount)} ✏️</div><div class="mkp-chip ${chipCls}">${chipTxt}</div>${pmHtml}</div></div></div>`;
     });
     grp.innerHTML=`<div class="mkp-dhead"><div class="bar"></div><div class="d">${fmtDate(d)}</div><div class="tot">कुल ${fmt(dayTot)}</div></div>${rowsHtml}`;
     wrap.appendChild(grp);

@@ -111,6 +111,7 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .entry-chip.m{background:rgba(74,144,212,0.12);color:#4a90d4;border:1px solid rgba(74,144,212,0.25)}
 .entry-chip.k{background:rgba(176,124,255,0.12);color:#b07cff;border:1px solid rgba(176,124,255,0.25)}
 .entry-chip.u{background:rgba(204,122,71,0.12);color:#f0a868;border:1px solid rgba(204,122,71,0.25)}
+.entry-chip.p{background:rgba(212,168,80,0.14);color:#e8c06a;border:1px solid rgba(212,168,80,0.32)}
 .entry-chip.zero{background:rgba(42,64,120,0.3);color:#4a5aa8;border:1px solid rgba(74,90,168,0.3)}
 .view-btn{background:rgba(212,168,80,0.08);border:1px solid #d4a850;color:#d4a850;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
 .view-btn:hover{background:rgba(212,168,80,0.16)}
@@ -195,11 +196,13 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .engagement-card.m{border-top:1.5px solid #4a90d4}
 .engagement-card.k{border-top:1.5px solid #b07cff}
 .engagement-card.u{border-top:1.5px solid #cc7a47}
+.engagement-card.p{border-top:1.5px solid #d4a850}
 .engagement-card.zero{background:rgba(20,37,74,0.4);border-color:rgba(42,64,120,0.4)}
 .engagement-card.zero.b{border-top-color:rgba(93,202,165,0.3)}
 .engagement-card.zero.m{border-top-color:rgba(74,144,212,0.3)}
 .engagement-card.zero.k{border-top-color:rgba(176,124,255,0.3)}
 .engagement-card.zero.u{border-top-color:rgba(204,122,71,0.3)}
+.engagement-card.zero.p{border-top-color:rgba(212,168,80,0.3)}
 .engagement-num{font-size:20px;font-weight:600;color:#e8d8b8;line-height:1}
 .engagement-card.zero .engagement-num{color:#4a5aa8}
 .engagement-label{font-size:10px;color:#b0a0e8;margin-top:4px;letter-spacing:0.3px}
@@ -495,8 +498,9 @@ window._loadUsersFromFirestore = async function() {
     const upiCount     = profile.upiCount     || 0;
     const kharchaCount = profile.kharchaCount || 0;
     const udhaarCount  = profile.udhaarCount  || 0;
+    const maalCount    = profile.maalCount    || 0;
     const lastActive   = profile.lastActiveAt || null;
-    users.push({ uid, profile, cashCount, upiCount, kharchaCount, udhaarCount, lastActive });
+    users.push({ uid, profile, cashCount, upiCount, kharchaCount, udhaarCount, maalCount, lastActive });
   }
   return users;
 };
@@ -870,7 +874,7 @@ function classifyStage(p, u) {
   // GROUND TRUTH: if the user has made any entries, they MUST have
   // installed the PWA and crossed the activation threshold. Entry counts
   // override missing funnel timestamps (old users predate the funnel tracker).
-  if (u && (u.cashCount > 0 || u.upiCount > 0 || u.kharchaCount > 0 || u.udhaarCount > 0)) {
+  if (u && (u.cashCount > 0 || u.upiCount > 0 || u.kharchaCount > 0 || u.udhaarCount > 0 || u.maalCount > 0)) {
     return 'complete';
   }
   if (p.firstEntryAt) return 'complete';
@@ -1055,6 +1059,7 @@ function entriesMiniHTML(u) {
   const arr = [
     { c: 'b', l: 'Cash', n: u.cashCount },
     { c: 'm', l: 'UPI', n: u.upiCount },
+    { c: 'p', l: 'खरीद', n: u.maalCount },
     { c: 'k', l: 'खर्चा', n: u.kharchaCount },
     { c: 'u', l: 'उधार', n: u.udhaarCount }
   ];
@@ -1294,10 +1299,11 @@ function trialSectionHTML(p) {
 }
 
 function engagementSectionHTML(u, p, stage) {
-  const zero = u.cashCount + u.upiCount + u.kharchaCount + u.udhaarCount === 0;
+  const zero = u.cashCount + u.upiCount + u.kharchaCount + u.udhaarCount + u.maalCount === 0;
   const cells = [
     { cls: 'b', label: 'Cash', n: u.cashCount },
     { cls: 'm', label: 'UPI', n: u.upiCount },
+    { cls: 'p', label: 'खरीद', n: u.maalCount },
     { cls: 'k', label: 'खर्चा', n: u.kharchaCount },
     { cls: 'u', label: 'उधार', n: u.udhaarCount }
   ];
@@ -1476,7 +1482,7 @@ function pickTemplate(u) {
 
   // 7. PWA installed but no first entry yet (1+ day since pwaActivatedAt)
   if (p.pwaActivatedAt && !p.firstEntryAt &&
-      !(u.cashCount > 0 || u.upiCount > 0 || u.kharchaCount > 0 || u.udhaarCount > 0) &&
+      !(u.cashCount > 0 || u.upiCount > 0 || u.kharchaCount > 0 || u.udhaarCount > 0 || u.maalCount > 0) &&
       daysSince(p.pwaActivatedAt) >= 1) {
     return {
       tag: 'FIRST ENTRY',

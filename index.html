@@ -2328,7 +2328,7 @@ body.notif-modal-open { overflow: hidden; }
         <div class="mk-tile-cta">खोलें →</div>
       </div>
     </div>
-    <div class="ub-tile" onclick="go('s-udhaar-book')">
+    <div class="ub-tile" onclick="go('s-udhaar-book')" style="display:none;">
       <div class="ub-tile-stripe"></div>
       <div class="ub-tile-body">
         <div class="ub-tile-icon">
@@ -9238,10 +9238,11 @@ function _syncEngagementCounts(){
       else{if((rec.cash||0)>0)cash++;if((rec.upi||0)>0)upi++;if((rec.expense||0)>0)kharcha++;}
     });
     var udhaar=(DB.get(K.UDHAAR)||[]).filter(function(x){return x&&x.type!=='payment';}).length;
-    var key=cash+'|'+upi+'|'+kharcha+'|'+udhaar;
+    var maal=(DB.get(K.MAAL)||[]).filter(function(x){return x&&!x.placeholder;}).length;
+    var key=cash+'|'+upi+'|'+kharcha+'|'+udhaar+'|'+maal;
     if(key===_engCountKey)return; _engCountKey=key;
     import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(function(m){
-      m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{cashCount:cash,upiCount:upi,kharchaCount:kharcha,udhaarCount:udhaar,countsUpdatedAt:Date.now()},{merge:true}).catch(function(){});
+      m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{cashCount:cash,upiCount:upi,kharchaCount:kharcha,udhaarCount:udhaar,maalCount:maal,countsUpdatedAt:Date.now()},{merge:true}).catch(function(){});
     }).catch(function(){});
   }catch(e){}
 }

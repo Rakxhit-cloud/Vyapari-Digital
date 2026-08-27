@@ -10758,14 +10758,16 @@ function npCapture(){var f=document.getElementById('np-file');if(f){f.value='';f
 function npGallery(){var f=document.getElementById('np-file-gal');if(f){f.value='';f.click();}}
 function npPhotoChosen(ev){
   var f=ev&&ev.target&&ev.target.files?ev.target.files[0]:null;if(!f)return;
+  // Switch to preview SYNCHRONOUSLY, before the async compress, so the scan screen (np-s1) can never flash back after the camera confirms.
+  var img=document.getElementById('np-img');
+  if(img){try{img.src=URL.createObjectURL(f);}catch(e){img.src='';}img.style.display='block';}
+  npShow('s2');
+  npScanUI('reading');
   if(typeof toast==='function')toast('\u0924\u0948\u092f\u093e\u0930 \u0939\u094b \u0930\u0939\u093e \u0939\u0948\u2026');
   _bpCompress(f,1600,0.8,128,0.55).then(function(r){
     window.lgPhoto={rawFile:f,blob:r.blob,thumb:r.thumb,url:'',path:'',pages:[],isPdf:false,pageCount:0};
-    var img=document.getElementById('np-img');
-    if(img){try{img.src=URL.createObjectURL(f);}catch(e){img.src=r.thumb||'';}img.style.display='block';}
-    npShow('s2');
     npRunScan(f);
-  }).catch(function(){if(typeof toast==='function')toast('\u092b\u094b\u091f\u094b process \u0928\u0939\u0940\u0902 \u0939\u0941\u0908, \u0926\u094b\u092c\u093e\u0930\u093e \u0932\u0947\u0902',true);});
+  }).catch(function(){if(typeof toast==='function')toast('\u092b\u094b\u091f\u094b process \u0928\u0939\u0940\u0902 \u0939\u0941\u0908, \u0926\u094b\u092c\u093e\u0930\u093e \u0932\u0947\u0902',true);npScanUI('fail');npShow('s1');});
 }
 function npRetake(){npCapture();}
 function _blobToB64(blob){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){var s=String(fr.result||'');var i=s.indexOf(',');res(i>=0?s.slice(i+1):s);};fr.onerror=function(){rej(new Error('read'));};fr.readAsDataURL(blob);});}

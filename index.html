@@ -1675,13 +1675,14 @@ body.notif-modal-open { overflow: hidden; }
 .spay-btn-cancel{margin-top:9px;background:#1e1012;border:1px solid #5a2530;color:#e08a9c;text-align:center;padding:12px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;}
 </style>
 <style id="lg-voice-css">
-.lg-voice{margin:8px 0 10px;padding:8px 10px;border-radius:12px;background:#081428;border:1px solid #16294f;display:flex;flex-direction:column;align-items:center;}
-.lg-voice[data-type="cash"]{--vac:#8aef7a;border-color:#173a24;background:#07160e;}
-.lg-voice[data-type="upi"]{--vac:#5dcaff;border-color:#173453;background:#061627;}
+.lg-voice{margin:8px 0 10px;padding:10px 10px;border-radius:14px;background:#081428;border:1px solid #16294f;display:flex;flex-direction:column;align-items:center;}
+.lg-voice[data-type="cash"]{--vac:#8aef7a;--vglow:rgba(138,239,122,.5);border-color:#1c4a2e;background:radial-gradient(120% 120% at 50% 0%,#0c2418,#06120c);}
+.lg-voice[data-type="upi"]{--vac:#5dcaff;--vglow:rgba(93,202,255,.5);border-color:#1a4266;background:radial-gradient(120% 120% at 50% 0%,#0a2036,#05121f);}
 .lg-voice-idle{display:flex;flex-direction:column;align-items:center;gap:4px;}
-.lg-voice-mic{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--vac);background:radial-gradient(circle at 50% 38%,#0f2038,#0a1626);color:var(--vac);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;}
+.lg-voice-mic{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--vac);background:radial-gradient(circle at 50% 34%,#12244a,#0a1626);color:var(--vac);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 6px 0 var(--vglow);animation:lgvBreathe 2.4s ease-in-out infinite;}
 .lg-voice-mic:active{transform:scale(.93);}
-.lg-voice-mic svg{width:19px;height:19px;}
+.lg-voice-mic svg{width:20px;height:20px;}
+@keyframes lgvBreathe{0%,100%{box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 6px 0 var(--vglow)}50%{box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 20px 3px var(--vglow)}}
 .lg-voice-cap{font-size:11.5px;font-weight:700;color:var(--vac);}
 .lg-voice-sub{font-size:9.5px;color:#6a7ba8;}
 .lg-voice-rec,.lg-voice-proc,.lg-voice-res{display:none;flex-direction:column;align-items:center;gap:8px;width:100%;}
@@ -2662,12 +2663,12 @@ body.notif-modal-open { overflow: hidden; }
           <div class="lg-voice-wave" id="lg-wave-cash"></div>
           <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-cash">0.0s</b></div>
         </div>
-        <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">समझ रहा हूँ…</div></div>
+        <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
         <div class="lg-voice-res">
           <div class="lg-voice-amt" id="lg-vamt-cash">₹0</div>
           <div class="lg-voice-btns">
             <button type="button" class="lg-voice-add" onclick="lgVoiceConfirm('cash')">Add / जोड़ें</button>
-            <button type="button" class="lg-voice-again" onclick="lgVoiceStart('cash')">🔄 फिर से</button>
+            <button type="button" class="lg-voice-again" onclick="lgVoiceReset('cash')">🔄 फिर से</button>
           </div>
         </div>
         <div class="lg-voice-err" id="lg-verr-cash"></div>
@@ -2697,12 +2698,12 @@ body.notif-modal-open { overflow: hidden; }
           <div class="lg-voice-wave" id="lg-wave-upi"></div>
           <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-upi">0.0s</b></div>
         </div>
-        <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">समझ रहा हूँ…</div></div>
+        <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
         <div class="lg-voice-res">
           <div class="lg-voice-amt" id="lg-vamt-upi">₹0</div>
           <div class="lg-voice-btns">
             <button type="button" class="lg-voice-add" onclick="lgVoiceConfirm('upi')">Add / जोड़ें</button>
-            <button type="button" class="lg-voice-again" onclick="lgVoiceStart('upi')">🔄 फिर से</button>
+            <button type="button" class="lg-voice-again" onclick="lgVoiceReset('upi')">🔄 फिर से</button>
           </div>
         </div>
         <div class="lg-voice-err" id="lg-verr-upi"></div>
@@ -10909,10 +10910,10 @@ function npReopenPreview(){
         var src = S.ac.createMediaStreamSource(stream);
         S.analyser = S.ac.createAnalyser(); S.analyser.fftSize=64; src.connect(S.analyser);
         S.data = new Uint8Array(S.analyser.frequencyBinCount);
-        var bars = buildWave(type); S.silence=0; S.spoke=false;
+        var bars = buildWave(type); S.silence=0; S.spoke=false; S.sawAudio=false;
         (function draw(){
           S.raf = requestAnimationFrame(draw);
-          S.analyser.getByteFrequencyData(S.data);
+          S.analyser.getByteFrequencyData(S.data); S.sawAudio=true;
           var sum=0; for(var i=0;i<11;i++){ var v=S.data[i+1]||0; bars[i].style.height=Math.max(5,(v/255)*22)+'px'; sum+=v; }
           var level=sum/11;
           if(level>18){ S.spoke=true; S.silence=0; }
@@ -10945,6 +10946,7 @@ function npReopenPreview(){
     var S = LGV[type]; _stopTracks(S);
     var chunks = S.chunks||[];
     if(!chunks.length){ return _fail(type,'कुछ सुनाई नहीं दिया — फिर से बोलें'); }
+    if(S.sawAudio && !S.spoke){ return _fail(type,'कुछ नहीं सुना — फिर से बोलिए'); }
     var blob = new Blob(chunks, { type:(chunks[0] && chunks[0].type) || 'audio/webm' });
     setState(type,'proc');
     _toWav(blob).then(function(wav){ return _blobToB64(wav); }).then(function(b64){
@@ -10983,6 +10985,7 @@ function npReopenPreview(){
     if(typeof loadHome==='function') setTimeout(loadHome,50);
   };
 
+  window.lgVoiceReset = function(type){ _cleanup(type); LGV[type].amt=0; setState(type,null); };
   function _fail(type,msg){ _cleanup(type); var e=el('lg-verr-'+type); if(e) e.textContent=msg||'फिर से कोशिश करें'; setState(type,'err'); }
   function _cleanup(type){
     var S=LGV[type];

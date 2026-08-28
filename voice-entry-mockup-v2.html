@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Live Khaata · बोलकर एंट्री — Real Mic Demo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Devanagari",Roboto,sans-serif;
+    background:#05080f; color:#e8d8b8;
+    display:flex; flex-direction:column; align-items:center; padding:18px 12px 60px; min-height:100vh;
+  }
+  .mk-head { text-align:center; margin-bottom:12px; max-width:420px; }
+  .mk-head h1 { font-size:16px; color:#f0d890; font-weight:800; }
+  .mk-head p { font-size:11px; color:#7a8bc0; margin-top:4px; line-height:1.5; }
+  .mk-badge { display:inline-block; background:#1a1005; border:1px solid #c0902f; color:#f0d890;
+    font-size:9px; font-weight:800; padding:2px 8px; border-radius:20px; margin-top:8px; letter-spacing:.4px; }
+  .chrome-tip { max-width:360px; width:100%; background:#0c1e14; border:1px solid #2f7a4a; border-radius:10px;
+    padding:9px 12px; font-size:10.5px; color:#a8e8c0; line-height:1.5; margin-bottom:10px; }
+  .chrome-tip b { color:#c4f4b8; }
+
+  .mk-seg { display:flex; gap:6px; margin:6px 0; }
+  .mk-seg button { background:#0e1730; border:1.5px solid #2a4078; color:#8aa0d8;
+    font-size:12px; font-weight:700; padding:8px 16px; border-radius:9px; cursor:pointer; }
+  .mk-seg button.on-cash { border-color:#8aef7a; color:#c4f4b8; background:#0c1e18; }
+  .mk-seg button.on-upi { border-color:#5dcaff; color:#a8e0ff; background:#0a1a2c; }
+
+  .phone {
+    width:100%; max-width:360px; aspect-ratio:9/17.6; background:#040a18;
+    border:8px solid #10152a; border-radius:34px; position:relative; overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.7); margin-top:6px;
+  }
+  .status-bar { height:26px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 16px; font-size:10px; color:#c8d4f0; background:#0a1530; }
+  .home-dim { position:absolute; inset:26px 0 0; background:linear-gradient(180deg,#0a1530,#081020); opacity:.35; filter:blur(1px); }
+  .home-dim .hrow { height:44px; margin:10px; border-radius:10px; border:1px solid #1a2a50; background:#0c1830; }
+
+  .backdrop { position:absolute; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center; padding:14px; }
+  .card { width:100%; max-width:300px; background:#0a1530; border:1.5px solid #2a4078;
+    border-radius:14px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.6); position:relative; }
+  .stripe { height:3px; background:linear-gradient(90deg,#d4a850,#cc7a47 40%,#4a90d4); }
+  .body { padding:14px 13px 15px; }
+  .head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .title { font-size:14px; font-weight:800; color:#f0e0c0; }
+  .close { width:26px; height:26px; border:1px solid #2a4078; border-radius:7px; display:flex;
+    align-items:center; justify-content:center; color:#8aa0d8; font-size:13px; cursor:pointer; }
+
+  /* annotation pills — answer "where does voice show up" */
+  .anno { position:absolute; z-index:5; background:#1a1005; border:1px solid #d4a850; color:#f0d890;
+    font-size:9px; font-weight:800; padding:2px 7px; border-radius:12px; white-space:nowrap;
+    box-shadow:0 2px 8px rgba(0,0,0,.5); pointer-events:none; opacity:0; transition:.35s; }
+  .anno.show { opacity:1; }
+  #anno-in { top:64px; left:-6px; }
+  #anno-out { top:64px; right:-6px; }
+
+  .voice-hero { text-align:center; padding:6px 0 4px; }
+  .mic-btn {
+    width:104px; height:104px; margin:2px auto 0; border-radius:50%;
+    background:radial-gradient(circle at 50% 40%,#12244a,#0a1730);
+    border:2.5px solid var(--accent); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; position:relative; transition:transform .12s;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.5);
+  }
+  .mic-btn:active { transform:scale(.95); }
+  .mic-btn svg { width:42px; height:42px; }
+  .mic-cap { font-size:14px; font-weight:800; color:var(--accent-txt); margin-top:11px; }
+  .mic-hint { font-size:10.5px; color:#8aa0d8; margin-top:4px; line-height:1.5; }
+  .mic-hint b { color:#c8b888; }
+
+  .recording .mic-btn { border-color:#e84545; animation:pulseRing 1.15s ease-out infinite; }
+  @keyframes pulseRing {
+    0% { box-shadow:0 0 0 0 rgba(232,69,69,.55), inset 0 2px 8px rgba(0,0,0,.5); }
+    70% { box-shadow:0 0 0 16px rgba(232,69,69,0), inset 0 2px 8px rgba(0,0,0,.5); }
+    100% { box-shadow:0 0 0 0 rgba(232,69,69,0), inset 0 2px 8px rgba(0,0,0,.5); } }
+  .reddot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#e84545;
+    margin-right:6px; box-shadow:0 0 8px #e84545; animation:blink 1s infinite; vertical-align:middle; }
+  @keyframes blink { 50%{opacity:.3} }
+
+  /* REAL waveform (JS-driven bars) */
+  .wave { display:none; justify-content:center; align-items:center; gap:3px; height:30px; margin-top:12px; }
+  .recording .wave, .wave.force { display:flex; }
+  .wave i { width:3.5px; height:5px; background:#e84545; border-radius:2px; transition:height .06s linear; }
+
+  .timer { font-size:12px; color:#e84545; font-weight:800; margin-top:8px; display:none; }
+  .recording .timer { display:block; }
+
+  .live-tx { font-size:13px; color:#e8d8b8; margin-top:10px; min-height:18px; font-weight:600; }
+  .live-tx.empty { color:#4a5aa8; font-weight:400; }
+
+  /* recorded/playback panel */
+  .recd { display:none; margin-top:12px; }
+  .recd.show { display:block; }
+  .recd-strip { display:flex; align-items:center; gap:10px; background:#081223; border:1px solid #2a4078;
+    border-radius:10px; padding:10px 12px; }
+  .play-btn { width:38px; height:38px; flex-shrink:0; border-radius:50%; background:var(--accent-dim);
+    border:1.5px solid var(--accent); display:flex; align-items:center; justify-content:center;
+    color:var(--accent-txt); font-size:15px; cursor:pointer; }
+  .recd-meta { flex:1; text-align:left; }
+  .recd-meta .t1 { font-size:12px; font-weight:800; color:#c4f4b8; }
+  .recd-meta .t2 { font-size:10px; color:#8aa0d8; margin-top:2px; }
+  .understand { background:linear-gradient(135deg,#d4a850,#e8c870); border:2px solid #f0d890;
+    color:#1a1208; font-size:13px; font-weight:800; padding:11px; border-radius:10px; text-align:center;
+    margin-top:10px; cursor:pointer; }
+
+  /* parsing */
+  .parsing { display:none; text-align:center; padding:22px 0; }
+  .parsing.show { display:block; }
+  .spinner { width:34px; height:34px; margin:0 auto 12px; border:3px solid #1a2a50;
+    border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .parsing .pt { font-size:13px; color:#a8c0f0; font-weight:700; }
+  .parsing .ps { font-size:10px; color:#6a7ba8; margin-top:4px; }
+
+  /* confirm gate */
+  .confirm { display:none; }
+  .confirm.show { display:block; }
+  .cf-said { background:#081223; border:1px dashed #2a4078; border-radius:9px; padding:8px 10px;
+    font-size:11px; color:#8aa0d8; margin-bottom:12px; text-align:center; }
+  .cf-said b { color:#c8d4f0; }
+  .cf-amt-box { background:#081223; border:2px solid var(--accent); border-radius:11px;
+    padding:14px 10px; text-align:center; margin-bottom:10px; }
+  .cf-amt { font-size:34px; font-weight:800; color:var(--accent-txt); letter-spacing:-.5px; line-height:1; }
+  .cf-chips { display:flex; gap:7px; justify-content:center; margin-top:11px; flex-wrap:wrap; }
+  .cf-chip { font-size:11px; font-weight:700; padding:5px 11px; border-radius:20px;
+    background:#0e1e3a; border:1px solid #2a4078; color:#a8c0f0; }
+  .cf-chip.type { background:var(--accent-dim); border-color:var(--accent); color:var(--accent-txt); }
+  .cf-btns { display:flex; gap:8px; margin-top:14px; }
+  .cf-yes { flex:1.4; background:linear-gradient(135deg,#d4a850,#e8c870); border:2px solid #f0d890;
+    color:#1a1208; font-size:13px; font-weight:800; padding:12px; border-radius:10px; cursor:pointer; text-align:center; }
+  .cf-edit { flex:1; background:#0e1e3a; border:1.5px solid #2a4078; color:#a8c0f0;
+    font-size:12px; font-weight:700; padding:12px; border-radius:10px; cursor:pointer; text-align:center; }
+
+  .alt-row { display:flex; gap:9px; margin-top:15px; }
+  .alt-tile { flex:1; background:#081223; border:1.5px dashed #d4a850; border-radius:10px;
+    padding:11px 6px; text-align:center; cursor:pointer; }
+  .alt-tile.type-mode { border-style:solid; border-color:#2a4078; }
+  .alt-tile svg { width:20px; height:20px; display:block; margin:0 auto 3px; }
+  .alt-tile span { font-size:10px; font-weight:700; color:#e8c870; }
+  .alt-tile.type-mode span { color:#a8c0f0; }
+
+  .note-row { margin-top:11px; }
+  .note-lbl { font-size:11px; color:#8aa0d8; font-weight:700; margin-bottom:5px; }
+  .note-lbl span { color:#4a5aa8; font-weight:400; }
+  .note-in { width:100%; background:#14254a; border:1px solid #2a4078; border-radius:8px;
+    padding:9px 12px; font-size:13px; color:#e8d8b8; outline:none; }
+  .note-in::placeholder { color:#4a5aa8; }
+
+  .keypad-wrap { display:none; margin-top:12px; }
+  .keypad-wrap.show { display:block; }
+  .display { background:#081223; border:2px solid var(--accent); border-radius:10px; padding:12px; text-align:center; margin-bottom:9px; }
+  .display .amt { font-size:28px; font-weight:800; color:var(--accent-txt); }
+  .display .hint { font-size:9px; color:#8aa0d8; margin-top:4px; }
+  .keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+  .key { background:#081223; border:1.5px solid #2a4078; border-radius:9px; padding:11px 0; text-align:center; font-size:17px; font-weight:600; color:#e8d8b8; cursor:pointer; }
+  .key:active { background:#142544; }
+  .key.back { color:#cc7a47; border-color:rgba(204,122,71,.6); font-size:14px; }
+  .key.tri { color:#d4a850; border-color:rgba(212,168,80,.6); font-size:13px; }
+  .commit { background:linear-gradient(135deg,#d4a850,#e8c870); border:2px solid #f0d890; color:#1a1208; font-size:12px; font-weight:800; padding:11px; border-radius:10px; text-align:center; margin-top:9px; cursor:pointer; }
+
+  .toast { position:absolute; left:50%; bottom:20px; transform:translateX(-50%) translateY(20px);
+    background:#0c2a16; border:1.5px solid #4caf50; color:#c4f4b8; font-size:12px; font-weight:700;
+    padding:10px 18px; border-radius:22px; opacity:0; transition:.3s; white-space:nowrap; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  .theme-cash { --accent:#8aef7a; --accent-txt:#c4f4b8; --accent-dim:#0e2a1c; }
+  .theme-upi  { --accent:#5dcaff; --accent-txt:#a8e0ff; --accent-dim:#0a2438; }
+
+  .demo { max-width:360px; width:100%; margin-top:16px; background:#0a1020; border:1px solid #1a2a50; border-radius:12px; padding:13px; }
+  .demo h3 { font-size:11px; color:#f0d890; font-weight:800; margin-bottom:4px; }
+  .demo .sub { font-size:10px; color:#7a8bc0; margin-bottom:10px; line-height:1.5; }
+  .ex-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+  .ex { background:#0e1730; border:1px solid #2a4078; border-radius:8px; padding:8px 9px; font-size:11px; color:#c8d4f0; cursor:pointer; line-height:1.4; }
+  .ex:active { background:#142544; }
+  .ex b { color:#f0d890; }
+  .mk-note { max-width:360px; width:100%; margin-top:14px; font-size:10.5px; color:#6a7ba8; line-height:1.6; border-top:1px solid #1a2a50; padding-top:12px; }
+  .mk-note b { color:#a8b8e0; }
+  .mk-note .warn { color:#e8a878; }
+</style>
+</head>
+<body class="theme-cash">
+
+<div class="mk-head">
+  <h1>बोलकर एंट्री · Real Mic Demo</h1>
+  <p>असली रिकॉर्डिंग + waveform + playback · production जैसा (record → Gemini → result)</p>
+  <div class="mk-badge">MOCKUP v2 — real capture</div>
+</div>
+
+<div class="chrome-tip">
+  ✅ <b>Chrome में सीधे खोलें</b> (Claude app के preview में नहीं) — mic permission माँगेगा, "Allow" दबाएँ।
+  तब असली आवाज़ record होगी। Preview/sandbox में mic block रहता है।
+</div>
+
+<div class="mk-seg">
+  <button id="seg-cash" class="on-cash" onclick="setType('cash')">💵 नकद</button>
+  <button id="seg-upi" onclick="setType('upi')">📱 UPI</button>
+</div>
+
+<div class="phone">
+  <div class="status-bar"><span>10:38</span><span>📶 55% 🔋</span></div>
+  <div class="home-dim"><div class="hrow"></div><div class="hrow"></div><div class="hrow"></div><div class="hrow"></div></div>
+
+  <div class="backdrop">
+    <div class="card" id="card">
+      <div class="anno" id="anno-in">① आवाज़ यहाँ जाती है</div>
+      <div class="anno" id="anno-out">② result यहाँ आता है</div>
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="head">
+          <div class="title" id="m-title">💵 नकद · एंट्री 1</div>
+          <div class="close">✕</div>
+        </div>
+
+        <!-- HERO: record -->
+        <div class="voice-hero" id="hero">
+          <div class="mic-btn" id="mic" onclick="micTap()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </div>
+          <div class="mic-cap" id="mic-cap">बोलकर एंट्री</div>
+          <div class="mic-hint" id="mic-hint">दबाकर बोलिए · जैसे <b>"पाँच सौ बीस कैश"</b></div>
+          <div class="wave" id="wave"></div>
+          <div class="timer" id="timer">● 0.0s</div>
+          <div class="live-tx empty" id="live-tx">…रिकॉर्ड करने के लिए mic दबाएँ</div>
+        </div>
+
+        <!-- RECORDED + playback -->
+        <div class="recd" id="recd">
+          <div class="recd-strip">
+            <div class="play-btn" id="play" onclick="playBack()">▶</div>
+            <div class="recd-meta">
+              <div class="t1" id="recd-t1">🎙️ आपकी रिकॉर्डिंग तैयार</div>
+              <div class="t2" id="recd-t2">▶ दबाकर अपनी आवाज़ सुनें</div>
+            </div>
+          </div>
+          <div class="understand" onclick="understand()">समझें → (Gemini को भेजें)</div>
+        </div>
+
+        <!-- PARSING -->
+        <div class="parsing" id="parsing">
+          <div class="spinner"></div>
+          <div class="pt">समझ रहा हूँ…</div>
+          <div class="ps">production में: आवाज़ → Gemini → amount + type + note</div>
+        </div>
+
+        <!-- CONFIRM -->
+        <div class="confirm" id="confirm">
+          <div class="cf-said" id="cf-said">आपने कहा: <b>—</b></div>
+          <div class="cf-amt-box">
+            <div class="cf-amt" id="cf-amt">₹0</div>
+            <div class="cf-chips" id="cf-chips"></div>
+          </div>
+          <div class="cf-btns">
+            <div class="cf-yes" id="cf-yes" onclick="commit()">✓ सही है — जोड़ें</div>
+            <div class="cf-edit" onclick="editViaKeypad()">✏️ बदलें</div>
+          </div>
+        </div>
+
+        <!-- secondary -->
+        <div class="alt-row" id="alt-row">
+          <div class="alt-tile" onclick="fakeBill()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#e8c870" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>बिल फोटो</span>
+          </div>
+          <div class="alt-tile type-mode" onclick="toggleKeypad()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#a8c0f0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+            <span>⌨️ टाइप करें</span>
+          </div>
+        </div>
+
+        <div class="note-row" id="note-row">
+          <div class="note-lbl">📝 Note <span>optional</span></div>
+          <input class="note-in" id="note-in" maxlength="80" placeholder="रमेश जी / उधार…">
+        </div>
+
+        <div class="keypad-wrap" id="keypad-wrap">
+          <div class="display"><div class="amt" id="kp-amt">₹0</div><div class="hint">अधिकतम 5 अंक · ₹99,999 तक</div></div>
+          <div class="keypad">
+            <div class="key" onclick="kp('1')">1</div><div class="key" onclick="kp('2')">2</div><div class="key" onclick="kp('3')">3</div>
+            <div class="key" onclick="kp('4')">4</div><div class="key" onclick="kp('5')">5</div><div class="key" onclick="kp('6')">6</div>
+            <div class="key" onclick="kp('7')">7</div><div class="key" onclick="kp('8')">8</div><div class="key" onclick="kp('9')">9</div>
+            <div class="key back" onclick="kpBack()">⌫</div><div class="key" onclick="kp('0')">0</div><div class="key tri" onclick="kp('000')">000</div>
+          </div>
+          <div class="commit" id="kp-commit" onclick="commitKeypad()">💾 Box 1 में ₹0 जोड़ें</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">✓ जुड़ गया</div>
+</div>
+
+<div class="demo">
+  <h3>▶ रिकॉर्ड के बाद ये चुनें — "आपने क्या कहा" (demo parse)</h3>
+  <div class="sub">standalone file Gemini को call नहीं कर सकता, तो parse demo है। नीचे से कोई भी चुनें — असल में Gemini खुद आपकी रिकॉर्डिंग से निकालेगा।</div>
+  <div class="ex-grid">
+    <div class="ex" onclick="setDemoParse('पाँच सौ बीस कैश रमेश जी',520,'cash','रमेश जी')">🎙️ <b>"पाँच सौ बीस कैश रमेश जी"</b> → ₹520</div>
+    <div class="ex" onclick="setDemoParse('ढाई सौ यूपीआई',250,'upi','')">🎙️ <b>"ढाई सौ यूपीआई"</b> → ₹250</div>
+    <div class="ex" onclick="setDemoParse('बारह सौ UPI फ़ोन पे',1200,'upi','')">🎙️ <b>"बारह सौ फ़ोन पे"</b> → ₹1200</div>
+    <div class="ex" onclick="setDemoParse('साढ़े तीन हज़ार कैश उधार',3500,'cash','उधार')">🎙️ <b>"साढ़े तीन हज़ार कैश"</b> → ₹3500</div>
+  </div>
+</div>
+
+<div class="mk-note">
+  <b>ये demo क्या साबित करता है:</b><br>
+  • mic दबाने पर <b>असली getUserMedia + MediaRecorder</b> चलता है — waveform आपकी आवाज़ पर हिलता है, playback में आप खुद को सुनते हैं। यही production में Gemini को जाएगा।<br>
+  • <b>① आवाज़ यहाँ</b> (mic) → <b>② result यहाँ</b> (confirm card) — voice input इन्हीं दो जगह दिखता है।<br>
+  <span class="warn">⚠ Chrome में सीधे खोलें; Claude preview/sandbox mic block करता है।</span><br>
+  • Confirm gate हमेशा रहेगा — commit से पहले parsed amount दिखता है (शोर/Hinglish में गलती पकड़ने को)।
+</div>
+
+<script>
+let TYPE='cash', amount=0, note='', kpAmount='';
+let stream=null, rec=null, chunks=[], audioURL=null, audioEl=null, ac=null, analyser=null, raf=null, t0=0, timerIv=null, recording=false;
+let pendingParse={say:'—', amt:0, type:'cash', note:''};
+
+/* build waveform bars */
+const WAVE_N=13;
+(function(){ const w=document.getElementById('wave'); for(let i=0;i<WAVE_N;i++){ w.appendChild(document.createElement('i')); } })();
+
+function setType(t){
+  TYPE=t; document.body.className='theme-'+t;
+  document.getElementById('seg-cash').className=t==='cash'?'on-cash':'';
+  document.getElementById('seg-upi').className=t==='upi'?'on-upi':'';
+  document.getElementById('m-title').textContent=(t==='cash'?'💵 नकद':'📱 UPI')+' · एंट्री 1';
+}
+
+function showAnnos(){ document.getElementById('anno-in').classList.add('show');
+  setTimeout(()=>document.getElementById('anno-out').classList.add('show'),400); }
+
+function resetToIdle(){
+  ['confirm','recd','parsing','keypad-wrap'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById('hero').style.display='';
+  document.getElementById('alt-row').style.display='';
+  document.getElementById('note-row').style.display='';
+  document.getElementById('card').classList.remove('recording');
+  const lt=document.getElementById('live-tx'); lt.textContent='…रिकॉर्ड करने के लिए mic दबाएँ'; lt.className='live-tx empty';
+  document.getElementById('mic-cap').textContent='बोलकर एंट्री';
+  resetWave();
+}
+function resetWave(){ document.querySelectorAll('#wave i').forEach(b=>b.style.height='5px'); }
+
+/* ---------- REAL MIC ---------- */
+function micTap(){ recording ? stopRec() : startRec(); }
+
+async function startRec(){
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({audio:true});
+  }catch(err){
+    const lt=document.getElementById('live-tx');
+    lt.className='live-tx'; lt.innerHTML='🚫 mic नहीं मिला — Chrome में खोलें व Allow दबाएँ<br><span style="font-size:10px;color:#8aa0d8">(या नीचे demo parse चुनकर flow देखें)</span>';
+    return;
+  }
+  recording=true;
+  document.getElementById('card').classList.add('recording');
+  document.getElementById('mic-cap').textContent='सुन रहा हूँ…';
+  const lt=document.getElementById('live-tx'); lt.className='live-tx'; lt.innerHTML='<span class="reddot"></span>बोलिए… (फिर mic दबाकर रोकें)';
+  // analyser
+  ac = new (window.AudioContext||window.webkitAudioContext)();
+  const src = ac.createMediaStreamSource(stream);
+  analyser = ac.createAnalyser(); analyser.fftSize=64; src.connect(analyser);
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  const bars=document.querySelectorAll('#wave i');
+  (function draw(){ raf=requestAnimationFrame(draw); analyser.getByteFrequencyData(data);
+    for(let i=0;i<WAVE_N;i++){ const v=data[i+1]||0; bars[i].style.height=Math.max(5,(v/255)*30)+'px'; }
+  })();
+  // recorder
+  chunks=[]; rec=new MediaRecorder(stream);
+  rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
+  rec.onstop=onRecStop;
+  rec.start();
+  t0=Date.now(); timerIv=setInterval(()=>{ document.getElementById('timer').textContent='● '+((Date.now()-t0)/1000).toFixed(1)+'s'; },100);
+  // auto stop at 10s
+  setTimeout(()=>{ if(recording) stopRec(); },10000);
+}
+
+function stopRec(){
+  if(!recording) return; recording=false;
+  clearInterval(timerIv); cancelAnimationFrame(raf);
+  try{ rec.stop(); }catch(e){}
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  if(ac) try{ ac.close(); }catch(e){}
+  document.getElementById('card').classList.remove('recording');
+}
+
+function onRecStop(){
+  const blob=new Blob(chunks,{type:(chunks[0]&&chunks[0].type)||'audio/webm'});
+  audioURL=URL.createObjectURL(blob);
+  audioEl=new Audio(audioURL);
+  const secs=((Date.now()-t0)/1000).toFixed(1);
+  document.getElementById('recd-t1').textContent='🎙️ रिकॉर्डिंग तैयार · '+secs+'s';
+  document.getElementById('recd-t2').textContent='▶ दबाकर अपनी आवाज़ सुनें, फिर "समझें"';
+  document.getElementById('hero').style.display='none';
+  document.getElementById('alt-row').style.display='none';
+  document.getElementById('note-row').style.display='none';
+  document.getElementById('recd').classList.add('show');
+}
+
+function playBack(){ if(!audioEl) return; const p=document.getElementById('play'); audioEl.currentTime=0; audioEl.play();
+  p.textContent='❚❚'; audioEl.onended=()=>p.textContent='▶'; }
+
+function understand(){
+  document.getElementById('recd').classList.remove('show');
+  document.getElementById('parsing').classList.add('show');
+  setTimeout(showConfirm,1000); // simulate Gemini latency
+}
+
+/* demo parse chosen from list (before or after recording) */
+function setDemoParse(say,amt,type,nt){
+  pendingParse={say,amt,type,note:nt};
+  // if we already have a recording sitting, jump straight to parsing
+  if(document.getElementById('recd').classList.contains('show')){ understand(); }
+  else { // no recording yet — simulate full flow quickly
+    resetToIdle();
+    document.getElementById('hero').style.display='none';
+    document.getElementById('alt-row').style.display='none';
+    document.getElementById('note-row').style.display='none';
+    document.getElementById('parsing').classList.add('show');
+    setTimeout(showConfirm,700);
+  }
+}
+
+function showConfirm(){
+  document.getElementById('parsing').classList.remove('show');
+  const {say,amt,type,note:nt}=pendingParse;
+  amount=amt; note=nt; setType(type);
+  document.getElementById('cf-said').innerHTML='आपने कहा: <b>"'+say+'"</b>';
+  document.getElementById('cf-amt').textContent = amt?('₹'+amt.toLocaleString('en-IN')):'समझ नहीं आया';
+  const chips=['<div class="cf-chip type">'+(type==='upi'?'📱 UPI':'💵 नकद')+'</div>'];
+  if(nt) chips.push('<div class="cf-chip">📝 '+nt+'</div>');
+  document.getElementById('cf-chips').innerHTML=chips.join('');
+  document.getElementById('confirm').classList.add('show');
+}
+
+function commit(){ showToast('✓ '+(TYPE==='cash'?'नकद':'UPI')+' ₹'+amount.toLocaleString('en-IN')+' जुड़ गया'); setTimeout(resetToIdle,1400); }
+function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1400); }
+
+/* keypad fallback */
+function toggleKeypad(){ const kw=document.getElementById('keypad-wrap'); const show=!kw.classList.contains('show');
+  kw.classList.toggle('show',show); document.getElementById('hero').style.display=show?'none':''; kpAmount=''; updateKp(); }
+function editViaKeypad(){ document.getElementById('confirm').classList.remove('show');
+  document.getElementById('alt-row').style.display=''; document.getElementById('note-row').style.display='';
+  kpAmount=String(amount||''); document.getElementById('note-in').value=note||'';
+  document.getElementById('keypad-wrap').classList.add('show'); document.getElementById('hero').style.display='none'; updateKp(); }
+function kp(d){ if(kpAmount.length>=5)return; if(kpAmount===''&&d==='0')return;
+  if(d==='000'){ if(kpAmount==='')return; kpAmount=(kpAmount+'000').slice(0,5);} else kpAmount+=d; updateKp(); }
+function kpBack(){ kpAmount=kpAmount.slice(0,-1); updateKp(); }
+function updateKp(){ const v=kpAmount===''?'₹0':'₹'+parseInt(kpAmount).toLocaleString('en-IN');
+  document.getElementById('kp-amt').textContent=v; document.getElementById('kp-commit').textContent='💾 Box 1 में '+v+' जोड़ें'; }
+function commitKeypad(){ const a=parseInt(kpAmount)||0; if(a<=0)return; amount=a; note=document.getElementById('note-in').value||''; commit(); }
+function fakeBill(){ document.getElementById('mic-hint').textContent='📷 बिल OCR → amount auto-fill (अलग feature)'; }
+
+setType('cash');
+setTimeout(showAnnos,600);
+</script>
+</body>
+</html>

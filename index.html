@@ -1674,6 +1674,41 @@ body.notif-modal-open { overflow: hidden; }
 .spay-btn-full{background:linear-gradient(135deg,#0e2c1a,#0a1f12);border:1px solid #3ec873;color:#6dee96;}
 .spay-btn-cancel{margin-top:9px;background:#1e1012;border:1px solid #5a2530;color:#e08a9c;text-align:center;padding:12px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;}
 </style>
+<style id="lg-voice-css">
+.lg-voice{margin:8px 0 10px;padding:8px 10px;border-radius:12px;background:#081428;border:1px solid #16294f;display:flex;flex-direction:column;align-items:center;}
+.lg-voice[data-type="cash"]{--vac:#8aef7a;border-color:#173a24;background:#07160e;}
+.lg-voice[data-type="upi"]{--vac:#5dcaff;border-color:#173453;background:#061627;}
+.lg-voice-idle{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.lg-voice-mic{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--vac);background:radial-gradient(circle at 50% 38%,#0f2038,#0a1626);color:var(--vac);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;}
+.lg-voice-mic:active{transform:scale(.93);}
+.lg-voice-mic svg{width:19px;height:19px;}
+.lg-voice-cap{font-size:11.5px;font-weight:700;color:var(--vac);}
+.lg-voice-sub{font-size:9.5px;color:#6a7ba8;}
+.lg-voice-rec,.lg-voice-proc,.lg-voice-res{display:none;flex-direction:column;align-items:center;gap:8px;width:100%;}
+.lg-voice.rec .lg-voice-idle,.lg-voice.proc .lg-voice-idle,.lg-voice.res .lg-voice-idle{display:none;}
+.lg-voice.rec .lg-voice-rec{display:flex;}
+.lg-voice.proc .lg-voice-proc{display:flex;}
+.lg-voice.res .lg-voice-res{display:flex;}
+.lg-voice-stop{width:44px;height:44px;border-radius:50%;border:2px solid #e84545;background:radial-gradient(circle at 50% 38%,#2a1220,#1a0c14);cursor:pointer;display:flex;align-items:center;justify-content:center;animation:lgvPulse 1.1s ease-out infinite;padding:0;}
+.lg-voice-stop span{width:15px;height:15px;border-radius:3px;background:#e84545;display:block;}
+@keyframes lgvPulse{0%{box-shadow:0 0 0 0 rgba(232,69,69,.5)}70%{box-shadow:0 0 0 13px rgba(232,69,69,0)}100%{box-shadow:0 0 0 0 rgba(232,69,69,0)}}
+.lg-voice-wave{display:flex;align-items:center;gap:3px;height:22px;}
+.lg-voice-wave i{width:3px;height:5px;background:#e84545;border-radius:2px;transition:height .06s linear;}
+.lg-voice-recmsg{font-size:11.5px;color:#e8d8b8;font-weight:600;}
+.lg-voice-recmsg b{color:#e07a7a;font-weight:700;}
+.lg-voice-rd{display:inline-block;width:7px;height:7px;border-radius:50%;background:#e84545;margin-right:5px;box-shadow:0 0 6px #e84545;animation:lgvBlink 1s infinite;vertical-align:middle;}
+@keyframes lgvBlink{50%{opacity:.3}}
+.lg-voice-spin{width:26px;height:26px;border:3px solid #1a2a50;border-top-color:var(--vac);border-radius:50%;animation:lgvSpin .8s linear infinite;}
+@keyframes lgvSpin{to{transform:rotate(360deg)}}
+.lg-voice-procmsg{font-size:11.5px;color:#a8c0f0;font-weight:600;}
+.lg-voice-amt{font-size:32px;font-weight:800;color:var(--vac);line-height:1;}
+.lg-voice-btns{display:flex;gap:8px;width:100%;}
+.lg-voice-add{flex:1.5;background:linear-gradient(135deg,#d4a850,#e8c870);border:2px solid #f0d890;color:#1a1208;font-size:13px;font-weight:800;padding:11px;border-radius:10px;cursor:pointer;}
+.lg-voice-again{flex:1;background:#0e1e3a;border:1.5px solid #2a4078;color:#a8c0f0;font-size:12px;font-weight:700;padding:11px 6px;border-radius:10px;cursor:pointer;}
+.lg-voice-err{display:none;font-size:11px;color:#e8a878;text-align:center;margin-top:6px;line-height:1.5;}
+.lg-voice.err .lg-voice-err{display:block;}
+.lg-box-voiceicon{position:absolute;top:2px;right:2px;font-size:10px;line-height:1;z-index:2;filter:drop-shadow(0 0 3px rgba(0,0,0,0.9));}
+</style>
 </head>
 <body> <!-- Splash Screen -->
 <div id="app-lock-screen">
@@ -2616,6 +2651,27 @@ body.notif-modal-open { overflow: hidden; }
         <div style="font-size:11px;color:#8aef7a;font-weight:500;" id="lg-cash-meta">₹0 · 0 एंट्री</div>
       </div>
       <div class="lg-cat-sub">Cash Sales · हर बिक्री एक box में</div>
+      <div class="lg-voice" id="lg-voice-cash" data-type="cash">
+        <div class="lg-voice-idle">
+          <button type="button" class="lg-voice-mic" onclick="lgVoiceStart('cash')" aria-label="बोलकर बिक्री जोड़ें"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+          <div class="lg-voice-cap">बोलकर बिक्री जोड़ें</div>
+          <div class="lg-voice-sub">सिर्फ़ amount बोलिए</div>
+        </div>
+        <div class="lg-voice-rec">
+          <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('cash')" aria-label="रोकें"><span></span></button>
+          <div class="lg-voice-wave" id="lg-wave-cash"></div>
+          <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-cash">0.0s</b></div>
+        </div>
+        <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">समझ रहा हूँ…</div></div>
+        <div class="lg-voice-res">
+          <div class="lg-voice-amt" id="lg-vamt-cash">₹0</div>
+          <div class="lg-voice-btns">
+            <button type="button" class="lg-voice-add" onclick="lgVoiceConfirm('cash')">Add / जोड़ें</button>
+            <button type="button" class="lg-voice-again" onclick="lgVoiceStart('cash')">🔄 फिर से</button>
+          </div>
+        </div>
+        <div class="lg-voice-err" id="lg-verr-cash"></div>
+      </div>
       <div class="lg-box-grid" id="lg-grid-cash"></div>
     </div>
 
@@ -2630,6 +2686,27 @@ body.notif-modal-open { overflow: hidden; }
         <div style="font-size:11px;color:#5dcaff;font-weight:500;" id="lg-upi-meta">₹0 · 0 एंट्री</div>
       </div>
       <div class="lg-cat-sub">UPI Sales · PhonePe / GPay / Paytm</div>
+      <div class="lg-voice" id="lg-voice-upi" data-type="upi">
+        <div class="lg-voice-idle">
+          <button type="button" class="lg-voice-mic" onclick="lgVoiceStart('upi')" aria-label="बोलकर बिक्री जोड़ें"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+          <div class="lg-voice-cap">बोलकर बिक्री जोड़ें</div>
+          <div class="lg-voice-sub">सिर्फ़ amount बोलिए</div>
+        </div>
+        <div class="lg-voice-rec">
+          <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('upi')" aria-label="रोकें"><span></span></button>
+          <div class="lg-voice-wave" id="lg-wave-upi"></div>
+          <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-upi">0.0s</b></div>
+        </div>
+        <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">समझ रहा हूँ…</div></div>
+        <div class="lg-voice-res">
+          <div class="lg-voice-amt" id="lg-vamt-upi">₹0</div>
+          <div class="lg-voice-btns">
+            <button type="button" class="lg-voice-add" onclick="lgVoiceConfirm('upi')">Add / जोड़ें</button>
+            <button type="button" class="lg-voice-again" onclick="lgVoiceStart('upi')">🔄 फिर से</button>
+          </div>
+        </div>
+        <div class="lg-voice-err" id="lg-verr-upi"></div>
+      </div>
       <div class="lg-box-grid" id="lg-grid-upi"></div>
     </div>
 
@@ -3501,6 +3578,8 @@ const storage = getStorage(app);
 const functions = getFunctions(app, 'us-central1');
 const _scanBillCallable = httpsCallable(functions, 'scanBill', { timeout: 70000 });
 window._fsScanBill = function(b64){ return _scanBillCallable({ image: b64 }); };
+const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 40000 });
+window._fsVoiceParse = function(b64, mimeType){ return _voiceParseCallable({ audio: b64, mimeType: mimeType || 'audio/wav' }); };
 
 // Registration source (web vs Play TWA) — first-touch, persisted, written once at signup
 function getRegSource() {
@@ -5934,7 +6013,7 @@ function lgRenderGrid(type) {
     const _hasNote = !!(box.note && box.note.trim());
     const _hasBill = !!(box.billThumb || box.billUrl);
     cell.className = 'lg-box lg-box-' + type + (_hasBill ? ' has-bill' : '') + (_hasNote ? ' has-note' : '');
-    cell.innerHTML = (_hasBill ? '<div class="lg-box-billicon">🧾</div>' : '') + '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
+    cell.innerHTML = (_hasBill ? '<div class="lg-box-billicon">🧾</div>' : '') + (box.src === 'voice' ? '<div class="lg-box-voiceicon">🎤</div>' : '') + '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
     if (_hasNote) {
       const dot = document.createElement('div');
       dot.className = 'lg-box-notedot';
@@ -10808,6 +10887,133 @@ function npReopenPreview(){
   npShow('s2');
 }
 
+</script>
+<script>
+(function(){
+  var LGV = { cash:{}, upi:{} };
+  window.lgVoiceState = LGV;
+  function el(id){ return document.getElementById(id); }
+  function zone(type){ return el('lg-voice-'+type); }
+  function setState(type, st){ var z=zone(type); if(!z) return; z.classList.remove('rec','proc','res','err'); if(st) z.classList.add(st); }
+  function buildWave(type){ var w=el('lg-wave-'+type); if(!w) return []; w.innerHTML=''; var bars=[]; for(var i=0;i<11;i++){ var b=document.createElement('i'); w.appendChild(b); bars.push(b); } return bars; }
+
+  window.lgVoiceStart = function(type){
+    var S = LGV[type];
+    _cleanup(type);
+    setState(type,'rec');
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ return _fail(type,'इस डिवाइस पर voice नहीं — नीचे + से टाइप करें'); }
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      S.stream = stream;
+      try{
+        S.ac = new (window.AudioContext||window.webkitAudioContext)();
+        var src = S.ac.createMediaStreamSource(stream);
+        S.analyser = S.ac.createAnalyser(); S.analyser.fftSize=64; src.connect(S.analyser);
+        S.data = new Uint8Array(S.analyser.frequencyBinCount);
+        var bars = buildWave(type); S.silence=0; S.spoke=false;
+        (function draw(){
+          S.raf = requestAnimationFrame(draw);
+          S.analyser.getByteFrequencyData(S.data);
+          var sum=0; for(var i=0;i<11;i++){ var v=S.data[i+1]||0; bars[i].style.height=Math.max(5,(v/255)*22)+'px'; sum+=v; }
+          var level=sum/11;
+          if(level>18){ S.spoke=true; S.silence=0; }
+          else if(S.spoke){ S.silence++; if(S.silence>70){ window.lgVoiceStop(type); } }
+        })();
+      }catch(e){}
+      S.chunks=[];
+      try{ S.rec = new MediaRecorder(stream); }catch(e){ return _fail(type,'रिकॉर्डिंग नहीं चली — नीचे + से टाइप करें'); }
+      S.rec.ondataavailable=function(e){ if(e.data && e.data.size) S.chunks.push(e.data); };
+      S.rec.onstop=function(){ _onStop(type); };
+      S.rec.start();
+      S.t0=Date.now(); var tel=el('lg-timer-'+type);
+      S.timer=setInterval(function(){ if(tel) tel.textContent=((Date.now()-S.t0)/1000).toFixed(1)+'s'; },100);
+      S.cap=setTimeout(function(){ window.lgVoiceStop(type); },6000);
+    }).catch(function(err){ _fail(type,'माइक की अनुमति नहीं मिली — नीचे + से टाइप करें'); });
+  };
+
+  window.lgVoiceStop = function(type){
+    var S = LGV[type];
+    if(S.timer){ clearInterval(S.timer); S.timer=null; }
+    if(S.cap){ clearTimeout(S.cap); S.cap=null; }
+    if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }
+    if(S.rec && S.rec.state && S.rec.state!=='inactive'){ try{ S.rec.stop(); }catch(e){} }
+    else { _onStop(type); }
+  };
+
+  function _stopTracks(S){ if(S.stream){ S.stream.getTracks().forEach(function(t){ t.stop(); }); S.stream=null; } if(S.ac){ try{ S.ac.close(); }catch(e){} S.ac=null; } }
+
+  function _onStop(type){
+    var S = LGV[type]; _stopTracks(S);
+    var chunks = S.chunks||[];
+    if(!chunks.length){ return _fail(type,'कुछ सुनाई नहीं दिया — फिर से बोलें'); }
+    var blob = new Blob(chunks, { type:(chunks[0] && chunks[0].type) || 'audio/webm' });
+    setState(type,'proc');
+    _toWav(blob).then(function(wav){ return _blobToB64(wav); }).then(function(b64){
+      if(!window._fsVoiceParse){ return _fail(type,'सेवा उपलब्ध नहीं — नीचे + से टाइप करें'); }
+      return window._fsVoiceParse(b64, 'audio/wav');
+    }).then(function(res){
+      if(res===undefined) return;
+      var amt = res && res.data && res.data.amount ? parseInt(res.data.amount,10) : 0;
+      if(!amt || amt<=0){ return _fail(type,'समझ नहीं आया — फिर से बोलें'); }
+      S.amt=amt; var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+amt.toLocaleString('en-IN');
+      setState(type,'res');
+    }).catch(function(err){
+      var code=(err && (err.code||err.message))||''; 
+      var msg = /resource-exhausted/i.test(code) ? 'आज की voice limit पूरी — नीचे + से टाइप करें' : 'समझ नहीं आया — फिर से बोलें';
+      _fail(type, msg);
+    });
+  }
+
+  window.lgVoiceConfirm = function(type){
+    var S = LGV[type]; var amt = parseInt(S.amt,10)||0;
+    if(amt<=0){ return _fail(type,'फिर से बोलें'); }
+    var r = window.lgState && window.lgState.rec;
+    if(!r){ try{ if(typeof lgGetOrCreateRec==='function'){ window.lgState.date=TSTR; window.lgState.isToday=true; window.lgState.rec=lgGetOrCreateRec(TSTR); r=window.lgState.rec; } }catch(e){} }
+    if(!r){ if(typeof toast==='function') toast('❌ आज का हिसाब नहीं खुला', true); return; }
+    if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
+    var typeBoxes = r.lgBoxes.filter(function(b){ return b.type===type; });
+    r.lgBoxes.push({ n: typeBoxes.length+1, type: type, amount: amt, note: '', ts: Date.now(), src: 'voice' });
+    if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
+    else if(window.lgState.isToday){ r.lgSaved=false; r.lgSavedAt=null; }
+    if(typeof lgPersistRec==='function') lgPersistRec(r);
+    if(typeof lgRenderTotals==='function') lgRenderTotals();
+    if(typeof lgRenderGrid==='function') lgRenderGrid(type);
+    if(typeof lgRenderSaveArea==='function') lgRenderSaveArea();
+    setState(type,null); S.amt=0;
+    if(typeof toast==='function') toast('✓ '+(type==='cash'?'नकद':'UPI')+' ₹'+amt.toLocaleString('en-IN')+' जुड़ गया');
+    if(typeof loadHome==='function') setTimeout(loadHome,50);
+  };
+
+  function _fail(type,msg){ _cleanup(type); var e=el('lg-verr-'+type); if(e) e.textContent=msg||'फिर से कोशिश करें'; setState(type,'err'); }
+  function _cleanup(type){
+    var S=LGV[type];
+    if(S.timer){ clearInterval(S.timer); S.timer=null; }
+    if(S.cap){ clearTimeout(S.cap); S.cap=null; }
+    if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }
+    if(S.rec && S.rec.state && S.rec.state!=='inactive'){ try{ S.rec.stop(); }catch(e){} }
+    _stopTracks(S); S.chunks=[];
+  }
+
+  function _toWav(blob){
+    return blob.arrayBuffer().then(function(ab){
+      var AC = window.AudioContext||window.webkitAudioContext; var ctx=new AC();
+      return new Promise(function(resolve,reject){ ctx.decodeAudioData(ab, function(buf){ resolve(buf); try{ctx.close();}catch(e){} }, function(e){ reject(e||new Error('decode')); }); });
+    }).then(function(buf){
+      var targetRate=16000; var ch0=buf.getChannelData(0); var ratio=buf.sampleRate/targetRate;
+      var outLen=Math.floor(ch0.length/ratio); var pcm=new Int16Array(outLen);
+      for(var i=0;i<outLen;i++){ var sm=ch0[Math.floor(i*ratio)]||0; sm=Math.max(-1,Math.min(1,sm)); pcm[i]= sm<0 ? sm*0x8000 : sm*0x7FFF; }
+      return _wavBlob(pcm, targetRate);
+    });
+  }
+  function _wavBlob(pcm, rate){
+    var bytes=pcm.length*2; var buf=new ArrayBuffer(44+bytes); var dv=new DataView(buf);
+    function ws(off,str){ for(var i=0;i<str.length;i++) dv.setUint8(off+i, str.charCodeAt(i)); }
+    ws(0,'RIFF'); dv.setUint32(4,36+bytes,true); ws(8,'WAVE'); ws(12,'fmt '); dv.setUint32(16,16,true);
+    dv.setUint16(20,1,true); dv.setUint16(22,1,true); dv.setUint32(24,rate,true); dv.setUint32(28,rate*2,true);
+    dv.setUint16(32,2,true); dv.setUint16(34,16,true); ws(36,'data'); dv.setUint32(40,bytes,true);
+    var off=44; for(var i=0;i<pcm.length;i++,off+=2) dv.setInt16(off,pcm[i],true);
+    return new Blob([buf], { type:'audio/wav' });
+  }
+})();
 </script>
 </body>
 </html>

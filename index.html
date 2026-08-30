@@ -1531,7 +1531,7 @@ body.notif-modal-open { overflow: hidden; }
 .mk-monthchip{font-size:11px;color:#d4a850;background:#1a1208;border:1px solid #5a4418;border-radius:9px;padding:5px 11px;text-align:center;line-height:1.3;margin-left:auto;}
 .mk-stripe{height:4px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
 /* result card */
-.mk-res{background:linear-gradient(160deg,#0b1626 0%,#070f1d 100%);border:1px solid #233a60;border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,0.35),inset 0 1px 0 rgba(122,108,240,0.05);}
+.mk-res{background:linear-gradient(160deg,#0e1013 0%,#070809 100%);border:1px solid #2a3040;border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.03);}
 .mk-res-stripe{height:4px;background:linear-gradient(90deg,#cc7a47,#3ec873);}
 .mk-res-body{padding:15px 16px;}
 .mk-res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
@@ -1556,6 +1556,10 @@ body.notif-modal-open { overflow: hidden; }
 .mk-baki{margin-top:11px;background:linear-gradient(135deg,#2e1a0a,#1f1206);border:1px solid #5a3a1a;border-radius:9px;padding:8px 13px;display:flex;justify-content:space-between;align-items:center;}
 .mk-baki .l{font-size:11px;color:#e89b5a;font-weight:700;}
 .mk-baki .v{font-size:14px;color:#f0c890;font-weight:700;}
+/* Purchase screen: summary + header + search stay fixed; only the supplier list scrolls */
+#s-suppliers.screen.active{display:flex;flex-direction:column;height:100vh;height:100dvh;padding-bottom:0;overflow:hidden;}
+#s-suppliers>.mk-hl,#s-suppliers>.mk-res,#s-suppliers>.mk-sec,#s-suppliers>.mk-sub2,#s-suppliers>.mk-search{flex:0 0 auto;}
+#s-suppliers>#sup-list{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(96px + env(safe-area-inset-bottom));}
 /* section head */
 .mk-sec{display:flex;align-items:center;gap:8px;margin:4px 2px 4px;}
 .mk-sec .bar{width:3px;height:14px;background:#d4a850;border-radius:2px;}
@@ -1673,42 +1677,6 @@ body.notif-modal-open { overflow: hidden; }
 .spay-btn-pay{background:linear-gradient(135deg,#14306a,#0d1f4a);border:1px solid #4a90d4;color:#8ab8e8;}
 .spay-btn-full{background:linear-gradient(135deg,#0e2c1a,#0a1f12);border:1px solid #3ec873;color:#6dee96;}
 .spay-btn-cancel{margin-top:9px;background:#1e1012;border:1px solid #5a2530;color:#e08a9c;text-align:center;padding:12px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;}
-</style>
-<style id="lg-voice-css">
-.lg-voice{margin:8px 0 10px;padding:10px 10px;border-radius:14px;background:#081428;border:1px solid #16294f;display:flex;flex-direction:column;align-items:center;}
-.lg-voice[data-type="cash"]{--vac:#8aef7a;--vglow:rgba(138,239,122,.5);border-color:#1c4a2e;background:radial-gradient(120% 120% at 50% 0%,#0c2418,#06120c);}
-.lg-voice[data-type="upi"]{--vac:#5dcaff;--vglow:rgba(93,202,255,.5);border-color:#1a4266;background:radial-gradient(120% 120% at 50% 0%,#0a2036,#05121f);}
-.lg-voice-idle{display:flex;flex-direction:column;align-items:center;gap:4px;}
-.lg-voice-mic{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--vac);background:radial-gradient(circle at 50% 34%,#12244a,#0a1626);color:var(--vac);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 6px 0 var(--vglow);animation:lgvBreathe 2.4s ease-in-out infinite;}
-.lg-voice-mic:active{transform:scale(.93);}
-.lg-voice-mic svg{width:20px;height:20px;}
-@keyframes lgvBreathe{0%,100%{box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 6px 0 var(--vglow)}50%{box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 20px 3px var(--vglow)}}
-.lg-voice-cap{font-size:11.5px;font-weight:700;color:var(--vac);}
-.lg-voice-sub{font-size:9.5px;color:#6a7ba8;}
-.lg-voice-rec,.lg-voice-proc,.lg-voice-res{display:none;flex-direction:column;align-items:center;gap:8px;width:100%;}
-.lg-voice.rec .lg-voice-idle,.lg-voice.proc .lg-voice-idle,.lg-voice.res .lg-voice-idle{display:none;}
-.lg-voice.rec .lg-voice-rec{display:flex;}
-.lg-voice.proc .lg-voice-proc{display:flex;}
-.lg-voice.res .lg-voice-res{display:flex;}
-.lg-voice-stop{width:44px;height:44px;border-radius:50%;border:2px solid #e84545;background:radial-gradient(circle at 50% 38%,#2a1220,#1a0c14);cursor:pointer;display:flex;align-items:center;justify-content:center;animation:lgvPulse 1.1s ease-out infinite;padding:0;}
-.lg-voice-stop span{width:15px;height:15px;border-radius:3px;background:#e84545;display:block;}
-@keyframes lgvPulse{0%{box-shadow:0 0 0 0 rgba(232,69,69,.5)}70%{box-shadow:0 0 0 13px rgba(232,69,69,0)}100%{box-shadow:0 0 0 0 rgba(232,69,69,0)}}
-.lg-voice-wave{display:flex;align-items:center;gap:3px;height:22px;}
-.lg-voice-wave i{width:3px;height:5px;background:#e84545;border-radius:2px;transition:height .06s linear;}
-.lg-voice-recmsg{font-size:11.5px;color:#e8d8b8;font-weight:600;}
-.lg-voice-recmsg b{color:#e07a7a;font-weight:700;}
-.lg-voice-rd{display:inline-block;width:7px;height:7px;border-radius:50%;background:#e84545;margin-right:5px;box-shadow:0 0 6px #e84545;animation:lgvBlink 1s infinite;vertical-align:middle;}
-@keyframes lgvBlink{50%{opacity:.3}}
-.lg-voice-spin{width:26px;height:26px;border:3px solid #1a2a50;border-top-color:var(--vac);border-radius:50%;animation:lgvSpin .8s linear infinite;}
-@keyframes lgvSpin{to{transform:rotate(360deg)}}
-.lg-voice-procmsg{font-size:11.5px;color:#a8c0f0;font-weight:600;}
-.lg-voice-amt{font-size:32px;font-weight:800;color:var(--vac);line-height:1;}
-.lg-voice-btns{display:flex;gap:8px;width:100%;}
-.lg-voice-add{flex:1.5;background:linear-gradient(135deg,#d4a850,#e8c870);border:2px solid #f0d890;color:#1a1208;font-size:13px;font-weight:800;padding:11px;border-radius:10px;cursor:pointer;}
-.lg-voice-again{flex:1;background:#0e1e3a;border:1.5px solid #2a4078;color:#a8c0f0;font-size:12px;font-weight:700;padding:11px 6px;border-radius:10px;cursor:pointer;}
-.lg-voice-err{display:none;font-size:11px;color:#e8a878;text-align:center;margin-top:6px;line-height:1.5;}
-.lg-voice.err .lg-voice-err{display:block;}
-.lg-box-voiceicon{position:absolute;top:2px;right:2px;font-size:10px;line-height:1;z-index:2;filter:drop-shadow(0 0 3px rgba(0,0,0,0.9));}
 </style>
 </head>
 <body> <!-- Splash Screen -->
@@ -2588,10 +2556,10 @@ body.notif-modal-open { overflow: hidden; }
 <div id="s-livegalla" class="screen">
   <div class="header" style="border-bottom-color:#d4a850;">
     <div class="header-left">
-      <div class="header-icon" style="background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%);border:2px solid #d4a850;"><svg width="40" height="40" viewBox="0 0 56 56" aria-label="Live हिसाब"><defs><linearGradient id="lh-pg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfaf0"/><stop offset="1" stop-color="#dcd3b8"/></linearGradient><linearGradient id="lh-gold2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe6a8"/><stop offset="0.5" stop-color="#e8c860"/><stop offset="1" stop-color="#b8902f"/></linearGradient><linearGradient id="lh-note2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6e6b6"/><stop offset="1" stop-color="#4ea568"/></linearGradient><linearGradient id="lh-band2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dff5e4"/><stop offset="0.5" stop-color="#bfe9cb"/><stop offset="1" stop-color="#dff5e4"/></linearGradient><linearGradient id="lh-phone2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#243150"/><stop offset="1" stop-color="#161f38"/></linearGradient></defs><rect x="7" y="4" width="33" height="42" rx="4.5" fill="#0c1428"/><rect x="6" y="3" width="33" height="42" rx="4.5" fill="url(#lh-pg2)" stroke="#2a3358" stroke-width="1.4"/><rect x="6" y="3" width="6.5" height="42" rx="3.2" fill="url(#lh-gold2)"/><circle cx="9.2" cy="11" r="1.2" fill="#9a7820"/><circle cx="9.2" cy="24" r="1.2" fill="#9a7820"/><circle cx="9.2" cy="37" r="1.2" fill="#9a7820"/><line x1="17" y1="10" x2="35" y2="10" stroke="#b9c0d0" stroke-width="1.7" stroke-linecap="round"/><line x1="17" y1="15" x2="30" y2="15" stroke="#cfd5e2" stroke-width="1.7" stroke-linecap="round"/><line x1="17" y1="20" x2="35" y2="20" stroke="#cfd5e2" stroke-width="1.7" stroke-linecap="round"/><g transform="translate(1,29) rotate(-6)"><rect x="0" y="0" width="29" height="17" rx="2.5" fill="url(#lh-note2)" stroke="#357a4a" stroke-width="1.1"/><rect x="1.6" y="1.6" width="25.8" height="13.8" rx="1.6" fill="none" stroke="#d4f3dc" stroke-width="0.7" opacity="0.8"/><rect x="0" y="6.5" width="29" height="4" fill="url(#lh-band2)" opacity="0.95"/><line x1="0" y1="6.5" x2="29" y2="6.5" stroke="#3f8a55" stroke-width="0.4"/><line x1="0" y1="10.5" x2="29" y2="10.5" stroke="#3f8a55" stroke-width="0.4"/><circle cx="7" cy="8.5" r="3.2" fill="#9adcab" stroke="#2f6b44" stroke-width="0.8"/><text x="7" y="11" text-anchor="middle" fill="#1f4d31" font-family="sans-serif" font-size="5.5" font-weight="700">₹</text><text x="20" y="10.6" text-anchor="middle" fill="#235235" font-family="sans-serif" font-size="6" font-weight="700">500</text><circle cx="24.5" cy="3.4" r="1.6" fill="none" stroke="#3f8a55" stroke-width="0.6"/><circle cx="4.5" cy="13.4" r="1.6" fill="none" stroke="#3f8a55" stroke-width="0.6"/></g><g transform="translate(35,21) rotate(8)"><rect x="0" y="0" width="18" height="29" rx="3.5" fill="url(#lh-phone2)" stroke="#4a5a82" stroke-width="1.2"/><rect x="1.8" y="4" width="14.4" height="21" rx="1.5" fill="#0d1526"/><rect x="6.5" y="1.6" width="5" height="1.3" rx="0.6" fill="#4a5a82"/><circle cx="9" cy="13" r="5.4" fill="none" stroke="#3ec873" stroke-width="1.5"/><path d="M6.2 13.2 l2 2.2 l3.4 -4.2" fill="none" stroke="#3ec873" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><line x1="5.5" y1="21" x2="12.5" y2="21" stroke="#2f9e5a" stroke-width="1.3" stroke-linecap="round"/></g><circle cx="46" cy="8" r="7" fill="#e84545" stroke="#0c1428" stroke-width="1.5"/><line x1="46" y1="4" x2="46" y2="10.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><path d="M42.8 8.5 l3.2 3.6 l3.2 -3.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="header-icon" style="background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%);border:2px solid #d4a850;">💰</div>
       <div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <div class="header-title" id="lg-screen-title">Live हिसाब</div>
+          <div class="header-title" id="lg-screen-title">Live Khaata</div>
           <div class="lg-pill" style="background:#1a1208;border:1px solid #d4a850;color:#f0d890;">
             <span class="lg-dot" style="background:#d4a850;"></span>LIVE
           </div>
@@ -2615,26 +2583,28 @@ body.notif-modal-open { overflow: hidden; }
     <div class="lg-totals-card">
       <div class="lg-totals-stripe"></div>
       <div class="lg-totals-body">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:11px;border-bottom:1px solid #2a4078;margin-bottom:11px;">
-          <div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#d4a850;font-weight:600;margin-bottom:4px;"><span style="font-size:15px;">💰</span> Today’s Result · Total/कुल</div>
-            <div style="font-size:30px;font-weight:600;color:#e8d8b8;line-height:1;" id="lg-tot-profit">₹0</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:7px;">
+            <span style="font-size:17px;">💰</span>
+            <span style="font-size:13px;color:#d4a850;font-weight:600;">Today's Result</span>
           </div>
-          <div style="font-size:10px;color:#8aa0d8;text-align:right;line-height:1.4;" id="lg-date-label">—</div>
+          <div style="font-size:10px;color:#8aa0d8;" id="lg-date-label">—</div>
         </div>
-        <div style="display:flex;">
-          <div style="flex:1;text-align:center;">
-            <div style="font-size:11px;color:#8aef7a;font-weight:600;margin-bottom:3px;">💵 बिक्री</div>
-            <div style="font-size:16px;font-weight:700;color:#8aef7a;" id="lg-tot-sales">₹0</div>
-          </div>
-          <div style="flex:1;text-align:center;border-left:1px solid #2a4078;">
-            <div style="font-size:11px;color:#cc7a47;font-weight:600;margin-bottom:3px;">🧾 खर्चा</div>
-            <div style="font-size:16px;font-weight:700;color:#cc7a47;" id="lg-tot-expense">₹0</div>
-          </div>
-          <div style="flex:1;text-align:center;border-left:1px solid #2a4078;">
-            <div style="font-size:11px;color:#b0a0e8;font-weight:600;margin-bottom:3px;">📝 एंट्री</div>
-            <div style="font-size:16px;font-weight:700;color:#b0a0e8;" id="lg-tot-count">0 बार</div>
-          </div>
+        <div class="lg-totals-row">
+          <span style="font-size:12px;color:#d4a850;font-weight:500;">Total/कुल</span>
+          <span style="font-size:24px;font-weight:500;color:#e8d8b8;" id="lg-tot-profit">₹0</span>
+        </div>
+        <div class="lg-totals-row">
+          <span style="font-size:12px;color:#8aef7a;font-weight:500;">💵 कुल बिक्री</span>
+          <span style="font-size:16px;font-weight:500;color:#8aef7a;" id="lg-tot-sales">₹0</span>
+        </div>
+        <div class="lg-totals-row">
+          <span style="font-size:12px;color:#cc7a47;font-weight:500;">🧾 कुल खर्चा</span>
+          <span style="font-size:16px;font-weight:500;color:#cc7a47;" id="lg-tot-expense">₹0</span>
+        </div>
+        <div class="lg-totals-row">
+          <span style="font-size:12px;color:#b0a0e8;font-weight:500;">📝 कुल एंट्री</span>
+          <span style="font-size:14px;font-weight:500;color:#b0a0e8;" id="lg-tot-count">0 बार</span>
         </div>
       </div>
     </div>
@@ -2644,33 +2614,12 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lg-cat-head">
         <div class="lg-cat-head-left">
           <span style="font-size:22px;">💵</span>
-          <span style="font-size:17px;color:#8aef7a;font-weight:700;">Cash</span>
+          <span style="font-size:17px;color:#8aef7a;font-weight:700;">Cash बिक्री</span>
           <div class="lg-pill lg-pill-green"><span class="lg-dot lg-dot-green"></span>LIVE</div>
         </div>
         <div style="font-size:11px;color:#8aef7a;font-weight:500;" id="lg-cash-meta">₹0 · 0 एंट्री</div>
       </div>
       <div class="lg-cat-sub">Cash Sales · हर बिक्री एक box में</div>
-      <div class="lg-voice" id="lg-voice-cash" data-type="cash">
-        <div class="lg-voice-idle">
-          <button type="button" class="lg-voice-mic" onclick="lgVoiceStart('cash')" aria-label="बोलकर बिक्री जोड़ें"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-          <div class="lg-voice-cap">बोलकर बिक्री जोड़ें</div>
-          <div class="lg-voice-sub">सिर्फ़ amount बोलिए</div>
-        </div>
-        <div class="lg-voice-rec">
-          <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('cash')" aria-label="रोकें"><span></span></button>
-          <div class="lg-voice-wave" id="lg-wave-cash"></div>
-          <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-cash">0.0s</b></div>
-        </div>
-        <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
-        <div class="lg-voice-res">
-          <div class="lg-voice-amt" id="lg-vamt-cash">₹0</div>
-          <div class="lg-voice-btns">
-            <button type="button" class="lg-voice-add" onclick="lgVoiceConfirm('cash')">Add / जोड़ें</button>
-            <button type="button" class="lg-voice-again" onclick="lgVoiceReset('cash')">🔄 फिर से</button>
-          </div>
-        </div>
-        <div class="lg-voice-err" id="lg-verr-cash"></div>
-      </div>
       <div class="lg-box-grid" id="lg-grid-cash"></div>
     </div>
 
@@ -2679,33 +2628,12 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lg-cat-head">
         <div class="lg-cat-head-left">
           <span style="font-size:22px;">📱</span>
-          <span style="font-size:17px;color:#5dcaff;font-weight:700;">UPI</span>
+          <span style="font-size:17px;color:#5dcaff;font-weight:700;">UPI बिक्री</span>
           <div class="lg-pill lg-pill-blue"><span class="lg-dot lg-dot-blue"></span>LIVE</div>
         </div>
         <div style="font-size:11px;color:#5dcaff;font-weight:500;" id="lg-upi-meta">₹0 · 0 एंट्री</div>
       </div>
       <div class="lg-cat-sub">UPI Sales · PhonePe / GPay / Paytm</div>
-      <div class="lg-voice" id="lg-voice-upi" data-type="upi">
-        <div class="lg-voice-idle">
-          <button type="button" class="lg-voice-mic" onclick="lgVoiceStart('upi')" aria-label="बोलकर बिक्री जोड़ें"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-          <div class="lg-voice-cap">बोलकर बिक्री जोड़ें</div>
-          <div class="lg-voice-sub">सिर्फ़ amount बोलिए</div>
-        </div>
-        <div class="lg-voice-rec">
-          <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('upi')" aria-label="रोकें"><span></span></button>
-          <div class="lg-voice-wave" id="lg-wave-upi"></div>
-          <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-upi">0.0s</b></div>
-        </div>
-        <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
-        <div class="lg-voice-res">
-          <div class="lg-voice-amt" id="lg-vamt-upi">₹0</div>
-          <div class="lg-voice-btns">
-            <button type="button" class="lg-voice-add" onclick="lgVoiceConfirm('upi')">Add / जोड़ें</button>
-            <button type="button" class="lg-voice-again" onclick="lgVoiceReset('upi')">🔄 फिर से</button>
-          </div>
-        </div>
-        <div class="lg-voice-err" id="lg-verr-upi"></div>
-      </div>
       <div class="lg-box-grid" id="lg-grid-upi"></div>
     </div>
 
@@ -2948,7 +2876,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="mk-res">
       <div class="mk-res-stripe"></div>
       <div class="mk-res-body">
-        <div class="mk-res-head"><div class="l">📦 इस महीने का माल · This Month</div><div class="r" id="sup-res-month">—</div></div>
+        <div class="mk-res-head"><div class="l">📦 Purchase/खरीद · This Month</div><div class="r" id="sup-res-month">—</div></div>
         <div class="mk-box mk-box-total"><div class="mk-box-lbl">📦 कुल माल</div><div class="mk-box-val" id="sup-total">₹0</div></div>
         <div class="mk-row2">
           <div class="mk-box mk-box-nakad"><div class="mk-box-lbl">💵 Cash</div><div class="mk-box-val" id="sup-nakad">₹0</div></div>
@@ -3577,8 +3505,6 @@ const storage = getStorage(app);
 const functions = getFunctions(app, 'us-central1');
 const _scanBillCallable = httpsCallable(functions, 'scanBill', { timeout: 70000 });
 window._fsScanBill = function(b64){ return _scanBillCallable({ image: b64 }); };
-const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 40000 });
-window._fsVoiceParse = function(b64, mimeType){ return _voiceParseCallable({ audio: b64, mimeType: mimeType || 'audio/wav' }); };
 
 // Registration source (web vs Play TWA) — first-touch, persisted, written once at signup
 function getRegSource() {
@@ -5949,7 +5875,7 @@ function lgRenderDay(date, blocked) {
     subEl.textContent = lgFormatDate(date);
   } else {
     banner.style.display = 'none';
-    titleEl.textContent = 'Live हिसाब';
+    titleEl.textContent = 'Live Khaata';
     subEl.textContent = window.lgState.isToday ? 'आज · ' + lgFormatDate(date) : lgFormatDate(date);
   }
   document.getElementById('lg-date-label').textContent = lgFormatDate(date);
@@ -6012,7 +5938,7 @@ function lgRenderGrid(type) {
     const _hasNote = !!(box.note && box.note.trim());
     const _hasBill = !!(box.billThumb || box.billUrl);
     cell.className = 'lg-box lg-box-' + type + (_hasBill ? ' has-bill' : '') + (_hasNote ? ' has-note' : '');
-    cell.innerHTML = (_hasBill ? '<div class="lg-box-billicon">🧾</div>' : '') + (box.src === 'voice' ? '<div class="lg-box-voiceicon">🎤</div>' : '') + '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
+    cell.innerHTML = (_hasBill ? '<div class="lg-box-billicon">🧾</div>' : '') + '<div class="lg-box-num">' + n + '</div><div class="lg-box-amt">₹' + box.amount.toLocaleString('en-IN') + '</div>';
     if (_hasNote) {
       const dot = document.createElement('div');
       dot.className = 'lg-box-notedot';
@@ -10886,135 +10812,6 @@ function npReopenPreview(){
   npShow('s2');
 }
 
-</script>
-<script>
-(function(){
-  var LGV = { cash:{}, upi:{} };
-  window.lgVoiceState = LGV;
-  function el(id){ return document.getElementById(id); }
-  function zone(type){ return el('lg-voice-'+type); }
-  function setState(type, st){ var z=zone(type); if(!z) return; z.classList.remove('rec','proc','res','err'); if(st) z.classList.add(st); }
-  function buildWave(type){ var w=el('lg-wave-'+type); if(!w) return []; w.innerHTML=''; var bars=[]; for(var i=0;i<11;i++){ var b=document.createElement('i'); w.appendChild(b); bars.push(b); } return bars; }
-
-  window.lgVoiceStart = function(type){
-    var S = LGV[type];
-    _cleanup(type);
-    setState(type,'rec');
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ return _fail(type,'इस डिवाइस पर voice नहीं — नीचे + से टाइप करें'); }
-    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
-      S.stream = stream;
-      try{
-        S.ac = new (window.AudioContext||window.webkitAudioContext)();
-        var src = S.ac.createMediaStreamSource(stream);
-        S.analyser = S.ac.createAnalyser(); S.analyser.fftSize=64; src.connect(S.analyser);
-        S.data = new Uint8Array(S.analyser.frequencyBinCount);
-        var bars = buildWave(type); S.silence=0; S.spoke=false; S.sawAudio=false;
-        (function draw(){
-          S.raf = requestAnimationFrame(draw);
-          S.analyser.getByteFrequencyData(S.data); S.sawAudio=true;
-          var sum=0; for(var i=0;i<11;i++){ var v=S.data[i+1]||0; bars[i].style.height=Math.max(5,(v/255)*22)+'px'; sum+=v; }
-          var level=sum/11;
-          if(level>18){ S.spoke=true; S.silence=0; }
-          else if(S.spoke){ S.silence++; if(S.silence>70){ window.lgVoiceStop(type); } }
-        })();
-      }catch(e){}
-      S.chunks=[];
-      try{ S.rec = new MediaRecorder(stream); }catch(e){ return _fail(type,'रिकॉर्डिंग नहीं चली — नीचे + से टाइप करें'); }
-      S.rec.ondataavailable=function(e){ if(e.data && e.data.size) S.chunks.push(e.data); };
-      S.rec.onstop=function(){ _onStop(type); };
-      S.rec.start();
-      S.t0=Date.now(); var tel=el('lg-timer-'+type);
-      S.timer=setInterval(function(){ if(tel) tel.textContent=((Date.now()-S.t0)/1000).toFixed(1)+'s'; },100);
-      S.cap=setTimeout(function(){ window.lgVoiceStop(type); },6000);
-    }).catch(function(err){ _fail(type,'माइक की अनुमति नहीं मिली — नीचे + से टाइप करें'); });
-  };
-
-  window.lgVoiceStop = function(type){
-    var S = LGV[type];
-    if(S.timer){ clearInterval(S.timer); S.timer=null; }
-    if(S.cap){ clearTimeout(S.cap); S.cap=null; }
-    if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }
-    if(S.rec && S.rec.state && S.rec.state!=='inactive'){ try{ S.rec.stop(); }catch(e){} }
-    else { _onStop(type); }
-  };
-
-  function _stopTracks(S){ if(S.stream){ S.stream.getTracks().forEach(function(t){ t.stop(); }); S.stream=null; } if(S.ac){ try{ S.ac.close(); }catch(e){} S.ac=null; } }
-
-  function _onStop(type){
-    var S = LGV[type]; _stopTracks(S);
-    var chunks = S.chunks||[];
-    if(!chunks.length){ return _fail(type,'कुछ सुनाई नहीं दिया — फिर से बोलें'); }
-    if(S.sawAudio && !S.spoke){ return _fail(type,'कुछ नहीं सुना — फिर से बोलिए'); }
-    var blob = new Blob(chunks, { type:(chunks[0] && chunks[0].type) || 'audio/webm' });
-    setState(type,'proc');
-    _toWav(blob).then(function(wav){ return _blobToB64(wav); }).then(function(b64){
-      if(!window._fsVoiceParse){ return _fail(type,'सेवा उपलब्ध नहीं — नीचे + से टाइप करें'); }
-      return window._fsVoiceParse(b64, 'audio/wav');
-    }).then(function(res){
-      if(res===undefined) return;
-      var amt = res && res.data && res.data.amount ? parseInt(res.data.amount,10) : 0;
-      if(!amt || amt<=0){ return _fail(type,'समझ नहीं आया — फिर से बोलें'); }
-      S.amt=amt; var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+amt.toLocaleString('en-IN');
-      setState(type,'res');
-    }).catch(function(err){
-      var code=(err && (err.code||err.message))||''; 
-      var msg = /resource-exhausted/i.test(code) ? 'आज की voice limit पूरी — नीचे + से टाइप करें' : 'समझ नहीं आया — फिर से बोलें';
-      _fail(type, msg);
-    });
-  }
-
-  window.lgVoiceConfirm = function(type){
-    var S = LGV[type]; var amt = parseInt(S.amt,10)||0;
-    if(amt<=0){ return _fail(type,'फिर से बोलें'); }
-    var r = window.lgState && window.lgState.rec;
-    if(!r){ try{ if(typeof lgGetOrCreateRec==='function'){ window.lgState.date=TSTR; window.lgState.isToday=true; window.lgState.rec=lgGetOrCreateRec(TSTR); r=window.lgState.rec; } }catch(e){} }
-    if(!r){ if(typeof toast==='function') toast('❌ आज का हिसाब नहीं खुला', true); return; }
-    if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
-    var typeBoxes = r.lgBoxes.filter(function(b){ return b.type===type; });
-    r.lgBoxes.push({ n: typeBoxes.length+1, type: type, amount: amt, note: '', ts: Date.now(), src: 'voice' });
-    if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
-    else if(window.lgState.isToday){ r.lgSaved=false; r.lgSavedAt=null; }
-    if(typeof lgPersistRec==='function') lgPersistRec(r);
-    if(typeof lgRenderTotals==='function') lgRenderTotals();
-    if(typeof lgRenderGrid==='function') lgRenderGrid(type);
-    if(typeof lgRenderSaveArea==='function') lgRenderSaveArea();
-    setState(type,null); S.amt=0;
-    if(typeof toast==='function') toast('✓ '+(type==='cash'?'नकद':'UPI')+' ₹'+amt.toLocaleString('en-IN')+' जुड़ गया');
-    if(typeof loadHome==='function') setTimeout(loadHome,50);
-  };
-
-  window.lgVoiceReset = function(type){ _cleanup(type); LGV[type].amt=0; setState(type,null); };
-  function _fail(type,msg){ _cleanup(type); var e=el('lg-verr-'+type); if(e) e.textContent=msg||'फिर से कोशिश करें'; setState(type,'err'); }
-  function _cleanup(type){
-    var S=LGV[type];
-    if(S.timer){ clearInterval(S.timer); S.timer=null; }
-    if(S.cap){ clearTimeout(S.cap); S.cap=null; }
-    if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }
-    if(S.rec && S.rec.state && S.rec.state!=='inactive'){ try{ S.rec.stop(); }catch(e){} }
-    _stopTracks(S); S.chunks=[];
-  }
-
-  function _toWav(blob){
-    return blob.arrayBuffer().then(function(ab){
-      var AC = window.AudioContext||window.webkitAudioContext; var ctx=new AC();
-      return new Promise(function(resolve,reject){ ctx.decodeAudioData(ab, function(buf){ resolve(buf); try{ctx.close();}catch(e){} }, function(e){ reject(e||new Error('decode')); }); });
-    }).then(function(buf){
-      var targetRate=16000; var ch0=buf.getChannelData(0); var ratio=buf.sampleRate/targetRate;
-      var outLen=Math.floor(ch0.length/ratio); var pcm=new Int16Array(outLen);
-      for(var i=0;i<outLen;i++){ var sm=ch0[Math.floor(i*ratio)]||0; sm=Math.max(-1,Math.min(1,sm)); pcm[i]= sm<0 ? sm*0x8000 : sm*0x7FFF; }
-      return _wavBlob(pcm, targetRate);
-    });
-  }
-  function _wavBlob(pcm, rate){
-    var bytes=pcm.length*2; var buf=new ArrayBuffer(44+bytes); var dv=new DataView(buf);
-    function ws(off,str){ for(var i=0;i<str.length;i++) dv.setUint8(off+i, str.charCodeAt(i)); }
-    ws(0,'RIFF'); dv.setUint32(4,36+bytes,true); ws(8,'WAVE'); ws(12,'fmt '); dv.setUint32(16,16,true);
-    dv.setUint16(20,1,true); dv.setUint16(22,1,true); dv.setUint32(24,rate,true); dv.setUint32(28,rate*2,true);
-    dv.setUint16(32,2,true); dv.setUint16(34,16,true); ws(36,'data'); dv.setUint32(40,bytes,true);
-    var off=44; for(var i=0;i<pcm.length;i++,off+=2) dv.setInt16(off,pcm[i],true);
-    return new Blob([buf], { type:'audio/wav' });
-  }
-})();
 </script>
 </body>
 </html>

@@ -1538,6 +1538,20 @@ body.notif-modal-open { overflow: hidden; }
 #s-suppliers>.fw{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
 #s-suppliers>.fw>.mk-res,#s-suppliers>.fw>.mk-sec,#s-suppliers>.fw>.mk-sub2,#s-suppliers>.fw>.mk-search{flex-shrink:0;}
 #s-suppliers>.fw>#sup-list{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:100px;}
+/* Purchase summary: Total hero + independent stat cards */
+.mk-hero{margin-bottom:11px;}
+.mk-hero-l{font-size:12px;color:#d4a850;font-weight:600;letter-spacing:.3px;}
+.mk-hero-v{font-size:30px;font-weight:700;color:#f0d68a;line-height:1.05;letter-spacing:-.5px;}
+.mk-cards3{display:flex;gap:9px;}
+.mk-c{flex:1;min-width:0;display:flex;flex-direction:column;border-radius:11px;padding:9px 11px;}
+.mk-c-l{font-size:10px;font-weight:600;margin-bottom:3px;white-space:nowrap;}
+.mk-c-v{font-size:15px;font-weight:700;letter-spacing:-.3px;white-space:nowrap;}
+.mk-c-cash{background:linear-gradient(135deg,#0e2417,#0a1a12);border:1px solid #1d5a3a;}
+.mk-c-cash .mk-c-l{color:#7ed99a;} .mk-c-cash .mk-c-v{color:#8aef7a;}
+.mk-c-cred{background:linear-gradient(135deg,#241808,#1a1206);border:1px solid #5a3a1a;}
+.mk-c-cred .mk-c-l{color:#e0b45a;} .mk-c-cred .mk-c-v{color:#f0cf7a;}
+.mk-c-baki{background:linear-gradient(135deg,#2e1a0a,#1f1206);border:1px solid #6a4420;}
+.mk-c-baki .mk-c-l{color:#e0a850;} .mk-c-baki .mk-c-v{color:#f0b060;}
 .mk-res-stripe{height:4px;background:linear-gradient(90deg,#cc7a47,#3ec873);}
 .mk-res-body{padding:15px 16px;}
 .mk-res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
@@ -2955,16 +2969,15 @@ body.notif-modal-open { overflow: hidden; }
       <div class="mk-res-stripe"></div>
       <div class="mk-res-body">
         <div class="mk-res-head"><div class="l">📦 Purchase/खरीद · This Month</div><div class="r" id="sup-res-month">—</div></div>
-        <div class="mk-box mk-box-total"><div class="mk-box-lbl">📦 कुल माल</div><div class="mk-box-val" id="sup-total">₹0</div></div>
-        <div class="mk-row2">
-          <div class="mk-box mk-box-nakad"><div class="mk-box-lbl">💵 Cash</div><div class="mk-box-val" id="sup-nakad">₹0</div></div>
-          <div class="mk-box mk-box-udhaar"><div class="mk-box-lbl">📋 Credit</div><div class="mk-box-val" id="sup-udhaar">₹0</div></div>
+        <div class="mk-hero"><div class="mk-hero-l">📦 Total</div><div class="mk-hero-v" id="sup-total">₹0</div></div>
+        <div class="mk-cards3">
+          <div class="mk-c mk-c-cash"><div class="mk-c-l">💵 Cash</div><div class="mk-c-v" id="sup-nakad">₹0</div></div>
+          <div class="mk-c mk-c-cred"><div class="mk-c-l">📋 Credit</div><div class="mk-c-v" id="sup-udhaar">₹0</div></div>
+          <div class="mk-c mk-c-baki" id="sup-baki-strip"><div class="mk-c-l">⚠ बाकी</div><div class="mk-c-v" id="sup-baki">₹0</div></div>
         </div>
-        <div class="mk-baki" id="sup-baki-strip"><span class="l">⚠ सप्लायर बाकी</span><span class="v" id="sup-baki">₹0</span></div>
       </div>
     </div>
-    <div class="mk-sec"><div class="bar"></div><div class="t">सप्लायर</div><div class="c" id="sup-count">0</div><div class="mk-addbtn" onclick="lgOpenPurchaseFor('')"><span class="pl">+</span> नया</div></div>
-    <div class="mk-sub2">हर सप्लायर का खरीद + उधार हिसाब</div>
+    <div class="mk-sec"><div class="bar"></div><div class="t">Supplier</div><div class="c" id="sup-count">0</div><div class="mk-addbtn" onclick="lgOpenPurchaseFor('')"><span class="pl">+</span> नया</div></div>
     <div class="mk-search"><span class="mk-search-ico">🔍</span><input type="text" id="sup-search" placeholder="नाम से सप्लायर खोजें…" oninput="renderSuppliers()"><span class="mk-search-clear" id="sup-search-clear" onclick="document.getElementById('sup-search').value='';renderSuppliers();" style="display:none;">✕</span></div>
     <div id="sup-list"></div>
   </div>

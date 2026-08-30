@@ -1531,7 +1531,13 @@ body.notif-modal-open { overflow: hidden; }
 .mk-monthchip{font-size:11px;color:#d4a850;background:#1a1208;border:1px solid #5a4418;border-radius:9px;padding:5px 11px;text-align:center;line-height:1.3;margin-left:auto;}
 .mk-stripe{height:4px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
 /* result card */
-.mk-res{background:linear-gradient(160deg,#0b1626 0%,#070f1d 100%);border:1px solid #233a60;border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,0.35),inset 0 1px 0 rgba(122,108,240,0.05);}
+.mk-res{background:linear-gradient(160deg,#141418 0%,#0b0b0e 100%);border:1px solid #2c2c34;border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.03);}
+/* Purchase screen: fixed header+summary+search, only supplier list scrolls */
+#s-suppliers.active{display:flex;flex-direction:column;height:100vh;height:100dvh;padding-bottom:0;overflow:hidden;}
+#s-suppliers>.mk-header,#s-suppliers>.mk-stripe{flex-shrink:0;}
+#s-suppliers>.fw{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+#s-suppliers>.fw>.mk-res,#s-suppliers>.fw>.mk-sec,#s-suppliers>.fw>.mk-sub2,#s-suppliers>.fw>.mk-search{flex-shrink:0;}
+#s-suppliers>.fw>#sup-list{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:100px;}
 .mk-res-stripe{height:4px;background:linear-gradient(90deg,#cc7a47,#3ec873);}
 .mk-res-body{padding:15px 16px;}
 .mk-res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
@@ -2948,7 +2954,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="mk-res">
       <div class="mk-res-stripe"></div>
       <div class="mk-res-body">
-        <div class="mk-res-head"><div class="l">📦 इस महीने का माल · This Month</div><div class="r" id="sup-res-month">—</div></div>
+        <div class="mk-res-head"><div class="l">📦 Purchase/खरीद · This Month</div><div class="r" id="sup-res-month">—</div></div>
         <div class="mk-box mk-box-total"><div class="mk-box-lbl">📦 कुल माल</div><div class="mk-box-val" id="sup-total">₹0</div></div>
         <div class="mk-row2">
           <div class="mk-box mk-box-nakad"><div class="mk-box-lbl">💵 Cash</div><div class="mk-box-val" id="sup-nakad">₹0</div></div>

@@ -2398,7 +2398,22 @@ body.notif-modal-open { overflow: hidden; }
       </div>
     </div>
     
-    <span id="w-maal" style="display:none;">₹0</span>
+    <!-- NEW: Statement / रिपोर्ट tile -> opens s-statement hub -->
+    <div class="lg-home-tile" id="stmt-tile" onclick="go('s-statement')" style="margin-top:14px;box-shadow:0 6px 22px rgba(232,200,112,.22);">
+      <div class="lg-home-stripe" style="background:linear-gradient(90deg,#e8c870,#4a90d4,#3ec873,#e8c870);"></div>
+      <div class="lg-home-body">
+        <div class="lg-home-icon" style="background:linear-gradient(135deg,#243150,#141d33);border:2.5px solid #e8c870;"><svg width="44" height="44" viewBox="0 0 56 56" aria-label="Statement"><rect x="12" y="6" width="30" height="42" rx="4" fill="#f4ead0" stroke="#b8902f" stroke-width="1.4"/><rect x="12" y="6" width="30" height="8.5" rx="4" fill="#e8c870"/><line x1="18" y1="22" x2="38" y2="22" stroke="#9aa0b0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="28" x2="38" y2="28" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="34" x2="30" y2="34" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="42" r="10" fill="#1e7a46" stroke="#fff" stroke-width="1.7"/><path d="M35.5 42l3 3 5.5-6" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="lg-home-text">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+            <div class="lg-home-title">Statement<span style="color:#a8b8d8;font-weight:700;font-size:16px;">/रिपोर्ट</span></div>
+            <div class="lg-pill" style="background:linear-gradient(135deg,#f0d890,#d4a850);color:#1a1208;font-weight:900;letter-spacing:.5px;padding:2px 9px;border-radius:10px;font-size:10px;">NEW</div>
+          </div>
+          <div class="lg-home-sub">PDF · Excel · Tally-ready — For Accounting</div>
+        </div>
+        <div class="lg-home-cta">खोलें →</div>
+      </div>
+    </div>
+        <span id="w-maal" style="display:none;">₹0</span>
     
    </div>
   </div>
@@ -2945,6 +2960,74 @@ body.notif-modal-open { overflow: hidden; }
 </style>
 <!-- उधार (Credit) entry popup -->
 <!-- List बनाएं notepad -->
+
+<style>
+#s-statement{padding-bottom:100px;}
+.st-hdr{background:linear-gradient(180deg,#0d1c40,#0a1530);padding:11px 13px;}
+.st-hrow{display:flex;align-items:center;gap:11px;}
+.st-back{width:34px;height:34px;border-radius:9px;border:1px solid #2a4078;display:flex;align-items:center;justify-content:center;color:#8aa0d8;font-size:16px;cursor:pointer;}
+.st-hicon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#3a2c08,#1a1305);border:2px solid #c9a24b;display:flex;align-items:center;justify-content:center;}
+.st-hicon svg{width:28px;height:28px;}
+.st-htitle{font-size:18px;font-weight:800;color:#f0cf7a;display:flex;align-items:center;gap:7px;}
+.st-propill{background:linear-gradient(135deg,#f0d890,#d4a850);color:#1a1208;font-size:8px;font-weight:900;padding:2px 7px;border-radius:10px;letter-spacing:.5px;}
+.st-hsub{font-size:10.5px;color:#8aa0d8;margin-top:2px;}
+.st-stripe{height:3px;background:linear-gradient(90deg,#d4a850,#cc7a47 40%,#4a90d4 75%,#e8c870);}
+.st-wrap{padding:14px 13px;}
+.st-legend{display:flex;gap:8px;margin-bottom:18px;}
+.st-lg{flex:1;display:flex;align-items:center;gap:7px;background:#141d33;border:1px solid #26314e;border-radius:11px;padding:8px 11px;}
+.st-lg .d{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.st-lg .d svg{width:16px;height:16px;}
+.st-lg .t{font-size:11px;font-weight:800;color:#e8e8f0;} .st-lg .s{font-size:9px;}
+.st-lg.pdf .d{background:#16233f;} .st-lg.pdf .s{color:#7bd39a;}
+.st-lg.xls .d{background:#241a08;} .st-lg.xls .s{color:#e0b45a;}
+.st-lbl{font-size:10.5px;font-weight:800;color:#8493b8;letter-spacing:.8px;margin:0 2px 9px;} .st-lbl .hi{color:#6a7ba0;font-weight:700;}
+.st-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:20px;}
+.st-tile{background:linear-gradient(180deg,#1c2b4e,#16233f);border:1px solid #33507e;border-radius:15px;padding:14px 13px;display:flex;flex-direction:column;gap:9px;cursor:pointer;position:relative;box-shadow:0 5px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05);}
+.st-tile:active{transform:translateY(1px) scale(.99);}
+.st-tile.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:13px;margin-bottom:20px;background:linear-gradient(180deg,#22335c,#1a2744);border-color:#3d5c92;}
+.st-ic{width:44px;height:44px;border-radius:12px;background:#0d1730;border:1px solid #2a3c60;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.st-ic svg{width:30px;height:30px;display:block;}
+.st-tile.wide .st-ic{width:50px;height:50px;} .st-tile.wide .st-ic svg{width:34px;height:34px;}
+.st-tn{font-size:13.5px;font-weight:800;color:#f2f5ff;line-height:1.2;} .st-tn .hi{color:#a8b8d8;font-weight:700;}
+.st-tile.wide .st-tn{font-size:16px;}
+.st-tg{font-size:10px;font-weight:600;color:#8fa0c4;}
+.st-tile.wide .st-tw{flex:1;}
+.st-arw{position:absolute;top:13px;right:12px;color:#5a6a98;font-size:13px;} .st-tile.wide .st-arw{position:static;color:#8aa0d8;font-size:16px;}
+.st-probar{display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,#241a08,#1a1305);border:1px solid #6a4420;border-radius:14px;padding:12px 14px;}
+.st-probar .pi{width:30px;height:30px;display:flex;align-items:center;justify-content:center;} .st-probar .pi svg{width:24px;height:24px;}
+.st-probar .pt{flex:1;} .st-probar .pt b{font-size:12px;color:#f0d890;font-weight:800;} .st-probar .pt div{font-size:10px;color:#c8b088;margin-top:1px;}
+.st-probar .pb{background:linear-gradient(135deg,#f0d890,#d4a850);color:#1a1208;font-size:12px;font-weight:800;padding:8px 14px;border-radius:10px;}
+</style>
+<div id="s-statement" class="screen">
+  <div class="st-hdr"><div class="st-hrow">
+    <div class="st-back" onclick="go('s-home')">←</div>
+    <div class="st-hicon"><svg width="28" height="28" viewBox="0 0 56 56" aria-label="Statement"><rect x="12" y="6" width="30" height="42" rx="4" fill="#f4ead0" stroke="#b8902f" stroke-width="1.4"/><rect x="12" y="6" width="30" height="8.5" rx="4" fill="#e8c870"/><line x1="18" y1="22" x2="38" y2="22" stroke="#9aa0b0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="28" x2="38" y2="28" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="34" x2="30" y2="34" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="42" r="10" fill="#1e7a46" stroke="#fff" stroke-width="1.7"/><path d="M35.5 42l3 3 5.5-6" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="st-htitle">Statement <span class="st-propill">CA-READY</span></div><div class="st-hsub">PDF &amp; Excel · Tally-ready</div></div>
+  </div></div>
+  <div class="st-stripe"></div>
+  <div class="st-wrap">
+    <div class="st-legend">
+      <div class="st-lg pdf"><div class="d"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="7" y="13" width="10" height="6" rx="1" fill="#e05555"/><text x="12" y="17.6" font-size="4.2" fill="#fff" text-anchor="middle" font-family="Arial" font-weight="700">PDF</text></svg></div><div><div class="t">PDF</div><div class="s">Free · WhatsApp</div></div></div>
+      <div class="st-lg xls"><div class="d"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="6.5" y="12" width="11" height="8" rx="1" fill="#1e7a46"/><path d="M9 14l6 4M15 14l-6 4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></div><div><div class="t">Excel</div><div class="s">Tally-ready · PRO</div></div></div>
+    </div>
+    <div class="st-lbl">SUPPLIER LEDGER <span class="hi">/ सप्लायर हिसाब</span></div>
+    <div class="st-tile wide" onclick="stSoon('Supplier')"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg></div><div class="st-tw"><div class="st-tn">Supplier <span class="hi">/ सप्लायर</span></div><div class="st-tg">one supplier’s full purchase &amp; payment ledger</div></div><span class="st-arw">›</span></div>
+    <div class="st-lbl">REGISTERS <span class="hi">/ रजिस्टर</span></div>
+    <div class="st-grid">
+      <div class="st-tile" onclick="stSoon('Sales')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg></div><div><div class="st-tn">Sales <span class="hi">/ बिक्री</span></div><div class="st-tg">cash + UPI</div></div><span class="st-arw">›</span></div>
+      <div class="st-tile" onclick="stSoon('Purchase')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 11l12-5 12 5-12 5z" fill="#e6bd7e" stroke="#a5761f" stroke-width="1"/><path d="M4 11v13l12 5V16z" fill="#cfa059" stroke="#a5761f" stroke-width="1"/><path d="M28 11v13l-12 5V16z" fill="#bd8f46" stroke="#a5761f" stroke-width="1"/><path d="M16 6v10" stroke="#8a5f20" stroke-width="1.2"/><rect x="12.5" y="8" width="7" height="2.6" fill="#f4e6b8" opacity=".85"/></svg></div><div><div class="st-tn">Purchase <span class="hi">/ खरीद</span></div><div class="st-tg">all suppliers</div></div><span class="st-arw">›</span></div>
+      <div class="st-tile" onclick="stSoon('Expense')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M8 4h16v24l-2.7-1.8L18.7 28 16 26.2 13.3 28 10.7 26.2 8 28z" fill="#fbf3ea" stroke="#e0a878" stroke-width="1.2"/><path d="M12 11h8M12 15h8M12 19h5" stroke="#e8956a" stroke-width="1.8" stroke-linecap="round"/></svg></div><div><div class="st-tn">Expense <span class="hi">/ खर्चा</span></div><div class="st-tg">by period</div></div><span class="st-arw">›</span></div>
+      <div class="st-tile" onclick="stSoon('Day Book')"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="4" y="6" width="24" height="22" rx="3" fill="#f4f6fa" stroke="#c3ccdb" stroke-width="1"/><rect x="4" y="6" width="24" height="6.5" rx="3" fill="#e8556a"/><rect x="9" y="3" width="2.5" height="5" rx="1.2" fill="#8a3540"/><rect x="20.5" y="3" width="2.5" height="5" rx="1.2" fill="#8a3540"/><g fill="#8894ad"><rect x="8" y="15.5" width="3" height="3" rx=".6"/><rect x="14.5" y="15.5" width="3" height="3" rx=".6"/><rect x="21" y="15.5" width="3" height="3" rx=".6"/><rect x="8" y="20.5" width="3" height="3" rx=".6"/><rect x="14.5" y="20.5" width="3" height="3" rx=".6" fill="#5a8fd8"/><rect x="21" y="20.5" width="3" height="3" rx=".6"/></g></svg></div><div><div class="st-tn">Day Book <span class="hi">/ रोज़नामचा</span></div><div class="st-tg">day-wise</div></div><span class="st-arw">›</span></div>
+    </div>
+    <div class="st-lbl">SUMMARIES <span class="hi">/ सारांश</span></div>
+    <div class="st-grid">
+      <div class="st-tile" onclick="stSoon('Outstanding')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M8 4h16M8 28h16" stroke="#c99a52" stroke-width="2.4" stroke-linecap="round"/><path d="M9.5 4c0 6 6.5 8 6.5 12 0-4 6.5-6 6.5-12M9.5 28c0-6 6.5-8 6.5-12 0 4 6.5 6 6.5 12" fill="none" stroke="#c99a52" stroke-width="1.5"/><path d="M11.5 6.5h9c0 3.3-4.5 4.8-4.5 7.5 0-2.7-4.5-4.2-4.5-7.5z" fill="#e8b84a"/><path d="M13 25.5c0-2 3-3 3-4.6 0 1.6 3 2.6 3 4.6z" fill="#e8b84a"/></svg></div><div><div class="st-tn">Outstanding <span class="hi">/ बकाया</span></div><div class="st-tg">with ageing</div></div><span class="st-arw">›</span></div>
+      <div class="st-tile" onclick="stSoon('Monthly')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><rect x="6" y="16" width="4.6" height="11" rx="1.2" fill="#5a8fd8"/><rect x="13.7" y="10" width="4.6" height="17" rx="1.2" fill="#8aef7a"/><rect x="21.4" y="6" width="4.6" height="21" rx="1.2" fill="#e8c870"/></svg></div><div><div class="st-tn">Monthly <span class="hi">/ महीना</span></div><div class="st-tg">month totals</div></div><span class="st-arw">›</span></div>
+    </div>
+    <div class="st-probar"><div class="pi"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="6.5" y="12" width="11" height="8" rx="1" fill="#1e7a46"/><path d="M9 14l6 4M15 14l-6 4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="pt"><b>Excel · Tally export</b><div>Unlock with Live हिसाब Pro</div></div><div class="pb">₹99/mo</div></div>
+  </div>
+</div>
+<script>window.stSoon=function(t){try{toast(t+' — जल्द आ रहा है (next update)');}catch(e){}};</script>
 
 <div id="s-suppliers" class="screen">
   <div class="mk-header">

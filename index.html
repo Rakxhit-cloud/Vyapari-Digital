@@ -3011,7 +3011,7 @@ body.notif-modal-open { overflow: hidden; }
       <div class="st-lg xls"><div class="d"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="6.5" y="12" width="11" height="8" rx="1" fill="#1e7a46"/><path d="M9 14l6 4M15 14l-6 4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></div><div><div class="t">Excel</div><div class="s">Tally-ready · PRO</div></div></div>
     </div>
     <div class="st-lbl">SUPPLIER LEDGER <span class="hi">/ सप्लायर हिसाब</span></div>
-    <div class="st-tile wide" onclick="stSoon('Supplier')"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg></div><div class="st-tw"><div class="st-tn">Supplier <span class="hi">/ सप्लायर</span></div><div class="st-tg">one supplier’s full purchase &amp; payment ledger</div></div><span class="st-arw">›</span></div>
+    <div class="st-tile wide" onclick="stGenOpen()"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg></div><div class="st-tw"><div class="st-tn">Supplier <span class="hi">/ सप्लायर</span></div><div class="st-tg">one supplier’s full purchase &amp; payment ledger</div></div><span class="st-arw">›</span></div>
     <div class="st-lbl">REGISTERS <span class="hi">/ रजिस्टर</span></div>
     <div class="st-grid">
       <div class="st-tile" onclick="stSoon('Sales')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg></div><div><div class="st-tn">Sales <span class="hi">/ बिक्री</span></div><div class="st-tg">cash + UPI</div></div><span class="st-arw">›</span></div>
@@ -3089,6 +3089,94 @@ textarea.st-biz-in{resize:none;}
   };
   window.getBizProfile=function(){
     try{return {name:localStorage.getItem("hk_business_name")||"",gstin:localStorage.getItem("hk_business_gstin")||"",address:localStorage.getItem("hk_business_address")||"",dlno:localStorage.getItem("hk_business_dlno")||""};}catch(e){return {name:"",gstin:"",address:"",dlno:""};}
+  };
+})();
+</script>
+<style>
+.st-gen-ov{position:fixed;inset:0;background:rgba(3,6,14,.72);backdrop-filter:blur(3px);z-index:9000;display:none;align-items:flex-end;justify-content:center;}
+.st-gen-ov.on{display:flex;}
+.st-gen-card{width:100%;max-width:440px;background:linear-gradient(180deg,#0e1a34,#0a1428);border:1.5px solid #33507e;border-top-left-radius:20px;border-top-right-radius:20px;padding:16px 15px 22px;box-shadow:0 -14px 44px rgba(0,0,0,.6);max-height:92vh;overflow-y:auto;}
+.st-gen-head{display:flex;align-items:center;gap:12px;padding-bottom:13px;border-bottom:1px solid #2c3f66;margin-bottom:14px;}
+.st-gen-ic{width:44px;height:44px;border-radius:12px;background:#0d1730;border:1px solid #2a3c60;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.st-gen-ic svg{width:30px;height:30px;}
+.st-gen-tt{flex:1;} .st-gen-tt .gn{font-size:15px;font-weight:800;color:#f2f5ff;} .st-gen-tt .gd{font-size:10.5px;color:#8fa0c4;}
+.st-gen-x{width:28px;height:28px;border:1px solid #2a4078;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8aa0d8;font-size:13px;cursor:pointer;}
+.st-gen-step{margin-bottom:15px;}
+.st-gen-num{font-size:11px;font-weight:800;color:#c8d4f0;letter-spacing:.3px;margin-bottom:8px;} .st-gen-num b{color:#e8c870;}
+.st-gen-picker{background:#0f1830;border:1px solid #2c3f66;border-radius:11px;padding:12px 13px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.st-gen-picker #st-gen-supname{font-size:13px;font-weight:700;color:#eaf0ff;} .st-gen-picker .cv{color:#8aa0d8;}
+.st-gen-suplist{display:none;margin-top:8px;max-height:210px;overflow-y:auto;border:1px solid #2c3f66;border-radius:11px;background:#0a1220;}
+.st-gen-suplist.on{display:block;}
+.st-gen-supitem{padding:10px 13px;border-bottom:1px solid #182642;cursor:pointer;}
+.st-gen-supitem:active{background:#12203c;} .st-gen-supitem:last-child{border-bottom:none;}
+.st-gen-supitem .sn{font-size:13px;font-weight:700;color:#eaf0ff;} .st-gen-supitem .sb{font-size:10px;color:#8fa0c4;margin-top:2px;}
+.st-gen-supempty{padding:14px;text-align:center;color:#8fa0c4;font-size:12px;}
+.st-gen-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.st-gen-chip{font-size:11.5px;font-weight:700;padding:8px 13px;border-radius:9px;background:#0f1830;border:1px solid #2c3f66;color:#a8c0f0;cursor:pointer;}
+.st-gen-chip.on{background:#241a08;border-color:#d4a850;color:#f0d890;}
+.st-gen-ftog{display:flex;gap:10px;}
+.st-gen-fopt{flex:1;border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;border:1.5px solid #2c3f66;background:#0f1830;}
+.st-gen-fopt.on{border-color:#d4a850;background:#1a2340;}
+.st-gen-fopt .fi{height:24px;display:flex;align-items:center;justify-content:center;} .st-gen-fopt .fi svg{width:22px;height:22px;}
+.st-gen-fopt .fn{font-size:13px;font-weight:800;color:#f2f5ff;margin-top:5px;}
+.st-gen-fopt .ff{font-size:9.5px;font-weight:800;margin-top:3px;} .st-gen-fopt .ff.free{color:#4ade80;}
+.st-gen-fopt .ff.pro{color:#1a1208;background:linear-gradient(135deg,#f0d890,#d4a850);border-radius:8px;padding:1px 6px;display:inline-block;}
+.st-gen-go{margin-top:8px;text-align:center;background:linear-gradient(135deg,#f0d890,#d4a850);border:2px solid #f6e6b0;color:#1a1208;font-size:14px;font-weight:800;padding:14px;border-radius:12px;cursor:pointer;box-shadow:0 4px 14px rgba(212,168,80,.3);}
+</style>
+<div id="st-gen-ov" class="st-gen-ov" onclick="if(event.target===this)stGenClose()">
+  <div class="st-gen-card">
+    <div class="st-gen-head"><div class="st-gen-ic"><svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg></div>
+      <div class="st-gen-tt"><div class="gn">Supplier Statement <span style="color:#a8b8d8;font-size:12px;">/ सप्लायर</span></div><div class="gd">per supplier ledger</div></div>
+      <div class="st-gen-x" onclick="stGenClose()">✕</div></div>
+    <div class="st-gen-step"><div class="st-gen-num"><b>1</b> · सप्लायर चुनें</div>
+      <div class="st-gen-picker" onclick="stGenToggleSup()"><span id="st-gen-supname">सप्लायर चुनें</span><span class="cv">⌄</span></div>
+      <div id="st-gen-suplist" class="st-gen-suplist"></div></div>
+    <div class="st-gen-step"><div class="st-gen-num"><b>2</b> · तारीख़</div>
+      <div class="st-gen-chips" id="st-gen-chips">
+        <div class="st-gen-chip on" data-r="thismonth" onclick="stGenRange(this)">इस महीना</div>
+        <div class="st-gen-chip" data-r="lastmonth" onclick="stGenRange(this)">पिछला महीना</div>
+        <div class="st-gen-chip" data-r="quarter" onclick="stGenRange(this)">तिमाही</div>
+        <div class="st-gen-chip" data-r="year" onclick="stGenRange(this)">इस साल</div>
+        <div class="st-gen-chip" data-r="all" onclick="stGenRange(this)">सब</div>
+      </div></div>
+    <div class="st-gen-step"><div class="st-gen-num"><b>3</b> · Format</div>
+      <div class="st-gen-ftog">
+        <div class="st-gen-fopt on" data-f="pdf" onclick="stGenFmt(this)"><div class="fi"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="7" y="13" width="10" height="6" rx="1" fill="#e05555"/><text x="12" y="17.6" font-size="4.2" fill="#fff" text-anchor="middle" font-family="Arial" font-weight="700">PDF</text></svg></div><div class="fn">PDF</div><div class="ff free">Free</div></div>
+        <div class="st-gen-fopt" data-f="excel" onclick="stGenFmt(this)"><div class="fi"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="6.5" y="12" width="11" height="8" rx="1" fill="#1e7a46"/><path d="M9 14l6 4M15 14l-6 4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="fn">Excel</div><div class="ff pro">PRO · Free</div></div>
+      </div></div>
+    <div class="st-gen-go" onclick="stGenerate()">बनाएं &amp; Share →</div>
+  </div>
+</div>
+<script>
+(function(){
+  window._stGen={supplier:null,range:"thismonth",format:"pdf"};
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  window.stGenOpen=function(){
+    window._stGen={supplier:null,range:"thismonth",format:"pdf"};
+    var n=document.getElementById("st-gen-supname"); if(n)n.textContent="सप्लायर चुनें";
+    var l=document.getElementById("st-gen-suplist"); if(l){l.classList.remove("on");l.innerHTML="";}
+    document.querySelectorAll("#st-gen-chips .st-gen-chip").forEach(function(c){c.classList.toggle("on",c.getAttribute("data-r")==="thismonth");});
+    document.querySelectorAll(".st-gen-fopt").forEach(function(c){c.classList.toggle("on",c.getAttribute("data-f")==="pdf");});
+    document.getElementById("st-gen-ov").classList.add("on");
+  };
+  window.stGenClose=function(){document.getElementById("st-gen-ov").classList.remove("on");};
+  window.stGenToggleSup=function(){
+    var l=document.getElementById("st-gen-suplist");
+    if(l.classList.contains("on")){l.classList.remove("on");return;}
+    var maal=[]; try{maal=DB.get(K.MAAL)||[];}catch(e){}
+    var by={};
+    maal.forEach(function(r){ if(r&&r.placeholder)return; var s=(r&&r.supplier)||""; if(!s)return; if(!by[s])by[s]={name:s,baki:0,n:0}; by[s].n++; if(r.pay!=="नकद")by[s].baki+=Math.max(0,(r.amount||0)-(r.paid||0)); });
+    var arr=Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){return b.baki-a.baki;});
+    if(!arr.length){l.innerHTML='<div class="st-gen-supempty">कोई सप्लायर नहीं — पहले Purchase में एंट्री करें</div>';l.classList.add("on");return;}
+    l.innerHTML=arr.map(function(s){var f=(window.fmt?fmt(s.baki):("₹"+s.baki));return '<div class="st-gen-supitem" onclick="stGenPickSup(\''+encodeURIComponent(s.name)+'\')"><div class="sn">'+esc(s.name)+'</div><div class="sb">'+s.n+' खरीद · बाकी '+f+'</div></div>';}).join("");
+    l.classList.add("on");
+  };
+  window.stGenPickSup=function(enc){ var name=decodeURIComponent(enc); window._stGen.supplier=name; document.getElementById("st-gen-supname").textContent=name; document.getElementById("st-gen-suplist").classList.remove("on"); };
+  window.stGenRange=function(el){ document.querySelectorAll("#st-gen-chips .st-gen-chip").forEach(function(c){c.classList.remove("on");}); el.classList.add("on"); window._stGen.range=el.getAttribute("data-r"); };
+  window.stGenFmt=function(el){ document.querySelectorAll(".st-gen-fopt").forEach(function(c){c.classList.remove("on");}); el.classList.add("on"); window._stGen.format=el.getAttribute("data-f"); };
+  window.stGenerate=function(){
+    if(!window._stGen.supplier){ try{toast("❌ पहले सप्लायर चुनें",true);}catch(e){} return; }
+    try{toast(window._stGen.supplier+" · "+window._stGen.format.toUpperCase()+" — अगले step में बनेगा");}catch(e){}
   };
 })();
 </script>

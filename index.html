@@ -3176,7 +3176,49 @@ textarea.st-biz-in{resize:none;}
   window.stGenFmt=function(el){ document.querySelectorAll(".st-gen-fopt").forEach(function(c){c.classList.remove("on");}); el.classList.add("on"); window._stGen.format=el.getAttribute("data-f"); };
   window.stGenerate=function(){
     if(!window._stGen.supplier){ try{toast("❌ पहले सप्लायर चुनें",true);}catch(e){} return; }
-    try{toast(window._stGen.supplier+" · "+window._stGen.format.toUpperCase()+" — अगले step में बनेगा");}catch(e){}
+    try{
+      var A=window.stAggSupplier(window._stGen.supplier);
+      var f=window.fmt||function(x){return "₹"+x;};
+      toast(window._stGen.supplier+" — बाकी "+f(A.closing)+" | credit "+f(A.creditTotal)+" · चुकाया "+f(A.paidTotal)+" · cash "+f(A.cashTotal)+" | "+A.nCredit+" credit/"+A.nCash+" cash · pay-box "+f(A.paymentBoxTotal));
+    }catch(e){ try{toast("aggregation error: "+(e&&e.message||e));}catch(e2){} }
+  };
+})();
+</script>
+<script>
+(function(){
+  function supkey(s){ try{ return window.mkSupKey?mkSupKey(s):String(s||"").trim().toLowerCase(); }catch(e){ return String(s||"").trim().toLowerCase(); } }
+  function pdate(s){ var p=String(s||"").split("-"); if(p.length!==3)return null; var d=new Date(+p[0],(+p[1])-1,+p[2]); return isNaN(d)?null:d; }
+  window.stAggSupplier=function(supName){
+    var key=supkey(supName), maal=[], bikri=[];
+    try{maal=DB.get(K.MAAL)||[];}catch(e){}
+    try{bikri=DB.get(K.BIKRI)||[];}catch(e){}
+    var purchases=maal.filter(function(r){return r&&!r.placeholder&&supkey(r.supplier)===key;});
+    var creditBills=[],cashBills=[],ids={},creditTotal=0,cashTotal=0,paidTotal=0,closing=0;
+    purchases.forEach(function(r){
+      if(r.id)ids[r.id]=1;
+      var amt=r.amount||0;
+      if(r.pay==="नकद"){cashTotal+=amt;cashBills.push(r);}
+      else{creditTotal+=amt;paidTotal+=(r.paid||0);closing+=Math.max(0,amt-(r.paid||0));creditBills.push(r);}
+    });
+    var paymentBoxTotal=0,nPay=0,payments=[];
+    bikri.forEach(function(rec){
+      var boxes=(rec&&rec.lgBoxes)||[];
+      boxes.forEach(function(b){
+        if(b&&b.src==="maal"&&b.maalKind==="payment"&&b.maalId&&ids[b.maalId]){
+          paymentBoxTotal+=(b.amount||0);nPay++;payments.push({date:rec.date||"",amount:b.amount||0,maalId:b.maalId});
+        }
+      });
+    });
+    var today=new Date();today.setHours(0,0,0,0);
+    var ag={b0:0,b1:0,b2:0,b3:0};
+    creditBills.forEach(function(r){
+      var unpaid=Math.max(0,(r.amount||0)-(r.paid||0)); if(unpaid<=0)return;
+      var dt=pdate(r.date); var days=dt?Math.floor((today-dt)/86400000):0;
+      if(days<=30)ag.b0+=unpaid; else if(days<=60)ag.b1+=unpaid; else if(days<=90)ag.b2+=unpaid; else ag.b3+=unpaid;
+    });
+    return {creditTotal:creditTotal,cashTotal:cashTotal,paidTotal:paidTotal,closing:closing,
+      paymentBoxTotal:paymentBoxTotal,nCredit:creditBills.length,nCash:cashBills.length,nPay:nPay,
+      ageing:ag,payments:payments,creditBills:creditBills,cashBills:cashBills};
   };
 })();
 </script>

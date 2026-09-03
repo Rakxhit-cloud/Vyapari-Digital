@@ -3130,7 +3130,7 @@ textarea.st-biz-in{resize:none;}
       <div class="st-gen-x" onclick="stGenClose()">✕</div></div>
     <div class="st-gen-step"><div class="st-gen-num"><b>1</b> · सप्लायर चुनें</div>
       <div class="st-gen-picker" onclick="stSupPickOpen()"><span id="st-gen-supname">सप्लायर चुनें</span><span class="cv">⌄</span></div>
-      <div id="st-gen-suplist" class="st-gen-suplist"></div></div>
+      <div id="st-gen-suplist" class="st-gen-suplist"></div><input id="st-gen-supgst" class="st-gen-gst" placeholder="Supplier GSTIN — CA statement के लिए" maxlength="15" onblur="stSaveSupGst()" style="text-transform:uppercase;letter-spacing:.4px;"></div>
     <div class="st-gen-step"><div class="st-gen-num"><b>2</b> · तारीख़</div>
       <div class="st-gen-chips" id="st-gen-chips">
         <div class="st-gen-chip on" data-r="thismonth" onclick="stGenRange(this)">इस महीना</div>
@@ -3153,7 +3153,7 @@ textarea.st-biz-in{resize:none;}
   function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
   window.stGenOpen=function(){
     window._stGen={supplier:null,range:"thismonth",format:"pdf"};
-    var n=document.getElementById("st-gen-supname"); if(n)n.textContent="सप्लायर चुनें";
+    var n=document.getElementById("st-gen-supname"); if(n)n.textContent="सप्लायर चुनें";var g=document.getElementById("st-gen-supgst"); if(g)g.value="";
     var l=document.getElementById("st-gen-suplist"); if(l){l.classList.remove("on");l.innerHTML="";}
     document.querySelectorAll("#st-gen-chips .st-gen-chip").forEach(function(c){c.classList.toggle("on",c.getAttribute("data-r")==="thismonth");});
     document.querySelectorAll(".st-gen-fopt").forEach(function(c){c.classList.toggle("on",c.getAttribute("data-f")==="pdf");});
@@ -3232,7 +3232,20 @@ textarea.st-biz-in{resize:none;}
   window.stSupPickOpen=function(){build();var q=document.getElementById("st-suppick-q");if(q)q.value="";render("");document.getElementById("st-suppick-ov").classList.add("on");setTimeout(function(){try{if(q)q.focus();}catch(e){}},150);};
   window.stSupPickClose=function(){document.getElementById("st-suppick-ov").classList.remove("on");};
   window.stSupPickFilter=function(){var q=document.getElementById("st-suppick-q");render(q?q.value:"");};
-  window.stSupPickChoose=function(enc){var name=decodeURIComponent(enc);window._stGen.supplier=name;var el=document.getElementById("st-gen-supname");if(el)el.textContent=name;stSupPickClose();};
+  window.stSupPickChoose=function(enc){var name=decodeURIComponent(enc);window._stGen.supplier=name;var el=document.getElementById("st-gen-supname");if(el)el.textContent=name;var gi=document.getElementById("st-gen-supgst");if(gi)gi.value=(window.getSupGstin?getSupGstin(name):"");stSupPickClose();};
+})();
+</script>
+<style>
+.st-gen-gst{width:100%;margin-top:9px;background:#0a1220;border:1px solid #2c3f66;border-radius:11px;padding:11px 13px;font-size:12.5px;color:#eaf0ff;outline:none;font-family:inherit;}
+.st-gen-gst:focus{border-color:#d4a850;}
+.st-gen-gst::placeholder{color:#4a5a80;text-transform:none;letter-spacing:0;}
+</style>
+<script>
+(function(){
+  function _map(){try{return JSON.parse(localStorage.getItem("hk_sup_gstin")||"{}");}catch(e){return {};}}
+  window.getSupGstin=function(name){var m=_map();return m[name]||"";};
+  window.setSupGstin=function(name,g){try{var m=_map();if(g)m[name]=g;else delete m[name];localStorage.setItem("hk_sup_gstin",JSON.stringify(m));}catch(e){}};
+  window.stSaveSupGst=function(){var s=window._stGen&&window._stGen.supplier;if(!s)return;var el=document.getElementById("st-gen-supgst");if(!el)return;window.setSupGstin(s,(el.value||"").trim().toUpperCase());};
 })();
 </script>
 

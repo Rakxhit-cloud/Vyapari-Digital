@@ -3129,7 +3129,7 @@ textarea.st-biz-in{resize:none;}
       <div class="st-gen-tt"><div class="gn">Supplier Statement <span style="color:#a8b8d8;font-size:12px;">/ सप्लायर</span></div><div class="gd">per supplier ledger</div></div>
       <div class="st-gen-x" onclick="stGenClose()">✕</div></div>
     <div class="st-gen-step"><div class="st-gen-num"><b>1</b> · सप्लायर चुनें</div>
-      <div class="st-gen-picker" onclick="stGenToggleSup()"><span id="st-gen-supname">सप्लायर चुनें</span><span class="cv">⌄</span></div>
+      <div class="st-gen-picker" onclick="stSupPickOpen()"><span id="st-gen-supname">सप्लायर चुनें</span><span class="cv">⌄</span></div>
       <div id="st-gen-suplist" class="st-gen-suplist"></div></div>
     <div class="st-gen-step"><div class="st-gen-num"><b>2</b> · तारीख़</div>
       <div class="st-gen-chips" id="st-gen-chips">
@@ -3178,6 +3178,61 @@ textarea.st-biz-in{resize:none;}
     if(!window._stGen.supplier){ try{toast("❌ पहले सप्लायर चुनें",true);}catch(e){} return; }
     try{toast(window._stGen.supplier+" · "+window._stGen.format.toUpperCase()+" — अगले step में बनेगा");}catch(e){}
   };
+})();
+</script>
+<style>
+.st-suppick-ov{position:fixed;inset:0;background:rgba(3,6,14,.7);backdrop-filter:blur(3px);z-index:9100;display:none;align-items:flex-end;justify-content:center;}
+.st-suppick-ov.on{display:flex;}
+.st-suppick-sheet{width:100%;max-width:440px;background:linear-gradient(180deg,#0e1a34,#0a1428);border:1.5px solid #33507e;border-top-left-radius:20px;border-top-right-radius:20px;padding:8px 14px 18px;box-shadow:0 -14px 44px rgba(0,0,0,.6);height:66vh;display:flex;flex-direction:column;}
+.st-suppick-grab{width:40px;height:4px;border-radius:3px;background:#33507e;margin:4px auto 10px;flex-shrink:0;}
+.st-suppick-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-shrink:0;}
+.st-suppick-title{font-size:15px;font-weight:800;color:#f0d890;}
+.st-suppick-x{width:28px;height:28px;border:1px solid #2a4078;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8aa0d8;font-size:13px;cursor:pointer;}
+.st-suppick-search{display:flex;align-items:center;gap:8px;background:#0a1220;border:1px solid #2c3f66;border-radius:11px;padding:10px 12px;margin-bottom:8px;flex-shrink:0;}
+.st-suppick-search svg{width:17px;height:17px;flex-shrink:0;}
+.st-suppick-search input{flex:1;background:transparent;border:none;outline:none;color:#eaf0ff;font-size:13px;font-family:inherit;}
+.st-suppick-search input::placeholder{color:#4a5a80;}
+.st-suppick-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.st-suppick-item{padding:11px 4px;border-bottom:1px solid #182642;cursor:pointer;display:flex;align-items:center;gap:11px;}
+.st-suppick-item:active{background:#12203c;}
+.st-suppick-av{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#c79a34,#a5761f);display:flex;align-items:center;justify-content:center;color:#1a1208;font-weight:800;font-size:15px;flex-shrink:0;}
+.st-suppick-info{flex:1;min-width:0;}
+.st-suppick-nm{font-size:14px;font-weight:700;color:#eaf0ff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.st-suppick-mt{font-size:10.5px;color:#8fa0c4;margin-top:2px;}
+.st-suppick-baki{font-size:12px;font-weight:700;color:#f0b060;flex-shrink:0;}
+.st-suppick-empty{padding:30px 10px;text-align:center;color:#8fa0c4;font-size:13px;line-height:1.5;}
+</style>
+<div id="st-suppick-ov" class="st-suppick-ov" onclick="if(event.target===this)stSupPickClose()">
+  <div class="st-suppick-sheet">
+    <div class="st-suppick-grab"></div>
+    <div class="st-suppick-head"><div class="st-suppick-title">सप्लायर चुनें</div><div class="st-suppick-x" onclick="stSupPickClose()">✕</div></div>
+    <div class="st-suppick-search"><svg viewBox="0 0 24 24" fill="none" stroke="#6a7ba0" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="st-suppick-q" placeholder="नाम खोजें…" oninput="stSupPickFilter()"></div>
+    <div id="st-suppick-list" class="st-suppick-list"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var _all=[];
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function build(){
+    var maal=[];try{maal=DB.get(K.MAAL)||[];}catch(e){}
+    var by={};
+    maal.forEach(function(r){if(r&&r.placeholder)return;var s=(r&&r.supplier)||"";if(!s)return;if(!by[s])by[s]={name:s,baki:0,n:0};by[s].n++;if(r.pay!=="नकद")by[s].baki+=Math.max(0,(r.amount||0)-(r.paid||0));});
+    _all=Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){return b.baki-a.baki;});
+  }
+  function render(q){
+    var l=document.getElementById("st-suppick-list");if(!l)return;
+    q=(q||"").trim().toLowerCase();
+    var arr=q?_all.filter(function(s){return s.name.toLowerCase().indexOf(q)>=0;}):_all;
+    if(!arr.length){l.innerHTML='<div class="st-suppick-empty">'+(_all.length?"कोई मेल नहीं":"कोई सप्लायर नहीं — पहले Purchase में एंट्री करें")+"</div>";return;}
+    l.innerHTML=arr.map(function(s){var f=(window.fmt?fmt(s.baki):("₹"+s.baki));var av=(String(s.name)[0]||"?").toUpperCase();
+      return '<div class="st-suppick-item" onclick="stSupPickChoose(\''+encodeURIComponent(s.name)+'\')"><div class="st-suppick-av">'+esc(av)+'</div><div class="st-suppick-info"><div class="st-suppick-nm">'+esc(s.name)+'</div><div class="st-suppick-mt">'+s.n+' खरीद</div></div><div class="st-suppick-baki">'+f+'</div></div>';
+    }).join("");
+  }
+  window.stSupPickOpen=function(){build();var q=document.getElementById("st-suppick-q");if(q)q.value="";render("");document.getElementById("st-suppick-ov").classList.add("on");setTimeout(function(){try{if(q)q.focus();}catch(e){}},150);};
+  window.stSupPickClose=function(){document.getElementById("st-suppick-ov").classList.remove("on");};
+  window.stSupPickFilter=function(){var q=document.getElementById("st-suppick-q");render(q?q.value:"");};
+  window.stSupPickChoose=function(enc){var name=decodeURIComponent(enc);window._stGen.supplier=name;var el=document.getElementById("st-gen-supname");if(el)el.textContent=name;stSupPickClose();};
 })();
 </script>
 

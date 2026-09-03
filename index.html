@@ -3002,7 +3002,7 @@ body.notif-modal-open { overflow: hidden; }
   <div class="st-hdr"><div class="st-hrow">
     <div class="st-back" onclick="go('s-home')">←</div>
     <div class="st-hicon"><svg width="28" height="28" viewBox="0 0 56 56" aria-label="Statement"><rect x="12" y="6" width="30" height="42" rx="4" fill="#f4ead0" stroke="#b8902f" stroke-width="1.4"/><rect x="12" y="6" width="30" height="8.5" rx="4" fill="#e8c870"/><line x1="18" y1="22" x2="38" y2="22" stroke="#9aa0b0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="28" x2="38" y2="28" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="34" x2="30" y2="34" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="42" r="10" fill="#1e7a46" stroke="#fff" stroke-width="1.7"/><path d="M35.5 42l3 3 5.5-6" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div><div class="st-htitle">Statement <span class="st-propill">CA-READY</span></div><div class="st-hsub">PDF &amp; Excel · Tally-ready</div></div>
+    <div><div class="st-htitle">Statement <span class="st-propill">CA-READY</span></div><div class="st-hsub">PDF &amp; Excel · Tally-ready</div></div><div class="st-bizbtn" onclick="bizOpen()">✏️ व्यापार जानकारी</div>
   </div></div>
   <div class="st-stripe"></div>
   <div class="st-wrap">
@@ -3028,6 +3028,70 @@ body.notif-modal-open { overflow: hidden; }
   </div>
 </div>
 <script>window.stSoon=function(t){try{toast(t+' — जल्द आ रहा है (next update)');}catch(e){}};</script>
+<style>
+.st-bizbtn{margin-left:auto;font-size:10px;font-weight:800;color:#f0d890;background:#1a1408;border:1px solid #c0902f;border-radius:9px;padding:6px 9px;cursor:pointer;white-space:nowrap;line-height:1.1;text-align:center;}
+.st-biz-ov{position:fixed;inset:0;background:rgba(3,6,14,.72);backdrop-filter:blur(3px);z-index:9000;display:none;align-items:center;justify-content:center;padding:16px;}
+.st-biz-ov.on{display:flex;}
+.st-biz-card{width:100%;max-width:340px;background:linear-gradient(180deg,#0e1a34,#0a1428);border:1.5px solid #33507e;border-radius:16px;padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.6);max-height:90vh;overflow-y:auto;}
+.st-biz-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.st-biz-title{font-size:16px;font-weight:800;color:#f0d890;}
+.st-biz-x{width:28px;height:28px;border:1px solid #2a4078;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8aa0d8;font-size:13px;cursor:pointer;}
+.st-biz-sub{font-size:10.5px;color:#8aa0d8;margin-bottom:14px;}
+.st-biz-lbl{display:block;font-size:11px;font-weight:700;color:#c8d4f0;margin:11px 0 5px;}
+.st-biz-lbl span{color:#6a7ba0;font-weight:500;}
+.st-biz-in{width:100%;background:#0a1220;border:1px solid #2c3f66;border-radius:10px;padding:10px 12px;font-size:13px;color:#eaf0ff;outline:none;font-family:inherit;}
+.st-biz-in:focus{border-color:#d4a850;}
+.st-biz-in::placeholder{color:#4a5a80;}
+textarea.st-biz-in{resize:none;}
+.st-biz-btns{display:flex;gap:10px;margin-top:18px;}
+.st-biz-cancel{flex:1;text-align:center;background:#0f1830;border:1.5px solid #2c3f66;color:#a8c0f0;font-size:13px;font-weight:700;padding:12px;border-radius:11px;cursor:pointer;}
+.st-biz-save{flex:1.6;text-align:center;background:linear-gradient(135deg,#f0d890,#d4a850);border:2px solid #f6e6b0;color:#1a1208;font-size:13px;font-weight:800;padding:12px;border-radius:11px;cursor:pointer;}
+</style>
+<div id="st-biz-ov" class="st-biz-ov">
+  <div class="st-biz-card">
+    <div class="st-biz-head"><div class="st-biz-title">व्यापार जानकारी</div><div class="st-biz-x" onclick="bizClose()">✕</div></div>
+    <div class="st-biz-sub">Statement के header में दिखेगी · एक बार भरें</div>
+    <label class="st-biz-lbl">Business Name <span>(ज़रूरी)</span></label>
+    <input id="biz-name-in" class="st-biz-in" placeholder="जैसे: Shankar Retail">
+    <label class="st-biz-lbl">GSTIN <span>(optional)</span></label>
+    <input id="biz-gstin-in" class="st-biz-in" placeholder="09AABCA7621M1Z4" maxlength="15" style="text-transform:uppercase;letter-spacing:.5px;">
+    <label class="st-biz-lbl">Address <span>(optional)</span></label>
+    <textarea id="biz-addr-in" class="st-biz-in" rows="2" placeholder="दुकान का पता"></textarea>
+    <label class="st-biz-lbl">D.L. No. <span>(pharma — optional)</span></label>
+    <input id="biz-dl-in" class="st-biz-in" placeholder="Drug License No.">
+    <div class="st-biz-btns"><div class="st-biz-cancel" onclick="bizClose()">रद्द</div><div class="st-biz-save" onclick="bizSave()">सेव करें</div></div>
+  </div>
+</div>
+<script>
+(function(){
+  function gv(id){var e=document.getElementById(id);return e?e.value.trim():"";}
+  window.bizOpen=function(){
+    try{
+      document.getElementById("biz-name-in").value=localStorage.getItem("hk_business_name")||"";
+      document.getElementById("biz-gstin-in").value=localStorage.getItem("hk_business_gstin")||"";
+      document.getElementById("biz-addr-in").value=localStorage.getItem("hk_business_address")||"";
+      document.getElementById("biz-dl-in").value=localStorage.getItem("hk_business_dlno")||"";
+    }catch(e){}
+    document.getElementById("st-biz-ov").classList.add("on");
+  };
+  window.bizClose=function(){document.getElementById("st-biz-ov").classList.remove("on");};
+  window.bizSave=function(){
+    var nm=gv("biz-name-in");
+    if(!nm){try{toast("❌ Business Name ज़रूरी है",true);}catch(e){}return;}
+    try{
+      localStorage.setItem("hk_business_name",nm);
+      localStorage.setItem("hk_business_gstin",gv("biz-gstin-in").toUpperCase());
+      localStorage.setItem("hk_business_address",gv("biz-addr-in"));
+      localStorage.setItem("hk_business_dlno",gv("biz-dl-in"));
+      toast("✓ व्यापार जानकारी सेव हो गई");
+    }catch(e){}
+    window.bizClose();
+  };
+  window.getBizProfile=function(){
+    try{return {name:localStorage.getItem("hk_business_name")||"",gstin:localStorage.getItem("hk_business_gstin")||"",address:localStorage.getItem("hk_business_address")||"",dlno:localStorage.getItem("hk_business_dlno")||""};}catch(e){return {name:"",gstin:"",address:"",dlno:""};}
+  };
+})();
+</script>
 
 <div id="s-suppliers" class="screen">
   <div class="mk-header">

@@ -3259,12 +3259,17 @@ textarea.st-biz-in{resize:none;}
     });
     var bal=opening;
     inR.forEach(function(r){ bal += (r.credit - r.debit); r.balance=bal; });
+    var asOf=R.to||todayStr();
+    var ag={b0:0,b1:0,b2:0,b3:0};
+    var outB=(A.creditBills||[]).filter(function(b){return b.date && b.date<=asOf;}).sort(function(x,y){return String(y.date).localeCompare(String(x.date));});
+    var remaining=Math.max(0,bal); var asD=pdate(asOf)||new Date();
+    outB.forEach(function(b){ if(remaining<=0)return; var u=Math.min(b.amount||0,remaining); remaining-=u; var bd=pdate(b.date); var dys=bd?Math.floor((asD-bd)/86400000):0; if(dys<=30)ag.b0+=u; else if(dys<=60)ag.b1+=u; else if(dys<=90)ag.b2+=u; else ag.b3+=u; });
     return {biz:(window.getBizProfile?getBizProfile():{name:"",gstin:"",address:"",dlno:""}),
       supplier:supName, supGstin:(window.getSupGstin?getSupGstin(supName):""), phone:phone,
-      period:R, opening:opening, rows:inR, closing:bal,
+      period:R, opening:opening, rows:inR, closing:bal, asOf:asOf,
       totalCredit:inR.reduce(function(t,r){return t+r.credit;},0),
       totalDebit:inR.reduce(function(t,r){return t+r.debit;},0),
-      cashTotal:A.cashTotal||0, nCash:A.nCash||0, ageing:A.ageing||{b0:0,b1:0,b2:0,b3:0}};
+      cashTotal:A.cashTotal||0, nCash:A.nCash||0, ageing:ag};
   }
   function idBlock(title, name, lines){
     var h='<div class="ib"><div class="ibh">'+title+'</div><div class="ibn">'+esc(name||"\u2014")+'</div>';
@@ -3310,7 +3315,7 @@ textarea.st-biz-in{resize:none;}
       + idBlock("Your Business", biz.name, [{k:"Address:",v:biz.address},{k:"GSTIN:",v:biz.gstin},{k:"D.L. No.:",v:biz.dlno},{k:"Phone:",v:""}])
       + idBlock("Supplier \u00b7 this statement", D.supplier, [{k:"GSTIN:",v:D.supGstin},{k:"Phone:",v:D.phone}])
       + '</div>';
-    var meta='<div class="meta"><div><b>Period:</b> '+esc(D.period.label)+(D.period.from?(" ("+dispDate(D.period.from)+" \u2013 "+dispDate(D.period.to)+")"):"")+'</div><div><b>As on:</b> '+dispDate(todayStr())+'</div></div>';
+    var meta='<div class="meta"><div><b>Period:</b> '+esc(D.period.label)+(D.period.from?(" ("+dispDate(D.period.from)+" \u2013 "+dispDate(D.period.to)+")"):"")+'</div><div><b>As on:</b> '+dispDate(D.asOf||todayStr())+'</div></div>';
     var gstNote = (biz.gstin||D.supGstin) ? '' : '<div class="note1">GSTIN not set \u2014 add it via \u201c\u270f\ufe0f \u0935\u094d\u092f\u093e\u092a\u093e\u0930 \u091c\u093e\u0928\u0915\u093e\u0930\u0940\u201d + supplier GSTIN for a fully CA-ready statement.</div>';
     var body='<tr class="op"><td>'+dispDate(D.period.from||(D.rows[0]&&D.rows[0].date)||todayStr())+'</td><td>Opening Balance</td><td></td><td class="r"></td><td class="r"></td><td class="r bal">'+f(D.opening)+'</td></tr>';
     D.rows.forEach(function(r){
@@ -3322,7 +3327,7 @@ textarea.st-biz-in{resize:none;}
     var table='<table><thead><tr><th>Date</th><th>Particulars</th><th>Bill No</th><th class="r">Debit (Payment)</th><th class="r">Credit (Purchase)</th><th class="r">Balance (Payable)</th></tr></thead><tbody>'+body+'</tbody></table>';
     var clo='<div class="clo"><div class="l">CLOSING BALANCE (Payable \u2014 Cr)</div><div class="v">'+f(D.closing)+'</div></div>';
     var ag=D.ageing;
-    var age='<div class="agh">Outstanding Ageing (unpaid bills, as on '+dispDate(todayStr())+')</div><div class="ag">'
+    var age='<div class="agh">Outstanding Ageing (unpaid bills, as on '+dispDate(D.asOf||todayStr())+')</div><div class="ag">'
       +'<div class="c"><div class="k">0\u201330 days</div><div class="v">'+f(ag.b0)+'</div></div>'
       +'<div class="c a1"><div class="k">31\u201360 days</div><div class="v">'+f(ag.b1)+'</div></div>'
       +'<div class="c a2"><div class="k">61\u201390 days</div><div class="v">'+f(ag.b2)+'</div></div>'

@@ -3014,7 +3014,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="st-tile wide" onclick="stGenOpen()"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg></div><div class="st-tw"><div class="st-tn">Supplier <span class="hi">/ सप्लायर</span></div><div class="st-tg">one supplier’s full purchase &amp; payment ledger</div></div><span class="st-arw">›</span></div>
     <div class="st-lbl">REGISTERS <span class="hi">/ रजिस्टर</span></div>
     <div class="st-grid">
-      <div class="st-tile" onclick="stSoon('Sales')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg></div><div><div class="st-tn">Sales <span class="hi">/ बिक्री</span></div><div class="st-tg">cash + UPI</div></div><span class="st-arw">›</span></div>
+      <div class="st-tile" onclick="stGenOpen('sales')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg></div><div><div class="st-tn">Sales <span class="hi">/ बिक्री</span></div><div class="st-tg">cash + UPI</div></div><span class="st-arw">›</span></div>
       <div class="st-tile" onclick="stSoon('Purchase')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 11l12-5 12 5-12 5z" fill="#e6bd7e" stroke="#a5761f" stroke-width="1"/><path d="M4 11v13l12 5V16z" fill="#cfa059" stroke="#a5761f" stroke-width="1"/><path d="M28 11v13l-12 5V16z" fill="#bd8f46" stroke="#a5761f" stroke-width="1"/><path d="M16 6v10" stroke="#8a5f20" stroke-width="1.2"/><rect x="12.5" y="8" width="7" height="2.6" fill="#f4e6b8" opacity=".85"/></svg></div><div><div class="st-tn">Purchase <span class="hi">/ खरीद</span></div><div class="st-tg">all suppliers</div></div><span class="st-arw">›</span></div>
       <div class="st-tile" onclick="stSoon('Expense')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M8 4h16v24l-2.7-1.8L18.7 28 16 26.2 13.3 28 10.7 26.2 8 28z" fill="#fbf3ea" stroke="#e0a878" stroke-width="1.2"/><path d="M12 11h8M12 15h8M12 19h5" stroke="#e8956a" stroke-width="1.8" stroke-linecap="round"/></svg></div><div><div class="st-tn">Expense <span class="hi">/ खर्चा</span></div><div class="st-tg">by period</div></div><span class="st-arw">›</span></div>
       <div class="st-tile" onclick="stSoon('Day Book')"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="4" y="6" width="24" height="22" rx="3" fill="#f4f6fa" stroke="#c3ccdb" stroke-width="1"/><rect x="4" y="6" width="24" height="6.5" rx="3" fill="#e8556a"/><rect x="9" y="3" width="2.5" height="5" rx="1.2" fill="#8a3540"/><rect x="20.5" y="3" width="2.5" height="5" rx="1.2" fill="#8a3540"/><g fill="#8894ad"><rect x="8" y="15.5" width="3" height="3" rx=".6"/><rect x="14.5" y="15.5" width="3" height="3" rx=".6"/><rect x="21" y="15.5" width="3" height="3" rx=".6"/><rect x="8" y="20.5" width="3" height="3" rx=".6"/><rect x="14.5" y="20.5" width="3" height="3" rx=".6" fill="#5a8fd8"/><rect x="21" y="20.5" width="3" height="3" rx=".6"/></g></svg></div><div><div class="st-tn">Day Book <span class="hi">/ रोज़नामचा</span></div><div class="st-tg">day-wise</div></div><span class="st-arw">›</span></div>
@@ -3125,13 +3125,13 @@ textarea.st-biz-in{resize:none;}
 </style>
 <div id="st-gen-ov" class="st-gen-ov" onclick="if(event.target===this)stGenClose()">
   <div class="st-gen-card">
-    <div class="st-gen-head"><div class="st-gen-ic"><svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg></div>
-      <div class="st-gen-tt"><div class="gn">Supplier Statement <span style="color:#a8b8d8;font-size:12px;">/ सप्लायर</span></div><div class="gd">per supplier ledger</div></div>
+    <div class="st-gen-head"><div class="st-gen-ic" id="st-gen-ic"><svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg></div>
+      <div class="st-gen-tt"><div class="gn" id="st-gen-gn">Supplier Statement</div><div class="gd" id="st-gen-gd">per supplier ledger</div></div>
       <div class="st-gen-x" onclick="stGenClose()">✕</div></div>
-    <div class="st-gen-step"><div class="st-gen-num"><b>1</b> · सप्लायर चुनें</div>
+    <div class="st-gen-step" id="st-gen-party"><div class="st-gen-num"><b>1</b> · सप्लायर चुनें</div>
       <div class="st-gen-picker" onclick="stSupPickOpen()"><span id="st-gen-supname">सप्लायर चुनें</span><span class="cv">⌄</span></div>
       <div id="st-gen-suplist" class="st-gen-suplist"></div><input id="st-gen-supgst" class="st-gen-gst" placeholder="Supplier GSTIN — CA statement के लिए" maxlength="15" onblur="stSaveSupGst()" style="text-transform:uppercase;letter-spacing:.4px;"></div>
-    <div class="st-gen-step"><div class="st-gen-num"><b>2</b> · तारीख़</div>
+    <div class="st-gen-step"><div class="st-gen-num" id="st-gen-num-date"><b>2</b> · तारीख़</div>
       <div class="st-gen-chips" id="st-gen-chips">
         <div class="st-gen-chip on" data-r="thismonth" onclick="stGenRange(this)">इस महीना</div>
         <div class="st-gen-chip" data-r="lastmonth" onclick="stGenRange(this)">पिछला महीना</div>
@@ -3139,7 +3139,7 @@ textarea.st-biz-in{resize:none;}
         <div class="st-gen-chip" data-r="year" onclick="stGenRange(this)">इस साल</div>
         <div class="st-gen-chip" data-r="all" onclick="stGenRange(this)">सब</div>
       </div></div>
-    <div class="st-gen-step"><div class="st-gen-num"><b>3</b> · Format</div>
+    <div class="st-gen-step"><div class="st-gen-num" id="st-gen-num-fmt"><b>3</b> · Format</div>
       <div class="st-gen-ftog">
         <div class="st-gen-fopt on" data-f="pdf" onclick="stGenFmt(this)"><div class="fi"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="7" y="13" width="10" height="6" rx="1" fill="#e05555"/><text x="12" y="17.6" font-size="4.2" fill="#fff" text-anchor="middle" font-family="Arial" font-weight="700">PDF</text></svg></div><div class="fn">PDF</div><div class="ff free">Free</div></div>
         <div class="st-gen-fopt" data-f="excel" onclick="stGenFmt(this)"><div class="fi"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="6.5" y="12" width="11" height="8" rx="1" fill="#1e7a46"/><path d="M9 14l6 4M15 14l-6 4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="fn">Excel</div><div class="ff pro">PRO · Free</div></div>
@@ -3151,9 +3151,18 @@ textarea.st-biz-in{resize:none;}
 (function(){
   window._stGen={supplier:null,range:"thismonth",format:"pdf"};
   function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-  window.stGenOpen=function(){
-    window._stGen={supplier:null,range:"thismonth",format:"pdf"};
-    var n=document.getElementById("st-gen-supname"); if(n)n.textContent="सप्लायर चुनें";var g=document.getElementById("st-gen-supgst"); if(g)g.value="";
+  window.ST_TYPES={supplier:{party:true,icon:'<svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg>',title:"Supplier Statement",sub:"per supplier ledger"},sales:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg>',title:"Sales / बिक्री",sub:"cash + UPI sales register"}};
+  window.stGenOpen=function(type){
+    type=type||"supplier"; var T=window.ST_TYPES[type]||window.ST_TYPES.supplier;
+    window._stGen={type:type,supplier:null,range:"thismonth",format:"pdf"};
+    var ic=document.getElementById("st-gen-ic"); if(ic)ic.innerHTML=T.icon;
+    var gn=document.getElementById("st-gen-gn"); if(gn)gn.textContent=T.title;
+    var gd=document.getElementById("st-gen-gd"); if(gd)gd.textContent=T.sub;
+    var pty=document.getElementById("st-gen-party"); if(pty)pty.style.display=T.party?"":"none";
+    var nd=document.getElementById("st-gen-num-date"); if(nd)nd.innerHTML="<b>"+(T.party?2:1)+"</b> · तारीख़";
+    var nf=document.getElementById("st-gen-num-fmt"); if(nf)nf.innerHTML="<b>"+(T.party?3:2)+"</b> · Format";
+    var n=document.getElementById("st-gen-supname"); if(n)n.textContent="सप्लायर चुनें";
+    var g=document.getElementById("st-gen-supgst"); if(g)g.value="";
     var l=document.getElementById("st-gen-suplist"); if(l){l.classList.remove("on");l.innerHTML="";}
     document.querySelectorAll("#st-gen-chips .st-gen-chip").forEach(function(c){c.classList.toggle("on",c.getAttribute("data-r")==="thismonth");});
     document.querySelectorAll(".st-gen-fopt").forEach(function(c){c.classList.toggle("on",c.getAttribute("data-f")==="pdf");});
@@ -3175,9 +3184,14 @@ textarea.st-biz-in{resize:none;}
   window.stGenRange=function(el){ document.querySelectorAll("#st-gen-chips .st-gen-chip").forEach(function(c){c.classList.remove("on");}); el.classList.add("on"); window._stGen.range=el.getAttribute("data-r"); };
   window.stGenFmt=function(el){ document.querySelectorAll(".st-gen-fopt").forEach(function(c){c.classList.remove("on");}); el.classList.add("on"); window._stGen.format=el.getAttribute("data-f"); };
   window.stGenerate=function(){
-    if(!window._stGen.supplier){ try{toast("❌ पहले सप्लायर चुनें",true);}catch(e){} return; }
-    if(window._stGen.format==="excel"){ try{ stCAExcelRun(window._stGen.supplier, window._stGen.range); }catch(e){ try{toast("Excel error: "+(e&&e.message||e),true);}catch(e2){} } return; }
-    try{ stCARun(window._stGen.supplier, window._stGen.range); }catch(e){ try{toast("PDF error: "+(e&&e.message||e),true);}catch(e2){} }
+    var t=(window._stGen&&window._stGen.type)||"supplier";
+    if(t==="supplier"){
+      if(!window._stGen.supplier){ try{toast("❌ पहले सप्लायर चुनें",true);}catch(e){} return; }
+      try{ if(window._stGen.format==="excel"){ stCAExcelRun(window._stGen.supplier,window._stGen.range); } else { stCARun(window._stGen.supplier,window._stGen.range); } }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} }
+      return;
+    }
+    if(t==="sales"){ try{ if(window.stSalesRun){ stSalesRun(window._stGen.range, window._stGen.format); } else { toast("Sales — अगले step में"); } }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} } return; }
+    try{toast("जल्द आ रहा है");}catch(e){}
   };
 })();
 </script>

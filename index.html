@@ -3358,19 +3358,46 @@ textarea.st-biz-in{resize:none;}
     });
   }
   function dl(blob,name){ try{var o=URL.createObjectURL(blob);var a=document.createElement("a");a.href=o;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){try{URL.revokeObjectURL(o);}catch(e){}},60000);}catch(e){} }
+  var _caBlob=null,_caName="";
+  function cel(id){return document.getElementById(id);}
+  window.stCACardClose=function(){ if(cel("stca-cscrim"))cel("stca-cscrim").classList.remove("show"); if(cel("stca-card"))cel("stca-card").classList.remove("show"); };
+  window.stCAAct=function(kind){
+    if(!_caBlob){ try{toast("\u0905\u092d\u0940 \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026");}catch(e){} return; }
+    if(kind==="dl"){ dl(_caBlob,_caName); try{toast("\U0001F4E5 Download \u0939\u094b \u0917\u092f\u093e");}catch(e){} }
+    else if(kind==="view"){ try{var u=URL.createObjectURL(_caBlob);window.open(u,"_blank");setTimeout(function(){try{URL.revokeObjectURL(u);}catch(e){}},60000);}catch(e){} }
+    else if(kind==="wa"){
+      try{ var file=new File([_caBlob],_caName,{type:"application/pdf"});
+        var sd={files:[file],title:"Statement",text:((window._stGen&&window._stGen.supplier)||"")+" \u2014 Live \u0939\u093f\u0938\u093e\u092c"};
+        if(navigator.canShare&&navigator.canShare(sd)){ navigator.share(sd).catch(function(){}); }
+        else{ dl(_caBlob,_caName); try{toast("Share \u0928\u0939\u0940\u0902 \u2014 Download \u0915\u0930 \u0926\u093f\u092f\u093e");}catch(e){} }
+      }catch(e){ dl(_caBlob,_caName); }
+    }
+  };
   window.stCARun=function(supName, rangeKey){
-    try{toast("Statement \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026");}catch(e){}
-    var D;
-    try{ D=buildData(supName, rangeKey); }catch(e){ try{toast("data error: "+(e&&e.message||e),true);}catch(x){} return; }
-    var name=("Statement_"+(supName||"supplier")+"_"+(D.period.label||"")).replace(/[^A-Za-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,60)+".pdf";
+    var D; try{ D=buildData(supName, rangeKey); }catch(e){ try{toast("data error: "+(e&&e.message||e),true);}catch(x){} return; }
+    _caName=("Statement_"+(supName||"supplier")+"_"+(D.period.label||"")).replace(/[^A-Za-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,60)+".pdf";
+    _caBlob=null;
+    if(cel("stca-badge"))cel("stca-badge").textContent="\u23f3";
+    if(cel("stca-title"))cel("stca-title").textContent="Statement \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026";
+    if(cel("stca-auto"))cel("stca-auto").style.display="none";
+    if(cel("stca-btns"))cel("stca-btns").style.display="none";
+    if(cel("stca-detail"))cel("stca-detail").textContent=(supName||"\u2014")+" \u00b7 "+D.period.label+" \u00b7 Balance "+f(D.closing);
+    if(cel("stca-cscrim"))cel("stca-cscrim").classList.add("show");
+    if(cel("stca-card"))cel("stca-card").classList.add("show");
     setTimeout(function(){
       genBlob(D).then(function(blob){
-        dl(blob,name);
-        var file=null; try{ file=new File([blob],name,{type:"application/pdf"}); }catch(e){}
-        if(navigator.share && file && navigator.canShare && navigator.canShare({files:[file]})){
-          navigator.share({files:[file], title:name, text:supName+" \u2014 Statement"}).then(function(){try{toast("\u2713 Statement \u0924\u0948\u092f\u093e\u0930");}catch(e){}}).catch(function(){try{toast("\u2713 Download \u0939\u094b \u0917\u092f\u093e");}catch(e){}});
-        } else { try{toast("\u2713 Statement download \u0939\u094b \u0917\u092f\u093e");}catch(e){} }
-      }).catch(function(err){ try{toast("PDF \u0928\u0939\u0940\u0902 \u092c\u0928\u093e: "+(err&&err.message||err),true);}catch(e){} if(window.console)console.warn("stCA err",err); });
+        _caBlob=blob; dl(blob,_caName);
+        if(cel("stca-badge"))cel("stca-badge").textContent="\u2705";
+        if(cel("stca-title"))cel("stca-title").textContent="Statement \u0924\u0948\u092f\u093e\u0930";
+        if(cel("stca-auto"))cel("stca-auto").style.display="";
+        if(cel("stca-btns"))cel("stca-btns").style.display="";
+      }).catch(function(err){
+        if(cel("stca-badge"))cel("stca-badge").textContent="\u26a0\ufe0f";
+        if(cel("stca-title"))cel("stca-title").textContent="\u0928\u0939\u0940\u0902 \u092c\u0928 \u092a\u093e\u092f\u093e";
+        if(cel("stca-auto"))cel("stca-auto").style.display="none";
+        if(cel("stca-btns"))cel("stca-btns").style.display="none";
+        if(window.console)console.warn("stCA err",err);
+      });
     },220);
   };
 })();
@@ -3597,6 +3624,19 @@ textarea.st-biz-in{resize:none;}
   <div class="stmt-cclose" onclick="stmtCardClose()">बंद करें</div>
 </div>
 
+<div class="stmt-cscrim" id="stca-cscrim" onclick="stCACardClose()"></div>
+<div class="stmt-card" id="stca-card">
+  <div class="stmt-badge" id="stca-badge">⏳</div>
+  <div class="stmt-ctitle" id="stca-title">Statement बन रहा है…</div>
+  <div class="stmt-cauto" id="stca-auto" style="display:none;">📥 अपने-आप Download हो गया ✓</div>
+  <div class="stmt-cdetail" id="stca-detail">—</div>
+  <div class="stmt-cbtns" id="stca-btns" style="display:none;">
+    <button class="v" onclick="stCAAct('view')">👁</button>
+    <button class="dl" onclick="stCAAct('dl')">📥 Download</button>
+    <button class="wa" onclick="stCAAct('wa')">💬 भेजें</button>
+  </div>
+  <div class="stmt-cclose" onclick="stCACardClose()">बंद करें</div>
+</div>
 <style id="np-flow-css">
 .np-modal{position:fixed;inset:0;z-index:9500;background:rgba(4,8,20,.7);display:none;align-items:flex-start;justify-content:center;overflow-y:auto;font-family:'Noto Sans Devanagari','Poppins',sans-serif;}
 .np-modal.show{display:flex;}

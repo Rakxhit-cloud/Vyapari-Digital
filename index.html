@@ -3176,11 +3176,8 @@ textarea.st-biz-in{resize:none;}
   window.stGenFmt=function(el){ document.querySelectorAll(".st-gen-fopt").forEach(function(c){c.classList.remove("on");}); el.classList.add("on"); window._stGen.format=el.getAttribute("data-f"); };
   window.stGenerate=function(){
     if(!window._stGen.supplier){ try{toast("❌ पहले सप्लायर चुनें",true);}catch(e){} return; }
-    try{
-      var A=window.stAggSupplier(window._stGen.supplier);
-      var f=window.fmt||function(x){return "₹"+x;};
-      toast(window._stGen.supplier+" — बाकी "+f(A.closing)+" | credit "+f(A.creditTotal)+" · चुकाया "+f(A.paidTotal)+" · cash "+f(A.cashTotal)+" | "+A.nCredit+" credit/"+A.nCash+" cash · pay-box "+f(A.paymentBoxTotal));
-    }catch(e){ try{toast("aggregation error: "+(e&&e.message||e));}catch(e2){} }
+    if(window._stGen.format==="excel"){ try{toast("📊 Excel (Tally-ready) — PRO · Free, जल्द आ रहा है");}catch(e){} return; }
+    try{ stCARun(window._stGen.supplier, window._stGen.range); }catch(e){ try{toast("PDF error: "+(e&&e.message||e),true);}catch(e2){} }
   };
 })();
 </script>
@@ -3219,6 +3216,162 @@ textarea.st-biz-in{resize:none;}
     return {creditTotal:creditTotal,cashTotal:cashTotal,paidTotal:paidTotal,closing:closing,
       paymentBoxTotal:paymentBoxTotal,nCredit:creditBills.length,nCash:cashBills.length,nPay:nPay,
       ageing:ag,payments:payments,creditBills:creditBills,cashBills:cashBills};
+  };
+})();
+</script>
+<script>
+(function(){
+  function f(x){ try{ return window.fmt?fmt(x):("\u20b9"+Number(x||0).toLocaleString("en-IN")); }catch(e){ return "\u20b9"+(x||0); } }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function pad2(n){ return (n<10?"0":"")+n; }
+  var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function dispDate(s){ var p=String(s||"").split("-"); if(p.length!==3)return String(s||""); return p[2].slice(0,2)+"-"+MON[(parseInt(p[1],10)||1)-1]+"-"+p[0]; }
+  function todayStr(){ var d=new Date(); return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+  function computeRange(key){
+    var d=new Date(); var y=d.getFullYear(), m=d.getMonth();
+    function s(yy,mm,dd){ return yy+"-"+pad2(mm+1)+"-"+pad2(dd); }
+    if(key==="thismonth") return {from:s(y,m,1), to:todayStr(), label:"This Month"};
+    if(key==="lastmonth"){ var pm=m-1,py=y; if(pm<0){pm=11;py--;} var last=new Date(py,pm+1,0).getDate(); return {from:s(py,pm,1), to:s(py,pm,last), label:"Last Month"}; }
+    if(key==="quarter"){ var qm=Math.floor(m/3)*3; return {from:s(y,qm,1), to:todayStr(), label:"This Quarter"}; }
+    if(key==="year"){ var fy=(m>=3)?y:(y-1); return {from:fy+"-04-01", to:todayStr(), label:"FY "+fy+"-"+String(fy+1).slice(2)}; }
+    return {from:null, to:null, label:"All Time"};
+  }
+  function buildData(supName, rangeKey){
+    var A=window.stAggSupplier(supName);
+    var R=computeRange(rangeKey);
+    var phone=""; var all=(A.creditBills||[]).concat(A.cashBills||[]);
+    for(var i=0;i<all.length;i++){ if(all[i].supplierPhone){phone=all[i].supplierPhone;break;} }
+    // rows: credit purchases (credit col), payments (debit col)
+    var rows=[];
+    (A.creditBills||[]).forEach(function(r){ rows.push({date:r.date||"", disp:(r.invoiceDate||dispDate(r.date)), bill:r.billNo||"\u2014", kind:"buy", debit:0, credit:(r.amount||0)}); });
+    (A.payments||[]).forEach(function(p){ rows.push({date:p.date||"", disp:dispDate(p.date), bill:"\u2014", kind:"pay", debit:(p.amount||0), credit:0}); });
+    // reconciliation: legacy payments (paid > dated boxes) -> one earlier line so it balances
+    var legacy=Math.round((A.paidTotal||0)-(A.paymentBoxTotal||0));
+    if(legacy>1){ var early=rows.length?rows.map(function(r){return r.date;}).filter(Boolean).sort()[0]:todayStr(); rows.push({date:early||"", disp:"\u2014", bill:"\u2014", kind:"payold", debit:legacy, credit:0}); }
+    rows.sort(function(a,b){ return String(a.date).localeCompare(String(b.date)); });
+    // range split -> opening + inRange, running balance (payable)
+    var opening=0, inR=[];
+    rows.forEach(function(r){
+      var before = R.from && String(r.date) < R.from;
+      var after  = R.to && String(r.date) > R.to;
+      if(before){ opening += (r.credit - r.debit); }
+      else if(!after){ inR.push(r); }
+    });
+    var bal=opening;
+    inR.forEach(function(r){ bal += (r.credit - r.debit); r.balance=bal; });
+    return {biz:(window.getBizProfile?getBizProfile():{name:"",gstin:"",address:"",dlno:""}),
+      supplier:supName, supGstin:(window.getSupGstin?getSupGstin(supName):""), phone:phone,
+      period:R, opening:opening, rows:inR, closing:bal,
+      totalCredit:inR.reduce(function(t,r){return t+r.credit;},0),
+      totalDebit:inR.reduce(function(t,r){return t+r.debit;},0),
+      cashTotal:A.cashTotal||0, nCash:A.nCash||0, ageing:A.ageing||{b0:0,b1:0,b2:0,b3:0}};
+  }
+  function idBlock(title, name, lines){
+    var h='<div class="ib"><div class="ibh">'+title+'</div><div class="ibn">'+esc(name||"\u2014")+'</div>';
+    lines.forEach(function(l){ if(l && l.v) h+='<div class="ibl"><span>'+l.k+'</span> '+esc(l.v)+'</div>'; });
+    return h+'</div>';
+  }
+  function buildHTML(D){
+    var css='<style>'
+      +'.ca{font-family:Arial,Helvetica,sans-serif;color:#1b2130;width:794px;background:#fff;box-sizing:border-box;}'
+      +'.ca *{box-sizing:border-box;}'
+      +'.ca .mh{background:#0a1530;color:#e8c870;font-size:22px;font-weight:800;padding:16px 26px;}'
+      +'.ca .sh{background:#16294f;color:#fff;font-size:12px;padding:7px 26px;}'
+      +'.ca .ids{display:flex;gap:14px;padding:16px 26px 6px;}'
+      +'.ca .ib{flex:1;background:#f6f7fa;border:1px solid #e2e5ec;border-radius:9px;padding:11px 13px;}'
+      +'.ca .ibh{font-size:9px;font-weight:800;letter-spacing:.6px;color:#a5761f;text-transform:uppercase;margin-bottom:5px;}'
+      +'.ca .ibn{font-size:13px;font-weight:800;color:#16224a;margin-bottom:4px;}'
+      +'.ca .ibl{font-size:10.5px;color:#5a6178;line-height:1.6;}.ca .ibl span{color:#8a90a2;font-weight:600;}'
+      +'.ca .meta{display:flex;gap:20px;padding:2px 26px 10px;font-size:10.5px;color:#5a6178;}.ca .meta b{color:#16224a;}'
+      +'.ca .note1{margin:0 26px 12px;background:#fdf6e6;border:1px solid #ecd9a6;border-radius:8px;padding:8px 12px;font-size:10px;color:#8a6510;}'
+      +'.ca table{width:calc(100% - 52px);margin:0 26px;border-collapse:collapse;}'
+      +'.ca th{background:#0a1530;color:#fff;font-size:10px;font-weight:700;text-align:left;padding:9px 8px;}'
+      +'.ca th.r,.ca td.r{text-align:right;}'
+      +'.ca td{font-size:11px;padding:8px;border-bottom:1px solid #eef0f4;color:#2a3040;vertical-align:top;}'
+      +'.ca tbody tr:nth-child(even) td{background:#fafbfd;}'
+      +'.ca .op td{font-weight:700;color:#16224a;background:#f2f4f8 !important;}'
+      +'.ca .tot td{background:#e8c870 !important;color:#0a1530;font-weight:800;font-size:11px;}'
+      +'.ca .bal{font-weight:700;color:#0a1530;}'
+      +'.ca .clo{display:flex;justify-content:space-between;align-items:center;background:#0a1530;color:#e8c870;margin:12px 26px 0;padding:12px 16px;border-radius:9px;}'
+      +'.ca .clo .l{font-size:13px;font-weight:800;}.ca .clo .v{font-size:18px;font-weight:800;}'
+      +'.ca .agh{font-size:11px;font-weight:800;color:#16224a;margin:16px 26px 7px;}'
+      +'.ca .ag{display:flex;gap:8px;margin:0 26px;}'
+      +'.ca .ag .c{flex:1;border:1px solid #e2e5ec;border-radius:8px;padding:8px;text-align:center;}'
+      +'.ca .ag .c .k{font-size:9px;color:#8a90a2;font-weight:700;}.ca .ag .c .v{font-size:13px;font-weight:800;margin-top:3px;}'
+      +'.ca .ag .c.a1 .v{color:#a5730f;}.ca .ag .c.a2 .v,.ca .ag .c.a3 .v{color:#c62828;}'
+      +'.ca .cash{margin:14px 26px 0;font-size:10.5px;color:#5a6178;}.ca .cash b{color:#16224a;}'
+      +'.ca .disc{margin:16px 26px 0;font-size:9px;color:#8a90a2;line-height:1.6;border-top:1px solid #eef0f4;padding-top:10px;}'
+      +'.ca .ft{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 26px 20px;border-top:2px solid #0a1530;padding-top:10px;}'
+      +'.ca .ft .fl{font-size:9.5px;color:#6b7180;}.ca .bm{font-size:15px;font-weight:800;}.ca .bm .li{color:#e84545;}.ca .bm .kh{color:#c0902f;}'
+      +'</style>';
+    var biz=D.biz||{};
+    var head='<div class="mh">'+esc(biz.name||"\u2014")+'</div><div class="sh">Supplier Statement of Account \u00b7 Ledger (Sundry Creditor)</div>';
+    var ids='<div class="ids">'
+      + idBlock("Your Business", biz.name, [{k:"Address:",v:biz.address},{k:"GSTIN:",v:biz.gstin},{k:"D.L. No.:",v:biz.dlno},{k:"Phone:",v:""}])
+      + idBlock("Supplier \u00b7 this statement", D.supplier, [{k:"GSTIN:",v:D.supGstin},{k:"Phone:",v:D.phone}])
+      + '</div>';
+    var meta='<div class="meta"><div><b>Period:</b> '+esc(D.period.label)+(D.period.from?(" ("+dispDate(D.period.from)+" \u2013 "+dispDate(D.period.to)+")"):"")+'</div><div><b>As on:</b> '+dispDate(todayStr())+'</div></div>';
+    var gstNote = (biz.gstin||D.supGstin) ? '' : '<div class="note1">GSTIN not set \u2014 add it via \u201c\u270f\ufe0f \u0935\u094d\u092f\u093e\u092a\u093e\u0930 \u091c\u093e\u0928\u0915\u093e\u0930\u0940\u201d + supplier GSTIN for a fully CA-ready statement.</div>';
+    var body='<tr class="op"><td>'+dispDate(D.period.from||(D.rows[0]&&D.rows[0].date)||todayStr())+'</td><td>Opening Balance</td><td></td><td class="r"></td><td class="r"></td><td class="r bal">'+f(D.opening)+'</td></tr>';
+    D.rows.forEach(function(r){
+      var part = r.kind==="buy"?"Purchase \u2014 credit":(r.kind==="pay"?"Payment made":"Earlier payments (recorded)");
+      body+='<tr><td>'+esc(r.disp)+'</td><td>'+part+'</td><td>'+esc(r.bill)+'</td>'
+        +'<td class="r">'+(r.debit?f(r.debit):"")+'</td><td class="r">'+(r.credit?f(r.credit):"")+'</td><td class="r bal">'+f(r.balance)+'</td></tr>';
+    });
+    body+='<tr class="tot"><td colspan="3" style="text-align:right;">TOTAL</td><td class="r">'+f(D.totalDebit)+'</td><td class="r">'+f(D.totalCredit)+'</td><td></td></tr>';
+    var table='<table><thead><tr><th>Date</th><th>Particulars</th><th>Bill No</th><th class="r">Debit (Payment)</th><th class="r">Credit (Purchase)</th><th class="r">Balance (Payable)</th></tr></thead><tbody>'+body+'</tbody></table>';
+    var clo='<div class="clo"><div class="l">CLOSING BALANCE (Payable \u2014 Cr)</div><div class="v">'+f(D.closing)+'</div></div>';
+    var ag=D.ageing;
+    var age='<div class="agh">Outstanding Ageing (unpaid bills, as on '+dispDate(todayStr())+')</div><div class="ag">'
+      +'<div class="c"><div class="k">0\u201330 days</div><div class="v">'+f(ag.b0)+'</div></div>'
+      +'<div class="c a1"><div class="k">31\u201360 days</div><div class="v">'+f(ag.b1)+'</div></div>'
+      +'<div class="c a2"><div class="k">61\u201390 days</div><div class="v">'+f(ag.b2)+'</div></div>'
+      +'<div class="c a3"><div class="k">90+ days</div><div class="v">'+f(ag.b3)+'</div></div></div>';
+    var cash = D.nCash?('<div class="cash">Cash purchases (paid on delivery, not in payable): <b>'+D.nCash+' bills \u00b7 '+f(D.cashTotal)+'</b></div>'):'';
+    var disc='<div class="disc">This statement is generated from records entered by the user in Live \u0939\u093f\u0938\u093e\u092c. It is <b>not audited, verified, or certified</b>. Cr = amount payable to the supplier. Each Bill No has its original bill photo saved in the app. E&amp;OE \u2014 please confirm the closing balance; report any discrepancy within 7 days.</div>';
+    var now=new Date();
+    var ft='<div class="ft"><div class="fl">Computer-generated statement \u00b7 no signature required.<br>Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">\u0939\u093f\u0938\u093e\u092c</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
+    return '<div class="ca">'+css+head+ids+meta+gstNote+table+clo+age+cash+disc+ft+'</div>';
+  }
+  function genBlob(D){
+    return new Promise(function(resolve,reject){
+      try{
+        if(typeof html2canvas!=="function"){reject(new Error("html2canvas missing"));return;}
+        var ctor=(window.jspdf&&window.jspdf.jsPDF)?window.jspdf.jsPDF:null;
+        if(!ctor){reject(new Error("jsPDF missing"));return;}
+        var host=document.createElement("div");
+        host.style.cssText="position:fixed;top:0;left:-10000px;width:794px;background:#fff;z-index:-1;";
+        host.innerHTML=buildHTML(D);
+        document.body.appendChild(host);
+        var target=host.firstElementChild||host;
+        html2canvas(target,{scale:2,backgroundColor:"#ffffff",useCORS:true,logging:false}).then(function(canvas){
+          try{document.body.removeChild(host);}catch(e){}
+          var doc=new ctor({unit:"pt",format:"a4",compress:true});
+          var pw=doc.internal.pageSize.getWidth(), ph=doc.internal.pageSize.getHeight();
+          var img=canvas.toDataURL("image/jpeg",0.92);
+          var imgW=pw, imgH=canvas.height*imgW/canvas.width;
+          var pages=Math.max(1,Math.ceil((imgH/ph)-0.002));
+          for(var pi=0;pi<pages;pi++){ if(pi>0)doc.addPage(); doc.addImage(img,"JPEG",0,-(ph*pi),imgW,imgH,undefined,"FAST"); }
+          resolve(doc.output("blob"));
+        }).catch(function(e){ try{document.body.removeChild(host);}catch(x){} reject(e); });
+      }catch(e){ reject(e); }
+    });
+  }
+  function dl(blob,name){ try{var o=URL.createObjectURL(blob);var a=document.createElement("a");a.href=o;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){try{URL.revokeObjectURL(o);}catch(e){}},60000);}catch(e){} }
+  window.stCARun=function(supName, rangeKey){
+    try{toast("Statement \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026");}catch(e){}
+    var D;
+    try{ D=buildData(supName, rangeKey); }catch(e){ try{toast("data error: "+(e&&e.message||e),true);}catch(x){} return; }
+    var name=("Statement_"+(supName||"supplier")+"_"+(D.period.label||"")).replace(/[^A-Za-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,60)+".pdf";
+    setTimeout(function(){
+      genBlob(D).then(function(blob){
+        dl(blob,name);
+        var file=null; try{ file=new File([blob],name,{type:"application/pdf"}); }catch(e){}
+        if(navigator.share && file && navigator.canShare && navigator.canShare({files:[file]})){
+          navigator.share({files:[file], title:name, text:supName+" \u2014 Statement"}).then(function(){try{toast("\u2713 Statement \u0924\u0948\u092f\u093e\u0930");}catch(e){}}).catch(function(){try{toast("\u2713 Download \u0939\u094b \u0917\u092f\u093e");}catch(e){}});
+        } else { try{toast("\u2713 Statement download \u0939\u094b \u0917\u092f\u093e");}catch(e){} }
+      }).catch(function(err){ try{toast("PDF \u0928\u0939\u0940\u0902 \u092c\u0928\u093e: "+(err&&err.message||err),true);}catch(e){} if(window.console)console.warn("stCA err",err); });
+    },220);
   };
 })();
 </script>

@@ -3227,6 +3227,7 @@ textarea.st-biz-in{resize:none;}
   var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   function dispDate(s){ var p=String(s||"").split("-"); if(p.length!==3)return String(s||""); return p[2].slice(0,2)+"-"+MON[(parseInt(p[1],10)||1)-1]+"-"+p[0]; }
   function todayStr(){ var d=new Date(); return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+  function pdate(s){ var p=String(s||"").split("-"); if(p.length!==3)return null; var dd=new Date(+p[0],(+p[1])-1,+p[2]); return isNaN(dd)?null:dd; }
   function computeRange(key){
     var d=new Date(); var y=d.getFullYear(), m=d.getMonth();
     function s(yy,mm,dd){ return yy+"-"+pad2(mm+1)+"-"+pad2(dd); }

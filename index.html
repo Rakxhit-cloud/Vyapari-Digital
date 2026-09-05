@@ -3015,7 +3015,7 @@ body.notif-modal-open { overflow: hidden; }
     <div class="st-lbl">REGISTERS <span class="hi">/ रजिस्टर</span></div>
     <div class="st-grid">
       <div class="st-tile" onclick="stGenOpen('sales')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg></div><div><div class="st-tn">Sales <span class="hi">/ बिक्री</span></div><div class="st-tg">cash + UPI</div></div><span class="st-arw">›</span></div>
-      <div class="st-tile" onclick="stSoon('Purchase')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 11l12-5 12 5-12 5z" fill="#e6bd7e" stroke="#a5761f" stroke-width="1"/><path d="M4 11v13l12 5V16z" fill="#cfa059" stroke="#a5761f" stroke-width="1"/><path d="M28 11v13l-12 5V16z" fill="#bd8f46" stroke="#a5761f" stroke-width="1"/><path d="M16 6v10" stroke="#8a5f20" stroke-width="1.2"/><rect x="12.5" y="8" width="7" height="2.6" fill="#f4e6b8" opacity=".85"/></svg></div><div><div class="st-tn">Purchase <span class="hi">/ खरीद</span></div><div class="st-tg">all suppliers</div></div><span class="st-arw">›</span></div>
+      <div class="st-tile" onclick="stGenOpen('purchase')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 11l12-5 12 5-12 5z" fill="#e6bd7e" stroke="#a5761f" stroke-width="1"/><path d="M4 11v13l12 5V16z" fill="#cfa059" stroke="#a5761f" stroke-width="1"/><path d="M28 11v13l-12 5V16z" fill="#bd8f46" stroke="#a5761f" stroke-width="1"/><path d="M16 6v10" stroke="#8a5f20" stroke-width="1.2"/><rect x="12.5" y="8" width="7" height="2.6" fill="#f4e6b8" opacity=".85"/></svg></div><div><div class="st-tn">Purchase <span class="hi">/ खरीद</span></div><div class="st-tg">all suppliers</div></div><span class="st-arw">›</span></div>
       <div class="st-tile" onclick="stSoon('Expense')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M8 4h16v24l-2.7-1.8L18.7 28 16 26.2 13.3 28 10.7 26.2 8 28z" fill="#fbf3ea" stroke="#e0a878" stroke-width="1.2"/><path d="M12 11h8M12 15h8M12 19h5" stroke="#e8956a" stroke-width="1.8" stroke-linecap="round"/></svg></div><div><div class="st-tn">Expense <span class="hi">/ खर्चा</span></div><div class="st-tg">by period</div></div><span class="st-arw">›</span></div>
       <div class="st-tile" onclick="stSoon('Day Book')"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="4" y="6" width="24" height="22" rx="3" fill="#f4f6fa" stroke="#c3ccdb" stroke-width="1"/><rect x="4" y="6" width="24" height="6.5" rx="3" fill="#e8556a"/><rect x="9" y="3" width="2.5" height="5" rx="1.2" fill="#8a3540"/><rect x="20.5" y="3" width="2.5" height="5" rx="1.2" fill="#8a3540"/><g fill="#8894ad"><rect x="8" y="15.5" width="3" height="3" rx=".6"/><rect x="14.5" y="15.5" width="3" height="3" rx=".6"/><rect x="21" y="15.5" width="3" height="3" rx=".6"/><rect x="8" y="20.5" width="3" height="3" rx=".6"/><rect x="14.5" y="20.5" width="3" height="3" rx=".6" fill="#5a8fd8"/><rect x="21" y="20.5" width="3" height="3" rx=".6"/></g></svg></div><div><div class="st-tn">Day Book <span class="hi">/ रोज़नामचा</span></div><div class="st-tg">day-wise</div></div><span class="st-arw">›</span></div>
     </div>
@@ -3151,7 +3151,7 @@ textarea.st-biz-in{resize:none;}
 (function(){
   window._stGen={supplier:null,range:"thismonth",format:"pdf"};
   function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-  window.ST_TYPES={supplier:{party:true,icon:'<svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg>',title:"Supplier Statement",sub:"per supplier ledger"},sales:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg>',title:"Sales / बिक्री",sub:"cash + UPI sales register"}};
+  window.ST_TYPES={supplier:{party:true,icon:'<svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg>',title:"Supplier Statement",sub:"per supplier ledger"},purchase:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M4 11l12-5 12 5-12 5z" fill="#e6bd7e" stroke="#a5761f" stroke-width="1"/><path d="M4 11v13l12 5V16z" fill="#cfa059" stroke="#a5761f" stroke-width="1"/><path d="M28 11v13l-12 5V16z" fill="#bd8f46" stroke="#a5761f" stroke-width="1"/><path d="M16 6v10" stroke="#8a5f20" stroke-width="1.2"/><rect x="12.5" y="8" width="7" height="2.6" fill="#f4e6b8" opacity=".85"/></svg>',title:"Purchase / खरीद",sub:"all purchases · cash + credit"},sales:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg>',title:"Sales / बिक्री",sub:"cash + UPI sales register"}};
   window.stGenOpen=function(type){
     type=type||"supplier"; var T=window.ST_TYPES[type]||window.ST_TYPES.supplier;
     window._stGen={type:type,supplier:null,range:"thismonth",format:"pdf"};
@@ -3190,8 +3190,122 @@ textarea.st-biz-in{resize:none;}
       try{ if(window._stGen.format==="excel"){ stCAExcelRun(window._stGen.supplier,window._stGen.range); } else { stCARun(window._stGen.supplier,window._stGen.range); } }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} }
       return;
     }
+    if(t==="purchase"){ try{ stPurchaseRun(window._stGen.range, window._stGen.format); }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} } return; }
     if(t==="sales"){ try{ if(window.stSalesRun){ stSalesRun(window._stGen.range, window._stGen.format); } else { toast("Sales — अगले step में"); } }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} } return; }
     try{toast("जल्द आ रहा है");}catch(e){}
+  };
+
+  /* ================= PURCHASE register (all suppliers, cash + credit) ================= */
+  function purchaseData(rangeKey){
+    var maal=[]; try{maal=DB.get(K.MAAL)||[];}catch(e){}
+    var R=computeRange(rangeKey);
+    var rows=[], totalCash=0, totalCredit=0;
+    maal.forEach(function(r){
+      if(!r||r.placeholder)return; var dt=r.date; if(!dt)return;
+      if(R.from&&dt<R.from)return; if(R.to&&dt>R.to)return;
+      var isCash=(r.pay==="\u0928\u0915\u0926"), amt=r.amount||0;
+      rows.push({date:dt, disp:normDate(r.invoiceDate,r.date), supplier:r.supplier||"\u2014", bill:r.billNo||"\u2014", mode:(isCash?"Cash":"Credit"), amount:amt});
+      if(isCash) totalCash+=amt; else totalCredit+=amt;
+    });
+    rows.sort(function(a,b){ return String(a.date).localeCompare(String(b.date)); });
+    return {biz:(window.getBizProfile?getBizProfile():{name:"",gstin:"",address:"",dlno:""}),
+      period:R, asOf:(R.to||todayStr()), rows:rows, totalCash:totalCash, totalCredit:totalCredit, total:totalCash+totalCredit, n:rows.length};
+  }
+  function purchaseHTML(D){
+    var biz=D.biz||{};
+    var css='<style>'
+      +'.ca{font-family:Arial,Helvetica,sans-serif;color:#1b2130;width:794px;background:#fff;box-sizing:border-box;}'
+      +'.ca *{box-sizing:border-box;}'
+      +'.ca .mh{background:#0a1530;color:#e8c870;font-size:22px;font-weight:800;padding:16px 26px;}'
+      +'.ca .sh{background:#16294f;color:#fff;font-size:12px;padding:7px 26px;}'
+      +'.ca .meta{display:flex;gap:20px;padding:12px 26px 6px;font-size:11px;color:#5a6178;}.ca .meta b{color:#16224a;}'
+      +'.ca .sub{padding:2px 26px 12px;font-size:10.5px;color:#5a6178;}'
+      +'.ca .cards{display:flex;gap:12px;padding:4px 26px 14px;}'
+      +'.ca .cd{flex:1;border:1px solid #e2e5ec;border-radius:9px;padding:11px;text-align:center;}'
+      +'.ca .cd .k{font-size:10px;color:#8a90a2;font-weight:700;}.ca .cd .v{font-size:16px;font-weight:800;margin-top:4px;}'
+      +'.ca .cd.cash .v{color:#1e7a46;}.ca .cd.cred .v{color:#a5661a;}.ca .cd.tot{background:#0a1530;}.ca .cd.tot .k{color:#c9a24b;}.ca .cd.tot .v{color:#e8c870;}'
+      +'.ca table{width:calc(100% - 52px);margin:0 26px;border-collapse:collapse;}'
+      +'.ca th{background:#0a1530;color:#fff;font-size:10.5px;font-weight:700;text-align:left;padding:9px 8px;}'
+      +'.ca th.r,.ca td.r{text-align:right;}.ca th.c,.ca td.c{text-align:center;}'
+      +'.ca td{font-size:11px;padding:8px;border-bottom:1px solid #eef0f4;color:#2a3040;}'
+      +'.ca tbody tr:nth-child(even) td{background:#fafbfd;}'
+      +'.ca .tot td{background:#e8c870 !important;color:#0a1530;font-weight:800;}'
+      +'.ca .disc{margin:14px 26px 0;font-size:9px;color:#8a90a2;line-height:1.6;border-top:1px solid #eef0f4;padding-top:10px;}'
+      +'.ca .ft{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 26px 20px;border-top:2px solid #0a1530;padding-top:10px;}'
+      +'.ca .ft .fl{font-size:9.5px;color:#6b7180;}.ca .bm{font-size:15px;font-weight:800;}.ca .bm .li{color:#e84545;}.ca .bm .kh{color:#c0902f;}'
+      +'</style>';
+    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Purchase Register \u00b7 Cash + Credit</div>';
+    var meta='<div class="meta"><div><b>Period:</b> '+D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" \u2013 "+dispDate(D.period.to)+")"):"")+'</div><div><b>As on:</b> '+dispDate(D.asOf)+'</div><div><b>Entries:</b> '+D.n+'</div></div>';
+    if(biz.gstin) meta+='<div class="sub">GSTIN: '+biz.gstin+(biz.address?(" \u00b7 "+biz.address):"")+'</div>';
+    var cards='<div class="cards"><div class="cd cash"><div class="k">CASH</div><div class="v">'+f(D.totalCash)+'</div></div>'
+      +'<div class="cd cred"><div class="k">CREDIT</div><div class="v">'+f(D.totalCredit)+'</div></div>'
+      +'<div class="cd tot"><div class="k">TOTAL PURCHASES</div><div class="v">'+f(D.total)+'</div></div></div>';
+    var body='';
+    D.rows.forEach(function(r,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+r.disp+'</td><td>'+String(r.supplier).replace(/</g,"&lt;")+'</td><td>'+String(r.bill).replace(/</g,"&lt;")+'</td><td class="c">'+r.mode+'</td><td class="r">'+f(r.amount)+'</td></tr>'; });
+    if(!D.rows.length) body='<tr><td colspan="6" style="text-align:center;color:#8a90a2;padding:20px;">\u0907\u0938 period \u092e\u0947\u0902 \u0915\u094b\u0908 \u0916\u0930\u0940\u0926 \u0928\u0939\u0940\u0902</td></tr>';
+    body+='<tr class="tot"><td colspan="5" style="text-align:right;">TOTAL</td><td class="r">'+f(D.total)+'</td></tr>';
+    var table='<table><thead><tr><th class="c">#</th><th>Date</th><th>Supplier</th><th>Bill No</th><th class="c">Mode</th><th class="r">Amount</th></tr></thead><tbody>'+body+'</tbody></table>';
+    var disc='<div class="disc">Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
+    var ft='<div class="ft"><div class="fl">Computer-generated \u00b7 Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
+    return '<div class="ca">'+css+head+meta+cards+table+disc+ft+'</div>';
+  }
+  function purchaseWorkbook(D){
+    var X=window.XLSX, biz=D.biz||{}, wb=X.utils.book_new();
+    var perd=D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" to "+dispDate(D.period.to)+")"):"");
+    var s1=[[biz.name||""],["Purchase Register \u00b7 Cash + Credit"],[],
+      ["Period:",perd,"","As on:",dispDate(D.asOf)],["GSTIN:",biz.gstin||"","","Entries:",D.n],[],
+      ["Cash Total",D.totalCash],["Credit Total",D.totalCredit],["TOTAL PURCHASES",D.total],[],
+      ["#","Date","Supplier","Bill No","Mode","Amount"]];
+    D.rows.forEach(function(r,ix){ s1.push([ix+1,r.disp,r.supplier,r.bill,r.mode,r.amount]); });
+    s1.push(["","","","","TOTAL",D.total]);
+    s1.push([]); s1.push(["Generated by Live Khaata \u00b7 livekhaata.app. NOT audited/certified. E&OE."]);
+    var ws1=X.utils.aoa_to_sheet(s1);
+    var RS="\u0022\u20b9\u0022#,##,##0";
+    ["B7","B8","B9"].forEach(function(a){ if(ws1[a]) ws1[a].z=RS; });
+    var _rf=X.utils.decode_range(ws1["!ref"]||"A1");
+    for(var _r=11;_r<=_rf.e.r;_r++){ var _a=X.utils.encode_cell({r:_r,c:5}); if(ws1[_a]&&typeof ws1[_a].v==="number") ws1[_a].z=RS; }
+    ws1["!cols"]=[{wch:6},{wch:14},{wch:26},{wch:16},{wch:10},{wch:16}];
+    X.utils.book_append_sheet(wb,ws1,"Purchase");
+    var s2=[["Date","Voucher Type","Voucher No","Ledger","Debit","Credit","Narration"]];
+    D.rows.forEach(function(r,ix){
+      var vn="P"+(ix+1), cr=(r.mode==="Cash"?"Cash":r.supplier);
+      var nr="Purchase from "+r.supplier+((r.bill&&r.bill!=="\u2014")?(" ("+r.bill+")"):"");
+      s2.push([r.disp,"Purchase",vn,"Purchases",r.amount,"",nr]);
+      s2.push(["","","",cr,"",r.amount,""]);
+    });
+    var ws2=X.utils.aoa_to_sheet(s2); ws2["!cols"]=[{wch:14},{wch:12},{wch:10},{wch:26},{wch:14},{wch:14},{wch:30}];
+    X.utils.book_append_sheet(wb,ws2,"Tally Import");
+    var s3=[["Purchase \u2014 Summary"],[D.period.label||""],[],["Cash",D.totalCash],["Credit",D.totalCredit],["Total Purchases",D.total],["Entries",D.n],[],["Generated by Live Khaata \u00b7 livekhaata.app"]];
+    var ws3=X.utils.aoa_to_sheet(s3); ws3["!cols"]=[{wch:28},{wch:20}];
+    X.utils.book_append_sheet(wb,ws3,"Summary");
+    return new Blob([X.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+  }
+  window.stPurchaseRun=function(rangeKey, format){
+    var D; try{ D=purchaseData(rangeKey); }catch(e){ try{toast("data error: "+(e&&e.message||e),true);}catch(x){} return; }
+    var base="Purchase_"+(D.period.label||"").replace(/[^A-Za-z0-9]+/g,"_").replace(/^_+|_+$/g,"");
+    if(format==="excel"){
+      _caName=base+".xlsx"; _caBlob=null;
+      cardShow("Excel \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026","Purchase \u00b7 "+D.period.label+" \u00b7 Tally-ready");
+      setTimeout(function(){ ensureXLSX(function(){ try{ var b=purchaseWorkbook(D); _caBlob=b; dl(b,_caName); if(cel("stca-title"))cel("stca-title").textContent="Excel \u0924\u0948\u092f\u093e\u0930"; cardDone(); }catch(e){ cardFail(); if(window.console)console.warn(e);} }); },200);
+      return;
+    }
+    _caName=base+".pdf"; _caBlob=null;
+    cardShow("Statement \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026","Purchase \u00b7 "+D.period.label+" \u00b7 Total "+f(D.total));
+    setTimeout(function(){
+      var host=document.createElement("div"); host.style.cssText="position:fixed;top:0;left:-10000px;width:794px;background:#fff;z-index:-1;";
+      host.innerHTML=purchaseHTML(D); document.body.appendChild(host);
+      var ctor=(window.jspdf&&window.jspdf.jsPDF)?window.jspdf.jsPDF:null;
+      html2canvas(host.firstElementChild||host,{scale:2,backgroundColor:"#ffffff",useCORS:true,logging:false}).then(function(cv){
+        try{document.body.removeChild(host);}catch(e){}
+        var doc=new ctor({unit:"pt",format:"a4",compress:true});
+        var pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
+        var img=cv.toDataURL("image/jpeg",0.92), iw=pw, ih=cv.height*iw/cv.width;
+        var pages=Math.max(1,Math.ceil((ih/ph)-0.002));
+        for(var p=0;p<pages;p++){ if(p>0)doc.addPage(); doc.addImage(img,"JPEG",0,-(ph*p),iw,ih,undefined,"FAST"); }
+        _caBlob=doc.output("blob"); dl(_caBlob,_caName);
+        if(cel("stca-title"))cel("stca-title").textContent="Statement \u0924\u0948\u092f\u093e\u0930"; cardDone();
+      }).catch(function(err){ try{document.body.removeChild(host);}catch(x){} cardFail(); if(window.console)console.warn(err); });
+    },200);
   };
 })();
 </script>

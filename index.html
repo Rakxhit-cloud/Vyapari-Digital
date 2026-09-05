@@ -3021,7 +3021,7 @@ body.notif-modal-open { overflow: hidden; }
     </div>
     <div class="st-lbl">SUMMARIES <span class="hi">/ सारांश</span></div>
     <div class="st-grid">
-      <div class="st-tile" onclick="stSoon('Outstanding')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M8 4h16M8 28h16" stroke="#c99a52" stroke-width="2.4" stroke-linecap="round"/><path d="M9.5 4c0 6 6.5 8 6.5 12 0-4 6.5-6 6.5-12M9.5 28c0-6 6.5-8 6.5-12 0 4 6.5 6 6.5 12" fill="none" stroke="#c99a52" stroke-width="1.5"/><path d="M11.5 6.5h9c0 3.3-4.5 4.8-4.5 7.5 0-2.7-4.5-4.2-4.5-7.5z" fill="#e8b84a"/><path d="M13 25.5c0-2 3-3 3-4.6 0 1.6 3 2.6 3 4.6z" fill="#e8b84a"/></svg></div><div><div class="st-tn">Outstanding <span class="hi">/ बकाया</span></div><div class="st-tg">with ageing</div></div><span class="st-arw">›</span></div>
+      <div class="st-tile" onclick="stGenOpen('outstanding')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M8 4h16M8 28h16" stroke="#c99a52" stroke-width="2.4" stroke-linecap="round"/><path d="M9.5 4c0 6 6.5 8 6.5 12 0-4 6.5-6 6.5-12M9.5 28c0-6 6.5-8 6.5-12 0 4 6.5 6 6.5 12" fill="none" stroke="#c99a52" stroke-width="1.5"/><path d="M11.5 6.5h9c0 3.3-4.5 4.8-4.5 7.5 0-2.7-4.5-4.2-4.5-7.5z" fill="#e8b84a"/><path d="M13 25.5c0-2 3-3 3-4.6 0 1.6 3 2.6 3 4.6z" fill="#e8b84a"/></svg></div><div><div class="st-tn">Outstanding <span class="hi">/ बकाया</span></div><div class="st-tg">with ageing</div></div><span class="st-arw">›</span></div>
       <div class="st-tile" onclick="stSoon('Monthly')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><rect x="6" y="16" width="4.6" height="11" rx="1.2" fill="#5a8fd8"/><rect x="13.7" y="10" width="4.6" height="17" rx="1.2" fill="#8aef7a"/><rect x="21.4" y="6" width="4.6" height="21" rx="1.2" fill="#e8c870"/></svg></div><div><div class="st-tn">Monthly <span class="hi">/ महीना</span></div><div class="st-tg">month totals</div></div><span class="st-arw">›</span></div>
     </div>
     <div class="st-probar"><div class="pi"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="6.5" y="12" width="11" height="8" rx="1" fill="#1e7a46"/><path d="M9 14l6 4M15 14l-6 4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="pt"><b>Excel · Tally export</b><div>Unlock with Live हिसाब Pro</div></div><div class="pb">₹99/mo</div></div>
@@ -3151,7 +3151,7 @@ textarea.st-biz-in{resize:none;}
 (function(){
   window._stGen={supplier:null,range:"thismonth",format:"pdf"};
   function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-  window.ST_TYPES={supplier:{party:true,icon:'<svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg>',title:"Supplier Statement",sub:"per supplier ledger"},purchase:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M4 11l12-5 12 5-12 5z" fill="#e6bd7e" stroke="#a5761f" stroke-width="1"/><path d="M4 11v13l12 5V16z" fill="#cfa059" stroke="#a5761f" stroke-width="1"/><path d="M28 11v13l-12 5V16z" fill="#bd8f46" stroke="#a5761f" stroke-width="1"/><path d="M16 6v10" stroke="#8a5f20" stroke-width="1.2"/><rect x="12.5" y="8" width="7" height="2.6" fill="#f4e6b8" opacity=".85"/></svg>',title:"Purchase / खरीद",sub:"all purchases · cash + credit"},sales:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg>',title:"Sales / बिक्री",sub:"cash + UPI sales register"}};
+  window.ST_TYPES={supplier:{party:true,icon:'<svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg>',title:"Supplier Statement",sub:"per supplier ledger"},purchase:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M4 11l12-5 12 5-12 5z" fill="#e6bd7e" stroke="#a5761f" stroke-width="1"/><path d="M4 11v13l12 5V16z" fill="#cfa059" stroke="#a5761f" stroke-width="1"/><path d="M28 11v13l-12 5V16z" fill="#bd8f46" stroke="#a5761f" stroke-width="1"/><path d="M16 6v10" stroke="#8a5f20" stroke-width="1.2"/><rect x="12.5" y="8" width="7" height="2.6" fill="#f4e6b8" opacity=".85"/></svg>',title:"Purchase / खरीद",sub:"all purchases · cash + credit"},outstanding:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M8 4h16M8 28h16" stroke="#c99a52" stroke-width="2.4" stroke-linecap="round"/><path d="M9.5 4c0 6 6.5 8 6.5 12 0-4 6.5-6 6.5-12M9.5 28c0-6 6.5-8 6.5-12 0 4 6.5 6 6.5 12" fill="none" stroke="#c99a52" stroke-width="1.5"/><path d="M11.5 6.5h9c0 3.3-4.5 4.8-4.5 7.5 0-2.7-4.5-4.2-4.5-7.5z" fill="#e8b84a"/><path d="M13 25.5c0-2 3-3 3-4.6 0 1.6 3 2.6 3 4.6z" fill="#e8b84a"/></svg>',title:"Outstanding / बकाया",sub:"supplier payable + ageing (as on today)"},sales:{party:false,icon:'<svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg>',title:"Sales / बिक्री",sub:"cash + UPI sales register"}};
   window.stGenOpen=function(type){
     type=type||"supplier"; var T=window.ST_TYPES[type]||window.ST_TYPES.supplier;
     window._stGen={type:type,supplier:null,range:"thismonth",format:"pdf"};
@@ -3190,6 +3190,7 @@ textarea.st-biz-in{resize:none;}
       try{ if(window._stGen.format==="excel"){ stCAExcelRun(window._stGen.supplier,window._stGen.range); } else { stCARun(window._stGen.supplier,window._stGen.range); } }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} }
       return;
     }
+    if(t==="outstanding"){ try{ stOutstandingRun(window._stGen.format); }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} } return; }
     if(t==="purchase"){ try{ stPurchaseRun(window._stGen.range, window._stGen.format); }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} } return; }
     if(t==="sales"){ try{ if(window.stSalesRun){ stSalesRun(window._stGen.range, window._stGen.format); } else { toast("Sales — अगले step में"); } }catch(e){ try{toast("error: "+(e&&e.message||e),true);}catch(x){} } return; }
     try{toast("जल्द आ रहा है");}catch(e){}
@@ -3752,6 +3753,114 @@ textarea.st-biz-in{resize:none;}
     setTimeout(function(){
       var host=document.createElement("div"); host.style.cssText="position:fixed;top:0;left:-10000px;width:794px;background:#fff;z-index:-1;";
       host.innerHTML=purchaseHTML(D); document.body.appendChild(host);
+      var ctor=(window.jspdf&&window.jspdf.jsPDF)?window.jspdf.jsPDF:null;
+      html2canvas(host.firstElementChild||host,{scale:2,backgroundColor:"#ffffff",useCORS:true,logging:false}).then(function(cv){
+        try{document.body.removeChild(host);}catch(e){}
+        var doc=new ctor({unit:"pt",format:"a4",compress:true});
+        var pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
+        var img=cv.toDataURL("image/jpeg",0.92), iw=pw, ih=cv.height*iw/cv.width;
+        var pages=Math.max(1,Math.ceil((ih/ph)-0.002));
+        for(var p=0;p<pages;p++){ if(p>0)doc.addPage(); doc.addImage(img,"JPEG",0,-(ph*p),iw,ih,undefined,"FAST"); }
+        _caBlob=doc.output("blob"); dl(_caBlob,_caName);
+        if(cel("stca-title"))cel("stca-title").textContent="Statement \u0924\u0948\u092f\u093e\u0930"; cardDone();
+      }).catch(function(err){ try{document.body.removeChild(host);}catch(x){} cardFail(); if(window.console)console.warn(err); });
+    },200);
+  };
+
+  /* ================= OUTSTANDING (supplier payable + ageing, as on today) ================= */
+  function outstandingData(){
+    var maal=[]; try{maal=DB.get(K.MAAL)||[];}catch(e){}
+    var names={};
+    maal.forEach(function(r){ if(r&&!r.placeholder&&r.supplier) names[r.supplier]=1; });
+    var rows=[], tot=0, ag={b0:0,b1:0,b2:0,b3:0};
+    Object.keys(names).forEach(function(nm){
+      var A; try{ A=window.stAggSupplier(nm); }catch(e){ return; }
+      if(!A || (A.closing||0)<=0) return;
+      rows.push({supplier:nm, gstin:(window.getSupGstin?getSupGstin(nm):""), payable:A.closing,
+        b0:A.ageing.b0, b1:A.ageing.b1, b2:A.ageing.b2, b3:A.ageing.b3});
+      tot+=A.closing; ag.b0+=A.ageing.b0; ag.b1+=A.ageing.b1; ag.b2+=A.ageing.b2; ag.b3+=A.ageing.b3;
+    });
+    rows.sort(function(a,b){ return b.payable-a.payable; });
+    return {biz:(window.getBizProfile?getBizProfile():{name:"",gstin:"",address:"",dlno:""}),
+      asOf:todayStr(), rows:rows, total:tot, ageing:ag, n:rows.length, overdue:(ag.b1+ag.b2+ag.b3)};
+  }
+  function outstandingHTML(D){
+    var biz=D.biz||{};
+    var css='<style>'
+      +'.ca{font-family:Arial,Helvetica,sans-serif;color:#1b2130;width:794px;background:#fff;box-sizing:border-box;}'
+      +'.ca *{box-sizing:border-box;}'
+      +'.ca .mh{background:#0a1530;color:#e8c870;font-size:22px;font-weight:800;padding:16px 26px;}'
+      +'.ca .sh{background:#16294f;color:#fff;font-size:12px;padding:7px 26px;}'
+      +'.ca .meta{display:flex;gap:20px;padding:12px 26px 6px;font-size:11px;color:#5a6178;}.ca .meta b{color:#16224a;}'
+      +'.ca .cards{display:flex;gap:12px;padding:4px 26px 14px;}'
+      +'.ca .cd{flex:1;border:1px solid #e2e5ec;border-radius:9px;padding:11px;text-align:center;}'
+      +'.ca .cd .k{font-size:10px;color:#8a90a2;font-weight:700;}.ca .cd .v{font-size:16px;font-weight:800;margin-top:4px;}'
+      +'.ca .cd.tot{background:#0a1530;}.ca .cd.tot .k{color:#c9a24b;}.ca .cd.tot .v{color:#e8c870;}.ca .cd.ovd .v{color:#c62828;}'
+      +'.ca table{width:calc(100% - 52px);margin:0 26px;border-collapse:collapse;}'
+      +'.ca th{background:#0a1530;color:#fff;font-size:9.5px;font-weight:700;text-align:left;padding:8px 6px;}'
+      +'.ca th.r,.ca td.r{text-align:right;}.ca th.c,.ca td.c{text-align:center;}'
+      +'.ca td{font-size:10.5px;padding:7px 6px;border-bottom:1px solid #eef0f4;color:#2a3040;}'
+      +'.ca tbody tr:nth-child(even) td{background:#fafbfd;}'
+      +'.ca td.ovd{color:#c62828;}'
+      +'.ca .tot td{background:#e8c870 !important;color:#0a1530;font-weight:800;}'
+      +'.ca .disc{margin:14px 26px 0;font-size:9px;color:#8a90a2;line-height:1.6;border-top:1px solid #eef0f4;padding-top:10px;}'
+      +'.ca .ft{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 26px 20px;border-top:2px solid #0a1530;padding-top:10px;}'
+      +'.ca .ft .fl{font-size:9.5px;color:#6b7180;}.ca .bm{font-size:15px;font-weight:800;}.ca .bm .li{color:#e84545;}.ca .bm .kh{color:#c0902f;}'
+      +'</style>';
+    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Outstanding (Payable) \u00b7 Supplier Ageing</div>';
+    var meta='<div class="meta"><div><b>As on:</b> '+dispDate(D.asOf)+'</div><div><b>Suppliers with dues:</b> '+D.n+'</div></div>';
+    var cards='<div class="cards"><div class="cd tot"><div class="k">TOTAL PAYABLE</div><div class="v">'+f(D.total)+'</div></div>'
+      +'<div class="cd ovd"><div class="k">OVERDUE (&gt;30 days)</div><div class="v">'+f(D.overdue)+'</div></div></div>';
+    var body='';
+    D.rows.forEach(function(r,ix){
+      body+='<tr><td class="c">'+(ix+1)+'</td><td>'+String(r.supplier).replace(/</g,"&lt;")+'</td>'
+        +'<td class="r">'+f(r.payable)+'</td><td class="r">'+(r.b0?f(r.b0):"")+'</td>'
+        +'<td class="r ovd">'+(r.b1?f(r.b1):"")+'</td><td class="r ovd">'+(r.b2?f(r.b2):"")+'</td><td class="r ovd">'+(r.b3?f(r.b3):"")+'</td></tr>';
+    });
+    if(!D.rows.length) body='<tr><td colspan="7" style="text-align:center;color:#8a90a2;padding:20px;">\u0915\u094b\u0908 \u092c\u0915\u093e\u092f\u093e \u0928\u0939\u0940\u0902 \u2014 \u0938\u092d\u0940 \u0938\u092a\u094d\u0932\u093e\u092f\u0930 clear \u2713</td></tr>';
+    body+='<tr class="tot"><td></td><td style="text-align:right;">TOTAL</td><td class="r">'+f(D.total)+'</td><td class="r">'+f(D.ageing.b0)+'</td><td class="r">'+f(D.ageing.b1)+'</td><td class="r">'+f(D.ageing.b2)+'</td><td class="r">'+f(D.ageing.b3)+'</td></tr>';
+    var table='<table><thead><tr><th class="c">#</th><th>Supplier</th><th class="r">Payable</th><th class="r">0-30d</th><th class="r">31-60d</th><th class="r">61-90d</th><th class="r">90+d</th></tr></thead><tbody>'+body+'</tbody></table>';
+    var disc='<div class="disc">Payable = amount you owe each supplier (Cr), as on '+dispDate(D.asOf)+'. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
+    var ft='<div class="ft"><div class="fl">Computer-generated \u00b7 Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
+    return '<div class="ca">'+css+head+meta+cards+table+disc+ft+'</div>';
+  }
+  function outstandingWorkbook(D){
+    var X=window.XLSX, biz=D.biz||{}, wb=X.utils.book_new();
+    var s1=[[biz.name||""],["Outstanding (Payable) \u00b7 Supplier Ageing"],[],
+      ["As on:",dispDate(D.asOf)],["Suppliers with dues:",D.n],[],
+      ["Total Payable",D.total],["Overdue (>30d)",D.overdue],[],
+      ["#","Supplier","GSTIN","Payable","0-30d","31-60d","61-90d","90+d"]];
+    D.rows.forEach(function(r,ix){ s1.push([ix+1,r.supplier,r.gstin||"",r.payable,r.b0,r.b1,r.b2,r.b3]); });
+    s1.push(["","","TOTAL",D.total,D.ageing.b0,D.ageing.b1,D.ageing.b2,D.ageing.b3]);
+    s1.push([]); s1.push(["Generated by Live Khaata \u00b7 livekhaata.app. NOT audited/certified. E&OE."]);
+    var ws1=X.utils.aoa_to_sheet(s1);
+    var RS="\u0022\u20b9\u0022#,##,##0";
+    ["B7","B8"].forEach(function(a){ if(ws1[a]) ws1[a].z=RS; });
+    var _rf=X.utils.decode_range(ws1["!ref"]||"A1");
+    for(var _r=10;_r<=_rf.e.r;_r++){ for(var _c=3;_c<=7;_c++){ var _a=X.utils.encode_cell({r:_r,c:_c}); if(ws1[_a]&&typeof ws1[_a].v==="number") ws1[_a].z=RS; } }
+    ws1["!cols"]=[{wch:6},{wch:26},{wch:18},{wch:14},{wch:12},{wch:12},{wch:12},{wch:12}];
+    X.utils.book_append_sheet(wb,ws1,"Outstanding");
+    var s3=[["Outstanding \u2014 Summary"],["As on "+dispDate(D.asOf)],[],
+      ["Total Payable",D.total],["0-30 days",D.ageing.b0],["31-60 days",D.ageing.b1],["61-90 days",D.ageing.b2],["90+ days",D.ageing.b3],
+      ["Overdue (>30d)",D.overdue],["Suppliers with dues",D.n],[],["Generated by Live Khaata \u00b7 livekhaata.app"]];
+    var ws3=X.utils.aoa_to_sheet(s3); ws3["!cols"]=[{wch:26},{wch:20}];
+    X.utils.book_append_sheet(wb,ws3,"Summary");
+    return new Blob([X.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+  }
+  window.stOutstandingRun=function(format){
+    var D; try{ D=outstandingData(); }catch(e){ try{toast("data error: "+(e&&e.message||e),true);}catch(x){} return; }
+    var base="Outstanding_"+dispDate(D.asOf).replace(/[^A-Za-z0-9]+/g,"_");
+    if(format==="excel"){
+      _caName=base+".xlsx"; _caBlob=null;
+      cardShow("Excel \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026","Outstanding \u00b7 Total "+f(D.total));
+      setTimeout(function(){ ensureXLSX(function(){ try{ var b=outstandingWorkbook(D); _caBlob=b; dl(b,_caName); if(cel("stca-title"))cel("stca-title").textContent="Excel \u0924\u0948\u092f\u093e\u0930"; cardDone(); }catch(e){ cardFail(); if(window.console)console.warn(e);} }); },200);
+      return;
+    }
+    _caName=base+".pdf"; _caBlob=null;
+    cardShow("Statement \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026","Outstanding \u00b7 "+D.n+" suppliers \u00b7 "+f(D.total));
+    setTimeout(function(){
+      var host=document.createElement("div"); host.style.cssText="position:fixed;top:0;left:-10000px;width:794px;background:#fff;z-index:-1;";
+      host.innerHTML=outstandingHTML(D); document.body.appendChild(host);
       var ctor=(window.jspdf&&window.jspdf.jsPDF)?window.jspdf.jsPDF:null;
       html2canvas(host.firstElementChild||host,{scale:2,backgroundColor:"#ffffff",useCORS:true,logging:false}).then(function(cv){
         try{document.body.removeChild(host);}catch(e){}

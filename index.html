@@ -10364,6 +10364,42 @@ function _bpCompress(file,maxDim,quality,thumbDim,thumbQ){
     try{img.src=URL.createObjectURL(file);}catch(err){clearTimeout(_dto);reject(err);}
   });
 }
+// Decode ONCE, encode TWICE. The OCR copy keeps full resolution because small
+// tax figures on an angled photo are lost at 1600px; the stored copy stays
+// small so Firebase Storage costs don't balloon. Decoding a 12MP original is
+// the expensive part on a mid-range Android — the second encode is cheap.
+function _npPrep(file,ocrDim,ocrQ,stDim,stQ,thumbDim,thumbQ){
+  return new Promise(function(resolve,reject){
+    var img=new Image(),done=false;
+    var fail=function(e){if(done)return;done=true;try{URL.revokeObjectURL(img.src);}catch(x){}reject(e);};
+    var dto=setTimeout(function(){fail(new Error('decode timeout'));},15000);
+    img.onload=function(){
+      clearTimeout(dto);
+      try{
+        var w=img.width,h=img.height;
+        var mk=function(dim){
+          var sc=Math.min(1,dim/Math.max(w,h));
+          var c=document.createElement('canvas');
+          c.width=Math.max(1,Math.round(w*sc));c.height=Math.max(1,Math.round(h*sc));
+          c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c;
+        };
+        var oc=mk(ocrDim),stc=mk(stDim),tc=mk(thumbDim||150);
+        var thumb=tc.toDataURL('image/jpeg',(thumbQ||0.55));
+        oc.toBlob(function(ocrBlob){
+          if(!ocrBlob){fail(new Error('encode failed'));return;}
+          stc.toBlob(function(stBlob){
+            if(done)return;done=true;
+            try{URL.revokeObjectURL(img.src);}catch(x){}
+            if(!stBlob){reject(new Error('encode failed'));return;}
+            resolve({ocrBlob:ocrBlob,blob:stBlob,thumb:thumb});
+          },'image/jpeg',stQ);
+        },'image/jpeg',ocrQ);
+      }catch(err){fail(err);}
+    };
+    img.onerror=function(){clearTimeout(dto);fail(new Error('decode failed'));};
+    try{img.src=URL.createObjectURL(file);}catch(err){clearTimeout(dto);fail(err);}
+  });
+}
 function billPhotoConfirm(){
   var f=window._billPhoto.rawFile; if(!f){toast('पहले फोटो लें',true);return;}
   toast('तैयार हो रहा है…');
@@ -12229,10 +12265,10 @@ function npPhotoChosen(ev){
   npShow('s2');
   npScanUI('reading');
   if(typeof toast==='function')toast('\u0924\u0948\u092f\u093e\u0930 \u0939\u094b \u0930\u0939\u093e \u0939\u0948\u2026');
-  // ONE compression only. The same blob is stored AND sent to OCR.
-  _bpCompress(f,NP_OCR_MAXDIM,NP_OCR_QUALITY,128,0.55).then(function(r){
+  // ONE decode. Full-resolution copy goes to OCR, small copy goes to storage.
+  _npPrep(f,NP_OCR_MAXDIM,NP_OCR_QUALITY,1600,0.8,128,0.55).then(function(r){
     window.lgPhoto={rawFile:f,blob:r.blob,thumb:r.thumb,url:'',path:'',pages:[],isPdf:false,pageCount:0};
-    npRunScan(r.blob,true);
+    npRunScan(r.ocrBlob,true);
   }).catch(function(e){
     try{console.warn('np compress fail:',e&&e.message);}catch(x){}
     if(typeof toast==='function')toast('\u092b\u094b\u091f\u094b process \u0928\u0939\u0940\u0902 \u0939\u0941\u0908, \u0926\u094b\u092c\u093e\u0930\u093e \u0932\u0947\u0902',true);
@@ -12247,10 +12283,12 @@ function npClearAuto(k){npShowAuto(k,false);}
 function npScanReset(){var sb=document.getElementById('np-scanbar');if(sb)sb.style.display='none';var fb=document.getElementById('np-fallback');if(fb)fb.style.display='none';var iw=document.getElementById('np-imgwrap');if(iw)iw.classList.remove('scanning');['total','billno','due'].forEach(function(k){npShowAuto(k,false);});var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');}
 function npScanUI(state,why){var sb=document.getElementById('np-scanbar'),fb=document.getElementById('np-fallback'),cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar'),iw=document.getElementById('np-imgwrap');if(state==='reading'){if(sb)sb.style.display='flex';if(fb)fb.style.display='none';if(iw)iw.classList.add('scanning');if(cn)cn.classList.add('reading');if(cu)cu.classList.add('reading');}else{if(sb)sb.style.display='none';if(iw)iw.classList.remove('scanning');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');if(state==='fail'){if(fb)fb.style.display='flex';var _w=document.getElementById('np-fail-why');if(_w)_w.textContent=why||'\u0906\u092a\u0915\u0940 \u092b\u093c\u094b\u091f\u094b \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0939\u0948';}else{if(fb)fb.style.display='none';}}}
 function npApplyScan(p){var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
-// 1600px @ 0.72 is ~250-400KB — plenty for Vision on printed text, and ~5x
-// smaller on the wire than the old 2400 @ 0.9 (which was 1.5-2.5MB of base64
-// and took 15-25s to upload on Indian mobile data).
-var NP_OCR_MAXDIM=1600,NP_OCR_QUALITY=0.72;
+// Full resolution for OCR. 1600px was tried and REGRESSED accuracy: a bill
+// photographed at an angle occupies only part of the frame, so the small
+// CGST/SGST figures fell below the readable threshold and the arithmetic
+// cross-check collapsed. 0.85 (vs the original 0.9) trims the payload without
+// touching detail; the stored copy is separately encoded at 1600/0.8.
+var NP_OCR_MAXDIM=2400,NP_OCR_QUALITY=0.85;
 function _npErrMsg(e){
   var c='';try{c=String((e&&(e.code||e.message))||'');}catch(x){}
   if(/resource-exhausted|limit/i.test(c))return '\u0906\u091c \u0915\u0940 scan limit \u092a\u0942\u0930\u0940 \u0939\u094b \u0917\u0908';

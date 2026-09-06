@@ -4562,7 +4562,7 @@ textarea.st-biz-in{resize:none;}
     <div id="np-s2" style="display:none;">
       <div class="np-imgwrap" id="np-imgwrap"><img id="np-img" class="np-img" style="display:none;" alt="bill"><div class="np-scanline"></div><div class="np-retake" onclick="npRetake()">🔄 दुबारा</div></div>
       <div class="np-scanbar" id="np-scanbar" style="display:none;"><div class="np-spin"></div><div>बिल स्कैन हो रहा है…<small>विवरण अपने आप भर जाएगा</small></div></div>
-      <div class="np-fallback" id="np-fallback" style="display:none;">📝 <div>बिल स्कैन नहीं हो सका — विवरण हाथ से भरें<small>आपकी फ़ोटो सुरक्षित है</small></div></div>
+      <div class="np-fallback" id="np-fallback" style="display:none;">📝 <div>बिल स्कैन नहीं हो सका — विवरण हाथ से भरें<small id="np-fail-why">आपकी फ़ोटो सुरक्षित है</small></div></div>
       <div class="np-chips">
         <div class="np-chip nakad" id="np-chip-nakad" onclick="npSetType('nakad')">💵 Cash</div>
         <div class="np-chip udhaar off" id="np-chip-udhaar" onclick="npSetType('udhaar')">📋 Credit</div>
@@ -4576,7 +4576,7 @@ textarea.st-biz-in{resize:none;}
       <div class="np-cta" onclick="npProceed()">आगे बढ़ें →</div>
     </div>
     <input id="np-file" type="file" accept="image/*" capture="environment" style="display:none;" onchange="npPhotoChosen(event)">
-    <input id="np-file-gal" type="file" accept="image/*" style="display:none;" onchange="npPhotoChosen(event)">
+    <input id="np-file-gal" type="file" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none;" onchange="npPhotoChosen(event)">
   </div>
 </div>
 
@@ -4955,7 +4955,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const functions = getFunctions(app, 'us-central1');
-const _scanBillCallable = httpsCallable(functions, 'scanBill', { timeout: 70000 });
+const _scanBillCallable = httpsCallable(functions, 'scanBill', { timeout: 55000 });
 window._fsScanBill = function(b64){ return _scanBillCallable({ image: b64 }); };
 const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 40000 });
 window._fsVoiceParse = function(b64, mimeType){ return _voiceParseCallable({ audio: b64, mimeType: mimeType || 'audio/wav' }); };
@@ -10350,11 +10350,18 @@ function _bpCompress(file,maxDim,quality,thumbDim,thumbQ){
         var tc=document.createElement('canvas');tc.width=Math.round(w*ts);tc.height=Math.round(h*ts);
         tc.getContext('2d').drawImage(img,0,0,tc.width,tc.height);
         var thumb=tc.toDataURL('image/jpeg',(thumbQ||0.6));
-        c.toBlob(function(blob){try{URL.revokeObjectURL(img.src);}catch(x){}resolve({blob:blob,thumb:thumb});},'image/jpeg',quality);
+        c.toBlob(function(blob){
+          try{URL.revokeObjectURL(img.src);}catch(x){}
+          if(!blob){reject(new Error('encode failed'));return;}
+          resolve({blob:blob,thumb:thumb});
+        },'image/jpeg',quality);
       }catch(err){reject(err);}
     };
-    img.onerror=reject;
-    try{img.src=URL.createObjectURL(file);}catch(err){reject(err);}
+    img.onerror=function(){try{URL.revokeObjectURL(img.src);}catch(x){}reject(new Error('decode failed'));};
+    // Hard guard: a file the decoder silently stalls on must not hang the flow.
+    var _dto=setTimeout(function(){try{URL.revokeObjectURL(img.src);}catch(x){}reject(new Error('decode timeout'));},15000);
+    var _ol=img.onload;img.onload=function(){clearTimeout(_dto);_ol.call(img);};
+    try{img.src=URL.createObjectURL(file);}catch(err){clearTimeout(_dto);reject(err);}
   });
 }
 function billPhotoConfirm(){
@@ -12218,24 +12225,71 @@ function npPhotoChosen(ev){
   var f=ev&&ev.target&&ev.target.files?ev.target.files[0]:null;if(!f)return;
   // Switch to preview SYNCHRONOUSLY, before the async compress, so the scan screen (np-s1) can never flash back after the camera confirms.
   var img=document.getElementById('np-img');
-  if(img){try{img.src=URL.createObjectURL(f);}catch(e){img.src='';}img.style.display='block';}
+  if(img){try{if(img._objUrl){URL.revokeObjectURL(img._objUrl);}img._objUrl=URL.createObjectURL(f);img.src=img._objUrl;}catch(e){img.src='';}img.style.display='block';}
   npShow('s2');
   npScanUI('reading');
   if(typeof toast==='function')toast('\u0924\u0948\u092f\u093e\u0930 \u0939\u094b \u0930\u0939\u093e \u0939\u0948\u2026');
-  _bpCompress(f,1600,0.8,128,0.55).then(function(r){
+  // ONE compression only. The same blob is stored AND sent to OCR.
+  _bpCompress(f,NP_OCR_MAXDIM,NP_OCR_QUALITY,128,0.55).then(function(r){
     window.lgPhoto={rawFile:f,blob:r.blob,thumb:r.thumb,url:'',path:'',pages:[],isPdf:false,pageCount:0};
-    npRunScan(f);
-  }).catch(function(){if(typeof toast==='function')toast('\u092b\u094b\u091f\u094b process \u0928\u0939\u0940\u0902 \u0939\u0941\u0908, \u0926\u094b\u092c\u093e\u0930\u093e \u0932\u0947\u0902',true);npScanUI('fail');npShow('s1');});
+    npRunScan(r.blob,true);
+  }).catch(function(e){
+    try{console.warn('np compress fail:',e&&e.message);}catch(x){}
+    if(typeof toast==='function')toast('\u092b\u094b\u091f\u094b process \u0928\u0939\u0940\u0902 \u0939\u0941\u0908, \u0926\u094b\u092c\u093e\u0930\u093e \u0932\u0947\u0902',true);
+    npScanUI('fail','\u092f\u0939 \u092b\u093c\u094b\u091f\u094b \u092a\u0922\u093c\u0940 \u0928\u0939\u0940\u0902 \u0917\u0908 \u2014 JPG \u092b\u093c\u094b\u091f\u094b \u091a\u0941\u0928\u0947\u0902');
+    npShow('s1');
+  });
 }
 function npRetake(){npCapture();}
 function _blobToB64(blob){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){var s=String(fr.result||'');var i=s.indexOf(',');res(i>=0?s.slice(i+1):s);};fr.onerror=function(){rej(new Error('read'));};fr.readAsDataURL(blob);});}
 function npShowAuto(k,on){var t=document.getElementById('np-auto-'+k);if(t)t.style.display=on?'inline-flex':'none';}
 function npClearAuto(k){npShowAuto(k,false);}
 function npScanReset(){var sb=document.getElementById('np-scanbar');if(sb)sb.style.display='none';var fb=document.getElementById('np-fallback');if(fb)fb.style.display='none';var iw=document.getElementById('np-imgwrap');if(iw)iw.classList.remove('scanning');['total','billno','due'].forEach(function(k){npShowAuto(k,false);});var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');}
-function npScanUI(state){var sb=document.getElementById('np-scanbar'),fb=document.getElementById('np-fallback'),cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar'),iw=document.getElementById('np-imgwrap');if(state==='reading'){if(sb)sb.style.display='flex';if(fb)fb.style.display='none';if(iw)iw.classList.add('scanning');if(cn)cn.classList.add('reading');if(cu)cu.classList.add('reading');}else{if(sb)sb.style.display='none';if(iw)iw.classList.remove('scanning');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');if(state==='fail'){if(fb)fb.style.display='flex';}else{if(fb)fb.style.display='none';}}}
+function npScanUI(state,why){var sb=document.getElementById('np-scanbar'),fb=document.getElementById('np-fallback'),cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar'),iw=document.getElementById('np-imgwrap');if(state==='reading'){if(sb)sb.style.display='flex';if(fb)fb.style.display='none';if(iw)iw.classList.add('scanning');if(cn)cn.classList.add('reading');if(cu)cu.classList.add('reading');}else{if(sb)sb.style.display='none';if(iw)iw.classList.remove('scanning');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');if(state==='fail'){if(fb)fb.style.display='flex';var _w=document.getElementById('np-fail-why');if(_w)_w.textContent=why||'\u0906\u092a\u0915\u0940 \u092b\u093c\u094b\u091f\u094b \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0939\u0948';}else{if(fb)fb.style.display='none';}}}
 function npApplyScan(p){var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
-var NP_OCR_MAXDIM=2400,NP_OCR_QUALITY=0.9;
-function npRunScan(file){if(!window._fsScanBill||!file){return;}npScanUI('reading');_bpCompress(file,NP_OCR_MAXDIM,NP_OCR_QUALITY,32,0.4).then(function(r){return _blobToB64(r.blob);}).then(function(b64){return window._fsScanBill(b64);}).then(function(res){var p=res&&res.data&&res.data.parsed;if(p&&(p.total>0||p.billNo||p.dueDate||p.invoiceDate)){npApplyScan(p);npScanUI('done');}else{npScanUI('fail');}}).catch(function(){npScanUI('fail');});}
+// 1600px @ 0.72 is ~250-400KB — plenty for Vision on printed text, and ~5x
+// smaller on the wire than the old 2400 @ 0.9 (which was 1.5-2.5MB of base64
+// and took 15-25s to upload on Indian mobile data).
+var NP_OCR_MAXDIM=1600,NP_OCR_QUALITY=0.72;
+function _npErrMsg(e){
+  var c='';try{c=String((e&&(e.code||e.message))||'');}catch(x){}
+  if(/resource-exhausted|limit/i.test(c))return '\u0906\u091c \u0915\u0940 scan limit \u092a\u0942\u0930\u0940 \u0939\u094b \u0917\u0908';
+  if(/unauthenticated|sign in/i.test(c))return '\u0926\u094b\u092c\u093e\u0930\u093e login \u0915\u0930\u0947\u0902';
+  if(/app-?check|unauthorized|permission/i.test(c))return 'App verify \u0928\u0939\u0940\u0902 \u0939\u0941\u0906 \u2014 app \u0926\u094b\u092c\u093e\u0930\u093e \u0916\u094b\u0932\u0947\u0902';
+  if(/deadline|timeout|aborted/i.test(c))return '\u0928\u0947\u091f\u0935\u0930\u094d\u0915 \u0927\u0940\u092e\u093e \u0939\u0948 \u2014 \u0926\u094b\u092c\u093e\u0930\u093e \u0915\u094b\u0936\u093f\u0936 \u0915\u0930\u0947\u0902';
+  if(/unavailable|network|fetch|failed to/i.test(c))return '\u0907\u0902\u091f\u0930\u0928\u0947\u091f \u0915\u0928\u0947\u0915\u094d\u0936\u0928 \u091c\u093e\u0902\u091a\u0947\u0902';
+  if(/decode|encode|too large/i.test(c))return '\u092f\u0939 \u092b\u093c\u094b\u091f\u094b \u092a\u0922\u093c\u0940 \u0928\u0939\u0940\u0902 \u0917\u0908 \u2014 JPG \u092b\u093c\u094b\u091f\u094b \u091a\u0941\u0928\u0947\u0902';
+  return '\u0938\u094d\u0915\u0948\u0928 \u0928\u0939\u0940\u0902 \u0939\u094b \u0938\u0915\u093e \u2014 \u0926\u094b\u092c\u093e\u0930\u093e \u0915\u094b\u0936\u093f\u0936 \u0915\u0930\u0947\u0902';
+}
+function npRunScan(src,preCompressed){
+  if(!window._fsScanBill||!src){return;}
+  npScanUI('reading');
+  var t0=Date.now(),tries=0;
+  function send(b64){tries++;return window._fsScanBill(b64);}
+  var prep=preCompressed?Promise.resolve(src)
+    :_bpCompress(src,NP_OCR_MAXDIM,NP_OCR_QUALITY,32,0.4).then(function(r){return r.blob;});
+  prep.then(function(blob){
+    return _blobToB64(blob);
+  }).then(function(b64){
+    if(b64.length>4500000){throw new Error('image too large');}
+    return send(b64).catch(function(e){
+      // one automatic retry, transient failures only
+      var c='';try{c=String((e&&(e.code||e.message))||'');}catch(x){}
+      if(tries<2&&/unavailable|deadline|internal|network|fetch|aborted/i.test(c)){
+        return new Promise(function(r){setTimeout(r,1200);}).then(function(){return send(b64);});
+      }
+      throw e;
+    });
+  }).then(function(res){
+    var p=res&&res.data&&res.data.parsed;
+    try{console.log('scan ok in',Date.now()-t0,'ms engine=',res&&res.data&&res.data.engine,'tries=',tries);}catch(x){}
+    if(p&&(p.total>0||p.billNo||p.dueDate||p.invoiceDate)){npApplyScan(p);npScanUI('done');}
+    else{npScanUI('fail','\u092c\u093f\u0932 \u0938\u0947 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u0928\u0939\u0940\u0902 \u092e\u093f\u0932\u0940 \u2014 \u0939\u093e\u0925 \u0938\u0947 \u092d\u0930\u0947\u0902');}
+  }).catch(function(e){
+    try{console.warn('scan FAIL after',Date.now()-t0,'ms:',(e&&(e.code||e.message))||e,e);}catch(x){}
+    npScanUI('fail',_npErrMsg(e));
+  });
+}
 function npSetType(t){
   window.lgPurPay=t;
   var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');

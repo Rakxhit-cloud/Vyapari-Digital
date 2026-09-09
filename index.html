@@ -4508,6 +4508,23 @@ textarea.st-biz-in{resize:none;}
 .np-fld{background:#0e1834;border:1px solid #223052;border-radius:13px;padding:12px 14px;margin-top:11px;}
 .np-date-row{display:flex;gap:11px;}
 .np-date-row .np-fld{flex:1;margin-top:11px;}
+.np-split{background:linear-gradient(135deg,#12203f,#0d1528);border:1.5px solid #2d7a4a;border-radius:13px;padding:10px 12px 11px;margin-top:11px;}
+.np-split.flag{border-color:#8a6520;background:linear-gradient(135deg,#1e1a10,#0d1528);}
+.np-split-hd{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.np-split-hd .t{font-size:11px;font-weight:700;color:#7ee0a4;}
+.np-split.flag .np-split-hd .t{color:#f0d070;}
+.np-sum{margin-left:auto;font-size:10px;color:#8aa0d8;letter-spacing:.1px;white-space:nowrap;}
+.np-sum b{color:#9ad0c0;}
+.np-sum.bad{color:#c9a878;}.np-sum.bad b{color:#f0a0a0;}
+.np-pair{display:flex;gap:10px;}
+.np-pbox{flex:1;min-width:0;background:#0a1228;border:1px solid #223052;border-radius:9px;padding:6px 10px 7px;}
+.np-pbox .l{font-size:9.5px;font-weight:600;margin-bottom:1px;}
+.np-pbox .l.paid{color:#7ee0a4;}.np-pbox .l.due{color:#f0b878;}
+.np-pbox .v{display:flex;align-items:baseline;gap:2px;font-size:18px;font-weight:800;}
+.np-pbox .v .r{font-size:13px;font-weight:700;color:#6b7aa5;}
+.np-pbox .v.paid{color:#7ee0a4;}.np-pbox .v.due{color:#f0b878;}
+.np-pin{width:100%;min-width:0;background:transparent;border:none;outline:none;padding:0;font-family:'Poppins';font-size:18px;font-weight:800;color:#7ee0a4;}
+.np-warn{font-size:10px;color:#c9a878;margin-top:7px;}
 /* ---- Mark Payment flow ---- */
 .spay-head-rt{display:flex;gap:16px;align-items:center;}
 .spay-thumb{position:relative;width:50px;height:50px;border-radius:10px;overflow:hidden;border:1.5px solid #3a5a9a;background:#0c1830 center/cover no-repeat;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);flex-shrink:0;transition:transform .16s cubic-bezier(.34,1.45,.5,1);}
@@ -4581,6 +4598,14 @@ textarea.st-biz-in{resize:none;}
         <div class="np-chip udhaar off" id="np-chip-udhaar" onclick="npSetType('udhaar')">📋 Credit</div>
       </div>
       <div class="np-fld big"><div class="np-lbl">Bill Amount<span class="np-auto" id="np-auto-total" style="display:none;">🔍 auto</span></div><div class="np-amt"><span>₹</span><input id="np-total" class="np-in" inputmode="numeric" oninput="npTotalInput(this);npClearAuto('total');" placeholder="0"></div><div class="np-cap">अधिकतम ₹99,99,999</div></div>
+      <div class="np-split" id="np-split" style="display:none;">
+        <div class="np-split-hd"><span class="t" id="np-split-t">✅ भुगतान दर्ज</span><span class="np-auto">🔍 auto</span><span class="np-sum" id="np-split-sum"></span></div>
+        <div class="np-pair">
+          <div class="np-pbox"><div class="l paid">चुकाया</div><div class="v paid"><span class="r">₹</span><input id="np-paid" class="np-pin" inputmode="numeric" oninput="npPaidInput(this);" placeholder="0"></div></div>
+          <div class="np-pbox"><div class="l due">बाकी</div><div class="v due"><span class="r">₹</span><span id="np-duebal">0</span></div></div>
+        </div>
+        <div class="np-warn" id="np-split-warn" style="display:none;">सही करें या हटा दें</div>
+      </div>
       <div class="np-fld"><div class="np-lbl">बिल नंबर <span class="np-opt">optional</span><span class="np-auto" id="np-auto-billno" style="display:none;">🔍 auto</span></div><input id="np-billno" class="np-in txt" placeholder="जैसे: T000647" maxlength="40" oninput="npClearAuto('billno');"></div>
       <div class="np-date-row">
         <div class="np-fld" id="np-inv-wrap"><div class="np-lbl">Invoice Date <span class="np-opt">optional</span><span class="np-auto" id="np-auto-inv" style="display:none;">🔍 auto</span></div><input id="np-inv" class="np-in txt" placeholder="DD/MM/YYYY" maxlength="20" oninput="npClearAuto('inv');"></div>
@@ -7803,6 +7828,7 @@ function lgpcFile(sup, phone){
   if(window._lgpcBillNo)_maal.billNo=window._lgpcBillNo;
   if(window._lgpcDueDate)_maal.dueDate=window._lgpcDueDate;
   if(window._lgpcInvDate)_maal.invoiceDate=window._lgpcInvDate;
+  if(window._lgpcPaid>0&&window._lgpcPaid<amt)_maal.paid=window._lgpcPaid;
   if (phone) _maal.supplierPhone = phone;
   if (_ph.thumb) _maal.billThumb = _ph.thumb;
   if (_ph.url)   _maal.billUrl   = _ph.url;
@@ -12272,7 +12298,8 @@ function npShow(scr){
 }
 function npOpen(){
   window.lgPhoto={rawFile:null,blob:null,thumb:'',url:'',path:'',pages:[],isPdf:false,pageCount:0};
-  window._lgpcBillNo='';window._lgpcDueDate='';window._lgpcInvDate='';window.lgPurPay='nakad';
+  window._lgpcBillNo='';window._lgpcDueDate='';window._lgpcInvDate='';window._lgpcPaid=0;window.lgPurPay='nakad';
+  npSplitHide();
   window.lgKeypad=window.lgKeypad||{};window.lgKeypad.note='';
   window._npFlow=false;
   var t=document.getElementById('np-total');if(t)t.value='';
@@ -12312,7 +12339,7 @@ function npShowAuto(k,on){var t=document.getElementById('np-auto-'+k);if(t)t.sty
 function npClearAuto(k){npShowAuto(k,false);}
 function npScanReset(){var sb=document.getElementById('np-scanbar');if(sb)sb.style.display='none';var fb=document.getElementById('np-fallback');if(fb)fb.style.display='none';var iw=document.getElementById('np-imgwrap');if(iw)iw.classList.remove('scanning');['total','billno','due'].forEach(function(k){npShowAuto(k,false);});var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');}
 function npScanUI(state,why){var sb=document.getElementById('np-scanbar'),fb=document.getElementById('np-fallback'),cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar'),iw=document.getElementById('np-imgwrap');if(state==='reading'){if(sb)sb.style.display='flex';if(fb)fb.style.display='none';if(iw)iw.classList.add('scanning');if(cn)cn.classList.add('reading');if(cu)cu.classList.add('reading');}else{if(sb)sb.style.display='none';if(iw)iw.classList.remove('scanning');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');if(state==='fail'){if(fb)fb.style.display='flex';var _w=document.getElementById('np-fail-why');if(_w)_w.textContent=why||'\u0906\u092a\u0915\u0940 \u092b\u093c\u094b\u091f\u094b \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0939\u0948';}else{if(fb)fb.style.display='none';}}}
-function npApplyScan(p){var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
+function npApplyScan(p){var _pd=Number((p&&p.paid)||0);if(_pd>0){var _tt=Number(p.total||0);var _db=(p.paidOk&&Number(p.dueBal||0)>0)?Number(p.dueBal):Math.max(0,_tt-_pd);npSplitShow(_pd,(p.paidOk?_db:Number(p.dueBal||_db)),_tt,!!p.paidOk);}var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
 // Full resolution for OCR. 1600px was tried and REGRESSED accuracy: a bill
 // photographed at an angle occupies only part of the frame, so the small
 // CGST/SGST figures fell below the readable threshold and the arithmetic
@@ -12358,7 +12385,51 @@ function npRunScan(src,preCompressed){
     npScanUI('fail',_npErrMsg(e));
   });
 }
+// ---- split payment panel (bills that print a Received Amount) ----------
+// Shown ONLY when the scan reports paid>0. Everything else is untouched.
+function npSplitHide(){
+  var w=document.getElementById('np-split');if(w)w.style.display='none';
+  var p=document.getElementById('np-paid');if(p)p.value='';
+  var d=document.getElementById('np-duebal');if(d)d.textContent='0';
+  window._npSplitOn=false;
+}
+function _npInt(id){return parseInt(((document.getElementById(id)||{}).value||'').replace(/[^0-9]/g,''))||0;}
+// Recomputes बाकी from the bill total. Once the user edits चुकाया the pair is
+// derived, so it always reconciles by construction and the warning clears.
+function npPaidInput(el){
+  var v=(el.value||'').replace(/[^0-9]/g,'').slice(0,9);
+  el.value=v?Number(v).toLocaleString('en-IN'):'';
+  var tot=_npInt('np-total'), paid=_npInt('np-paid');
+  var due=Math.max(0,tot-paid);
+  var d=document.getElementById('np-duebal');if(d)d.textContent=due.toLocaleString('en-IN');
+  npSplitSum(paid,due,tot,true);
+  if(paid>0)npSetType('udhaar');
+}
+function npSplitSum(paid,due,tot,ok){
+  var w=document.getElementById('np-split'),s=document.getElementById('np-split-sum'),
+      t=document.getElementById('np-split-t'),n=document.getElementById('np-split-warn');
+  if(!w||!s)return;
+  var f=function(x){return Number(x||0).toLocaleString('en-IN');};
+  w.classList.toggle('flag',!ok);
+  if(t)t.textContent=ok?'✅ भुगतान दर्ज':'⚠️ भुगतान — जाँच करें';
+  s.className=ok?'np-sum':'np-sum bad';
+  s.innerHTML=ok?(f(paid)+' + '+f(due)+' = <b>'+f(tot)+'</b> ✓')
+                :(f(paid)+' + '+f(due)+' <b>≠ '+f(tot)+'</b>');
+  if(n)n.style.display=ok?'none':'block';
+}
+function npSplitShow(paid,due,tot,ok){
+  var w=document.getElementById('np-split');if(!w)return;
+  var p=document.getElementById('np-paid'),d=document.getElementById('np-duebal');
+  if(p)p.value=Number(paid||0).toLocaleString('en-IN');
+  if(d)d.textContent=Number(due||0).toLocaleString('en-IN');
+  npSplitSum(paid,due,tot,ok);
+  w.style.display='block';
+  window._npSplitOn=true;
+  npSetType('udhaar');
+}
 function npSetType(t){
+  // A part-paid bill has an outstanding balance, so it cannot be a cash bill.
+  if(window._npSplitOn&&t==='nakad')return;
   window.lgPurPay=t;
   var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');
   if(cn)cn.classList.toggle('off',t!=='nakad');
@@ -12376,6 +12447,7 @@ function npProceed(){
   window._lgpcBillNo=((document.getElementById('np-billno').value)||'').trim().slice(0,40);
   window._lgpcDueDate=(window.lgPurPay==='udhaar')?(((document.getElementById('np-due').value)||'').trim().slice(0,20)):'';
   window._lgpcInvDate=(((document.getElementById('np-inv').value)||'').trim().slice(0,20));
+  window._lgpcPaid=(window._npSplitOn&&window.lgPurPay==='udhaar')?Math.min(_npInt('np-paid'),amt):0;
   window.lgKeypad=window.lgKeypad||{};window.lgKeypad.note='';
   window._npFlow=true;
   document.getElementById('np-modal').classList.remove('show');

@@ -1657,7 +1657,9 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-header{padding:14px 16px;border-bottom:1px solid #cc7a47;background:#0a1530;}
 .mkp-hrow{display:flex;align-items:center;gap:11px;}
 .mkp-name{font-size:19px;font-weight:700;color:#f4f6fa;letter-spacing:-0.3px;}
-.mkp-gstin{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:#8fe0b4;letter-spacing:1.1px;margin-top:4px;}
+.mkp-gstin{font-size:11px;color:#8fe0b4;margin-top:4px;display:flex;align-items:baseline;gap:6px;}
+.mkp-gstin .l{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;font-size:9.5px;font-weight:600;color:#6d7fa8;letter-spacing:.5px;flex-shrink:0;}
+.mkp-gstin .v{font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:1.1px;word-break:break-all;}
 .mkp-addph{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.025);border:1px solid #2a3a66;border-radius:12px;padding:12px;color:#aebbd8;font-size:12.5px;font-weight:500;margin:2px 0 12px;cursor:pointer;}
 .mkp-addph:active{opacity:.7;}
 .mkp-addph svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
@@ -2899,22 +2901,6 @@ body.notif-modal-open { overflow: hidden; }
       <button class="lgpc-save" onclick="lgpcSaveNew()">💾 नया सप्लायर — save करें</button>
     </div>
     <!-- Purchase file confirm (dedicated — does not touch the delete confirm) -->
-    <div class="sgt-ov" id="sgt-ov">
-      <div class="sgt" id="sgt-box">
-        <div class="sgt-top">
-          <span class="sgt-ico" id="sgt-ico"></span>
-          <span class="sgt-kick" id="sgt-kick">New supplier</span>
-        </div>
-        <div class="sgt-name" id="sgt-name"></div>
-        <input class="sgt-in" id="sgt-in" maxlength="40" placeholder="Firm name" style="display:none;">
-        <div class="sgt-was" id="sgt-was" style="display:none;"></div>
-        <div class="sgt-cred">
-          <span class="num" id="sgt-num"></span>
-          <span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span id="sgt-tick">Verified</span></span>
-        </div>
-        <div class="sgt-acts" id="sgt-acts"></div>
-      </div>
-    </div>
     <div class="lgpc-cf" id="lgpc-confirm">
       <div class="lgpc-cf-box">
         <div class="lgpc-cf-ico">📦</div>
@@ -9627,7 +9613,8 @@ function renderSupplierProfile(){
     var _g='';
     for(var _i=allRows.length-1;_i>=0;_i--){ if(allRows[_i].supGstin){_g=String(allRows[_i].supGstin).toUpperCase();break;} }
     if(!_g&&typeof getSupGstin==='function'){ try{_g=(getSupGstin(_mkProfileName)||'').toUpperCase();}catch(e){} }
-    _gel.textContent=_g; _gel.style.display=_g?'':'none';
+    _gel.innerHTML=_g?('<span class="l">GSTIN</span><span class="v">'+escHTML(_g)+'</span>'):'';
+    _gel.style.display=_g?'':'none';
   }
   // totals (all-time for this supplier)
   let nak=0,udh=0,baki=0;
@@ -12816,5 +12803,21 @@ function npReopenPreview(){
   }
 })();
 </script>
+    <div class="sgt-ov" id="sgt-ov">
+  <div class="sgt" id="sgt-box">
+    <div class="sgt-top">
+      <span class="sgt-ico" id="sgt-ico"></span>
+      <span class="sgt-kick" id="sgt-kick">New supplier</span>
+    </div>
+    <div class="sgt-name" id="sgt-name"></div>
+    <input class="sgt-in" id="sgt-in" maxlength="40" placeholder="Firm name" style="display:none;">
+    <div class="sgt-was" id="sgt-was" style="display:none;"></div>
+    <div class="sgt-cred">
+      <span class="num" id="sgt-num"></span>
+      <span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span id="sgt-tick">Verified</span></span>
+    </div>
+    <div class="sgt-acts" id="sgt-acts"></div>
+  </div>
+</div>
 </body>
 </html>

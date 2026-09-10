@@ -1657,6 +1657,10 @@ body.notif-modal-open { overflow: hidden; }
 .mkp-header{padding:14px 16px;border-bottom:1px solid #cc7a47;background:#0a1530;}
 .mkp-hrow{display:flex;align-items:center;gap:11px;}
 .mkp-name{font-size:19px;font-weight:700;color:#f4f6fa;letter-spacing:-0.3px;}
+.mkp-gstin{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:#8fe0b4;letter-spacing:1.1px;margin-top:4px;}
+.mkp-addph{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.025);border:1px solid #2a3a66;border-radius:12px;padding:12px;color:#aebbd8;font-size:12.5px;font-weight:500;margin:2px 0 12px;cursor:pointer;}
+.mkp-addph:active{opacity:.7;}
+.mkp-addph svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
 .mkp-meta{font-size:11px;color:#9ad0c0;margin-top:2px;}
 .mkp-newrow{display:flex;justify-content:flex-end;margin-top:12px;}
 .mkp-new{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#d4a850,#e8c870);border:1.5px solid #f0d890;color:#1a1208;font-size:13px;font-weight:700;padding:9px 16px;border-radius:11px;box-shadow:0 2px 8px rgba(212,168,80,0.3);cursor:pointer;}
@@ -4343,7 +4347,17 @@ textarea.st-biz-in{resize:none;}
 <script>
 (function(){
   function _map(){try{return JSON.parse(localStorage.getItem("hk_sup_gstin")||"{}");}catch(e){return {};}}
-  window.getSupGstin=function(name){var m=_map();return m[name]||"";};
+  window.getSupGstin=function(name){
+    try{
+      var norm=function(x){return String(x||"").trim().toLowerCase();};
+      var k=norm(name), rows=(typeof DB!=="undefined"&&DB.get&&typeof K!=="undefined")?(DB.get(K.MAAL)||[]):[];
+      for(var i=rows.length-1;i>=0;i--){
+        var r=rows[i];
+        if(r.supGstin&&r.supplier&&norm(r.supplier)===k) return String(r.supGstin).toUpperCase();
+      }
+    }catch(e){}
+    var m=_map();return m[name]||"";
+  };
   window.setSupGstin=function(name,g){try{var m=_map();if(g)m[name]=g;else delete m[name];localStorage.setItem("hk_sup_gstin",JSON.stringify(m));}catch(e){}};
   window.stSaveSupGst=function(){var s=window._stGen&&window._stGen.supplier;if(!s)return;var el=document.getElementById("st-gen-supgst");if(!el)return;window.setSupGstin(s,(el.value||"").trim().toUpperCase());};
 })();
@@ -4391,7 +4405,7 @@ textarea.st-biz-in{resize:none;}
     <div class="mkp-hrow">
       <div class="mk-back" onclick="go('s-suppliers')">←</div>
       <div class="mk-av" id="mkp-av">?</div>
-      <div><div class="mkp-name" id="mkp-name">—</div><div class="mkp-meta" id="mkp-meta">—</div></div>
+      <div style="min-width:0;"><div class="mkp-name" id="mkp-name">—</div><div class="mkp-gstin" id="mkp-gstin" style="display:none;"></div><div class="mkp-meta" id="mkp-meta">—</div></div>
     </div>
     <div class="mkp-newrow"><div class="mkp-new" id="mkp-new" onclick="lgOpenPurchaseFor(_mkProfileName||'')"><span class="pl">+</span> नई एंट्री</div></div>
   </div>
@@ -9151,8 +9165,31 @@ function supBackfillGstin(nm,g){
 var _SGT_ICO={
   firm:'<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/></svg>',
   warn:'<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M12 10v4M12 17h.01"/></svg>',
-  link:'<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7L12 19"/></svg>'
+  link:'<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7L12 19"/></svg>',
+  phone:'<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>'
 };
+// Writes the representative's number onto the newest entry for this supplier.
+// renderSupplierProfile reads the most recent one that has a number, so a single
+// write is enough -- no need to touch every historical record.
+function mkpAddPhone(){
+  sgtShow({tone:'ok',icon:'phone',kick:'Add contact number',
+    name:_mkProfileName||'',input:true,placeholder:'Mobile number',inputMode:'tel',maxLen:15,
+    acts:[{t:'Cancel',on:'sgtHide()'},{t:'Save',hi:'सहेजें',p:1,on:'mkpSavePhone()'}]});
+}
+function mkpSavePhone(){
+  var el=document.getElementById('sgt-in');
+  var v=((el&&el.value)||'').replace(/[^0-9]/g,'').slice(0,15);
+  if(v.length<10){toast('Enter a valid mobile number',true);return;}
+  var k=mkSupKey(_mkProfileName),rows=(DB.get(K.MAAL)||[]),hit=null;
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i]; if(!r.supplier||mkSupKey(r.supplier)!==k) continue;
+    if(!hit||(r.ts||0)>(hit.ts||0)) hit=r;
+  }
+  if(!hit){toast('No entry found for this supplier',true);return;}
+  try{DB.update(K.MAAL,hit.id,{supplierPhone:v});}catch(e){toast('Could not save',true);return;}
+  sgtHide(); toast('Contact saved');
+  if(typeof renderSupplierProfile==='function')renderSupplierProfile();
+}
 function sgtHide(){var o=document.getElementById('sgt-ov');if(o)o.classList.remove('show');}
 function _sgtEl(id){return document.getElementById(id);}
 function sgtShow(cfg){
@@ -9166,6 +9203,12 @@ function sgtShow(cfg){
   nm.textContent=cfg.name||'';
   var inp=_sgtEl('sgt-in');
   inp.style.display=cfg.input?'':'none'; inp.value=cfg.inputValue||'';
+  inp.placeholder=cfg.placeholder||'Firm name';
+  inp.setAttribute('inputmode',cfg.inputMode||'text');
+  inp.setAttribute('maxlength',cfg.maxLen||40);
+  // The credential row is GSTIN-specific; hide it when the toast is not about one.
+  var _cr=document.querySelector('#sgt-box .sgt-cred');
+  if(_cr)_cr.style.display=cfg.gstin?'':'none';
   var was=_sgtEl('sgt-was');
   was.style.display=cfg.was?'':'none'; was.textContent=cfg.was||'';
   _sgtEl('sgt-num').textContent=cfg.gstin||'';
@@ -9577,6 +9620,15 @@ function renderSupplierProfile(){
   const setT=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
   setT('mkp-name',displayName);
   setT('mkp-av',(displayName[0]||'?').toUpperCase());
+  // GSTIN sits under the legal name -- it is the supplier's identity on every
+  // statement that leaves this app, so it belongs in the header, not buried.
+  var _gel=document.getElementById('mkp-gstin');
+  if(_gel){
+    var _g='';
+    for(var _i=allRows.length-1;_i>=0;_i--){ if(allRows[_i].supGstin){_g=String(allRows[_i].supGstin).toUpperCase();break;} }
+    if(!_g&&typeof getSupGstin==='function'){ try{_g=(getSupGstin(_mkProfileName)||'').toUpperCase();}catch(e){} }
+    _gel.textContent=_g; _gel.style.display=_g?'':'none';
+  }
   // totals (all-time for this supplier)
   let nak=0,udh=0,baki=0;
   rows.forEach(r=>{const a=r.amount||0;if(r.pay==='नकद')nak+=a;else{udh+=a;baki+=Math.max(0,a-(r.paid||0));}});
@@ -9591,7 +9643,13 @@ function renderSupplierProfile(){
       const _ph=String(_wp[0].supplierPhone).trim();
       const _wa=_waNum(_ph);
       _cel.innerHTML='<div style="background:linear-gradient(135deg,#1b2e58,#101c3d);border:1px solid #c8884a;border-radius:12px;padding:9px 11px;margin:2px 0 12px;box-shadow:0 2px 10px rgba(204,122,71,0.12);"><div style="font-size:16px;color:#ffd9a8;font-weight:800;letter-spacing:.6px;margin-bottom:8px;">📞 '+escHTML(_ph)+'</div><div style="display:flex;gap:8px;"><a href="tel:+'+_wa+'" style="flex:1;text-align:center;background:linear-gradient(135deg,#36a2ec,#2474c4);border:1px solid #7fd0ff;color:#ffffff;font-weight:800;font-size:13px;padding:9px;border-radius:9px;text-decoration:none;">📞 कॉल</a><a href="https://wa.me/'+_wa+'" target="_blank" rel="noopener" style="flex:1;text-align:center;background:linear-gradient(135deg,#2bd36e,#1fad55);border:1px solid #5cf09a;color:#ffffff;font-weight:800;font-size:13px;padding:9px;border-radius:9px;text-decoration:none;">💬 WhatsApp</a></div></div>';
-    } else { _cel.innerHTML=''; }
+    } else {
+      // No number on any entry. The representative's contact is added here by
+      // hand -- it is contact detail, never the supplier's identity.
+      _cel.innerHTML='<div class="mkp-addph" onclick="mkpAddPhone()">'
+        +'<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>'
+        +'Add contact number</div>';
+    }
   }
   // group by date, newest date first
   const byDate={};

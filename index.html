@@ -1385,6 +1385,10 @@ body.notif-modal-open { overflow: hidden; }
 .sgt-name.muted{color:#6d7fa8;font-weight:400;font-size:13px;}
 .sgt-in{width:100%;background:#080f22;border:1px solid #2a3a66;border-radius:8px;padding:10px 11px;color:#f2f5fb;font-family:inherit;font-size:14px;font-weight:600;outline:none;margin-bottom:11px;}
 .sgt-in:focus{border-color:#3fbe7c;}
+.sgt-in+.sgt-in{margin-top:-3px;}
+.sgt-pick{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px;margin-bottom:11px;border:1px dashed #2a3a66;border-radius:9px;color:#8fb4e8;font-size:11.5px;font-weight:500;cursor:pointer;}
+.sgt-pick:active{opacity:.65;}
+.sgt-pick svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
 .sgt-cred{display:flex;align-items:center;gap:9px;background:#080f22;border:1px solid #1e2c52;border-radius:8px;padding:8px 10px;margin-bottom:12px;}
 .sgt-cred .num{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;font-weight:500;color:#8fe0b4;letter-spacing:1.3px;flex:1;}
 .sgt-cred .tick{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:500;color:#3fbe7c;white-space:nowrap;}
@@ -9158,13 +9162,32 @@ var _SGT_ICO={
 // renderSupplierProfile reads the most recent one that has a number, so a single
 // write is enough -- no need to touch every historical record.
 function mkpAddPhone(){
-  sgtShow({tone:'ok',icon:'phone',kick:'Add contact number',
-    name:_mkProfileName||'',input:true,placeholder:'Mobile number',inputMode:'tel',maxLen:15,
+  sgtShow({tone:'ok',icon:'phone',kick:'Add contact',
+    name:_mkProfileName||'',
+    input:true, placeholder:'Contact name (optional)', maxLen:40,
+    input2:true, input2Placeholder:'Mobile number', input2Mode:'tel', input2MaxLen:15,
+    picker:true,
     acts:[{t:'Cancel',on:'sgtHide()'},{t:'Save',hi:'सहेजें',p:1,on:'mkpSavePhone()'}]});
 }
+// Device contact picker. Fills both fields at once so the number arrives with a
+// name attached -- a bare number in a supplier profile tells the owner nothing
+// six months later.
+function mkpPickContact(){
+  if(!(navigator.contacts&&navigator.contacts.select)) return;
+  navigator.contacts.select(['name','tel'],{multiple:false}).then(function(c){
+    if(!c||!c[0])return;
+    var nm=(c[0].name&&c[0].name[0])?String(c[0].name[0]).slice(0,40):'';
+    var ph=(c[0].tel&&c[0].tel[0])?String(c[0].tel[0]).replace(/[^0-9]/g,'').slice(-10):'';
+    var a=document.getElementById('sgt-in'), b=document.getElementById('sgt-in2');
+    if(a&&nm)a.value=nm;
+    if(b&&ph)b.value=ph;
+  }).catch(function(){});
+}
 function mkpSavePhone(){
-  var el=document.getElementById('sgt-in');
+  var el=document.getElementById('sgt-in2');
+  var nel=document.getElementById('sgt-in');
   var v=((el&&el.value)||'').replace(/[^0-9]/g,'').slice(0,15);
+  var rep=((nel&&nel.value)||'').trim().slice(0,40);
   if(v.length<10){toast('Enter a valid mobile number',true);return;}
   var k=mkSupKey(_mkProfileName),rows=(DB.get(K.MAAL)||[]),hit=null;
   for(var i=0;i<rows.length;i++){
@@ -9172,7 +9195,8 @@ function mkpSavePhone(){
     if(!hit||(r.ts||0)>(hit.ts||0)) hit=r;
   }
   if(!hit){toast('No entry found for this supplier',true);return;}
-  try{DB.update(K.MAAL,hit.id,{supplierPhone:v});}catch(e){toast('Could not save',true);return;}
+  var _upd={supplierPhone:v}; if(rep)_upd.supplierRep=rep;
+  try{DB.update(K.MAAL,hit.id,_upd);}catch(e){toast('Could not save',true);return;}
   sgtHide(); toast('Contact saved');
   if(typeof renderSupplierProfile==='function')renderSupplierProfile();
 }
@@ -9190,6 +9214,17 @@ function sgtShow(cfg){
   var inp=_sgtEl('sgt-in');
   inp.style.display=cfg.input?'':'none'; inp.value=cfg.inputValue||'';
   inp.placeholder=cfg.placeholder||'Firm name';
+  var in2=_sgtEl('sgt-in2');
+  if(in2){
+    in2.style.display=cfg.input2?'':'none';
+    in2.value=cfg.input2Value||'';
+    in2.placeholder=cfg.input2Placeholder||'';
+    in2.setAttribute('inputmode',cfg.input2Mode||'text');
+    in2.setAttribute('maxlength',cfg.input2MaxLen||40);
+  }
+  // The picker is Android Chrome only -- hide it rather than fail on tap.
+  var pk=_sgtEl('sgt-pick');
+  if(pk) pk.style.display=(cfg.picker&&navigator.contacts&&navigator.contacts.select)?'':'none';
   inp.setAttribute('inputmode',cfg.inputMode||'text');
   inp.setAttribute('maxlength',cfg.maxLen||40);
   // The credential row is GSTIN-specific; hide it when the toast is not about one.
@@ -9628,8 +9663,9 @@ function renderSupplierProfile(){
       .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||((b.ts||0)-(a.ts||0)));
     if(_wp.length){
       const _ph=String(_wp[0].supplierPhone).trim();
+      const _rep=String(_wp[0].supplierRep||'').trim();
       const _wa=_waNum(_ph);
-      _cel.innerHTML='<div style="background:linear-gradient(135deg,#1b2e58,#101c3d);border:1px solid #c8884a;border-radius:12px;padding:9px 11px;margin:2px 0 12px;box-shadow:0 2px 10px rgba(204,122,71,0.12);"><div style="font-size:16px;color:#ffd9a8;font-weight:800;letter-spacing:.6px;margin-bottom:8px;">📞 '+escHTML(_ph)+'</div><div style="display:flex;gap:8px;"><a href="tel:+'+_wa+'" style="flex:1;text-align:center;background:linear-gradient(135deg,#36a2ec,#2474c4);border:1px solid #7fd0ff;color:#ffffff;font-weight:800;font-size:13px;padding:9px;border-radius:9px;text-decoration:none;">📞 कॉल</a><a href="https://wa.me/'+_wa+'" target="_blank" rel="noopener" style="flex:1;text-align:center;background:linear-gradient(135deg,#2bd36e,#1fad55);border:1px solid #5cf09a;color:#ffffff;font-weight:800;font-size:13px;padding:9px;border-radius:9px;text-decoration:none;">💬 WhatsApp</a></div></div>';
+      _cel.innerHTML='<div style="background:linear-gradient(135deg,#1b2e58,#101c3d);border:1px solid #c8884a;border-radius:12px;padding:9px 11px;margin:2px 0 12px;box-shadow:0 2px 10px rgba(204,122,71,0.12);"><div style="font-size:16px;color:#ffd9a8;font-weight:800;letter-spacing:.6px;margin-bottom:8px;">📞 '+escHTML(_ph)+(_rep?('<span style="font-size:11px;color:#c8a882;font-weight:500;letter-spacing:0;margin-left:8px;">'+escHTML(_rep)+'</span>'):'')+'</div><div style="display:flex;gap:8px;"><a href="tel:+'+_wa+'" style="flex:1;text-align:center;background:linear-gradient(135deg,#36a2ec,#2474c4);border:1px solid #7fd0ff;color:#ffffff;font-weight:800;font-size:13px;padding:9px;border-radius:9px;text-decoration:none;">📞 कॉल</a><a href="https://wa.me/'+_wa+'" target="_blank" rel="noopener" style="flex:1;text-align:center;background:linear-gradient(135deg,#2bd36e,#1fad55);border:1px solid #5cf09a;color:#ffffff;font-weight:800;font-size:13px;padding:9px;border-radius:9px;text-decoration:none;">💬 WhatsApp</a></div></div>';
     } else {
       // No number on any entry. The representative's contact is added here by
       // hand -- it is contact detail, never the supplier's identity.
@@ -12811,6 +12847,8 @@ function npReopenPreview(){
     </div>
     <div class="sgt-name" id="sgt-name"></div>
     <input class="sgt-in" id="sgt-in" maxlength="40" placeholder="Firm name" style="display:none;">
+    <input class="sgt-in" id="sgt-in2" maxlength="15" placeholder="Mobile number" style="display:none;">
+    <div class="sgt-pick" id="sgt-pick" style="display:none;" onclick="mkpPickContact()"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Choose from contacts</div>
     <div class="sgt-was" id="sgt-was" style="display:none;"></div>
     <div class="sgt-cred">
       <span class="num" id="sgt-num"></span>

@@ -1370,6 +1370,32 @@ body.notif-modal-open { overflow: hidden; }
 .lgpc-chip:active { opacity:.7; }
 .lgpc-empty { padding:14px; text-align:center; font-size:10.5px; color:#5a6a8a; }
 .lgpc-hint { font-size:8.5px; color:#5a6a8a; text-align:center; margin-bottom:12px; }
+.sgt-ov{position:fixed;inset:0;background:rgba(3,6,14,.72);display:none;align-items:flex-end;justify-content:center;z-index:9600;padding:16px;}
+.sgt-ov.show{display:flex;}
+.sgt{position:relative;width:100%;max-width:420px;background:linear-gradient(180deg,#16244a,#0e1832);border:1px solid #2a3a66;border-radius:14px;padding:13px 14px 14px;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 10px 28px -8px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.35);}
+.sgt::before{content:"";position:absolute;left:14px;right:14px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);}
+.sgt.ok{border-color:#28563f;}
+.sgt.warn{border-color:#5c471f;}
+.sgt-top{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+.sgt-ico{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(63,190,124,.12);border:1px solid rgba(63,190,124,.28);color:#3fbe7c;}
+.sgt.warn .sgt-ico{background:rgba(216,171,82,.12);border-color:rgba(216,171,82,.28);color:#d8ab52;}
+.sgt-ico svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.sgt-kick{font-size:12.5px;font-weight:600;letter-spacing:-.1px;color:#f2f5fb;}
+.sgt-name{font-size:14.5px;font-weight:600;color:#f2f5fb;line-height:1.32;letter-spacing:-.25px;margin-bottom:11px;word-break:break-word;}
+.sgt-name.muted{color:#6d7fa8;font-weight:400;font-size:13px;}
+.sgt-in{width:100%;background:#080f22;border:1px solid #2a3a66;border-radius:8px;padding:10px 11px;color:#f2f5fb;font-family:inherit;font-size:14px;font-weight:600;outline:none;margin-bottom:11px;}
+.sgt-in:focus{border-color:#3fbe7c;}
+.sgt-cred{display:flex;align-items:center;gap:9px;background:#080f22;border:1px solid #1e2c52;border-radius:8px;padding:8px 10px;margin-bottom:12px;}
+.sgt-cred .num{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;font-weight:500;color:#8fe0b4;letter-spacing:1.3px;flex:1;}
+.sgt-cred .tick{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:500;color:#3fbe7c;white-space:nowrap;}
+.sgt-cred .tick svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.sgt-was{display:flex;align-items:center;gap:7px;font-size:12px;color:#6d7fa8;margin-bottom:11px;text-decoration:line-through;text-decoration-color:rgba(109,127,168,.5);word-break:break-word;}
+.sgt-acts{display:flex;gap:9px;}
+.sgt-b{flex:1;border:none;border-radius:10px;padding:11px 10px;font-family:inherit;font-size:12.5px;font-weight:600;letter-spacing:-.1px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:44px;}
+.sgt-b .hi{font-size:9.5px;font-weight:500;opacity:.68;}
+.sgt-p{background:linear-gradient(180deg,#46c987,#2f9c63);color:#04170d;box-shadow:0 1px 0 rgba(255,255,255,.28) inset,0 4px 12px -3px rgba(47,156,99,.5);}
+.sgt-p.gold{background:linear-gradient(180deg,#e2b862,#c08f2c);color:#1c1305;box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 4px 12px -3px rgba(192,143,44,.45);}
+.sgt-s{background:rgba(255,255,255,.035);border:1px solid #2a3a66;color:#aebbd8;font-weight:500;}
 .lgpc-div { display:flex; align-items:center; gap:8px; margin:4px 0 12px; color:#5a6a8a; font-size:9px; }
 .lgpc-div::before,.lgpc-div::after { content:""; flex:1; height:1px; background:#24365a; }
 .lgpc-fld { margin-bottom:10px; }
@@ -2869,6 +2895,22 @@ body.notif-modal-open { overflow: hidden; }
       <button class="lgpc-save" onclick="lgpcSaveNew()">💾 नया सप्लायर — save करें</button>
     </div>
     <!-- Purchase file confirm (dedicated — does not touch the delete confirm) -->
+    <div class="sgt-ov" id="sgt-ov">
+      <div class="sgt" id="sgt-box">
+        <div class="sgt-top">
+          <span class="sgt-ico" id="sgt-ico"></span>
+          <span class="sgt-kick" id="sgt-kick">New supplier</span>
+        </div>
+        <div class="sgt-name" id="sgt-name"></div>
+        <input class="sgt-in" id="sgt-in" maxlength="40" placeholder="Firm name" style="display:none;">
+        <div class="sgt-was" id="sgt-was" style="display:none;"></div>
+        <div class="sgt-cred">
+          <span class="num" id="sgt-num"></span>
+          <span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span id="sgt-tick">Verified</span></span>
+        </div>
+        <div class="sgt-acts" id="sgt-acts"></div>
+      </div>
+    </div>
     <div class="lgpc-cf" id="lgpc-confirm">
       <div class="lgpc-cf-box">
         <div class="lgpc-cf-ico">📦</div>
@@ -7754,6 +7796,11 @@ function lgpcGoContact(amt){
   window._lgpcAmt = amt;
   // Supplier locked (entry from a supplier profile) — skip the contact page, file directly.
   if (window.lgPurSupCtx) { lgpcFile(window.lgPurSupCtx, window.lgPurSupPhone||''); return; }
+  // GST track: a checksum-valid GSTIN resolves the supplier without the chips.
+  if (sgtResolve()) return;
+  lgpcChipPage();
+}
+function lgpcChipPage(){
   // Build supplier chips from distinct K.MAAL suppliers.
   var seen = {}, sups = [];
   (DB.get(K.MAAL) || []).forEach(function(m){
@@ -7830,6 +7877,10 @@ function lgpcFile(sup, phone){
   if(window._lgpcInvDate)_maal.invoiceDate=window._lgpcInvDate;
   if(window._lgpcPaid>0&&window._lgpcPaid<amt)_maal.paid=window._lgpcPaid;
   if (phone) _maal.supplierPhone = phone;
+  if (window._lgpcGstin) {
+    _maal.supGstin = supGstinNorm(window._lgpcGstin);
+    try { if (typeof setSupGstin === 'function') setSupGstin(sup, _maal.supGstin); } catch(e){}
+  }
   if (_ph.thumb) _maal.billThumb = _ph.thumb;
   if (_ph.url)   _maal.billUrl   = _ph.url;
   if (_ph.path)  _maal.billPath  = _ph.path;
@@ -9059,6 +9110,122 @@ function loadHome(){buildMonthNav();loadKPIForMonth(monthNavSelected);loadMaalFo
 function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0;rows.forEach(r=>{if(inHafta(r.date,activeHafta-1))tot+=(r.amount||0);});const w=document.getElementById('w-maal');if(w)w.textContent=fmt(tot);}
 
 // ===== माल की खरीद — supplier feature (Path A: group by name) =====
+// ---- GSTIN-based supplier resolution -----------------------------------
+// A supplier is still LABELLED by name everywhere downstream. GSTIN only
+// decides WHICH label a scanned bill belongs to, so nothing else changes.
+function supGstinNorm(g){return String(g||'').toUpperCase().replace(/[^0-9A-Z]/g,'').slice(0,15);}
+
+// Newest record wins: if a supplier was renamed, the latest name is the label.
+function supFindByGstin(g){
+  g=supGstinNorm(g); if(g.length!==15) return null;
+  var rows=(DB.get(K.MAAL)||[]), best=null;
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i]; if(supGstinNorm(r.supGstin)!==g) continue;
+    if(!r.supplier) continue;
+    if(!best||(r.ts||0)>(best.ts||0)) best=r;
+  }
+  return best?{name:String(best.supplier).trim(),ts:best.ts||0}:null;
+}
+
+// Existing suppliers created from contacts carry no GSTIN. When a GST bill
+// matches one by name we adopt it and backfill, rather than splitting the ledger.
+function supFindByName(nm){
+  var k=mkSupKey(nm), rows=(DB.get(K.MAAL)||[]);
+  for(var i=0;i<rows.length;i++){
+    if(rows[i].supplier&&mkSupKey(rows[i].supplier)===k) return String(rows[i].supplier).trim();
+  }
+  return '';
+}
+function supBackfillGstin(nm,g){
+  g=supGstinNorm(g); if(g.length!==15||!nm) return;
+  var k=mkSupKey(nm), rows=(DB.get(K.MAAL)||[]);
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    if(r.supplier&&mkSupKey(r.supplier)===k&&!r.supGstin){
+      try{DB.update(K.MAAL,r.id,{supGstin:g});}catch(e){}
+    }
+  }
+}
+
+// ---- the supplier toast -------------------------------------------------
+var _SGT_ICO={
+  firm:'<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/></svg>',
+  warn:'<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M12 10v4M12 17h.01"/></svg>',
+  link:'<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7L12 19"/></svg>'
+};
+function sgtHide(){var o=document.getElementById('sgt-ov');if(o)o.classList.remove('show');}
+function _sgtEl(id){return document.getElementById(id);}
+function sgtShow(cfg){
+  var o=_sgtEl('sgt-ov'); if(!o) return;
+  _sgtEl('sgt-box').className='sgt '+(cfg.tone||'ok');
+  _sgtEl('sgt-ico').innerHTML=_SGT_ICO[cfg.icon||'firm']||'';
+  _sgtEl('sgt-kick').textContent=cfg.kick||'';
+  var nm=_sgtEl('sgt-name');
+  nm.style.display=cfg.name?'':'none';
+  nm.className='sgt-name'+(cfg.nameMuted?' muted':'');
+  nm.textContent=cfg.name||'';
+  var inp=_sgtEl('sgt-in');
+  inp.style.display=cfg.input?'':'none'; inp.value=cfg.inputValue||'';
+  var was=_sgtEl('sgt-was');
+  was.style.display=cfg.was?'':'none'; was.textContent=cfg.was||'';
+  _sgtEl('sgt-num').textContent=cfg.gstin||'';
+  _sgtEl('sgt-tick').textContent=cfg.tick||'Verified';
+  _sgtEl('sgt-acts').innerHTML=(cfg.acts||[]).map(function(a){
+    return '<button class="sgt-b '+(a.p?('sgt-p'+(a.gold?' gold':'')):'sgt-s')+'" onclick="'+a.on+'">'
+      +a.t+(a.hi?'<span class="hi">'+a.hi+'</span>':'')+'</button>';
+  }).join('');
+  o.classList.add('show');
+  if(cfg.input) setTimeout(function(){try{inp.focus();}catch(e){}},60);
+}
+
+// Commit: the ONE place the GST track files a bill.
+function sgtCommit(nm){
+  nm=String(nm||'').trim().slice(0,40);
+  if(!nm){toast('Enter the firm name',true);return;}
+  sgtHide();
+  supBackfillGstin(nm,window._lgpcGstin);
+  lgpcFile(nm,'');
+}
+function sgtCommitTyped(){sgtCommit((_sgtEl('sgt-in')||{}).value||'');}
+// "Edit" turns the read-only name into an input rather than opening another screen.
+function sgtEdit(){
+  var cur=(_sgtEl('sgt-name')||{}).textContent||'';
+  sgtShow({tone:'ok',icon:'firm',kick:'New supplier',input:true,inputValue:cur,
+    gstin:window._lgpcGstin||'',
+    acts:[{t:'Cancel',on:'sgtHide()'},{t:'Save',hi:'सहेजें',p:1,on:'sgtCommitTyped()'}]});
+}
+// Falls back to the chip page when the user rejects the GSTIN match.
+function sgtManual(){sgtHide();lgpcChipPage();}
+
+// Entry point. Returns true when the GST track handled the bill.
+function sgtResolve(){
+  var g=supGstinNorm(window._lgpcGstin||'');
+  if(g.length!==15) return false;
+  var nm=String(window._lgpcSupName||'').trim().slice(0,40);
+  var hit=supFindByGstin(g);
+  if(!hit&&nm){ var byName=supFindByName(nm); if(byName) hit={name:byName,ts:0}; }
+  if(hit){
+    if(!nm||mkSupKey(nm)===mkSupKey(hit.name)){ supBackfillGstin(hit.name,g); lgpcFile(hit.name,''); return true; }
+    window._sgtHit=hit.name;
+    sgtShow({tone:'warn',icon:'link',kick:'Already on record',name:hit.name,was:nm,
+      gstin:g,tick:'Same',
+      acts:[{t:'New account',on:'sgtManual()'},
+            {t:'Add here',hi:'इसी खाते में',p:1,gold:1,on:'sgtCommit(window._sgtHit)'}]});
+    return true;
+  }
+  if(!nm){
+    sgtShow({tone:'warn',icon:'warn',kick:'Firm name needed',name:'Not readable on the bill',
+      nameMuted:true,input:true,gstin:g,
+      acts:[{t:'Enter name',hi:'नाम दर्ज करें',p:1,gold:1,on:'sgtCommitTyped()'}]});
+    return true;
+  }
+  window._sgtNew=nm;
+  sgtShow({tone:'ok',icon:'firm',kick:'New supplier',name:nm,gstin:g,
+    acts:[{t:'Edit',on:'sgtEdit()'},
+          {t:'Confirm',hi:'पुष्टि करें',p:1,on:'sgtCommit(window._sgtNew)'}]});
+  return true;
+}
+
 function mkSupKey(s){const t=(s||'').trim();return t?t.toLowerCase():'__blank__';}
 function renderSuppliers(){
   window._mkpSel={on:false,names:{},timer:null};
@@ -12298,7 +12465,7 @@ function npShow(scr){
 }
 function npOpen(){
   window.lgPhoto={rawFile:null,blob:null,thumb:'',url:'',path:'',pages:[],isPdf:false,pageCount:0};
-  window._lgpcBillNo='';window._lgpcDueDate='';window._lgpcInvDate='';window._lgpcPaid=0;window.lgPurPay='nakad';
+  window._lgpcBillNo='';window._lgpcDueDate='';window._lgpcInvDate='';window._lgpcPaid=0;window._lgpcGstin='';window._lgpcSupName='';window.lgPurPay='nakad';
   npSplitHide();
   window.lgKeypad=window.lgKeypad||{};window.lgKeypad.note='';
   window._npFlow=false;
@@ -12339,7 +12506,7 @@ function npShowAuto(k,on){var t=document.getElementById('np-auto-'+k);if(t)t.sty
 function npClearAuto(k){npShowAuto(k,false);}
 function npScanReset(){var sb=document.getElementById('np-scanbar');if(sb)sb.style.display='none';var fb=document.getElementById('np-fallback');if(fb)fb.style.display='none';var iw=document.getElementById('np-imgwrap');if(iw)iw.classList.remove('scanning');['total','billno','due'].forEach(function(k){npShowAuto(k,false);});var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');}
 function npScanUI(state,why){var sb=document.getElementById('np-scanbar'),fb=document.getElementById('np-fallback'),cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar'),iw=document.getElementById('np-imgwrap');if(state==='reading'){if(sb)sb.style.display='flex';if(fb)fb.style.display='none';if(iw)iw.classList.add('scanning');if(cn)cn.classList.add('reading');if(cu)cu.classList.add('reading');}else{if(sb)sb.style.display='none';if(iw)iw.classList.remove('scanning');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');if(state==='fail'){if(fb)fb.style.display='flex';var _w=document.getElementById('np-fail-why');if(_w)_w.textContent=why||'\u0906\u092a\u0915\u0940 \u092b\u093c\u094b\u091f\u094b \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0939\u0948';}else{if(fb)fb.style.display='none';}}}
-function npApplyScan(p){var _pd=Number((p&&p.paid)||0);if(_pd>0){var _tt=Number(p.total||0);var _db=(p.paidOk&&Number(p.dueBal||0)>0)?Number(p.dueBal):Math.max(0,_tt-_pd);npSplitShow(_pd,(p.paidOk?_db:Number(p.dueBal||_db)),_tt,!!p.paidOk);}var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
+function npApplyScan(p){window._lgpcGstin=(p&&p.supGstin)||'';window._lgpcSupName=(p&&p.supplier)||'';var _pd=Number((p&&p.paid)||0);if(_pd>0){var _tt=Number(p.total||0);var _db=(p.paidOk&&Number(p.dueBal||0)>0)?Number(p.dueBal):Math.max(0,_tt-_pd);npSplitShow(_pd,(p.paidOk?_db:Number(p.dueBal||_db)),_tt,!!p.paidOk);}var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
 // Full resolution for OCR. 1600px was tried and REGRESSED accuracy: a bill
 // photographed at an angle occupies only part of the frame, so the small
 // CGST/SGST figures fell below the readable threshold and the arithmetic
@@ -12448,6 +12615,7 @@ function npProceed(){
   window._lgpcDueDate=(window.lgPurPay==='udhaar')?(((document.getElementById('np-due').value)||'').trim().slice(0,20)):'';
   window._lgpcInvDate=(((document.getElementById('np-inv').value)||'').trim().slice(0,20));
   window._lgpcPaid=(window._npSplitOn&&window.lgPurPay==='udhaar')?Math.min(_npInt('np-paid'),amt):0;
+  // _lgpcGstin / _lgpcSupName are set by npApplyScan straight from the scan.
   window.lgKeypad=window.lgKeypad||{};window.lgKeypad.note='';
   window._npFlow=true;
   document.getElementById('np-modal').classList.remove('show');

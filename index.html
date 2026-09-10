@@ -7881,6 +7881,11 @@ function lgpcFile(sup, phone){
   if(window._lgpcInvDate)_maal.invoiceDate=window._lgpcInvDate;
   if(window._lgpcPaid>0&&window._lgpcPaid<amt)_maal.paid=window._lgpcPaid;
   if (phone) _maal.supplierPhone = phone;
+  var _tv=Number(window._lgpcTaxable)||0, _tx=Number(window._lgpcTax)||0;
+  if (_tv > 0 && _tx > 0 && Math.abs((_tv + _tx) - amt) <= 2) {
+    _maal.taxable = Math.round(_tv * 100) / 100;
+    _maal.tax     = Math.round(_tx * 100) / 100;
+  }
   if (window._lgpcGstin) {
     _maal.supGstin = supGstinNorm(window._lgpcGstin);
     try { if (typeof setSupGstin === 'function') setSupGstin(sup, _maal.supGstin); } catch(e){}
@@ -9114,6 +9119,29 @@ function loadHome(){buildMonthNav();loadKPIForMonth(monthNavSelected);loadMaalFo
 function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0;rows.forEach(r=>{if(inHafta(r.date,activeHafta-1))tot+=(r.amount||0);});const w=document.getElementById('w-maal');if(w)w.textContent=fmt(tot);}
 
 // ===== माल की खरीद — supplier feature (Path A: group by name) =====
+// ---- GST head split ----------------------------------------------------
+// Returns {cgst,sgst,igst,basis}. The heads follow the STATE CODES, not the
+// rate: same state -> CGST+SGST at half each, different state -> IGST in full.
+// basis records how it was decided so a statement can say so honestly:
+//   'intra'   supplier and buyer states match
+//   'inter'   they differ
+//   'assumed' own GSTIN not set -- intra assumed, the common case, but flagged
+function ownGstin(){
+  try{return String(localStorage.getItem('hk_business_gstin')||'').toUpperCase().replace(/[^0-9A-Z]/g,'');}catch(e){return '';}
+}
+function gstSplit(supG,taxAmt){
+  var t=Math.round((Number(taxAmt)||0)*100)/100;
+  if(!(t>0)) return {cgst:0,sgst:0,igst:0,basis:'none'};
+  var s=String(supG||'').toUpperCase().replace(/[^0-9A-Z]/g,'').slice(0,2);
+  var o=ownGstin().slice(0,2);
+  // Round BOTH halves. t-half leaves a float artifact (100.01 -> 50.00000000000001)
+  // which would print straight onto a CA-facing statement.
+  var half=Math.round(t*50)/100, rest=Math.round((t-half)*100)/100;
+  if(!s||!o) return {cgst:half,sgst:rest,igst:0,basis:'assumed'};
+  if(s===o)  return {cgst:half,sgst:rest,igst:0,basis:'intra'};
+  return {cgst:0,sgst:0,igst:t,basis:'inter'};
+}
+
 // ---- GSTIN-based supplier resolution -----------------------------------
 // A supplier is still LABELLED by name everywhere downstream. GSTIN only
 // decides WHICH label a scanned bill belongs to, so nothing else changes.
@@ -12546,7 +12574,7 @@ function npShow(scr){
 }
 function npOpen(){
   window.lgPhoto={rawFile:null,blob:null,thumb:'',url:'',path:'',pages:[],isPdf:false,pageCount:0};
-  window._lgpcBillNo='';window._lgpcDueDate='';window._lgpcInvDate='';window._lgpcPaid=0;window._lgpcGstin='';window._lgpcSupName='';window.lgPurPay='nakad';
+  window._lgpcBillNo='';window._lgpcDueDate='';window._lgpcInvDate='';window._lgpcPaid=0;window._lgpcGstin='';window._lgpcSupName='';window._lgpcTaxable=0;window._lgpcTax=0;window.lgPurPay='nakad';
   npSplitHide();
   window.lgKeypad=window.lgKeypad||{};window.lgKeypad.note='';
   window._npFlow=false;
@@ -12587,7 +12615,7 @@ function npShowAuto(k,on){var t=document.getElementById('np-auto-'+k);if(t)t.sty
 function npClearAuto(k){npShowAuto(k,false);}
 function npScanReset(){var sb=document.getElementById('np-scanbar');if(sb)sb.style.display='none';var fb=document.getElementById('np-fallback');if(fb)fb.style.display='none';var iw=document.getElementById('np-imgwrap');if(iw)iw.classList.remove('scanning');['total','billno','due'].forEach(function(k){npShowAuto(k,false);});var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');}
 function npScanUI(state,why){var sb=document.getElementById('np-scanbar'),fb=document.getElementById('np-fallback'),cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar'),iw=document.getElementById('np-imgwrap');if(state==='reading'){if(sb)sb.style.display='flex';if(fb)fb.style.display='none';if(iw)iw.classList.add('scanning');if(cn)cn.classList.add('reading');if(cu)cu.classList.add('reading');}else{if(sb)sb.style.display='none';if(iw)iw.classList.remove('scanning');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');if(state==='fail'){if(fb)fb.style.display='flex';var _w=document.getElementById('np-fail-why');if(_w)_w.textContent=why||'\u0906\u092a\u0915\u0940 \u092b\u093c\u094b\u091f\u094b \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0939\u0948';}else{if(fb)fb.style.display='none';}}}
-function npApplyScan(p){window._lgpcGstin=(p&&p.supGstin)||'';window._lgpcSupName=(p&&p.supplier)||'';var _pd=Number((p&&p.paid)||0);if(_pd>0){var _tt=Number(p.total||0);var _db=(p.paidOk&&Number(p.dueBal||0)>0)?Number(p.dueBal):Math.max(0,_tt-_pd);npSplitShow(_pd,(p.paidOk?_db:Number(p.dueBal||_db)),_tt,!!p.paidOk);}var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
+function npApplyScan(p){window._lgpcGstin=(p&&p.supGstin)||'';window._lgpcTaxable=Number((p&&p.taxable)||0);window._lgpcTax=Number((p&&p.tax)||0);window._lgpcSupName=(p&&p.supplier)||'';var _pd=Number((p&&p.paid)||0);if(_pd>0){var _tt=Number(p.total||0);var _db=(p.paidOk&&Number(p.dueBal||0)>0)?Number(p.dueBal):Math.max(0,_tt-_pd);npSplitShow(_pd,(p.paidOk?_db:Number(p.dueBal||_db)),_tt,!!p.paidOk);}var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
 // Full resolution for OCR. 1600px was tried and REGRESSED accuracy: a bill
 // photographed at an angle occupies only part of the frame, so the small
 // CGST/SGST figures fell below the readable threshold and the arithmetic

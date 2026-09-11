@@ -12465,25 +12465,122 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     // Bill (invoice) date is the true transaction date; recording date is only a fallback.
     function biso(r){var s=(r.invoiceDate||'').trim();if(!s)return '';var pp=s.split(/[\/\-]/);if(pp.length!==3)return '';var d=+pp[0],mo=+pp[1],y=+pp[2];if(!d||!mo||!y)return '';if(y<100)y+=2000;return y+'-'+('0'+mo).slice(-2)+'-'+('0'+d).slice(-2);}
     var rows=res.rows.slice().sort(function(x,y){var dx=biso(x)||(x.date||''),dy=biso(y)||(y.date||'');if(dx!==dy)return dx<dy?-1:1;return (x.ts||0)-(y.ts||0);});
-    var body='';
+    // ---- LEDGER ENTRIES -------------------------------------------------
+    // A supplier is a creditor: a purchase CREDITS the account, a payment
+    // DEBITS it, and the balance carries as Cr. Payments are their own dated
+    // rows because a payment is its own event, not a property of the bill.
+    var _agg=(window.stAggSupplier?window.stAggSupplier(supplier):null);
+    var _boxes={};
+    if(_agg&&_agg.payments) _agg.payments.forEach(function(p){ (_boxes[p.maalId]=_boxes[p.maalId]||[]).push(p); });
+    function _mode(r){
+      if(!r.payMode) return 'Cash';
+      if(r.payMode==='Bank') return (r.payRail||'Bank')+(r.payRef?(' '+r.payRef):'');
+      if(r.payMode==='Cheque') return 'Cheque'+(r.chequeNo?(' #'+r.chequeNo):'');
+      return r.payMode;
+    }
+    var ents=[], itc={}, exclAmt=0, exclN=0, drTot=0, crTot=0;
     rows.forEach(function(r){
-      var a=r.amount||0,cash=(r.pay==='\u0928\u0915\u0926'),pd=cash?a:(r.paid||0),bal=Math.max(0,a-pd);
-      var st,cls;
-      if(cash){st='Cash';cls='cash';}else if(bal<=0){st='Settled';cls='settled';}else if(pd>0){st='Partial';cls='partial';}else{st='Due';cls='due';}
+      var a=r.amount||0, cash=(r.pay==='\u0928\u0915\u0926');
+      var _bi=biso(r)||r.date||'';
+      var bn=r.billNo?esc(r.billNo):'\u2014';
       var det=(r.name&&String(r.name).trim())?esc(r.name):'Purchase';
       var clip=(r.billUrl||r.billThumb||r.billPath||r.isPdf)?(' <span class="lk-clip">\uD83D\uDCCE'+((r.isPdf&&r.pageCount)?(' '+r.pageCount+'pg'):'')+'</span>'):'';
-      var bn=r.billNo?esc(r.billNo):'\u2014';
-      var _pm='';if(!cash&&r.payMode){if(r.payMode==='Bank'){_pm=(r.payRail||'Bank');if(r.payRef)_pm+=' '+r.payRef;}else if(r.payMode==='Cheque'){_pm='Cheque'+(r.chequeNo?' #'+r.chequeNo:'');}else{_pm=r.payMode;}}
-      var _bi=biso(r),_dcell=_bi?fmtRowDate(_bi):((r.invoiceDate&&String(r.invoiceDate).trim())?esc(String(r.invoiceDate).trim()):fmtRowDate(r.date));
-      body+='<tr><td class="lk-dt">'+_dcell+'</td><td class="lk-bn">'+bn+'</td>'
-        +'<td class="lk-de"><b>'+det+'</b>'+clip+'</td>'
-        +'<td class="lk-num">'+fmtN(a)+'</td>'
-        +'<td class="lk-num lk-paid">'+(pd?(fmtN(pd)+(_pm?'<div class="lk-pm">'+esc(_pm)+'</div>':'')):'\u2014')+'</td>'
-        +'<td class="lk-num"><span class="lk-bal">'+fmtN(bal)+'</span><div class="lk-st s-'+cls+'">'+st+'</div></td></tr>';
+      // tax sub-line, and the ITC bucket it belongs to
+      var tv=Number(r.taxable)||0, tx=Number(r.tax)||0, sub='';
+      if(tv>0&&tx>0){
+        var sp=(typeof gstSplit==='function')?gstSplit(r.supGstin||'',tx):null;
+        var rate=Math.round((tx/tv)*10000)/100, key=String(rate);
+        if(!itc[key]) itc[key]={rate:rate,tv:0,c:0,s:0,i:0,t:0};
+        itc[key].tv+=tv; itc[key].t+=tx;
+        if(sp){ itc[key].c+=sp.cgst; itc[key].s+=sp.sgst; itc[key].i+=sp.igst; }
+        sub='Taxable '+fmtN(tv)+(sp?((sp.igst>0)?(' \u00b7 IGST '+fmtN(sp.igst)):(' \u00b7 CGST '+fmtN(sp.cgst)+' \u00b7 SGST '+fmtN(sp.sgst))):'');
+      } else { exclAmt+=a; exclN++; sub='No GST charged on this bill'; }
+      ents.push({d:_bi,ts:(r.ts||0),o:0,bill:bn,det:det,sub:sub,clip:clip,dr:0,cr:a});
+      crTot+=a;
+      // dated payments recorded through the Pay overlay
+      var boxed=0, bx=_boxes[r.id]||[];
+      bx.forEach(function(p){
+        boxed+=(p.amount||0);
+        ents.push({d:p.date||_bi,ts:(r.ts||0),o:1,bill:'\u2014',det:'Payment',
+          sub:'against '+bn,clip:'',dr:(p.amount||0),cr:0,pm:_mode(r),pd:(p.date||_bi)});
+        drTot+=(p.amount||0);
+      });
+      // anything paid but not boxed: a cash bill, or a part-payment read off the
+      // bill itself, which deliberately never created a day-book entry.
+      var paid=cash?a:(r.paid||0);
+      var resid=Math.round((paid-boxed)*100)/100;
+      if(resid>1){
+        var pdt=r.payDate||_bi;
+        ents.push({d:pdt,ts:(r.ts||0),o:1,bill:'\u2014',det:'Payment',
+          sub:'against '+bn+(cash?'':' \u00b7 recorded on bill'),clip:'',
+          dr:resid,cr:0,pm:_mode(r),pd:pdt});
+        drTot+=resid;
+      }
     });
+    // strict date order; on the same day a purchase precedes its payment
+    ents.sort(function(x,y){
+      if(x.d!==y.d) return (x.d<y.d)?-1:1;
+      if(x.ts!==y.ts) return x.ts-y.ts;
+      return x.o-y.o;
+    });
+    var _run=0;
+    var body='';
+    ents.forEach(function(e){
+      _run+=(e.cr-e.dr);
+      var dr = e.dr ? (fmtN(e.dr)
+              +(e.pm?'<div class="lk-pm">'+esc(e.pm)+'</div>':'')
+              +(e.pd?'<div class="lk-pd">paid '+fmtRowDate(e.pd)+'</div>':'')) : '\u2014';
+      body+='<tr'+(e.dr?' class="lk-pay"':'')+'><td class="lk-dt">'+(e.d?fmtRowDate(e.d):'\u2014')+'</td>'
+        +'<td class="lk-bn">'+e.bill+'</td>'
+        +'<td class="lk-de"><b>'+e.det+'</b>'+e.clip+(e.sub?('<div class="lk-sub">'+e.sub+'</div>'):'')+'</td>'
+        +'<td class="lk-num lk-dr">'+dr+'</td>'
+        +'<td class="lk-num lk-cr">'+(e.cr?fmtN(e.cr):'\u2014')+'</td>'
+        +'<td class="lk-num"><span class="lk-bal">'+fmtN(Math.abs(_run))+'</span>'
+        +(_run>0?'<span class="lk-crx">Cr</span>':'')+'</td></tr>';
+    });
+    if(!ents.length) body='<tr><td colspan="6" style="text-align:center;color:#8a90a2;padding:22px;">No entries in this period</td></tr>';
+    body+='<tr class="lk-tot"><td colspan="3">TOTAL FOR PERIOD</td>'
+      +'<td class="lk-num">'+fmtN(drTot)+'</td><td class="lk-num">'+fmtN(crTot)+'</td>'
+      +'<td class="lk-num">'+fmtN(Math.abs(_run))+(_run>0?' Cr':'')+'</td></tr>';
+    // ---- ITC SUMMARY ----------------------------------------------------
+    var _ik=Object.keys(itc).sort(function(a,b){return parseFloat(a)-parseFloat(b);});
+    var itcHtml='';
+    if(_ik.length){
+      var T={tv:0,c:0,s:0,i:0,t:0}, ir='';
+      _ik.forEach(function(k){
+        var o=itc[k]; T.tv+=o.tv; T.c+=o.c; T.s+=o.s; T.i+=o.i; T.t+=o.t;
+        ir+='<tr><td>'+o.rate+'%</td><td class="tr">'+fmtN(o.tv)+'</td><td class="tr">'+(o.c?fmtN(o.c):'\u2014')
+          +'</td><td class="tr">'+(o.s?fmtN(o.s):'\u2014')+'</td><td class="tr">'+(o.i?fmtN(o.i):'\u2014')
+          +'</td><td class="tr">'+fmtN(o.t)+'</td></tr>';
+      });
+      itcHtml='<div class="lk-itc"><div class="h">INPUT TAX CREDIT SUMMARY \u00b7 THIS SUPPLIER, THIS PERIOD</div>'
+        +'<table><tr><th>RATE</th><th class="tr">TAXABLE VALUE</th><th class="tr">CGST</th><th class="tr">SGST</th><th class="tr">IGST</th><th class="tr">TOTAL TAX</th></tr>'
+        +ir+'<tr class="t"><td>Total</td><td class="tr">'+fmtN(T.tv)+'</td><td class="tr">'+(T.c?fmtN(T.c):'\u2014')
+        +'</td><td class="tr">'+(T.s?fmtN(T.s):'\u2014')+'</td><td class="tr">'+(T.i?fmtN(T.i):'\u2014')
+        +'</td><td class="tr">'+fmtN(T.t)+'</td></tr></table>'
+        +(exclN?('<div class="n">Note: '+exclN+' purchase'+(exclN>1?'s':'')+' totalling '+inr(exclAmt)
+          +' excluded \u2014 no GST charged, not eligible for input credit.</div>'):'')
+        +'</div>';
+    }
     var css='<style>'
       +'.lk-stmt{width:794px;background:#fff;color:#1b2130;font-family:"Noto Sans Devanagari","Poppins","Segoe UI",system-ui,Arial,sans-serif;box-sizing:border-box;}'
       +'.lk-stmt *{box-sizing:border-box;}'
+      +'.lk-sub{font-family:ui-monospace,Consolas,monospace;font-size:8.5px;color:#7c8598;margin-top:2px;letter-spacing:-.2px;}'
+      +'.lk-pd{font-family:ui-monospace,Consolas,monospace;font-size:8px;color:#8a94a6;margin-top:1px;}'
+      +'.lk-dr{color:#1e7a46;}.lk-cr{color:#9a3a3a;}'
+      +'.lk-crx{font-size:8.5px;color:#a8703a;font-weight:700;margin-left:3px;}'
+      +'.lk-tb tr.lk-pay td{background:#f4faf6!important;}'
+      +'.lk-tb tr.lk-tot td{background:#f7f3ea!important;border-top:1.5px solid #d9d0bd;font-weight:800;color:#1d2432;}'
+      +'.lk-itc{padding:13px 30px;background:#faf8f3;border-top:1px solid #e6e4dc;}'
+      +'.lk-itc .h{font-size:9px;font-weight:800;letter-spacing:.6px;color:#6b7385;margin-bottom:7px;}'
+      +'.lk-itc table{width:100%;border-collapse:collapse;font-size:10.5px;}'
+      +'.lk-itc th{text-align:left;padding:5px 8px;font-size:8.5px;font-weight:700;color:#6b7385;border-bottom:1px solid #ded6c6;}'
+      +'.lk-itc td{padding:6px 8px;border-bottom:1px solid #eee9df;color:#2a3040;}'
+      +'.lk-itc .tr{text-align:right;}'
+      +'.lk-itc tr.t td{font-weight:800;background:#f2ede4;border-top:1px solid #ded6c6;border-bottom:none;}'
+      +'.lk-itc .n{font-size:8.5px;color:#8a8072;margin-top:7px;font-style:italic;}'
+      +'.lk-sg{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;color:#5d6a80;letter-spacing:.7px;margin-top:3px;}'
+      +'.lk-sg b{font-family:inherit;font-size:8px;color:#8a94a6;margin-right:4px;font-weight:700;}'
       +'.lk-hd{background:#0a1530;color:#fff;padding:20px 30px 17px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #c0902f;}'
       +'.lk-sh{font-size:22px;font-weight:800;}'
       +'.lk-ph{font-size:12px;color:#c3cade;margin-top:4px;}'
@@ -12525,12 +12622,14 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
       +'.lk-wrap{padding:14px 30px 0;}'
       +'</style>';
     var head='<div class="lk-hd"><div><div class="lk-sh">'+esc(shop)+'</div>'+(sph?('<div class="lk-ph">Phone '+esc(sph)+'</div>'):'')+'</div>'
-      +'<div class="lk-hr"><div class="l">Purchase Statement</div><div class="r">'+esc(label)+'</div></div></div>';
+      +'<div class="lk-hr"><div class="l">Supplier Ledger</div><div class="r">'+esc(label)+'</div></div></div>';
     var hero='<div class="lk-hero"><div><div class="who">'+esc(supplier||'\u2014')+'<span class="tag">Supplier</span></div>'
+      +(function(){var g=(window.getSupGstin?(getSupGstin(supplier)||''):'');
+         return g?('<div class="lk-sg"><b>GSTIN</b>'+esc(g)+'</div>'):'';})()
       +'<div class="as">'+res.bills+' bills'+(phone?(' \u00b7 '+esc(phone)):'')+'</div></div>'
       +'<div><div class="cap">Balance Payable</div><div class="amt">'+inr(res.payable)+'</div></div></div>';
     var table='<div class="lk-wrap"><table class="lk-tb"><thead><tr>'
-      +'<th>Bill Date</th><th>Bill No.</th><th>Details</th><th class="tr">Amount</th><th class="tr">Paid</th><th class="tr">Balance</th>'
+      +'<th>Date</th><th>Bill No.</th><th>Particulars</th><th class="tr">Debit</th><th class="tr">Credit</th><th class="tr">Balance</th>'
       +'</tr></thead><tbody>'+body+'</tbody></table></div>';
     var sum='<div class="lk-sum"><div class="c"><div class="k">Total purchased</div><div class="v">'+inr(res.purchased)+'</div></div>'
       +'<div class="c"><div class="k">Total paid</div><div class="v">'+inr(res.paid)+'</div></div>'
@@ -12539,7 +12638,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     var now=new Date();
     var ft='<div class="lk-ft"><div class="fl">Computer-generated statement \u00b7 no signature required.<br>Generated on '+fmtRowDate(now.getFullYear()+'-'+pad2(now.getMonth()+1)+'-'+pad2(now.getDate()))+' '+now.getFullYear()+'</div>'
       +'<div class="fr"><div class="lk-bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div class="lk-tag">\u0905\u092c \u0939\u093f\u0938\u093e\u092c \u091a\u0932\u0947\u0917\u093e LIVE</div></div></div>';
-    return '<div class="lk-stmt">'+css+head+hero+table+sum+ft+'</div>';
+    return '<div class="lk-stmt">'+css+head+hero+table+itcHtml+sum+ft+'</div>';
   }
 
   /* ---------- generate: DOM -> html2canvas -> jsPDF blob ---------- */

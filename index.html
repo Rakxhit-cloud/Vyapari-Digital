@@ -12472,6 +12472,8 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     var _agg=(window.stAggSupplier?window.stAggSupplier(supplier):null);
     var _boxes={};
     if(_agg&&_agg.payments) _agg.payments.forEach(function(p){ (_boxes[p.maalId]=_boxes[p.maalId]||[]).push(p); });
+    function _dmy(d){var p=String(d||'').split('-');
+      return (p.length===3)?(p[2]+'-'+p[1]+'-'+p[0]):String(d||'');}
     function _mode(r){
       if(!r.payMode) return 'Cash';
       if(r.payMode==='Bank') return (r.payRail||'Bank')+(r.payRef?(' '+r.payRef):'');
@@ -12529,7 +12531,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
       _run+=(e.cr-e.dr);
       var dr = e.dr ? (fmtN(e.dr)
               +(e.pm?'<div class="lk-pm">'+esc(e.pm)+'</div>':'')
-              +(e.pd?'<div class="lk-pd">paid '+fmtRowDate(e.pd)+'</div>':'')) : '\u2014';
+              +(e.pd?'<div class="lk-pd">paid '+_dmy(e.pd)+'</div>':'')) : '\u2014';
       body+='<tr'+(e.dr?' class="lk-pay"':'')+'><td class="lk-dt">'+(e.d?fmtRowDate(e.d):'\u2014')+'</td>'
         +'<td class="lk-bn">'+e.bill+'</td>'
         +'<td class="lk-de"><b>'+e.det+'</b>'+e.clip+(e.sub?('<div class="lk-sub">'+e.sub+'</div>'):'')+'</td>'

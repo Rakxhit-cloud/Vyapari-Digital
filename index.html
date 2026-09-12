@@ -1757,6 +1757,7 @@ body.notif-modal-open { overflow: hidden; }
 .lg-voice-sub{font-size:9.5px;color:#6a7ba8;}
 /* the SAME .lg-voice block, laid out horizontally. nothing restyled. */
 .lg-voice.row{flex-direction:row;align-items:center;gap:11px;margin:0 0 11px;padding:9px 11px;}
+.lg-voice.row .lg-voice-idle{display:contents;}
 .lg-voice.row .lgv-tx{flex:1;min-width:0;text-align:left;}
 .lg-voice.row .lg-voice-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .lg-voice.row .lgv-sq{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;
@@ -2786,13 +2787,13 @@ body.notif-modal-open { overflow: hidden; }
       </div>
     </div>
     <div class="lg-voice row" id="lg-voice-entry" data-type="entry">
-      <div class="lg-voice-idle" style="display:contents;">
+      <div class="lg-voice-idle">
         <button type="button" class="lg-voice-mic" onclick="lgVoiceStart('entry')" aria-label="बोलकर एंट्री करें"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
         <div class="lgv-tx">
           <div class="lg-voice-cap">बोलकर एंट्री करें</div>
           <div class="lg-voice-sub">"पंद्रह सौ राहुल से मिले"</div>
         </div>
-        <div class="lgv-sq" onclick="lgpOpenKeypad('cash')">⌨️</div>
+        <div class="lgv-sq" onclick="lgOpenKeypad('cash')">⌨️</div>
         <div class="lgv-sq" onclick="npOpen()">📷</div>
       </div>
       <div class="lg-voice-rec">
@@ -13056,7 +13057,7 @@ function npReopenPreview(){
 </script>
 <script>
 (function(){
-  var LGV = { cash:{}, upi:{} };
+  var LGV = { cash:{}, upi:{}, entry:{} };
   window.lgVoiceState = LGV;
   function el(id){ return document.getElementById(id); }
   function zone(type){ return el('lg-voice-'+type); }

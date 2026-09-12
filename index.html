@@ -2755,8 +2755,9 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lg-totals-body">
         <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:11px;border-bottom:1px solid #2a4078;margin-bottom:11px;">
           <div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#d4a850;font-weight:600;margin-bottom:4px;"><span style="font-size:15px;">💰</span> आज का हिसाब</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#d4a850;font-weight:600;margin-bottom:4px;"><span style="font-size:15px;">💰</span> शेष · BALANCE</div>
             <div style="font-size:30px;font-weight:600;color:#e8d8b8;line-height:1;" id="lg-tot-profit">₹0</div>
+            <div id="lg-tot-open" style="font-size:10px;color:#8aa0d8;font-weight:500;margin-top:3px;display:none;"></div>
           </div>
           <div style="font-size:10px;color:#8aa0d8;text-align:right;line-height:1.4;" id="lg-date-label">—</div>
         </div>
@@ -7299,6 +7300,21 @@ function lgInOut(boxes){
   return {inward:i, outward:o, balance:i-o};
 }
 
+// Closing balance of every day BEFORE dateStr. Dates are YYYY-MM-DD so plain
+// string comparison orders them correctly.
+function lgClosingBefore(dateStr){
+  if(!dateStr) return 0;
+  var rows=[]; try{ rows = DB.get(K.BIKRI) || []; }catch(e){ return 0; }
+  var bal=0;
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    if(!r || !r.date || String(r.date) >= String(dateStr)) continue;
+    var io=lgInOut(r.lgBoxes);
+    bal += (io.inward - io.outward);
+  }
+  return bal;
+}
+
 function lgPersistRec(rec) {
   // Recompute totals from boxes — always, even when empty (deletion case).
   // This is critical: if user deletes the last box, we need totals to drop to 0,
@@ -7317,7 +7333,12 @@ function lgPersistRec(rec) {
     // Direction totals sit ALONGSIDE the mode totals. sales, profit, margin and
     // every statement keep reading cash/upi/expense exactly as before.
     const io = lgInOut(rec.lgBoxes);
-    rec.inward = io.inward; rec.outward = io.outward; rec.balance = io.balance;
+    rec.inward = io.inward; rec.outward = io.outward;
+    // openBal is written for readers (calendar, month totals). The live screen
+    // recomputes it rather than trusting this, so an edited past day corrects
+    // every later day without a rewrite.
+    rec.openBal = lgClosingBefore(rec.date);
+    rec.balance = rec.openBal + io.inward - io.outward;
     const s = rec.sales, x = rec.expense, u = rec.udhaar || 0;
     rec.profit = s - x - u;
     rec.margin = s > 0 ? Math.round((rec.profit / s) * 100) : 0;
@@ -7566,7 +7587,15 @@ function lgRenderTotals() {
     else if (b.type === 'expense') expense += b.amount;
   });
   const io = lgInOut(boxes);
-  document.getElementById('lg-tot-profit').textContent = fmt(io.balance);
+  const _open = lgClosingBefore((window.lgState && window.lgState.rec && window.lgState.rec.date) || '');
+  const _run  = _open + io.inward - io.outward;
+  document.getElementById('lg-tot-profit').textContent = (_run < 0 ? '-' : '') + fmt(Math.abs(_run));
+  // Without this line आया - गया will not equal शेष and the card reads as broken.
+  const _oc = document.getElementById('lg-tot-open');
+  if (_oc) {
+    _oc.textContent = _open ? ('कल से ' + (_open < 0 ? '-' : '') + fmt(Math.abs(_open))) : '';
+    _oc.style.display = _open ? '' : 'none';
+  }
   document.getElementById('lg-tot-sales').textContent = fmt(io.inward);
   document.getElementById('lg-tot-expense').textContent = fmt(io.outward);
   document.getElementById('lg-tot-count').textContent = count + ' बार';
@@ -13158,6 +13187,20 @@ function npReopenPreview(){
     if(!r){ try{ if(typeof lgGetOrCreateRec==='function'){ window.lgState.date=TSTR; window.lgState.isToday=true; window.lgState.rec=lgGetOrCreateRec(TSTR); r=window.lgState.rec; } }catch(e){} }
     if(!r){ if(typeof toast==='function') toast('❌ आज का हिसाब नहीं खुला', true); return; }
     if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
+    // Double-tapped mic, or the same sentence said twice. Ask before adding a
+    // second identical entry inside two minutes.
+    if (type === 'entry') {
+      var _now = Date.now(), _nn = (S.note || '').trim();
+      var _dupe = (r.lgBoxes || []).some(function(b){
+        return Math.round(b.amount||0) === amt
+            && String(b.note||'').trim() === _nn
+            && (_now - (b.ts||0)) < 120000;
+      });
+      if (_dupe && !window.confirm('\u092f\u0939\u0940 \u090f\u0902\u091f\u094d\u0930\u0940 \u0905\u092d\u0940 \u091c\u0941\u0921\u093c\u0940 \u0925\u0940 \u2014 \u0926\u094b\u092c\u093e\u0930\u093e \u091c\u094b\u0921\u093c\u0947\u0902?')) {
+        setState(type,null); S.amt=0; S.note=''; S.dir='';
+        return;
+      }
+    }
     var _bt = (type==='entry') ? ((S.dir==='in') ? 'cash' : 'expense') : type;
     var typeBoxes = r.lgBoxes.filter(function(b){ return b.type===_bt; });
     r.lgBoxes.push({ n: typeBoxes.length+1, type: _bt, amount: amt,

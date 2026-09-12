@@ -1754,6 +1754,58 @@ body.notif-modal-open { overflow: hidden; }
 @keyframes lgvBreathe{0%,100%{box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 6px 0 var(--vglow)}50%{box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 20px 3px var(--vglow)}}
 .lg-voice-cap{font-size:11.5px;font-weight:700;color:var(--vac);}
 .lg-voice-sub{font-size:9.5px;color:#6a7ba8;}
+/* the SAME .lg-voice block, laid out horizontally. nothing restyled. */
+.lg-voice.row{flex-direction:row;align-items:center;gap:11px;margin:0 0 11px;padding:9px 11px;}
+.lg-voice.row .lgv-tx{flex:1;min-width:0;text-align:left;}
+.lg-voice.row .lg-voice-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lg-voice.row .lgv-sq{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;
+  align-items:center;justify-content:center;font-size:15px;background:rgba(255,255,255,.05);
+  border:1px solid #2a4078;cursor:pointer;}
+.lg-voice.row .lgv-sq:active{opacity:.6;}
+.lg-voice.row.rec,.lg-voice.row.proc,.lg-voice.row.res,.lg-voice.row.err{flex-direction:column;}
+.lg-voice.row.rec .lgv-tx,.lg-voice.row.proc .lgv-tx,.lg-voice.row.res .lgv-tx,
+.lg-voice.row.err .lgv-tx,.lg-voice.row.rec .lgv-sq,.lg-voice.row.proc .lgv-sq,
+.lg-voice.row.res .lgv-sq,.lg-voice.row.err .lgv-sq{display:none;}
+/* entry list */
+.lg-el-hd{display:flex;align-items:center;font-size:11.5px;font-weight:700;color:#cfe0ff;margin:0 2px 8px;}
+.lg-el-hd .n{margin-left:auto;font-size:10px;color:#8aa0d8;font-weight:600;}
+.lg-el{max-height:252px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:2px;}
+.lg-el::-webkit-scrollbar{width:3px;}
+.lg-el::-webkit-scrollbar-thumb{background:#2a4078;border-radius:3px;}
+.lg-en{display:flex;align-items:flex-start;gap:9px;border-radius:12px;padding:9px 11px;
+  margin-bottom:6px;border:1px solid;}
+.lg-en.i{background:linear-gradient(160deg,rgba(63,190,124,.09),rgba(63,190,124,.03));border-color:#2d7a4a;}
+.lg-en.o{background:linear-gradient(160deg,rgba(232,137,106,.09),rgba(232,137,106,.03));border-color:#8a4d3a;}
+.lg-en .ar{width:22px;height:22px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;margin-top:1px;}
+.lg-en.i .ar{background:rgba(63,190,124,.14);border:1px solid #2d7a4a;color:#5dd88a;}
+.lg-en.o .ar{background:rgba(232,137,106,.14);border:1px solid #8a4d3a;color:#e8896a;}
+.lg-en .ar svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.6;
+  stroke-linecap:round;stroke-linejoin:round;}
+.lg-en .m{flex:1;min-width:0;}
+.lg-en .m .a{font-size:15px;font-weight:800;letter-spacing:-.3px;}
+.lg-en.i .m .a{color:#7ee0a4;} .lg-en.o .m .a{color:#f0a080;}
+.lg-en .m .nt{font-size:11px;color:#b8c6e6;margin-top:1px;line-height:1.45;word-break:break-word;}
+.lg-en .m .nt .cl{color:#e8c870;}
+.lg-en .rt{text-align:right;flex-shrink:0;}
+.lg-en .rt .tm{font-size:9.5px;color:#6d8fa8;white-space:nowrap;}
+.lg-en .rt .ed{font-size:11px;opacity:.55;margin-top:4px;cursor:pointer;}
+.lg-el-empty{text-align:center;color:#5a6a8f;font-size:11.5px;padding:18px 0;}
+/* direction ask */
+.lg-ask{background:linear-gradient(160deg,#241a08,#141008);border:1px solid #8a6a28;
+  border-radius:13px;padding:12px;margin-bottom:11px;box-shadow:0 0 14px rgba(216,171,82,.10);}
+.lg-ask .h{font-size:11.5px;font-weight:700;color:#e8c870;margin-bottom:9px;}
+.lg-ask .hd{background:#0a1020;border:1px solid #2a4078;border-radius:10px;padding:9px 11px;margin-bottom:10px;}
+.lg-ask .hd .a{font-size:20px;font-weight:800;letter-spacing:-.5px;color:#fff;}
+.lg-ask .hd .n{font-size:11px;color:#b8c6e6;margin-top:2px;}
+.lg-ask .b2{display:flex;gap:9px;}
+.lg-ask .b2 button{flex:1;border:none;border-radius:11px;padding:10px;font-family:inherit;
+  font-size:13px;font-weight:800;cursor:pointer;}
+.lg-ask .b2 .y{background:linear-gradient(180deg,#46c987,#2f9c63);color:#04170d;
+  box-shadow:0 1px 0 rgba(255,255,255,.28) inset;}
+.lg-ask .b2 .n2{background:linear-gradient(180deg,#e8896a,#c05f48);color:#210d08;
+  box-shadow:0 1px 0 rgba(255,255,255,.28) inset;}
+.lg-ask .b2 small{display:block;font-size:9px;font-weight:500;opacity:.75;margin-top:1px;}
 .lg-voice-rec,.lg-voice-proc,.lg-voice-res{display:none;flex-direction:column;align-items:center;gap:8px;width:100%;}
 .lg-voice.rec .lg-voice-idle,.lg-voice.proc .lg-voice-idle,.lg-voice.res .lg-voice-idle{display:none;}
 .lg-voice.rec .lg-voice-rec{display:flex;}
@@ -2701,18 +2753,18 @@ body.notif-modal-open { overflow: hidden; }
       <div class="lg-totals-body">
         <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:11px;border-bottom:1px solid #2a4078;margin-bottom:11px;">
           <div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#d4a850;font-weight:600;margin-bottom:4px;"><span style="font-size:15px;">💰</span> Today’s Result · Total/कुल</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#d4a850;font-weight:600;margin-bottom:4px;"><span style="font-size:15px;">💰</span> आज का हिसाब</div>
             <div style="font-size:30px;font-weight:600;color:#e8d8b8;line-height:1;" id="lg-tot-profit">₹0</div>
           </div>
           <div style="font-size:10px;color:#8aa0d8;text-align:right;line-height:1.4;" id="lg-date-label">—</div>
         </div>
         <div style="display:flex;">
           <div style="flex:1;text-align:center;">
-            <div style="font-size:11px;color:#8aef7a;font-weight:600;margin-bottom:3px;">💵 बिक्री</div>
+            <div style="font-size:11px;color:#8aef7a;font-weight:600;margin-bottom:3px;">↓ आया</div>
             <div style="font-size:16px;font-weight:700;color:#8aef7a;" id="lg-tot-sales">₹0</div>
           </div>
           <div style="flex:1;text-align:center;border-left:1px solid #2a4078;">
-            <div style="font-size:11px;color:#cc7a47;font-weight:600;margin-bottom:3px;">🧾 खर्चा</div>
+            <div style="font-size:11px;color:#cc7a47;font-weight:600;margin-bottom:3px;">↑ गया</div>
             <div style="font-size:16px;font-weight:700;color:#cc7a47;" id="lg-tot-expense">₹0</div>
           </div>
           <div style="flex:1;text-align:center;border-left:1px solid #2a4078;">
@@ -2723,8 +2775,46 @@ body.notif-modal-open { overflow: hidden; }
       </div>
     </div>
 
+    <!-- entry: one voice row + one list -->
+    <div id="lg-ask" class="lg-ask" style="display:none;">
+      <div class="h">🤔 दिशा साफ़ नहीं</div>
+      <div class="hd"><div class="a" id="lg-ask-amt">₹0</div><div class="n" id="lg-ask-note">—</div></div>
+      <div class="b2">
+        <button type="button" class="y" onclick="lgAskPick('in')">आया<small>मिले</small></button>
+        <button type="button" class="n2" onclick="lgAskPick('out')">गया<small>दिए</small></button>
+      </div>
+    </div>
+    <div class="lg-voice row" id="lg-voice-entry" data-type="entry">
+      <div class="lg-voice-idle" style="display:contents;">
+        <button type="button" class="lg-voice-mic" onclick="lgVoiceStart('entry')" aria-label="बोलकर एंट्री करें"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+        <div class="lgv-tx">
+          <div class="lg-voice-cap">बोलकर एंट्री करें</div>
+          <div class="lg-voice-sub">"पंद्रह सौ राहुल से मिले"</div>
+        </div>
+        <div class="lgv-sq" onclick="lgpOpenKeypad('cash')">⌨️</div>
+        <div class="lgv-sq" onclick="npOpen()">📷</div>
+      </div>
+      <div class="lg-voice-rec">
+        <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('entry')" aria-label="रोकें"><span></span></button>
+        <div class="lg-voice-wave" id="lg-wave-entry"></div>
+        <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-entry">0.0s</b></div>
+      </div>
+      <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
+      <div class="lg-voice-res">
+        <div class="lg-voice-amt" id="lg-vamt-entry">₹0</div>
+        <div class="lg-voice-sub" id="lg-vnote-entry" style="margin-bottom:6px;"></div>
+        <div class="lg-voice-btns">
+          <button type="button" class="lg-voice-add" onclick="lgVoiceConfirm('entry')">Add / जोड़ें</button>
+          <button type="button" class="lg-voice-again" onclick="lgVoiceReset('entry')">🔄 फिर से</button>
+        </div>
+      </div>
+      <div class="lg-voice-err" id="lg-verr-entry"></div>
+    </div>
+    <div class="lg-el-hd">आज की एंट्री<span class="n" id="lg-el-count">0</span></div>
+    <div class="lg-el" id="lg-entry-list"></div>
+
     <!-- Cash बिक्री section -->
-    <div style="margin-bottom:18px;">
+    <div style="margin-bottom:18px;display:none;">
       <div class="lg-cat-head">
         <div class="lg-cat-head-left">
           <span style="font-size:22px;">💵</span>
@@ -2759,7 +2849,7 @@ body.notif-modal-open { overflow: hidden; }
     </div>
 
     <!-- UPI बिक्री section -->
-    <div style="margin-bottom:18px;">
+    <div style="margin-bottom:18px;display:none;">
       <div class="lg-cat-head">
         <div class="lg-cat-head-left">
           <span style="font-size:22px;">📱</span>
@@ -2808,7 +2898,7 @@ body.notif-modal-open { overflow: hidden; }
     </div>
 
     <!-- खर्चा section -->
-    <div style="margin-bottom:18px;">
+    <div style="margin-bottom:18px;display:none;">
       <div class="lg-cat-head">
         <div class="lg-cat-head-left">
           <span style="font-size:22px;">🧾</span>
@@ -7192,6 +7282,22 @@ function lgGetOrCreateRec(date) {
 
 // Persist a Live गल्ला record (after a box add/edit/delete or after save).
 // Recomputes derived totals from lgBoxes BEFORE writing.
+// Direction of a box. Explicit when the entry was spoken; derived for every
+// legacy box so old records read correctly without a migration.
+function lgDirOf(b){
+  if(b && (b.dir==='in' || b.dir==='out')) return b.dir;
+  if(b && (b.type==='cash' || b.type==='upi')) return 'in';
+  return 'out';
+}
+function lgInOut(boxes){
+  var i=0,o=0;
+  (boxes||[]).forEach(function(b){
+    var a=Math.round(b.amount||0); if(!(a>0)) return;
+    if(lgDirOf(b)==='in') i+=a; else o+=a;
+  });
+  return {inward:i, outward:o, balance:i-o};
+}
+
 function lgPersistRec(rec) {
   // Recompute totals from boxes — always, even when empty (deletion case).
   // This is critical: if user deletes the last box, we need totals to drop to 0,
@@ -7207,6 +7313,10 @@ function lgPersistRec(rec) {
     rec.upi = upi;
     rec.expense = expense;
     rec.sales = cash + upi;
+    // Direction totals sit ALONGSIDE the mode totals. sales, profit, margin and
+    // every statement keep reading cash/upi/expense exactly as before.
+    const io = lgInOut(rec.lgBoxes);
+    rec.inward = io.inward; rec.outward = io.outward; rec.balance = io.balance;
     const s = rec.sales, x = rec.expense, u = rec.udhaar || 0;
     rec.profit = s - x - u;
     rec.margin = s > 0 ? Math.round((rec.profit / s) * 100) : 0;
@@ -7454,12 +7564,61 @@ function lgRenderTotals() {
     else if (b.type === 'upi') upi += b.amount;
     else if (b.type === 'expense') expense += b.amount;
   });
-  const sales = cash + upi;
-  const profit = sales - expense;
-  document.getElementById('lg-tot-profit').textContent = fmt(profit);
-  document.getElementById('lg-tot-sales').textContent = fmt(sales);
-  document.getElementById('lg-tot-expense').textContent = fmt(expense);
+  const io = lgInOut(boxes);
+  document.getElementById('lg-tot-profit').textContent = fmt(io.balance);
+  document.getElementById('lg-tot-sales').textContent = fmt(io.inward);
+  document.getElementById('lg-tot-expense').textContent = fmt(io.outward);
   document.getElementById('lg-tot-count').textContent = count + ' बार';
+  if (typeof lgRenderEntries === 'function') lgRenderEntries();
+}
+
+// One list for the whole day, newest first, scrolling past four rows.
+var _LG_AR_IN  = '<svg viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>';
+var _LG_AR_OUT = '<svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+function _lgTime(ts){
+  if(!ts) return '';
+  var d=new Date(ts), h=d.getHours(), m=String(d.getMinutes()).padStart(2,'0');
+  var ap=h>=12?'PM':'AM'; h=h%12; if(h===0)h=12;
+  return h+':'+m+' '+ap;
+}
+function _lgLabel(b){
+  if(b.note && String(b.note).trim()) return escHTML(String(b.note).trim());
+  if(b.type==='cash') return 'नकद';
+  if(b.type==='upi')  return 'UPI';
+  if(b.type==='expense') return 'खर्चा';
+  if(b.type==='purchase') return 'माल';
+  return 'एंट्री';
+}
+function lgRenderEntries(){
+  var host=document.getElementById('lg-entry-list');
+  if(!host) return;
+  var r=window.lgState && window.lgState.rec;
+  var boxes=(r && Array.isArray(r.lgBoxes)) ? r.lgBoxes.slice() : [];
+  var cEl=document.getElementById('lg-el-count');
+  if(cEl) cEl.textContent = boxes.length ? (boxes.length+' एंट्री') : '';
+  if(!boxes.length){
+    host.innerHTML='<div class="lg-el-empty">अभी कोई एंट्री नहीं — माइक दबाकर बोलिए</div>';
+    return;
+  }
+  boxes.sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+  host.innerHTML = boxes.map(function(b,i){
+    var d=lgDirOf(b), amt=Math.round(b.amount||0);
+    var clip=(b.src==='maal'||b.type==='purchase')?' <span class="cl">📎</span>':'';
+    return '<div class="lg-en '+(d==='in'?'i':'o')+'">'
+      +'<span class="ar">'+(d==='in'?_LG_AR_IN:_LG_AR_OUT)+'</span>'
+      +'<span class="m"><span class="a">₹'+amt.toLocaleString('en-IN')+'</span>'
+      +'<div class="nt">'+_lgLabel(b)+clip+'</div></span>'
+      +'<span class="rt"><div class="tm">'+_lgTime(b.ts)+'</div>'
+      +'<div class="ed" onclick="lgEditEntry('+i+')">✏️</div></span></div>';
+  }).join('');
+}
+// Editing works on the sorted view, so map the row back to the real box by ts.
+function lgEditEntry(i){
+  var r=window.lgState && window.lgState.rec; if(!r||!Array.isArray(r.lgBoxes)) return;
+  var sorted=r.lgBoxes.slice().sort(function(a,b){return (b.ts||0)-(a.ts||0);});
+  var box=sorted[i]; if(!box) return;
+  if(typeof lgBoxTap==='function'){ try{ return lgBoxTap(box.type, box.n); }catch(e){} }
+  if(typeof toast==='function') toast('एडिट अभी उपलब्ध नहीं');
 }
 
 function lgRenderGrid(type) {
@@ -12961,7 +13120,11 @@ function npReopenPreview(){
       if(res===undefined) return;
       var amt = res && res.data && res.data.amount ? parseInt(res.data.amount,10) : 0;
       if(!amt || amt<=0){ return _fail(type,'समझ नहीं आया — फिर से बोलें'); }
-      S.amt=amt; var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+amt.toLocaleString('en-IN');
+      S.amt=amt;
+      S.note=(res && res.data && res.data.note) ? String(res.data.note).slice(0,40) : '';
+      S.dir =(res && res.data && res.data.direction) || 'unclear';
+      var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+amt.toLocaleString('en-IN');
+      var nel=el('lg-vnote-'+type); if(nel) nel.textContent=S.note||'';
       setState(type,'res');
     }).catch(function(err){
       var code=(err && (err.code||err.message))||''; 
@@ -12970,23 +13133,44 @@ function npReopenPreview(){
     });
   }
 
-  window.lgVoiceConfirm = function(type){
+  // The entry mic carries a note and a direction. When the sentence had no
+  // direction verb the server returns 'unclear' and we ASK -- a wrong direction
+  // moves the day's balance by twice the amount.
+  window.lgAskPick = function(dir){
+    var a=document.getElementById('lg-ask'); if(a) a.style.display='none';
+    var S=LGV['entry']; S.dir=(dir==='in'?'in':'out');
+    window.lgVoiceConfirm('entry', true);
+  };
+  window.lgVoiceConfirm = function(type, dirResolved){
     var S = LGV[type]; var amt = parseInt(S.amt,10)||0;
     if(amt<=0){ return _fail(type,'फिर से बोलें'); }
+    if(type==='entry' && !dirResolved && S.dir!=='in' && S.dir!=='out'){
+      var ae=document.getElementById('lg-ask');
+      var aa=document.getElementById('lg-ask-amt'), an=document.getElementById('lg-ask-note');
+      if(aa) aa.textContent='₹'+amt.toLocaleString('en-IN');
+      if(an) an.textContent=S.note||'—';
+      if(ae) ae.style.display='';
+      setState(type,null);
+      return;
+    }
     var r = window.lgState && window.lgState.rec;
     if(!r){ try{ if(typeof lgGetOrCreateRec==='function'){ window.lgState.date=TSTR; window.lgState.isToday=true; window.lgState.rec=lgGetOrCreateRec(TSTR); r=window.lgState.rec; } }catch(e){} }
     if(!r){ if(typeof toast==='function') toast('❌ आज का हिसाब नहीं खुला', true); return; }
     if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
-    var typeBoxes = r.lgBoxes.filter(function(b){ return b.type===type; });
-    r.lgBoxes.push({ n: typeBoxes.length+1, type: type, amount: amt, note: '', ts: Date.now(), src: 'voice' });
+    var _bt = (type==='entry') ? ((S.dir==='in') ? 'cash' : 'expense') : type;
+    var typeBoxes = r.lgBoxes.filter(function(b){ return b.type===_bt; });
+    r.lgBoxes.push({ n: typeBoxes.length+1, type: _bt, amount: amt,
+      note: (type==='entry' ? (S.note||'') : ''), ts: Date.now(), src: 'voice',
+      dir: (type==='entry' ? S.dir : undefined) });
     if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
     else if(window.lgState.isToday){ r.lgSaved=false; r.lgSavedAt=null; }
     if(typeof lgPersistRec==='function') lgPersistRec(r);
     if(typeof lgRenderTotals==='function') lgRenderTotals();
-    if(typeof lgRenderGrid==='function') lgRenderGrid(type);
+    if(typeof lgRenderGrid==='function') lgRenderGrid(_bt);
+    if(typeof lgRenderEntries==='function') lgRenderEntries();
     if(typeof lgRenderSaveArea==='function') lgRenderSaveArea();
-    setState(type,null); S.amt=0;
-    if(typeof toast==='function') toast('✓ '+(type==='cash'?'नकद':'UPI')+' ₹'+amt.toLocaleString('en-IN')+' जुड़ गया');
+    setState(type,null); S.amt=0; S.note=''; S.dir='';
+    if(typeof toast==='function') toast('✓ ₹'+amt.toLocaleString('en-IN')+' जुड़ गया');
     if(typeof loadHome==='function') setTimeout(loadHome,50);
   };
 

@@ -1531,7 +1531,8 @@ body.notif-modal-open { overflow: hidden; }
 .mk-monthchip{font-size:11px;color:#d4a850;background:#1a1208;border:1px solid #5a4418;border-radius:9px;padding:5px 11px;text-align:center;line-height:1.3;margin-left:auto;}
 .mk-stripe{height:4px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
 /* result card */
-.mk-res{background:linear-gradient(160deg,#141418 0%,#0b0b0e 100%);border:1px solid #2c2c34;border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.03);}
+.mk-res{background:linear-gradient(160deg,#132247 0%,#0a142f 100%);border:1.5px solid #8a5a30;border-radius:16px;overflow:hidden;margin-bottom:20px;position:relative;box-shadow:0 4px 18px rgba(0,0,0,0.45),inset 0 1px 0 rgba(232,160,80,0.14);}
+.mk-res::after{content:"";position:absolute;top:-70px;right:-50px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,80,0.13),transparent 68%);pointer-events:none;z-index:0;}
 /* Purchase screen: fixed header+summary+search, only supplier list scrolls */
 #s-suppliers.active{display:flex;flex-direction:column;height:100vh;height:100dvh;padding-bottom:0;overflow:hidden;}
 #s-suppliers>.mk-header,#s-suppliers>.mk-stripe{flex-shrink:0;}
@@ -1539,23 +1540,25 @@ body.notif-modal-open { overflow: hidden; }
 #s-suppliers>.fw>.mk-res,#s-suppliers>.fw>.mk-sec,#s-suppliers>.fw>.mk-sub2,#s-suppliers>.fw>.mk-search{flex-shrink:0;}
 #s-suppliers>.fw>#sup-list{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:100px;}
 /* Purchase summary: Total hero + independent stat cards */
-.mk-hero{margin-bottom:11px;}
-.mk-hero-l{font-size:12px;color:#d4a850;font-weight:600;letter-spacing:.3px;}
-.mk-hero-v{font-size:30px;font-weight:700;color:#f0d68a;line-height:1.05;letter-spacing:-.5px;}
+.mk-hero{margin-bottom:13px;}
+.mk-hero-l{font-size:11.5px;color:#8aa0d8;font-weight:600;}
+.mk-hero-v{font-size:33px;font-weight:700;color:#f0d68a;line-height:1.03;letter-spacing:-.8px;margin-top:1px;text-shadow:0 0 26px rgba(212,168,80,0.22);}
 .mk-cards3{display:flex;gap:9px;}
 .mk-c{flex:1;min-width:0;display:flex;flex-direction:column;border-radius:11px;padding:9px 11px;}
-.mk-c-l{font-size:10px;font-weight:600;margin-bottom:3px;white-space:nowrap;}
+.mk-c-l{font-size:9.5px;font-weight:600;margin-bottom:3px;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.mk-c-l i{width:6px;height:6px;border-radius:2px;display:inline-block;flex-shrink:0;}
 .mk-c-v{font-size:15px;font-weight:700;letter-spacing:-.3px;white-space:nowrap;}
 .mk-c-cash{background:linear-gradient(135deg,#0e2417,#0a1a12);border:1px solid #1d5a3a;}
-.mk-c-cash .mk-c-l{color:#7ed99a;} .mk-c-cash .mk-c-v{color:#8aef7a;}
+.mk-c-cash .mk-c-l{color:#7ed99a;} .mk-c-cash .mk-c-l i{background:#3ec873;} .mk-c-cash .mk-c-v{color:#8aef7a;}
 .mk-c-cred{background:linear-gradient(135deg,#241808,#1a1206);border:1px solid #5a3a1a;}
-.mk-c-cred .mk-c-l{color:#e0b45a;} .mk-c-cred .mk-c-v{color:#f0cf7a;}
-.mk-c-baki{background:linear-gradient(135deg,#2e1a0a,#1f1206);border:1px solid #6a4420;}
-.mk-c-baki .mk-c-l{color:#e0a850;} .mk-c-baki .mk-c-v{color:#f0b060;}
+.mk-c-cred .mk-c-l{color:#e0b45a;} .mk-c-cred .mk-c-l i{background:#cc7a47;} .mk-c-cred .mk-c-v{color:#f0cf7a;}
+.mk-c-baki{background:linear-gradient(135deg,#331c0a,#241406);border:1.5px solid #8a5828;box-shadow:0 0 16px rgba(212,168,80,0.16),inset 0 1px 0 rgba(255,210,140,0.12);}
+.mk-c-baki .mk-c-l{color:#f0b060;} .mk-c-baki .mk-c-l i{background:#f0b060;} .mk-c-baki .mk-c-v{color:#ffc470;font-size:16px;}
 .mk-res-stripe{height:4px;background:linear-gradient(90deg,#cc7a47,#3ec873);}
-.mk-res-body{padding:15px 16px;}
+.mk-res-body{padding:15px 16px;position:relative;z-index:1;}
 .mk-res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
-.mk-res-head .l{font-size:13px;color:#e89b5a;font-weight:700;}
+.mk-res-head .l{font-size:12.5px;color:#e89b5a;font-weight:700;display:flex;align-items:center;gap:7px;}
+.mk-res-head .l i{width:4px;height:14px;border-radius:2px;background:linear-gradient(180deg,#e8a050,#cc7a47);display:inline-block;flex-shrink:0;}
 .mk-res-head .r{font-size:10px;color:#8aa0d8;}
 .mk-box{border-radius:13px;padding:13px 15px;position:relative;overflow:hidden;}
 .mk-box::before{content:"";position:absolute;top:0;left:0;bottom:0;width:3px;}
@@ -3229,14 +3232,13 @@ textarea.st-biz-in{resize:none;}
   <div class="mk-stripe"></div>
   <div class="fw">
     <div class="mk-res">
-      <div class="mk-res-stripe"></div>
       <div class="mk-res-body">
-        <div class="mk-res-head"><div class="l">📦 Purchase · This month</div><div class="r" id="sup-res-month">—</div></div>
-        <div class="mk-hero"><div class="mk-hero-l">📦 Total</div><div class="mk-hero-v" id="sup-total">₹0</div></div>
+        <div class="mk-res-head"><div class="l"><i></i>Purchase · This month</div><div class="r" id="sup-res-month">—</div></div>
+        <div class="mk-hero"><div class="mk-hero-l">Total purchased</div><div class="mk-hero-v" id="sup-total">₹0</div></div>
         <div class="mk-cards3">
-          <div class="mk-c mk-c-cash"><div class="mk-c-l">💵 Cash</div><div class="mk-c-v" id="sup-nakad">₹0</div></div>
-          <div class="mk-c mk-c-cred"><div class="mk-c-l">📋 Credit</div><div class="mk-c-v" id="sup-udhaar">₹0</div></div>
-          <div class="mk-c mk-c-baki" id="sup-baki-strip"><div class="mk-c-l">⚠ Payable</div><div class="mk-c-v" id="sup-baki">₹0</div></div>
+          <div class="mk-c mk-c-cash"><div class="mk-c-l"><i></i>Cash</div><div class="mk-c-v" id="sup-nakad">₹0</div></div>
+          <div class="mk-c mk-c-cred"><div class="mk-c-l"><i></i>Credit</div><div class="mk-c-v" id="sup-udhaar">₹0</div></div>
+          <div class="mk-c mk-c-baki" id="sup-baki-strip"><div class="mk-c-l"><i></i>Payable</div><div class="mk-c-v" id="sup-baki">₹0</div></div>
         </div>
       </div>
     </div>

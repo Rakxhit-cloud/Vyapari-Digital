@@ -1611,7 +1611,8 @@ body.notif-modal-open { overflow: hidden; }
 .mk-monthchip{font-size:11px;color:#d4a850;background:#1a1208;border:1px solid #5a4418;border-radius:9px;padding:5px 11px;text-align:center;line-height:1.3;margin-left:auto;}
 .mk-stripe{height:4px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
 /* result card */
-.mk-res{background:linear-gradient(160deg,#141418 0%,#0b0b0e 100%);border:1px solid #2c2c34;border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.03);}
+.mk-res{background:linear-gradient(160deg,#132247 0%,#0a142f 100%);border:1.5px solid #8a5a30;border-radius:16px;overflow:hidden;margin-bottom:20px;position:relative;box-shadow:0 4px 18px rgba(0,0,0,0.45),inset 0 1px 0 rgba(232,160,80,0.14);}
+.mk-res::after{content:"";position:absolute;top:-70px;right:-50px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,80,0.13),transparent 68%);pointer-events:none;z-index:0;}
 /* Purchase screen: fixed header+summary+search, only supplier list scrolls */
 #s-suppliers.active{display:flex;flex-direction:column;height:100vh;height:100dvh;padding-bottom:0;overflow:hidden;}
 #s-suppliers>.mk-header,#s-suppliers>.mk-stripe{flex-shrink:0;}
@@ -1619,23 +1620,25 @@ body.notif-modal-open { overflow: hidden; }
 #s-suppliers>.fw>.mk-res,#s-suppliers>.fw>.mk-sec,#s-suppliers>.fw>.mk-sub2,#s-suppliers>.fw>.mk-search{flex-shrink:0;}
 #s-suppliers>.fw>#sup-list{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:100px;}
 /* Purchase summary: Total hero + independent stat cards */
-.mk-hero{margin-bottom:11px;}
-.mk-hero-l{font-size:12px;color:#d4a850;font-weight:600;letter-spacing:.3px;}
-.mk-hero-v{font-size:30px;font-weight:700;color:#f0d68a;line-height:1.05;letter-spacing:-.5px;}
+.mk-hero{margin-bottom:13px;}
+.mk-hero-l{font-size:11.5px;color:#8aa0d8;font-weight:600;}
+.mk-hero-v{font-size:33px;font-weight:700;color:#f0d68a;line-height:1.03;letter-spacing:-.8px;margin-top:1px;text-shadow:0 0 26px rgba(212,168,80,0.22);}
 .mk-cards3{display:flex;gap:9px;}
 .mk-c{flex:1;min-width:0;display:flex;flex-direction:column;border-radius:11px;padding:9px 11px;}
-.mk-c-l{font-size:10px;font-weight:600;margin-bottom:3px;white-space:nowrap;}
+.mk-c-l{font-size:9.5px;font-weight:600;margin-bottom:3px;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.mk-c-l i{width:6px;height:6px;border-radius:2px;display:inline-block;flex-shrink:0;}
 .mk-c-v{font-size:15px;font-weight:700;letter-spacing:-.3px;white-space:nowrap;}
 .mk-c-cash{background:linear-gradient(135deg,#0e2417,#0a1a12);border:1px solid #1d5a3a;}
-.mk-c-cash .mk-c-l{color:#7ed99a;} .mk-c-cash .mk-c-v{color:#8aef7a;}
+.mk-c-cash .mk-c-l{color:#7ed99a;} .mk-c-cash .mk-c-l i{background:#3ec873;} .mk-c-cash .mk-c-v{color:#8aef7a;}
 .mk-c-cred{background:linear-gradient(135deg,#241808,#1a1206);border:1px solid #5a3a1a;}
-.mk-c-cred .mk-c-l{color:#e0b45a;} .mk-c-cred .mk-c-v{color:#f0cf7a;}
-.mk-c-baki{background:linear-gradient(135deg,#2e1a0a,#1f1206);border:1px solid #6a4420;}
-.mk-c-baki .mk-c-l{color:#e0a850;} .mk-c-baki .mk-c-v{color:#f0b060;}
+.mk-c-cred .mk-c-l{color:#e0b45a;} .mk-c-cred .mk-c-l i{background:#cc7a47;} .mk-c-cred .mk-c-v{color:#f0cf7a;}
+.mk-c-baki{background:linear-gradient(135deg,#331c0a,#241406);border:1.5px solid #8a5828;box-shadow:0 0 16px rgba(212,168,80,0.16),inset 0 1px 0 rgba(255,210,140,0.12);}
+.mk-c-baki .mk-c-l{color:#f0b060;} .mk-c-baki .mk-c-l i{background:#f0b060;} .mk-c-baki .mk-c-v{color:#ffc470;font-size:16px;}
 .mk-res-stripe{height:4px;background:linear-gradient(90deg,#cc7a47,#3ec873);}
-.mk-res-body{padding:15px 16px;}
+.mk-res-body{padding:15px 16px;position:relative;z-index:1;}
 .mk-res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
-.mk-res-head .l{font-size:13px;color:#e89b5a;font-weight:700;}
+.mk-res-head .l{font-size:12.5px;color:#e89b5a;font-weight:700;display:flex;align-items:center;gap:7px;}
+.mk-res-head .l i{width:4px;height:14px;border-radius:2px;background:linear-gradient(180deg,#e8a050,#cc7a47);display:inline-block;flex-shrink:0;}
 .mk-res-head .r{font-size:10px;color:#8aa0d8;}
 .mk-box{border-radius:13px;padding:13px 15px;position:relative;overflow:hidden;}
 .mk-box::before{content:"";position:absolute;top:0;left:0;bottom:0;width:3px;}
@@ -1688,6 +1691,34 @@ body.notif-modal-open { overflow: hidden; }
 .mk-card-baki{margin-top:11px;background:linear-gradient(135deg,#2e1a0a,#1f1206);border:1px solid #5a3a1a;border-radius:9px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;}
 .mk-card-baki .l{font-size:11px;color:#e89b5a;font-weight:700;}
 .mk-card-baki .v{font-size:14px;color:#f0c890;font-weight:700;}
+/* ── Purchase compact supplier card (Option C) ── */
+.mk-filters{display:flex;gap:7px;margin:0 0 13px;overflow-x:auto;scrollbar-width:none;}
+.mk-filters::-webkit-scrollbar{display:none;}
+.mk-f{font-size:11.5px;font-weight:600;padding:7px 14px;border-radius:9px;white-space:nowrap;border:1px solid #2a4078;background:#0d1838;color:#9ab0e0;cursor:pointer;flex-shrink:0;}
+.mk-f.on{background:linear-gradient(135deg,#2e1a0a,#1f1206);border-color:#6a4420;color:#f0b060;box-shadow:0 0 0 1px rgba(106,68,32,0.5) inset;}
+.mkc{background:linear-gradient(160deg,#13234a 0%,#0d1838 100%);border:1.5px solid #3d5aa6;border-radius:14px;padding:12px 13px;margin-bottom:10px;position:relative;box-shadow:0 3px 14px rgba(0,0,0,0.3),0 0 0 1px rgba(61,90,166,0.15),inset 0 1px 0 rgba(122,108,240,0.08);}
+.mkc-top{display:flex;align-items:center;gap:10px;padding-right:40px;}
+.mkc-av{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#6a8ad8,#3f5aa8);border:1px solid #8aa6e8;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#f0f5ff;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2);}
+.mkc-tx{flex:1;min-width:0;}
+.mkc-nm{font-size:14.5px;font-weight:700;color:#f4f6fa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mkc-mt{font-size:10px;color:#7d90c4;margin-top:3px;}
+.mkc-plus{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f0d080,#d4a850);border:1.5px solid #f4dc9a;color:#1a1208;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(212,168,80,0.45),0 2px 6px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.4);cursor:pointer;z-index:2;}
+.mkc-bar{height:7px;border-radius:4px;background:#0a1020;overflow:hidden;display:flex;margin-top:12px;border:1px solid #1e2c52;}
+.mkc-bar i{display:block;height:100%;}
+.mkc-lg{display:flex;justify-content:space-between;align-items:flex-end;margin-top:7px;gap:10px;}
+.mkc-paid{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:#5dd88a;font-weight:600;min-width:0;}
+.mkc-paid i{width:7px;height:7px;border-radius:2px;background:#3ec873;display:inline-block;flex-shrink:0;}
+.mkc-rt{text-align:right;flex-shrink:0;}
+.mkc-duel{font-size:9.5px;color:#a98a5a;font-weight:600;}
+.mkc-duev{font-size:15px;font-weight:700;color:#f0b060;letter-spacing:-0.2px;line-height:1.15;}
+.mkc-cash{display:flex;align-items:center;gap:8px;margin-top:11px;background:#0d1f15;border:1px solid #1d5a3a;border-radius:9px;padding:8px 11px;}
+.mkc-cash .l{font-size:10.5px;color:#5dd88a;font-weight:600;}
+.mkc-cash .v{margin-left:auto;font-size:14px;font-weight:700;color:#8aef7a;}
+.mkc-clear{display:flex;align-items:center;gap:8px;margin-top:11px;background:rgba(13,31,21,0.5);border:1px solid #1d5a3a;border-radius:9px;padding:8px 11px;}
+.mkc-clear .t{width:20px;height:20px;border-radius:50%;background:rgba(62,200,115,0.16);border:1px solid #2d7a4a;color:#5dd88a;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.mkc-clear .l{font-size:10.5px;color:#7ed99a;font-weight:600;}
+.mkc-clear .v{margin-left:auto;font-size:13.5px;font-weight:700;color:#8aef7a;}
+.mkc-none{margin-top:11px;background:rgba(255,255,255,0.03);border:1px dashed #2a4078;border-radius:9px;padding:8px 11px;font-size:10.5px;color:#6a7aa0;font-weight:600;}
 .mk-empty{text-align:center;font-size:12px;color:#6a7aa0;padding:22px 10px;background:#0d1838;border:1px dashed #2a4078;border-radius:12px;}
 .mk-addbar{width:100%;margin-top:8px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#d4a850,#e8c870);border:2px solid #f0d890;color:#1a1208;font-size:15px;font-weight:700;text-align:center;box-shadow:0 3px 0 #8a6818,0 5px 14px rgba(212,168,80,0.25);cursor:pointer;}
 /* entry popup */
@@ -4558,8 +4589,8 @@ textarea.st-biz-in{resize:none;}
         </svg>
       </div>
       <div>
-        <div class="mk-htitle">Purchase/खरीद<span class="mk-pill"><span class="mk-dot"></span>LIVE</span></div>
-        <div class="mk-hsub">हर सप्लायर · हर उधार</div>
+        <div class="mk-htitle">Purchase<span class="mk-pill"><span class="mk-dot"></span>LIVE</span></div>
+        <div class="mk-hsub">Suppliers and payables</div>
       </div>
       <div class="mk-monthchip" id="sup-month-chip">—</div>
     </div>
@@ -4567,19 +4598,19 @@ textarea.st-biz-in{resize:none;}
   <div class="mk-stripe"></div>
   <div class="fw">
     <div class="mk-res">
-      <div class="mk-res-stripe"></div>
       <div class="mk-res-body">
-        <div class="mk-res-head"><div class="l">📦 Purchase/खरीद · This Month</div><div class="r" id="sup-res-month">—</div></div>
-        <div class="mk-hero"><div class="mk-hero-l">📦 Total</div><div class="mk-hero-v" id="sup-total">₹0</div></div>
+        <div class="mk-res-head"><div class="l"><i></i>Purchase · This month</div><div class="r" id="sup-res-month">—</div></div>
+        <div class="mk-hero"><div class="mk-hero-l">Total purchased</div><div class="mk-hero-v" id="sup-total">₹0</div></div>
         <div class="mk-cards3">
-          <div class="mk-c mk-c-cash"><div class="mk-c-l">💵 Cash</div><div class="mk-c-v" id="sup-nakad">₹0</div></div>
-          <div class="mk-c mk-c-cred"><div class="mk-c-l">📋 Credit</div><div class="mk-c-v" id="sup-udhaar">₹0</div></div>
-          <div class="mk-c mk-c-baki" id="sup-baki-strip"><div class="mk-c-l">⚠ बाकी</div><div class="mk-c-v" id="sup-baki">₹0</div></div>
+          <div class="mk-c mk-c-cash"><div class="mk-c-l"><i></i>Cash</div><div class="mk-c-v" id="sup-nakad">₹0</div></div>
+          <div class="mk-c mk-c-cred"><div class="mk-c-l"><i></i>Credit</div><div class="mk-c-v" id="sup-udhaar">₹0</div></div>
+          <div class="mk-c mk-c-baki" id="sup-baki-strip"><div class="mk-c-l"><i></i>Payable</div><div class="mk-c-v" id="sup-baki">₹0</div></div>
         </div>
       </div>
     </div>
-    <div class="mk-sec"><div class="bar"></div><div class="t">Supplier</div><div class="c" id="sup-count">0</div><div class="mk-addbtn" onclick="lgOpenPurchaseFor('')"><span class="pl">+</span> नया</div></div>
-    <div class="mk-search"><span class="mk-search-ico">🔍</span><input type="text" id="sup-search" placeholder="नाम से सप्लायर खोजें…" oninput="renderSuppliers()"><span class="mk-search-clear" id="sup-search-clear" onclick="document.getElementById('sup-search').value='';renderSuppliers();" style="display:none;">✕</span></div>
+    <div class="mk-sec"><div class="bar"></div><div class="t">Suppliers</div><div class="c" id="sup-count">0</div><div class="mk-addbtn" onclick="lgOpenPurchaseFor('')"><span class="pl">+</span> New</div></div>
+    <div class="mk-search"><span class="mk-search-ico">🔍</span><input type="text" id="sup-search" placeholder="Search suppliers" oninput="renderSuppliers()"><span class="mk-search-clear" id="sup-search-clear" onclick="document.getElementById('sup-search').value='';renderSuppliers();" style="display:none;">✕</span></div>
+    <div class="mk-filters" id="sup-filters"><div class="mk-f" id="supf-owing" onclick="mkSetFilter('owing')">Owing</div><div class="mk-f" id="supf-all" onclick="mkSetFilter('all')">All</div><div class="mk-f" id="supf-settled" onclick="mkSetFilter('settled')">Settled</div></div>
     <div id="sup-list"></div>
   </div>
 </div>
@@ -4725,8 +4756,9 @@ textarea.st-biz-in{resize:none;}
 #np-s2{padding:16px;}#np-s1{padding:16px;flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;}
 .np-cam{border:2px dashed #c9a24b;border-radius:20px;background:linear-gradient(160deg,#16203f,#0d1528);padding:34px 18px;text-align:center;cursor:pointer;touch-action:manipulation;box-shadow:0 8px 22px rgba(0,0,0,.35),inset 0 1px 0 rgba(240,200,144,.08);transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}.np-cam:active{transform:scale(.955);box-shadow:0 3px 10px rgba(0,0,0,.4),inset 0 1px 0 rgba(240,200,144,.05);filter:brightness(1.08);}
 /* ---- app-wide press feedback (button feel) ---- */
-.lg-home-tile,.ub-tile,.mk-tile,.kpi-card,.mk-card,.mk-addbtn,.mkp-new,.popup-btn,.ledger-pay-btn,.mkp-pay,.stmt-open-btn,.pbtn,.lgpur-tg,.uc-m,.np-chip,.edit-pay-pill,.mk-back{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}
-.lg-home-tile:active,.ub-tile:active,.mk-tile:active,.kpi-card:active,.mk-card:active{transform:scale(.975);filter:brightness(1.06);}
+.lg-home-tile,.ub-tile,.mk-tile,.kpi-card,.mk-card,.mk-addbtn,.mkp-new,.popup-btn,.ledger-pay-btn,.mkp-pay,.stmt-open-btn,.pbtn,.lgpur-tg,.uc-m,.np-chip,.edit-pay-pill,.mk-back,.mkc,.mk-f{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}
+.lg-home-tile:active,.ub-tile:active,.mk-tile:active,.kpi-card:active,.mk-card:active,.mkc:active{transform:scale(.975);filter:brightness(1.06);}
+.mk-f:active{transform:scale(.94);}
 .mk-addbtn:active,.mkp-new:active,.popup-btn:active,.ledger-pay-btn:active,.mkp-pay:active,.stmt-open-btn:active,.pbtn:active,.lgpur-tg:active,.uc-m:active,.np-chip:active,.edit-pay-pill:active,.mk-back:active{transform:scale(.94);filter:brightness(1.08);}
 .np-ci{width:86px;height:86px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(201,162,75,.16),rgba(201,162,75,.02) 70%);border:1.5px solid rgba(201,162,75,.5);box-shadow:0 0 18px rgba(240,200,144,.14),inset 0 1px 0 rgba(240,200,144,.12);}.np-ci svg{width:46px;height:46px;color:#f0c890;filter:drop-shadow(0 1px 3px rgba(240,200,144,.3));}.np-ci .sc-frame{stroke:#f0c890;}.np-ci .sc-txt{stroke:#d9c39a;}.np-ci .sc-beam{stroke:#ffe08a;filter:drop-shadow(0 0 2px rgba(255,224,138,.8));}
 .np-ca{font-size:19px;font-weight:800;color:#fff;}
@@ -9613,6 +9645,10 @@ function sgtResolve(){
   return true;
 }
 
+const MK_EN_MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function mkRelDateEN(ds){if(!ds)return'—';try{const d=parseLocalDate(ds);const t=new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());const diff=Math.round((t-dd)/86400000);if(diff===0)return'today';if(diff===1)return'yesterday';if(diff===-1)return'tomorrow';return dd.getDate()+' '+MK_EN_MONTHS[dd.getMonth()];}catch(e){return ds;}}
+window._mkFilter='owing';
+function mkSetFilter(m){window._mkFilter=m;if(typeof renderSuppliers==='function')renderSuppliers();}
 function mkSupKey(s){const t=(s||'').trim();return t?t.toLowerCase():'__blank__';}
 function renderSuppliers(){
   window._mkpSel={on:false,names:{},timer:null};
@@ -9620,15 +9656,17 @@ function renderSuppliers(){
   const rows=DB.get(K.MAAL)||[];
   const now=new Date();
   const ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-  let mTot=0,mNak=0,mUdh=0;
+  let mTot=0,mNak=0,mUdh=0,mBills=0;
   const groups={};
   rows.forEach(r=>{
     const key=mkSupKey(r.supplier);
-    if(!groups[key])groups[key]={name:(r.supplier||'').trim()||'बिना नाम',mNak:0,mUdh:0,baki:0,count:0,last:''};
+    if(!groups[key])groups[key]={name:(r.supplier||'').trim()||'बिना नाम',mNak:0,mUdh:0,baki:0,cTot:0,cPaid:0,nakTot:0,count:0,last:''};
     if(r.placeholder)return;
     const g=groups[key],a=r.amount||0,inMonth=(r.date||'').startsWith(ym);
     if(inMonth){if(r.pay==='नकद')g.mNak+=a;else g.mUdh+=a;mTot+=a;if(r.pay==='नकद')mNak+=a;else mUdh+=a;}
-    if(r.pay==='उधार')g.baki+=Math.max(0,a-(r.paid||0));
+    if(r.pay==='उधार'){g.cTot+=a;g.cPaid+=Math.min(a,Math.max(0,r.paid||0));g.baki+=Math.max(0,a-(r.paid||0));}
+    else{g.nakTot+=a;}
+    if(inMonth)mBills++;
     g.count++;
     if((r.date||'')>g.last)g.last=r.date||'';
   });
@@ -9637,27 +9675,55 @@ function renderSuppliers(){
   let totBaki=0;Object.values(groups).forEach(g=>totBaki+=g.baki);
   setT('sup-baki',fmt(totBaki));
   const strip=document.getElementById('sup-baki-strip');if(strip)strip.style.display=totBaki>0?'flex':'none';
-  setT('sup-res-month',HI_MONTHS[now.getMonth()]+' '+now.getFullYear());
-  const chip=document.getElementById('sup-month-chip');if(chip)chip.innerHTML=HI_MONTHS[now.getMonth()]+'<br>'+now.getFullYear();
-  const allArr=Object.values(groups).sort((a,b)=>(b.last||'').localeCompare(a.last||''));
+  setT('sup-res-month',mBills+(mBills===1?' bill':' bills'));
+  const chip=document.getElementById('sup-month-chip');if(chip)chip.innerHTML=MK_EN_MONTHS[now.getMonth()]+'<br>'+now.getFullYear();
+  const _byBaki=(a,b)=>(b.baki-a.baki)||((b.last||'').localeCompare(a.last||''));
+  const _byLast=(a,b)=>(b.last||'').localeCompare(a.last||'');
+  const owingArr=Object.values(groups).filter(g=>g.baki>0).sort(_byBaki);
+  const settledArr=Object.values(groups).filter(g=>g.baki<=0).sort(_byLast);
+  const allArr=owingArr.concat(settledArr);
   setT('sup-count',allArr.length);
+  // filter chips
+  let mode=window._mkFilter||'owing';
+  if(mode==='owing'&&!owingArr.length)mode='all';
+  const _chip=(id,lbl,n,on)=>{const el=document.getElementById(id);if(!el)return;el.textContent=lbl+' '+n;el.className='mk-f'+(on?' on':'');};
+  _chip('supf-owing','Owing',owingArr.length,mode==='owing');
+  _chip('supf-all','All',allArr.length,mode==='all');
+  _chip('supf-settled','Settled',settledArr.length,mode==='settled');
+  const fArr=mode==='owing'?owingArr:(mode==='settled'?settledArr:allArr);
+  const fbox=document.getElementById('sup-filters');if(fbox)fbox.style.display=allArr.length?'flex':'none';
   // search filter
   const searchEl=document.getElementById('sup-search');
   const q=(searchEl?searchEl.value:'').trim().toLowerCase();
   const clearBtn=document.getElementById('sup-search-clear');if(clearBtn)clearBtn.style.display=q?'inline':'none';
-  const arr=q?allArr.filter(g=>g.name.toLowerCase().includes(q)):allArr;
+  const arr=q?allArr.filter(g=>g.name.toLowerCase().includes(q)):fArr;
   const list=document.getElementById('sup-list');if(!list)return;list.innerHTML='';
-  if(!allArr.length){list.innerHTML='<div class="mk-empty">अभी कोई सप्लायर नहीं —<br>"नया" से पहली खरीद जोड़ें</div>';return;}
-  if(!arr.length){list.innerHTML='<div class="mk-search-empty">🔍 "'+escHTML(q)+'" से कोई सप्लायर नहीं मिला</div>';return;}
+  if(!allArr.length){list.innerHTML='<div class="mk-empty">No suppliers yet —<br>tap "+ New" to record your first purchase</div>';return;}
+  if(!arr.length){list.innerHTML='<div class="mk-search-empty">'+(q?('🔍 No supplier matches “'+escHTML(q)+'”'):(mode==='owing'?'✓ Nothing pending — every supplier is settled':'No suppliers in this view'))+'</div>';return;}
   arr.forEach(g=>{
-    const card=document.createElement('div');card.className='mk-card';
+    const card=document.createElement('div');card.className='mkc';
     const av=(g.name[0]||'?').toUpperCase();
-    const bakiHtml=g.baki>0?`<div class="mk-card-baki"><span class="l">⚠ अभी बाकी</span><span class="v">${fmt(g.baki)}</span></div>`:'';
-    card.innerHTML=`<div class="mk-card-plus">+</div>
-      <div class="mk-card-top"><div class="mk-av">${escHTML(av)}</div><div><div class="mk-name">${escHTML(g.name)}</div><div class="mk-meta">${g.count} खरीद${g.count?(' · आखिरी '+fmtRelDate(g.last)):''}</div></div></div>
-      <div class="mk-tots"><div class="mk-t mk-t-nakad"><div class="mk-t-lbl">Cash</div><div class="mk-t-val">${fmt(g.mNak)}</div></div><div class="mk-t mk-t-udhaar"><div class="mk-t-lbl">Credit</div><div class="mk-t-val">${fmt(g.mUdh)}</div></div></div>${bakiHtml}`;
+    let bodyHtml;
+    if(g.cTot>0&&g.baki>0){
+      const pct=Math.max(0,Math.min(100,Math.round((g.cPaid/g.cTot)*100)));
+      bodyHtml=`<div class="mkc-bar"><i style="width:${pct}%;background:#3ec873"></i><i style="width:${100-pct}%;background:#cc7a47"></i></div>`
+        +`<div class="mkc-lg"><span class="mkc-paid"><i></i>Paid ${fmt(g.cPaid)} of ${fmt(g.cTot)}</span>`
+        +`<div class="mkc-rt"><div class="mkc-duel">Payable</div><div class="mkc-duev">${fmt(g.baki)}</div></div></div>`;
+    }else if(g.cTot>0){
+      bodyHtml=`<div class="mkc-clear"><span class="t">✓</span><span class="l">Settled in full</span><span class="v">${fmt(g.cTot)}</span></div>`;
+    }else if(g.nakTot>0){
+      bodyHtml=`<div class="mkc-cash"><span class="l">Cash only · nothing pending</span><span class="v">${fmt(g.nakTot)}</span></div>`;
+    }else{
+      bodyHtml='<div class="mkc-none">No purchases yet</div>';
+    }
+    const billTxt=g.count+(g.count===1?' bill':' bills');
+    const cashTxt=(g.cTot>0&&g.nakTot>0)?(' · '+fmt(g.nakTot)+' in cash'):'';
+    const lastTxt=g.count?(' · last '+mkRelDateEN(g.last)):'';
+    card.innerHTML=`<div class="mkc-plus">+</div>`
+      +`<div class="mkc-top"><div class="mkc-av">${escHTML(av)}</div><div class="mkc-tx"><div class="mkc-nm">${escHTML(g.name)}</div><div class="mkc-mt">${billTxt}${cashTxt}${lastTxt}</div></div></div>`
+      +bodyHtml;
     const sname=(g.name==='बिना नाम')?'':g.name;
-    card.querySelector('.mk-card-plus').onclick=(e)=>{e.stopPropagation();lgOpenPurchaseFor(sname);};
+    card.querySelector('.mkc-plus').onclick=(e)=>{e.stopPropagation();lgOpenPurchaseFor(sname);};
     card.style.cursor='pointer';
     card.setAttribute('data-sk', mkSupKey(g.name));
     card.setAttribute('data-sname', g.name);

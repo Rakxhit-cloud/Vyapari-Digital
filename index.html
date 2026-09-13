@@ -187,6 +187,38 @@ body.notif-modal-open { overflow: hidden; }
 .sec-line { flex: 0; height: 1px; max-width: 50px; background: linear-gradient(90deg, transparent, currentColor); opacity: 0.4; align-self: stretch; margin: auto 0; min-width: 30px; }
 .sec-badge { font-size: 10px; padding: 4px 10px; border-radius: 6px; font-weight: 500; white-space: nowrap; }
 .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.mt-bal{background:linear-gradient(135deg,#0a1530,#14254a);border:1.5px solid #2a4078;border-radius:14px;overflow:hidden;margin-bottom:11px;}
+.mt-bal .rb{height:3px;background:linear-gradient(90deg,#d4a850,#cc7a47 33%,#4a90d4 66%,#7a6cf0);}
+.mt-bal .in{padding:13px 14px;}
+.mt-bal .lb{font-size:11px;color:#d4a850;font-weight:600;display:flex;align-items:center;gap:6px;}
+.mt-bal .lb .m{margin-left:auto;font-size:9.5px;color:#8aa0d8;font-weight:500;}
+.mt-bal .v{font-size:31px;font-weight:600;color:#e8d8b8;line-height:1;margin:6px 0 3px;letter-spacing:-.8px;}
+.mt-bal .c{font-size:10px;color:#8aa0d8;}
+.kpi-in{background:linear-gradient(135deg,#0e2a1c,#081a12);border:1px solid #1c4a2e;border-top:2px solid #3fbe7c;}
+.kpi-out{background:linear-gradient(135deg,#2a1810,#1a0f08);border:1px solid #4a2818;border-top:2px solid #e0705a;}
+.kpi-in .kpi-val{color:#7ee0a4;}.kpi-in .kpi-lbl{color:#8fe0b4;}.kpi-in .kpi-sub{color:#5a9a78;}
+.kpi-out .kpi-val{color:#f0a080;}.kpi-out .kpi-lbl{color:#e8a890;}.kpi-out .kpi-sub{color:#a07868;}
+.mt-top{background:#0d1428;border:1px solid #1e2c52;border-radius:11px;padding:11px 12px;margin-top:11px;}
+.mt-top .h{font-size:10.5px;font-weight:700;color:#e8c898;margin-bottom:9px;}
+.mt-tr{display:flex;align-items:center;gap:9px;margin-bottom:8px;}
+.mt-tr:last-child{margin-bottom:0;}
+.mt-tr .nm{font-size:11.5px;color:#c8d4ec;flex:0 0 82px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mt-tr .br{flex:1;height:7px;border-radius:4px;background:#111c38;overflow:hidden;}
+.mt-tr .br i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#cc7a47,#e8a060);}
+.mt-tr .vl{font-size:11.5px;font-weight:700;color:#f0a080;white-space:nowrap;}
+.mt-cmp{display:flex;align-items:center;gap:10px;background:#0d1428;border:1px solid #1e2c52;border-radius:11px;padding:10px 12px;margin-top:11px;}
+.mt-cmp .ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.mt-cmp .ic.up{background:rgba(63,190,124,.14);border:1px solid #2d7a4a;color:#5dd88a;}
+.mt-cmp .ic.dn{background:rgba(224,112,90,.14);border:1px solid #8a4d3a;color:#e8896a;}
+.mt-cmp .tx{flex:1;}.mt-cmp .tx .t{font-size:11.5px;font-weight:600;color:#c8d4ec;}
+.mt-cmp .tx .s{font-size:9.5px;color:#6d7fa8;margin-top:1px;}
+.mt-cmp .pc{font-size:13px;font-weight:800;}
+.mt-cal{display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#1a1545,#0d0a30);border:2px solid #d4a850;border-radius:12px;padding:10px 13px;margin-top:12px;cursor:pointer;}
+.mt-cal .e{font-size:24px;line-height:1;}
+.mt-cal .t{color:#d4a850;font-size:13px;font-weight:700;}
+.mt-cal .s{color:#b0a0e8;font-size:10.5px;}
+.mt-cal .ch{margin-left:auto;color:#b0a0e8;font-size:14px;}
+
 .kpi-card { border-radius: 9px; padding: 10px; cursor: pointer; transition: opacity .15s; user-select: none; }
 .kpi-card:active { opacity: .8; }
 .kpi-tap-hint { font-size: 7px; margin-top: 3px; font-weight: 700; }
@@ -2545,27 +2577,68 @@ body.notif-modal-open { overflow: hidden; }
       <div id="month-nav-track" style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;"></div>
       <div onclick="monthNavSlide(1)" id="month-nav-next" style="width:26px;height:26px;background:#1a1200;border:1px solid #3a2000;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#cc7a47;flex-shrink:0;">▶</div>
     </div>
-    <div id="month-nav-detail" style="display:none;background:#161616;border:1px solid #1e1e1e;border-radius:8px;padding:10px 12px;margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span id="month-detail-title" style="font-size:10px;font-weight:800;color:#d4a850;"></span>
-        <span id="month-detail-entries" style="font-size:8px;color:#2a6a2a;background:#0d1f0d;padding:2px 7px;border-radius:4px;border:1px solid #1a4a1a;"></span>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
-        <div style="background:#0d1f0d;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#2dba4d;font-weight:700;margin-bottom:3px;">बिक्री</div><div id="month-detail-sales" style="font-size:13px;font-weight:800;color:#d4a850;"></div></div>
-        <div style="background:#080f1a;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#4a90d4;font-weight:700;margin-bottom:3px;">बिक्री</div><div id="month-detail-galla" style="font-size:13px;font-weight:800;color:#8ab8e8;"></div></div>
-        <div style="background:#1a1000;border-radius:6px;padding:7px;text-align:center;"><div style="font-size:7px;color:#cc7a47;font-weight:700;margin-bottom:3px;">खर्चा</div><div id="month-detail-expense" style="font-size:13px;font-weight:800;color:#cc7a47;"></div></div>
+    <div class="mt-bal">
+      <div class="rb"></div>
+      <div class="in">
+        <div class="lb">💰 Closing Balance <span style="opacity:.62;font-weight:500;">· शेष</span><span class="m" id="mt-month">—</span></div>
+        <div class="v" id="mt-balance">₹0</div>
+        <div class="c" id="mt-open"></div>
       </div>
     </div>
-    <div class="sec-head"><div class="sec-icon sec-icon-gold">💰</div><div class="sec-text"><div class="sec-title" style="color:#d4a850;">बिक्री</div><div class="sec-sub">Sales & Cash Earnings</div></div><div onclick="toggleMahineyFromBtn()" style="background:linear-gradient(135deg,#1a1545 0%,#0d0a30 100%);border:2px solid #d4a850;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:9px;cursor:pointer;box-shadow:0 3px 10px rgba(212,168,80,0.2), 0 0 0 1px rgba(122,108,240,0.3);flex-shrink:0;"><span style="font-size:28px;line-height:1;">📆</span><div style="line-height:1.2;"><div style="color:#d4a850;font-size:13px;font-weight:700;">कैलेंडर</div><div style="color:#b0a0e8;font-size:10.5px;font-weight:500;">▼ खोलें</div></div></div></div>
+
     <div class="kpi-grid">
-      <div class="kpi-card kpi-green" onclick="toggleKPI('bikri')"><div class="kpi-lbl"><span class="kpi-lbl-text">💰 बिक्री</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-sales">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card kpi-blue" onclick="toggleKPI('galla')"><div class="kpi-lbl"><span class="kpi-lbl-text">📈 कुल कमाई</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card kpi-amber" onclick="toggleKPI('kharcha')"><div class="kpi-lbl"><span class="kpi-lbl-text">🧾 खर्चा</span><span class="kpi-period">This month</span></div><div class="kpi-val" id="k-expense">₹0</div><div class="kpi-sub">अब तक</div><div class="kpi-tap-hint">▼ विस्तार देखें</div></div>
-      <div class="kpi-card" id="tulna-card" style="background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;"><span id="tulna-label" style="color:#ffffff;font-size:12px;font-weight:600;opacity:1;">आज Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span></span><span id="tulna-badge" style="background:#0d2a1a;color:#3dca6a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #1a4a30;">+0%</span></div><div id="tulna-amount" style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:-0.3px;margin-bottom:4px;">₹0</div><div id="tulna-delta-row" style="display:flex;align-items:center;gap:5px;margin-bottom:5px;"><span id="tulna-arrow" style="color:#3dca6a;font-size:12px;font-weight:700;">▲</span><span id="tulna-sub" style="color:#ffffff;font-size:10px;font-weight:500;opacity:0.9;">कल से ज़्यादा</span></div><div id="tulna-inset" style="background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:3px 7px;"><span id="tulna-kal-ref" style="color:#ffffff;font-size:9px;font-weight:500;opacity:0.75;">कल - ₹0</span></div></div>
+      <div class="kpi-card kpi-in">
+        <div class="kpi-lbl">↓ Inward <span style="opacity:.6;">· आया</span><span class="kpi-period">This month</span></div>
+        <div class="kpi-val" id="mt-in">₹0</div>
+        <div class="kpi-sub" id="mt-in-n">0 entries</div>
+      </div>
+      <div class="kpi-card kpi-out">
+        <div class="kpi-lbl">↑ Outward <span style="opacity:.6;">· गया</span><span class="kpi-period">This month</span></div>
+        <div class="kpi-val" id="mt-out">₹0</div>
+        <div class="kpi-sub" id="mt-out-n">0 entries</div>
+      </div>
     </div>
-    <div class="kpi-panel" id="panel-bikri"><div class="kpi-panel-inner panel-green"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d2a1a;color:#2dba4d;text-align:right;">बिक्री</div></div><div id="bikri-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a3a1a;"><div class="ptbl-total-cell" style="background:#0d2a1a;color:#2dba4d;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d2a1a;color:#d4a850;text-align:right;" id="bikri-total">₹0</div></div></div></div>
-    <div class="kpi-panel" id="panel-galla"><div class="kpi-panel-inner panel-blue"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;">कुल कमाई</div></div><div id="galla-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #1a2a40;"><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#0d1a2a;color:#4a90d4;text-align:right;" id="galla-total">₹0</div></div></div></div>
-    <div class="kpi-panel" id="panel-kharcha"><div class="kpi-panel-inner panel-amber"><div class="ptbl-hdr"><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;">दिन / तारीख</div><div class="ptbl-hdr-cell" style="background:#2a1500;color:#cc7a47;text-align:right;">खर्चा</div></div><div id="kharcha-table-rows"></div><div class="ptbl-total" style="border-top:1px solid #3a2000;"><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;">कुल (हफ़्ता)</div><div class="ptbl-total-cell" style="background:#2a1500;color:#cc7a47;text-align:right;" id="kharcha-total">₹0</div></div></div></div>
+
+    <div id="mt-breakdown" style="display:none;">
+      <div class="sec-head">
+        <div class="sec-icon sec-icon-gold">📦</div>
+        <div class="sec-text"><div class="sec-title">Outward Breakdown</div><div class="sec-sub">व्यय विवरण</div></div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-green" id="mt-pur-card" style="display:none;">
+          <div class="kpi-lbl">📦 Purchases <span style="opacity:.6;">· माल</span></div>
+          <div class="kpi-val" id="mt-pur">₹0</div>
+          <div class="kpi-sub" id="mt-pur-n">0 bills</div>
+        </div>
+        <div class="kpi-card kpi-amber" id="mt-exp-card" style="display:none;">
+          <div class="kpi-lbl">🧾 Expenses <span style="opacity:.6;">· खर्चा</span></div>
+          <div class="kpi-val" id="mt-exp">₹0</div>
+          <div class="kpi-sub">excl. supplier payments</div>
+        </div>
+        <div class="kpi-card kpi-blue" id="mt-pay-card" style="display:none;grid-column:1/-1;">
+          <div class="kpi-lbl">🏪 Payable <span style="opacity:.6;">· बाकी</span><span class="kpi-period" style="color:#a8c8e8;background:#0d1a2a;border-color:#2a4078;">Current</span></div>
+          <div class="kpi-val" id="mt-pay">₹0</div>
+          <div class="kpi-sub" id="mt-pay-n"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-top" id="mt-top" style="display:none;">
+      <div class="h">Top Outflows <span style="opacity:.6;font-weight:500;">· प्रमुख व्यय</span></div>
+      <div id="mt-top-rows"></div>
+    </div>
+
+    <div class="mt-cmp" id="mt-cmp" style="display:none;">
+      <div class="ic up" id="mt-cmp-ic">▲</div>
+      <div class="tx"><div class="t" id="mt-cmp-t">—</div><div class="s" id="mt-cmp-s">—</div></div>
+      <div class="pc" id="mt-cmp-pc">—</div>
+    </div>
+
+    <div class="mt-cal" onclick="toggleMahineyFromBtn()">
+      <span class="e">📆</span>
+      <div><div class="t">Calendar</div><div class="s">Day-wise detail · तारीख़वार</div></div>
+      <span class="ch">›</span>
+    </div>
   </div>
 </div>
 
@@ -8492,8 +8565,6 @@ window.showSuccessModal = showSuccessModal;
 window.playCrystalTinkle = playCrystalTinkle;
 
 function toast(msg,err=false){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='toast'+(err?' err':'')+' show';clearTimeout(window._toastTimer);window._toastTimer=setTimeout(function(){t.className=t.className.replace(' show','');},3000);}
-function toggleKPI(key){const panel=document.getElementById('panel-'+key);const isOpen=panel.classList.contains('open');document.querySelectorAll('.kpi-panel').forEach(p=>p.classList.remove('open'));if(!isOpen){panel.classList.add('open');}}
-function renderWeeklyTable(containerId,totalId,field,color,dimColor){const bikri=DB.get(K.BIKRI);const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const entry=bikri.find(r=>r.date===ds);let val=null;if(entry){val=field==='profit'?calcEntryProfit(entry):(entry[field]||0);}rows.push({ds,val});}const el=document.getElementById(containerId);let total=0;el.innerHTML=rows.map(r=>{if(r.val!==null)total+=r.val;return`<div class="ptbl-row"><div class="ptbl-cell" style="color:#6090d0;">${fmtDayDate(r.ds)}</div><div class="ptbl-cell" style="color:${r.val!==null?color:dimColor};text-align:right;font-weight:${r.val!==null?700:400};font-style:${r.val!==null?'normal':'italic'};">${r.val!==null?fmt(r.val):'कोई नहीं'}</div></div>`;}).join('');document.getElementById(totalId).textContent=fmt(total);}
 let pressTimer=null,currentEntry=null;
 function startPress(el,type,id,data){el.classList.add('pressing');pressTimer=setTimeout(()=>{el.classList.remove('pressing');currentEntry={type,id,data};showActionPopup(type,data);},600);}
 function endPress(el){clearTimeout(pressTimer);el.classList.remove('pressing');}
@@ -8600,22 +8671,6 @@ function buildMonthNav(){
 }
 function selectMonthNav(mi){
   monthNavSelected=mi;
-  const bikri=DB.get(K.BIKRI);
-  const entries=bikri.filter(r=>inMonth(r.date,mi));
-  const det=document.getElementById('month-nav-detail');
-  const sales=entries.reduce((s,r)=>s+(r.sales||0),0);
-  const expense=entries.reduce((s,r)=>s+(r.expense||0),0);
-  const galla=entries.reduce((s,r)=>s+calcEntryProfit(r),0);
-  if(entries.length>0){
-    det.style.display='block';
-    document.getElementById('month-detail-title').textContent=HI_MONTHS[mi]+' '+CUR_YEAR;
-    document.getElementById('month-detail-entries').textContent=entries.length+' एंट्री';
-    document.getElementById('month-detail-sales').textContent=fmt(sales);
-    document.getElementById('month-detail-galla').textContent=fmt(galla);
-    document.getElementById('month-detail-expense').textContent=fmt(expense);
-  } else {
-    det.style.display='none';
-  }
   loadKPIForMonth(mi);
   loadMaalForMonth(mi);
   buildMonthNav();
@@ -8626,123 +8681,104 @@ function monthNavSlide(dir){
   monthNavOffset=newOff;
   buildMonthNav();
 }
-function updateTulnaCard(){
-  const bikri=DB.get(K.BIKRI);
-  const today=new Date();
-  const yesterday=new Date(today.getTime()-86400000);
-  const todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-  const yesterdayStr=yesterday.getFullYear()+'-'+String(yesterday.getMonth()+1).padStart(2,'0')+'-'+String(yesterday.getDate()).padStart(2,'0');
-  const todayEntries=bikri.filter(r=>r.date===todayStr);
-  const yesterdayEntries=bikri.filter(r=>r.date===yesterdayStr);
-  const aajGalla=todayEntries.reduce((s,r)=>s+calcEntryProfit(r),0);
-  const kalGalla=yesterdayEntries.reduce((s,r)=>s+calcEntryProfit(r),0);
-  const yDate=new Date(today.getTime()-86400000);
-  const HI_M=['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
-  const yDayMonth=yDate.getDate()+' '+HI_M[yDate.getMonth()];
-  const card=document.getElementById('tulna-card');
-  const label=document.getElementById('tulna-label');
-  const badge=document.getElementById('tulna-badge');
-  const amount=document.getElementById('tulna-amount');
-  const arrow=document.getElementById('tulna-arrow');
-  const sub=document.getElementById('tulna-sub');
-  const deltaRow=document.getElementById('tulna-delta-row');
-  const inset=document.getElementById('tulna-inset');
-  const kalRef=document.getElementById('tulna-kal-ref');
-  if(!card)return;
-  // STATE 1: Both empty (new user / both days no entry)
-  if(yesterdayEntries.length===0 && todayEntries.length===0){
-    card.style.cssText='background:#0a1530;border:1px solid #2a4078;border-top:2px solid #4a90d4;border-radius:9px;padding:10px;';
-    label.innerHTML='आज Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span>';
-    label.style.cssText='color:#ffffff;font-size:12px;font-weight:600;opacity:1;';
-    badge.style.cssText='background:#0d1a2a;color:#a8c8e8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #2a4078;';
-    badge.textContent='—';
-    amount.textContent='₹0';
-    amount.style.opacity='0.7';
-    deltaRow.style.display='none';
-    inset.style.cssText='background:#0d1a2a;border:0.5px solid #2a4078;border-radius:4px;padding:3px 7px;';
-    kalRef.textContent='कल भी एंट्री नहीं थी';
-    return;
-  }
-  // STATE 2: Yesterday empty, today has entry (new start)
-  if(yesterdayEntries.length===0){
-    card.style.cssText='background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;';
-    label.innerHTML='आज Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span>';
-    label.style.cssText='color:#ffffff;font-size:12px;font-weight:600;opacity:1;';
-    badge.style.cssText='background:#0d2a1a;color:#3dca6a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #1a4a30;';
-    badge.textContent='नया';
-    amount.textContent=fmt(aajGalla);
-    amount.style.opacity='1';
-    deltaRow.style.display='none';
-    inset.style.cssText='background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:3px 7px;';
-    kalRef.textContent='कल कोई एंट्री नहीं थी';
-    return;
-  }
-  // STATE 3: Today empty, yesterday had entry (entry pending)
-  if(todayEntries.length===0){
-    card.style.cssText='background:#1a1408;border:1px solid #6a4818;border-top:2px solid #d4a850;border-radius:9px;padding:10px;';
-    label.innerHTML='आज Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span>';
-    label.style.cssText='color:#ffffff;font-size:12px;font-weight:600;opacity:1;';
-    badge.style.cssText='background:#2a1f08;color:#d4a850;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;border:0.5px solid #4a3818;';
-    badge.textContent='⏰ एंट्री बाकी';
-    amount.textContent='₹0';
-    amount.style.opacity='0.7';
-    deltaRow.style.display='none';
-    inset.style.cssText='background:#2a1f08;border:0.5px solid #4a3818;border-radius:4px;padding:3px 7px;';
-    kalRef.textContent='कल ('+yDayMonth+') - '+fmt(kalGalla);
-    return;
-  }
-  // STATE 4-6: Both have entries — compare
-  const diff=aajGalla-kalGalla;
-  let pct=0;
-  if(kalGalla>0){pct=Math.round((diff/kalGalla)*100);}
-  amount.textContent=fmt(aajGalla);
-  amount.style.opacity='1';
-  label.innerHTML='आज Revenue <span style="font-size:10px;opacity:0.75;">(Today)</span>';
-  label.style.cssText='color:#ffffff;font-size:12px;font-weight:600;opacity:1;';
-  deltaRow.style.display='flex';
-  if(diff>0){
-    card.style.cssText='background:#0a1f14;border:1px solid #2a6a4a;border-top:2px solid #6ab070;border-radius:9px;padding:10px;';
-    badge.style.cssText='background:#0d2a1a;color:#3dca6a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #1a4a30;';
-    badge.textContent=kalGalla>0?'+'+pct+'%':'नया';
-    arrow.style.color='#3dca6a';
-    arrow.textContent='▲';
-    sub.textContent='कल से '+fmt(diff)+' ज़्यादा';
-    inset.style.cssText='background:#0d2a1a;border:0.5px solid #1a4a30;border-radius:4px;padding:3px 7px;';
-    kalRef.textContent='कल ('+yDayMonth+') - '+fmt(kalGalla);
-  }else if(diff<0){
-    card.style.cssText='background:#1f0a14;border:1px solid #6a2a40;border-top:2px solid #e84878;border-radius:9px;padding:10px;';
-    badge.style.cssText='background:#2a0d18;color:#ff5470;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #4a1a30;';
-    badge.textContent=pct+'%';
-    arrow.style.color='#ff5470';
-    arrow.textContent='▼';
-    sub.textContent='कल से '+fmt(Math.abs(diff))+' कम';
-    inset.style.cssText='background:#2a0d18;border:0.5px solid #4a1a30;border-radius:4px;padding:3px 7px;';
-    kalRef.textContent='कल ('+yDayMonth+') - '+fmt(kalGalla);
-  }else{
-    card.style.cssText='background:#0a1530;border:1px solid #2a4078;border-top:2px solid #4a90d4;border-radius:9px;padding:10px;';
-    badge.style.cssText='background:#0d1a2a;color:#a8c8e8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;border:0.5px solid #2a4078;';
-    badge.textContent='0%';
-    arrow.style.color='#a8c8e8';
-    arrow.textContent='━';
-    sub.textContent='कल जैसा बराबर';
-    inset.style.cssText='background:#0d1a2a;border:0.5px solid #2a4078;border-radius:4px;padding:3px 7px;';
-    kalRef.textContent='कल ('+yDayMonth+') - '+fmt(kalGalla);
-  }
+// Month figures, built from day boxes only. Purchases create a box too, so
+// there is one source and nothing is counted twice.
+function lgMonthStats(mi){
+  var bikri=[],maal=[];
+  try{ bikri=DB.get(K.BIKRI)||[]; maal=DB.get(K.MAAL)||[]; }catch(e){}
+  var inw=0,outw=0,nIn=0,nOut=0,exp=0,pur=0,bills=0,notes={};
+  bikri.forEach(function(r){
+    if(!inMonth(r.date,mi)) return;
+    (r.lgBoxes||[]).forEach(function(b){
+      var a=Math.round(b.amount||0); if(!(a>0)) return;
+      if(lgDirOf(b)==='in'){ inw+=a; nIn++; return; }
+      outw+=a; nOut++;
+      if(b.type==='purchase'){ pur+=a; bills++; return; }
+      // operating expense excludes supplier payments -- the same filter the
+      // Expense statement already applies with b.src==='maal'.
+      // Supplier payments are excluded from BOTH the expense total and the
+      // Top Outflows list, so the two always agree. Purchases and payables
+      // have their own cards.
+      if(b.src==='maal') return;
+      exp+=a;
+      var k=String(b.note||'').trim();
+      if(k) notes[k]=(notes[k]||0)+a;
+    });
+  });
+  // Payable is point-in-time across every month, not just the selected one.
+  var pay=0,sups={},oldest=0,now=Date.now();
+  maal.forEach(function(m){
+    if(!m||m.placeholder) return;
+    var rem=Math.round((m.amount||0)-(m.paid||0));
+    if(rem<=0) return;
+    pay+=rem;
+    if(m.supplier) sups[String(m.supplier).trim().toLowerCase()]=1;
+    var t=Date.parse(m.date); if(t){ var d=Math.floor((now-t)/86400000); if(d>oldest) oldest=d; }
+  });
+  var top=Object.keys(notes).map(function(k){return {k:k,v:notes[k]};})
+           .sort(function(a,b){return b.v-a.v;}).slice(0,3);
+  return {inward:inw,outward:outw,nIn:nIn,nOut:nOut,expense:exp,purchases:pur,
+          bills:bills,payable:pay,suppliers:Object.keys(sups).length,oldest:oldest,top:top};
 }
+
+function _mtLastOfMonth(mi){
+  var y=CUR_YEAR, d=new Date(y,mi+1,0);
+  return y+'-'+String(mi+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function _mtFirstOfMonth(mi){ return CUR_YEAR+'-'+String(mi+1).padStart(2,'0')+'-01'; }
+function _mtShow(id,on){ var e=document.getElementById(id); if(e) e.style.display = on ? '' : 'none'; }
+function _mtSet(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+
 function loadKPIForMonth(mi){
-  const bikri=DB.get(K.BIKRI);
-  const entries=bikri.filter(r=>inMonth(r.date,mi));
-  const tS=entries.reduce((s,r)=>s+(r.sales||0),0);
-  const tE=entries.reduce((s,r)=>s+(r.expense||0),0);
-  const tP=entries.reduce((s,r)=>s+calcEntryProfit(r),0);
-  const margin=tS>0?Math.round((tP/tS)*100):0;
-  document.getElementById('k-sales').textContent=fmt(tS);
-  document.getElementById('k-profit').textContent=fmt(tP);
-  document.getElementById('k-expense').textContent=fmt(tE);
-  updateTulnaCard();
-  renderWeeklyTable('bikri-table-rows','bikri-total','sales','#4dca4d','#444');
-  renderWeeklyTable('galla-table-rows','galla-total','profit','#50a0f0','#444');
-  renderWeeklyTable('kharcha-table-rows','kharcha-total','expense','#f0b040','#444');
+  var S=lgMonthStats(mi);
+  var open=lgClosingBefore(_mtFirstOfMonth(mi));
+  var bal=open+S.inward-S.outward;
+  var MN=['January','February','March','April','May','June','July','August',
+          'September','October','November','December'];
+
+  _mtSet('mt-month', MN[mi]+' '+CUR_YEAR);
+  _mtSet('mt-balance', (bal<0?'-':'')+fmt(Math.abs(bal)));
+  var oc=document.getElementById('mt-open');
+  if(oc){ oc.textContent = open ? ('Opening '+(open<0?'-':'')+fmt(Math.abs(open))+' \u00b7 1 '+MN[mi].slice(0,3)) : ''; }
+
+  _mtSet('mt-in', fmt(S.inward));   _mtSet('mt-in-n',  S.nIn+' entries');
+  _mtSet('mt-out', fmt(S.outward)); _mtSet('mt-out-n', S.nOut+' entries');
+
+  // Nothing is assumed: a card with no data behind it does not render.
+  _mtShow('mt-pur-card', S.purchases>0);
+  _mtSet('mt-pur', fmt(S.purchases)); _mtSet('mt-pur-n', S.bills+' bill'+(S.bills===1?'':'s'));
+  _mtShow('mt-exp-card', S.expense>0);
+  _mtSet('mt-exp', fmt(S.expense));
+  _mtShow('mt-pay-card', S.payable>0);
+  _mtSet('mt-pay', fmt(S.payable));
+  _mtSet('mt-pay-n', S.suppliers+' supplier'+(S.suppliers===1?'':'s')+
+        (S.oldest>0 ? (' \u00b7 oldest '+S.oldest+' days') : ''));
+  _mtShow('mt-breakdown', S.purchases>0 || S.expense>0 || S.payable>0);
+
+  var tw=document.getElementById('mt-top-rows');
+  _mtShow('mt-top', S.top.length>0);
+  if(tw){
+    var mx=S.top.length?S.top[0].v:1;
+    tw.innerHTML=S.top.map(function(t){
+      return '<div class="mt-tr"><span class="nm">'+escHTML(t.k)+'</span>'
+        +'<span class="br"><i style="width:'+Math.max(6,Math.round(t.v/mx*100))+'%"></i></span>'
+        +'<span class="vl">'+fmt(t.v)+'</span></div>';
+    }).join('');
+  }
+
+  var P=(mi>0)?lgMonthStats(mi-1):null;
+  var hasPrev = !!(P && (P.inward>0||P.outward>0));
+  _mtShow('mt-cmp', hasPrev);
+  if(hasPrev){
+    var d=S.inward-P.inward, up=d>=0;
+    var pc=P.inward>0 ? Math.round(d/P.inward*100) : 0;
+    var ic=document.getElementById('mt-cmp-ic');
+    if(ic){ ic.className='ic '+(up?'up':'dn'); ic.textContent=up?'\u25b2':'\u25bc'; }
+    _mtSet('mt-cmp-t', fmt(Math.abs(d))+(up?' more':' less')+' than last month');
+    _mtSet('mt-cmp-s', MN[mi-1]+' inward \u2014 '+fmt(P.inward));
+    var pe=document.getElementById('mt-cmp-pc');
+    if(pe){ pe.textContent=(up?'+':'')+pc+'%'; pe.style.color=up?'#5dd88a':'#e8896a'; }
+  }
 }
 let MAAL_LEDGER_MI=0;
 let MAAL_LEDGER_FILTER='all';
@@ -10063,8 +10099,6 @@ function settleSupplierFull(){
 
 let openHafta=null;
 let activeHafta=CUR_HAFTA;
-function toggleHafta(hNum){for(let i=1;i<=4;i++)document.getElementById(`hafta-panel-${i}`).classList.remove('open');document.querySelectorAll('.hafta-card-past').forEach(c=>c.classList.remove('hafta-card-selected'));if(openHafta===hNum){openHafta=null;activeHafta=CUR_HAFTA;loadMaalHome();const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(inHafta(r.date,CUR_HAFTA-1)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);const mT=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-mT-tE));return;}else{openHafta=hNum;document.getElementById(`hafta-panel-${hNum}`).classList.add('open');if(hNum!==CUR_HAFTA){const allCards=Array.from(document.getElementById('hafta-grid').children);const clickedCard=allCards[hNum-1];if(clickedCard&&clickedCard.classList.contains('hafta-card-past'))clickedCard.classList.add('hafta-card-selected');}}activeHafta=hNum;loadMaalHome();const bikri=DB.get(K.BIKRI);let tS=0,tP=0,tE=0;bikri.forEach(r=>{if(inHafta(r.date,activeHafta-1)){tS+=r.sales||0;tE+=r.expense||0;tP+=calcEntryProfit(r);}});document.getElementById('k-sales').textContent=fmt(tS);document.getElementById('k-profit').textContent=fmt(tP);document.getElementById('k-expense').textContent=fmt(tE);document.getElementById('w-sales').textContent=fmt(tS);document.getElementById('w-expense').textContent=fmt(tE);const mT=parseInt((document.getElementById('w-maal').textContent||'0').replace(/[₹,]/g,''))||0;document.getElementById('w-profit').textContent=fmt(Math.max(0,tS-mT-tE));}
-function buildHaftaCards(){const bikri=DB.get(K.BIKRI);const grid=document.getElementById('hafta-grid');grid.innerHTML='';for(let h=0;h<4;h++){const hNum=h+1,isCur=(hNum===CUR_HAFTA),range=HAFTA_RANGES[h];let bikriTotal=0,gallaTotal=0,expenseTotal=0;bikri.forEach(r=>{if(inHafta(r.date,h)){bikriTotal+=r.sales||0;gallaTotal+=calcEntryProfit(r);expenseTotal+=r.expense||0;}});document.getElementById(`hv-bikri-${hNum}`).textContent=fmt(bikriTotal);document.getElementById(`hv-galla-${hNum}`).textContent=fmt(gallaTotal);document.getElementById(`hv-expense-${hNum}`).textContent=fmt(expenseTotal);document.getElementById(`hpd-${hNum}`).textContent=`${range.start}–${range.end} ${HI_MONTHS[CUR_MONTH]}`;if(isCur){const daysDone=Math.min(CUR_DAY-range.start+1,range.end-range.start+1),daysTotal=range.end-range.start+1;const pct=Math.max(0,Math.round((daysDone/daysTotal)*100));document.getElementById('hpb-4').textContent=`${Math.max(1,daysDone)}/${daysTotal} दिन`;document.getElementById('hafta-pbar').style.width=pct+'%';}const card=document.createElement('div');card.className='hafta-card '+(isCur?'hafta-card-cur':'hafta-card-past');card.innerHTML=`${isCur?'<div class="chaluu-badge">● चालू</div>':''}<div class="hafta-card-name">हफ्ता-${hNum}</div><div class="hafta-card-dates">${range.start}–${range.end}</div><div class="hafta-card-divider"></div><div class="hafta-card-amt">${fmt(bikriTotal)}</div><div class="hafta-card-sublbl">बिक्री</div><div class="hafta-card-hint">▼ देखें</div>`;card.onclick=()=>toggleHafta(hNum);grid.appendChild(card);}}
 function loadMonthly(){const el=document.getElementById('monthly-list');el.innerHTML='';const bikri=DB.get(K.BIKRI);if(!bikri.length){el.innerHTML='<div class="empty">📅<br>अभी कोई डेटा नहीं है</div>';return;}const months={};bikri.forEach(r=>{const m=r.date?r.date.substring(0,7):'unknown';if(!months[m])months[m]={sales:0,expense:0,profit:0,count:0};months[m].sales+=r.sales||0;months[m].expense+=r.expense||0;months[m].profit+=calcEntryProfit(r);months[m].count++;});Object.keys(months).sort().reverse().forEach(m=>{const data=months[m],parts=m.split('-');const label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleDateString('hi-IN',{month:'long',year:'numeric'});const div=document.createElement('div');div.className='mcard';div.innerHTML=`<div><div style="font-size:13px;font-weight:700;color:#e0e0e0;">${label}</div><div style="font-size:9px;color:#555;margin-top:3px;">बिक्री ${fmt(data.sales)} · खर्चा ${fmt(data.expense)}</div><div style="font-size:9px;color:#444;margin-top:2px;">${data.count} एंट्री</div></div><div><div style="font-size:17px;font-weight:800;color:#d4a850;">${fmt(data.profit)}</div><div style="font-size:9px;color:#cc7a47;margin-top:2px;">कुल कमाई</div></div>`;el.appendChild(div);});}
 // ============================================================
 // ADVANCED PIN LOCK SYSTEM (alck.js)

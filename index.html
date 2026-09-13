@@ -8957,7 +8957,11 @@ function openDatePopup(ds){
 
   const totalCount = bikriEntries.length + maalEntries.length;
   const subParts = [];
-  if (bikriEntries.length) subParts.push(bikriEntries.length + ' बिक्री');
+  if (bikriEntries.length) {
+    let _n = 0;
+    bikriEntries.forEach(r => { if (Array.isArray(r.lgBoxes)) _n += r.lgBoxes.length; });
+    subParts.push((_n || bikriEntries.length) + ' एंट्री');
+  }
   if (maalEntries.length) subParts.push(maalEntries.length + ' माल');
   const subText = totalCount > 0 ? subParts.join(' · ') : 'कोई एंट्री नहीं';
   subEl.textContent = isToday ? 'आज · ' + subText : subText;
@@ -8973,7 +8977,7 @@ function openDatePopup(ds){
     const banner = document.createElement('div');
     if (lgRec.lgSaved) {
       banner.className = 'lg-dp-saved';
-      banner.innerHTML = '<span class="lg-dp-saved-icon">✓</span><span class="lg-dp-saved-text">Closing हो चुका · ' + lgRec.lgBoxes.length + ' एंट्री</span><span class="lg-dp-saved-amt">' + fmt(lgRec.sales || 0) + '</span>';
+      banner.innerHTML = '<span class="lg-dp-saved-icon">✓</span><span class="lg-dp-saved-text">Closing हो चुका · ' + lgRec.lgBoxes.length + ' एंट्री</span><span class="lg-dp-saved-amt">' + fmt((typeof lgInOut==='function'?lgInOut(lgRec.lgBoxes).inward:(lgRec.sales||0))) + '</span>';
     } else {
       banner.className = 'lg-blocker-banner';
       banner.style.marginBottom = '10px';
@@ -8985,17 +8989,24 @@ function openDatePopup(ds){
   // ====== Bikri card (premium, simplified) ======
   if (bikriEntries.length > 0) {
     bikriEntries.forEach(r => {
-      const profit = calcEntryProfit(r);
+      const _io = (typeof lgInOut === 'function')
+        ? lgInOut(r.lgBoxes)
+        : { inward: (r.sales||0), outward: (r.expense||0), balance: (r.sales||0)-(r.expense||0) };
       const card = document.createElement('div');
       card.className = 'dpx-bikri-card';
       const _boxes = Array.isArray(r.lgBoxes) ? r.lgBoxes.filter(b => b && (b.amount || b.amount === 0)) : [];
       let _entryListHtml = '';
       if (_boxes.length > 0) {
-        const _lbl = { cash: 'नकद', upi: 'UPI', expense: 'खर्चा' };
+        const _lbl = { cash: '↓ आया', upi: '↓ आया', expense: '↑ गया' };
         const _cnt = { cash: 0, upi: 0, expense: 0 };
-        _boxes.forEach(b => { if (_cnt[b.type] !== undefined) _cnt[b.type]++; });
+        _boxes.forEach(b => {
+          const _bd = (typeof lgDirOf === 'function') ? lgDirOf(b) : 'in';
+          if (_bd === 'in') _cnt.cash++; else _cnt.expense++;
+        });
         const _rows = _boxes.map((b, _i) => {
-          const t = (b.type === 'cash' || b.type === 'upi' || b.type === 'expense') ? b.type : 'cash';
+          // Colour by DIRECTION, not payment mode: green bar in, orange bar out.
+          const _d = (typeof lgDirOf === 'function') ? lgDirOf(b) : 'in';
+          const t = (_d === 'in') ? 'cash' : 'expense';
           const note = (b.note || '').trim();
           const noteHtml = note ? `<span class="lgent-note">${escHTML(note)}</span>` : `<span class="lgent-note empty">note नहीं</span>`;
           const _bthumb = b.billThumb || b.billUrl || '';
@@ -9008,9 +9019,8 @@ function openDatePopup(ds){
         <div class="lgent-head">
           <div class="lgent-title">हर एंट्री</div>
           <div class="lgent-legend">
-            <span class="lgd"><span class="lgdot" style="color:#3ec873;">●</span> ${_cnt.cash}</span>
-            <span class="lgd"><span class="lgdot" style="color:#5dcaff;">●</span> ${_cnt.upi}</span>
-            <span class="lgd"><span class="lgdot" style="color:#cc7a47;">●</span> ${_cnt.expense}</span>
+            <span class="lgd"><span class="lgdot" style="color:#3ec873;">●</span> ${_cnt.cash} आया</span>
+            <span class="lgd"><span class="lgdot" style="color:#cc7a47;">●</span> ${_cnt.expense} गया</span>
           </div>
         </div>
         <div class="lgent-wrap${_scrollable ? ' scrollable' : ''}">
@@ -9020,26 +9030,24 @@ function openDatePopup(ds){
       }
       card.innerHTML = `
         <div class="dpx-card-header">
-          <div class="dpx-section-tag">💰 बिक्री</div>
+          <div class="dpx-section-tag">💰 दिन का हिसाब</div>
         </div>
         <div class="dpx-bikri-hero">
           <div>
-            <div class="dpx-hero-lbl">बिक्री</div>
-            <div class="dpx-hero-sublbl">Net Earnings</div>
+            <div class="dpx-hero-lbl">शेष</div>
+            <div class="dpx-hero-sublbl">Balance · आया − गया</div>
           </div>
-          <div class="dpx-bikri-amt">${fmt(profit)}</div>
+          <div class="dpx-bikri-amt">${(_io.balance<0?'-':'')+fmt(Math.abs(_io.balance))}</div>
         </div>
         <div class="dpx-bikri-grid">
           <div class="dpx-mini-card">
-            <div class="dpx-mini-lbl">बिक्री</div>
-            <div class="dpx-mini-val">${fmt(r.sales||0)}</div>
+            <div class="dpx-mini-lbl">↓ आया</div>
+            <div class="dpx-mini-val">${fmt(_io.inward)}</div>
           </div>
           <div class="dpx-mini-card kh">
-            <div class="dpx-mini-lbl">खर्चा</div>
-            <div class="dpx-mini-val">${fmt(r.expense||0)}</div>
+            <div class="dpx-mini-lbl">↑ गया</div>
+            <div class="dpx-mini-val">${fmt(_io.outward)}</div>
           </div>
-          ${r.cash ? `<div class="dpx-mini-card"><div class="dpx-mini-lbl">नकद</div><div class="dpx-mini-val">${fmt(r.cash)}</div></div>` : ''}
-          ${r.upi ? `<div class="dpx-mini-card up"><div class="dpx-mini-lbl">UPI</div><div class="dpx-mini-val">${fmt(r.upi)}</div></div>` : ''}
         </div>
         ${r.notes ? `<div style="margin-top:8px;padding:6px 10px;background:rgba(74,144,212,0.08);border-left:2px solid #4a90d4;border-radius:4px;font-size:11px;color:#b0c8e8;">📝 ${escHTML(r.notes)}</div>` : ''}
         ${_entryListHtml}

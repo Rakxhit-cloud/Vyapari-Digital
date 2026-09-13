@@ -710,12 +710,15 @@ body.notif-modal-open { overflow: hidden; }
 .dpx-bikri-card::before { content: ''; position: absolute; top: 0; left: 12px; right: 12px; height: 2.5px; background: linear-gradient(90deg, transparent, #5dea5d, #2dba4d, #5dea5d, transparent); border-radius: 2px; opacity: 0.85; }
 .dpx-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .dpx-section-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #5dea5d; background: linear-gradient(135deg, rgba(45, 186, 77, 0.18), rgba(45, 186, 77, 0.06)); border: 0.5px solid rgba(93, 234, 93, 0.5); padding: 4px 10px; border-radius: 6px; font-weight: 600; letter-spacing: 0.4px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
-.dpx-bikri-hero { background: linear-gradient(135deg, rgba(45,186,77,0.08), rgba(45,186,77,0)); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 0.5px solid rgba(45, 186, 77, 0.15); }
+.dpx-bikri-hero { background: linear-gradient(135deg, rgba(45,186,77,0.08), rgba(45,186,77,0)); border-radius: 10px; padding: 11px 12px; margin-bottom: 9px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(45, 186, 77, 0.42); }
 .dpx-hero-lbl { font-size: 11px; color: #6ab070; font-weight: 500; letter-spacing: 0.2px; }
 .dpx-hero-sublbl { font-size: 9px; color: #4a8a5a; margin-top: 1px; }
-.dpx-bikri-amt { font-size: 26px; font-weight: 700; background: linear-gradient(135deg, #7afa7a, #2dba4d); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.5px; }
+.dpx-bikri-amt { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #7afa7a, #2dba4d); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.5px; }
 .dpx-bikri-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.dpx-mini-card { background: rgba(10, 30, 18, 0.5); border: 0.5px solid rgba(45, 186, 77, 0.18); border-radius: 7px; padding: 6px 9px; }
+.dpx-mini-card { background: rgba(10, 30, 18, 0.5); border: 1px solid rgba(62, 200, 115, 0.45); border-radius: 7px; padding: 7px 10px; }
+.dpx-mini-card.kh { border-color: rgba(204, 122, 71, 0.45); }
+.dpx-mini-card .dpx-mini-val { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; color: #4fd97f; }
+.dpx-mini-card.kh .dpx-mini-val { color: #f08f5a; }
 .dpx-mini-lbl { font-size: 10px; color: #6ab070; font-weight: 500; margin-bottom: 1px; }
 .dpx-mini-val { font-size: 13px; font-weight: 700; color: #d4a850; }
 .dpx-mini-card.kh { border-color: rgba(204, 122, 71, 0.2); }
@@ -736,6 +739,20 @@ body.notif-modal-open { overflow: hidden; }
 .dpx-maal-total { background: linear-gradient(135deg, rgba(93, 202, 165, 0.1), rgba(93, 202, 165, 0)); border-radius: 9px; padding: 8px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; border: 0.5px solid rgba(93, 202, 165, 0.18); }
 .dpx-maal-total-lbl { font-size: 11px; color: #7ab8a8; font-weight: 500; }
 .dpx-maal-total-val { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #d0f5e0, #5dcaa5); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.3px; }
+.dpx-maal-tap { display:block; font-size:9px; color:#6a8a80; font-weight:500; margin-top:2px; }
+.dpx-maal-ch { color:#5dcaa5; font-size:17px; margin-left:10px; opacity:.7; }
+.dpm-ov { position:fixed; inset:0; z-index:11500; background:rgba(8,8,8,.86); display:none; align-items:center; justify-content:center; padding:18px; }
+.dpm-ov.show { display:flex; }
+.dpm { width:100%; max-width:420px; background:linear-gradient(180deg,#12251e,#081310); border:1.5px solid #2f7a62; border-radius:16px; padding:13px; box-shadow:0 18px 46px -10px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.07) inset; }
+.dpm-hd { display:flex; align-items:flex-start; gap:9px; margin-bottom:11px; }
+.dpm-hd .t { font-size:14px; font-weight:700; color:#d0f5e0; }
+.dpm-hd .s { font-size:10px; color:#6a9a88; margin-top:2px; }
+.dpm-hd .x { margin-left:auto; width:30px; height:30px; border-radius:9px; background:rgba(232,69,69,.12); border:1px solid #7a3038; color:#f08a8a; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; cursor:pointer; }
+.dpm-tot { display:flex; align-items:center; background:rgba(93,202,165,.12); border:1px solid #2f7a62; border-radius:10px; padding:9px 11px; margin-bottom:10px; font-size:11.5px; color:#7ab8a8; font-weight:600; }
+.dpm-tot b { margin-left:auto; font-size:16px; color:#d0f5e0; letter-spacing:-.4px; }
+.dpm-lst { max-height:46vh; overflow-y:auto; background:#0a0c11; border:1px solid #2a2e3a; border-radius:10px; padding:7px; }
+.dpm-lst::-webkit-scrollbar { width:3px; }
+.dpm-lst::-webkit-scrollbar-thumb { background:#2f4a42; border-radius:3px; }
 .dpx-maal-list-wrap { position: relative; }
 .dpx-maal-list-wrap.scrollable::after { content: ''; position: absolute; bottom: 0; left: 0; right: 4px; height: 18px; background: linear-gradient(180deg, transparent, #051410); pointer-events: none; border-radius: 0 0 8px 8px; }
 .dpx-maal-list { max-height: 240px; overflow-y: auto; padding-right: 4px; margin-right: -4px; scrollbar-width: thin; scrollbar-color: rgba(93, 202, 165, 0.4) transparent; }
@@ -767,9 +784,10 @@ body.notif-modal-open { overflow: hidden; }
 .lgent-legend .lgd { display: inline-flex; align-items: center; gap: 3px; }
 .lgent-legend .lgdot { font-size: 9px; }
 .lgent-wrap { position: relative; background: #0a0c11; border: 1px solid #2a2e3a; border-radius: 10px; padding: 7px; }
-.lgent-scroll { max-height: 168px; overflow-y: auto; }
+.lgent-scroll { max-height: 216px; overflow-y: auto; }
 .lgent-wrap.scrollable::after { content: ''; position: absolute; bottom: 1px; left: 1px; right: 8px; height: 22px; background: linear-gradient(180deg, transparent, #0a0c11); pointer-events: none; border-radius: 0 0 9px 9px; }
-.lgent-row { background: #0d0f15; border-radius: 0 8px 8px 0; padding: 9px 11px; margin-bottom: 6px; display: flex; align-items: center; gap: 9px; }
+.lgent-row { background: #0d0f15; border: 1px solid #242b38; border-left-width: 3px; border-radius: 8px; padding: 9px 11px; margin-bottom: 7px; display: flex; align-items: center; gap: 9px; }
+.lgent-row:last-child { margin-bottom: 0; }
 .lgent-row:last-child { margin-bottom: 0; }
 .lgent-row.t-cash { border-left: 3px solid #3ec873; }
 .lgent-row.t-upi { border-left: 3px solid #4a9fd4; }
@@ -2639,6 +2657,17 @@ body.notif-modal-open { overflow: hidden; }
       <div><div class="t">Calendar</div><div class="s">Day-wise detail · तारीख़वार</div></div>
       <span class="ch">›</span>
     </div>
+  </div>
+</div>
+
+<div class="dpm-ov" id="dpm-ov" onclick="if(event.target===this)dpMaalClose()">
+  <div class="dpm">
+    <div class="dpm-hd">
+      <div><div class="t">📦 Purchase</div><div class="s" id="dpm-date">—</div></div>
+      <div class="x" onclick="dpMaalClose()">✕</div>
+    </div>
+    <div class="dpm-tot">Total <b id="dpm-total">₹0</b></div>
+    <div class="dpm-lst" id="dpm-list"></div>
   </div>
 </div>
 
@@ -9029,9 +9058,6 @@ function openDatePopup(ds){
         ${_scrollable ? '<div class="lgent-hint">⬇ और एंट्री — scroll करें</div>' : ''}`;
       }
       card.innerHTML = `
-        <div class="dpx-card-header">
-          <div class="dpx-section-tag">💰 दिन का हिसाब</div>
-        </div>
         <div class="dpx-bikri-hero">
           <div>
             <div class="dpx-hero-lbl">शेष</div>
@@ -9124,21 +9150,25 @@ function openDatePopup(ds){
     const wrapClass = isScrollable ? 'dpx-maal-list-wrap scrollable' : 'dpx-maal-list-wrap';
     const scrollHint = isScrollable ? '<div class="dpx-scroll-hint">↕ scroll करें</div>' : '';
 
+    // The list moves into a popup. The card carries the total only, because
+    // that is what gets glanced at -- the breakdown is opened occasionally, and
+    // inline it pushed everything below it off screen.
+    window._dpMaalHtml = itemsHtml;
+    window._dpMaalMeta = { n: maalEntries.length, total: totalMaal, date: dateStr };
     const maalCard = document.createElement('div');
     maalCard.className = 'dpx-maal-section';
+    maalCard.style.cursor = 'pointer';
+    maalCard.setAttribute('onclick', 'dpMaalOpen()');
     maalCard.innerHTML = `
       <div class="dpx-card-header">
-        <div class="dpx-maal-tag">📦 माल खरीद</div>
+        <div class="dpx-maal-tag">📦 Purchase</div>
         <div class="dpx-entry-count">📋 <b>${maalEntries.length}</b> एंट्री</div>
       </div>
       <div class="dpx-maal-total">
-        <span class="dpx-maal-total-lbl">कुल माल आया</span>
+        <span class="dpx-maal-total-lbl">Total<span class="dpx-maal-tap">देखने के लिए दबाएँ</span></span>
         <span class="dpx-maal-total-val">${fmt(totalMaal)}</span>
+        <span class="dpx-maal-ch">›</span>
       </div>
-      <div class="${wrapClass}">
-        <div class="dpx-maal-list">${itemsHtml}</div>
-      </div>
-      ${scrollHint}
     `;
     content.appendChild(maalCard);
   }
@@ -11140,6 +11170,32 @@ async function mpinSubmit(){
     }
   }
 }
+// Purchase list popup. Back button closes it rather than the day sheet, via a
+// history entry pushed on open -- the same trick the other overlays use.
+function dpMaalOpen(){
+  var ov=document.getElementById('dpm-ov'); if(!ov) return;
+  var M=window._dpMaalMeta||{};
+  var d=document.getElementById('dpm-date'); if(d) d.textContent = M.date ? fmtDate(M.date) : '';
+  var t=document.getElementById('dpm-total'); if(t) t.textContent = fmt(M.total||0);
+  var l=document.getElementById('dpm-list'); if(l) l.innerHTML = window._dpMaalHtml || '';
+  ov.classList.add('show');
+  window._dpmOpen = true;
+  try{ history.pushState({dpm:1},''); }catch(e){}
+}
+function dpMaalClose(){
+  var ov=document.getElementById('dpm-ov'); if(ov) ov.classList.remove('show');
+  if(window._dpmOpen){
+    window._dpmOpen=false;
+    try{ if(history.state && history.state.dpm) history.back(); }catch(e){}
+  }
+}
+window.addEventListener('popstate', function(){
+  if(window._dpmOpen){
+    window._dpmOpen=false;
+    var ov=document.getElementById('dpm-ov'); if(ov) ov.classList.remove('show');
+  }
+});
+
 function openMahina(){ if(_mahinaHasPin())mpinOpen('enter'); else mpinOpen('create'); }
 function mpinForgot(){
   var fg=document.getElementById('mpin-forgot');

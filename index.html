@@ -516,6 +516,26 @@ body.notif-modal-open { overflow: hidden; }
 .fab:active { transform: scale(.92); }
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0a1530; border-top: 1px solid #2a4078; display: flex; justify-content: space-around; padding: 10px 4px 12px; z-index: 100; align-items: flex-end; gap: 2px; overflow: hidden; }
 .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 6px 6px; flex: 1 1 auto; min-width: 0; }
+@media (max-width: 360px) {
+  .lg-home-body { padding:18px 14px; gap:12px; }
+  .lg-home-icon { width:64px; height:64px; border-radius:16px; font-size:34px; }
+  .lg-home-icon svg { width:48px; height:48px; }
+  .lg-home-title { font-size:21px; }
+  .lg-home-sub { font-size:11.5px; }
+  .lg-home-cta { font-size:12.5px; padding:10px 12px; }
+  .mk-tile-body { padding:16px 13px; gap:11px; }
+  .mk-tile-icon { width:62px; height:62px; border-radius:15px; }
+  .mk-tile-icon svg { width:40px; height:40px; }
+  .mk-tile-title { font-size:20px; }
+  .mk-tile-sub { font-size:11px; }
+  .mk-tile-cta { font-size:12.5px; padding:10px 12px; }
+  .home-pair { gap:8px; }
+  .pair-body { padding:11px 10px; }
+  .pair-icon { width:38px; height:38px; border-radius:11px; font-size:18px !important; }
+  .pair-icon svg { width:22px; height:22px; }
+  .pair-title { font-size:13.5px; }
+  .pair-cta { font-size:11.5px; padding:8px 6px; }
+}
 @media (max-width: 380px) {
   .bottom-nav { padding: 8px 2px 10px; gap: 1px; }
   .nav-item { padding: 4px 3px 6px; gap: 3px; }
@@ -898,7 +918,7 @@ body.notif-modal-open { overflow: hidden; }
 .install-sheet-btn { width: 100%; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border: 2px solid #f0d890; color: #1a1208; font-size: 15px; font-weight: 500; padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 10px; letter-spacing: .3px; box-shadow: 0 2px 0 #8a6818; }
 .install-sheet-btn:active { opacity: .85; }
 .install-sheet-later { width: 100%; background: transparent; border: none; color: #b0a0e8; font-size: 12px; padding: 8px; cursor: pointer; }
-@media (min-width: 768px) {
+@media (min-width: 768px) and (min-height: 600px) {
   .header { padding: 14px 28px; }
   .header-title { font-size: 18px; }
   .pad { padding: 0 24px; }
@@ -935,7 +955,7 @@ body.notif-modal-open { overflow: hidden; }
 }
 
 /* Portrait tablets have the extra height — go a step larger again */
-@media (min-width: 768px) and (orientation: portrait) {
+@media (min-width: 768px) and (orientation: portrait) and (min-height: 600px) {
   .lg-home-tile { margin: 18px 0; }
   .lg-home-body { padding: 30px 26px; gap: 24px; }
   .lg-home-icon { width: 106px; height: 106px; font-size: 58px; border-radius: 25px; }
@@ -950,7 +970,17 @@ body.notif-modal-open { overflow: hidden; }
   .mk-tile-sub { font-size: 16.5px; margin-top: 8px; }
   .mk-tile-cta { font-size: 18px; padding: 15px 22px; }
   .mk-tile-pill { font-size: 15px; padding: 6px 14px; }
-} /* ── Splash Screen ── */
+} /* ── Responsive: ignore Android system text scaling ── */
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+/* ── Responsive: let flex text shrink instead of pushing buttons off-screen ── */
+.lg-home-text,.mk-tile-text,.ub-settings-item-txt,.udhaar-person-name,.edit-header-text,
+.lgent-note,.lg-blocker-text,.st-gen-tt,.np-t,.flbl,.mk-t,.install-benefit,.ub-sheet-lbl,
+.auth-input,.ub-search-inp,.pair-tx,.mt-cmp .tx,.lgp-row .lg-display,.sgt-cred .num,
+.mk-fldrow .mk-fld,.np-date-row .np-fld,.spay-row2>div,.stmt-opt .ot,.st-tile.wide .st-tw,
+[style*="flex:1"],[style*="flex: 1"]{min-width:0;}
+/* ── Responsive: CTAs never wrap or get clipped ── */
+.lg-home-cta,.mk-tile-cta,.pair-cta,.mk-addbtn,.mk-tile-pill,.lg-pill{white-space:nowrap;}
+/* ── Splash Screen ── */
 .splash-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #050810 0%, #0a1530 50%, #14254a 100%); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; transition: opacity .3s ease; }
 .splash-screen.hidden { opacity: 0; pointer-events: none; }
 .splash-logo { width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 8px 24px rgba(212, 168, 80, 0.35)); animation: coinPulse 2s ease-in-out infinite; }
@@ -1347,12 +1377,25 @@ body.notif-modal-open { overflow: hidden; }
 .lg-home-tile { background:linear-gradient(135deg,#11183d 0%,#1a1f4e 100%); border:1.5px solid #d4a850; border-radius:18px; overflow:hidden; cursor:pointer; margin:12px 0; transition:transform .15s; position:relative; box-shadow:0 4px 18px rgba(212,168,80,0.12); }
 .lg-home-tile:active { transform:scale(.97); }
 .lg-home-stripe { height:5px; background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%); }
-.lg-home-body { padding:20px 18px; display:flex; align-items:center; gap:16px; }
-.lg-home-icon { width:72px; height:72px; background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%); border:2.5px solid #d4a850; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:40px; flex-shrink:0; animation: hk-breathe 2.4s ease-in-out infinite; }
+.lg-home-body { padding:26px 20px; display:flex; align-items:center; gap:18px; }
+.lg-home-icon { width:86px; height:86px; background:linear-gradient(135deg,#6a4818 0%,#3a2810 100%); border:2.5px solid #d4a850; border-radius:21px; display:flex; align-items:center; justify-content:center; font-size:44px; flex-shrink:0; animation: hk-breathe 2.4s ease-in-out infinite; }
+.lg-home-icon svg { width:66px; height:66px; }
 .lg-home-text { flex:1; }
-.lg-home-title { font-size:24px; font-weight:700; color:#d4a850; line-height:1.1; letter-spacing:-0.3px; }
-.lg-home-sub { font-size:12px; color:#a8b8e0; margin-top:5px; font-weight:500; }
-.lg-home-cta { background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%); color:#1a1208; font-size:13px; font-weight:700; padding:10px 16px; border-radius:10px; border:1.5px solid #f0d890; flex-shrink:0; }
+.lg-home-title { font-size:28px; font-weight:700; color:#d4a850; line-height:1.1; letter-spacing:-0.3px; }
+.lg-home-sub { font-size:13.5px; color:#a8b8e0; margin-top:5px; font-weight:500; }
+/* ── Home: paired secondary tiles ── */
+.home-pair{display:flex;gap:11px;margin-top:24px;}
+.pair-tile{flex:1;min-width:0;background:linear-gradient(135deg,#11183d 0%,#1a1f4e 100%);border:1.5px solid #d4a850;border-radius:18px;overflow:hidden;cursor:pointer;position:relative;box-shadow:0 4px 18px rgba(212,168,80,0.12);}
+.pair-body{padding:13px 12px;}
+.pair-top{display:flex;align-items:center;gap:10px;}
+.pair-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.pair-icon svg{width:26px;height:26px;}
+.pair-tx{flex:1;min-width:0;}
+.pair-title{font-size:15px;font-weight:700;color:#d4a850;line-height:1.1;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pair-mono{font-size:8.5px;font-weight:700;color:#d4a850;letter-spacing:1px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pair-sub{font-size:9.5px;color:#a8b8e0;margin-top:4px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pair-cta{display:block;width:100%;text-align:center;background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%);color:#1a1208;font-size:12.5px;font-weight:700;padding:9px 8px;border-radius:10px;border:1.5px solid #f0d890;margin-top:11px;white-space:nowrap;}
+.lg-home-cta { background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%); color:#1a1208; font-size:14.5px; font-weight:700; padding:12px 18px; border-radius:11px; border:1.5px solid #f0d890; flex-shrink:0; }
 
 /* Screen header card with totals */
 .lg-totals-card { background:linear-gradient(135deg,#0a1530 0%,#14254a 100%); border:1.5px solid #2a4078; border-radius:14px; overflow:hidden; margin-bottom:18px; }
@@ -1592,12 +1635,13 @@ body.notif-modal-open { overflow: hidden; }
 /* ===== माल की खरीद — supplier feature ===== */
 .mk-tile{background:linear-gradient(135deg,#0a2828 0%,#10322e 100%);border:1.5px solid #cc7a47;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 4px 18px rgba(204,122,71,0.14);}
 .mk-tile-stripe{height:5px;background:linear-gradient(90deg,#cc7a47 0%,#e8a050 30%,#3ec873 70%,#20c0a0 100%);}
-.mk-tile-body{padding:18px 16px;display:flex;align-items:center;gap:15px;}
-.mk-tile-icon{width:68px;height:68px;background:linear-gradient(135deg,#5a3818 0%,#3a2410 100%);border:2.5px solid #cc7a47;border-radius:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:hk-breathe 2.4s ease-in-out infinite;}
+.mk-tile-body{padding:24px 18px;display:flex;align-items:center;gap:17px;}
+.mk-tile-icon{width:84px;height:84px;background:linear-gradient(135deg,#5a3818 0%,#3a2410 100%);border:2.5px solid #cc7a47;border-radius:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:hk-breathe 2.4s ease-in-out infinite;}
 .mk-tile-text{flex:1;}
-.mk-tile-title{font-size:23px;font-weight:700;color:#e89b5a;line-height:1.1;letter-spacing:-0.3px;}
-.mk-tile-sub{font-size:11.5px;color:#9ad0c0;margin-top:5px;font-weight:500;}
-.mk-tile-cta{background:linear-gradient(135deg,#cc7a47 0%,#e8a050 100%);color:#1a1208;font-size:13px;font-weight:700;padding:10px 15px;border-radius:10px;border:1.5px solid #f0b878;flex-shrink:0;}
+.mk-tile-icon svg{width:52px;height:52px;}
+.mk-tile-title{font-size:26px;font-weight:700;color:#e89b5a;line-height:1.1;letter-spacing:-0.3px;}
+.mk-tile-sub{font-size:13px;color:#9ad0c0;margin-top:5px;font-weight:500;}
+.mk-tile-cta{background:linear-gradient(135deg,#cc7a47 0%,#e8a050 100%);color:#1a1208;font-size:14.5px;font-weight:700;padding:12px 18px;border-radius:11px;border:1.5px solid #f0b878;flex-shrink:0;}
 .mk-tile-pill{background:#0a1f1a;border-radius:10px;padding:4px 11px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.4px;border:1px solid #3ec873;color:#5dd88a;margin-left:8px;vertical-align:middle;animation:hk-breathe 2.4s ease-in-out infinite;}
 .mk-tile-dot,.mk-dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#3ec873;}
 /* screen header */
@@ -2545,7 +2589,7 @@ body.notif-modal-open { overflow: hidden; }
       .ub-tile-baki .l{font-size:11.5px;color:#ff8a7a;font-weight:700;}
       .ub-tile-baki .v{font-size:17px;color:#f0c890;font-weight:800;}
     </style>
-    <div class="mk-tile" onclick="go('s-suppliers')" style="margin-top:18px;">
+    <div class="mk-tile" onclick="go('s-suppliers')" style="margin-top:22px;">
       <div class="mk-tile-stripe"></div>
       <div class="mk-tile-body">
         <div class="mk-tile-icon">
@@ -2568,35 +2612,30 @@ body.notif-modal-open { overflow: hidden; }
         <div class="mk-tile-cta">खोलें →</div>
       </div>
     </div>
-    <!-- Mahina Totals (PIN-locked) — replaces open monthly figures -->
-    <div class="lg-home-tile" id="mahina-tile" onclick="openMahina()" style="border:1.5px solid #d4a850;margin-top:14px;">
-      <div class="lg-home-stripe" style="background:linear-gradient(90deg,#d4a850,#e8c870,#cc7a47);"></div>
-      <div class="lg-home-body">
-        <div class="lg-home-icon" style="background:#0d1838;border:2px solid #e8c870;border-radius:15px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;position:relative;font-size:30px;flex-shrink:0;">📊<div style="position:absolute;right:-5px;bottom:-5px;width:23px;height:23px;border-radius:50%;background:#2a1018;border:1.5px solid #e23a3a;display:flex;align-items:center;justify-content:center;font-size:11px;">🔒</div></div>
-        <div class="lg-home-text">
-          <div class="lg-home-title" style="color:#f0c890;">Mahina Totals</div>
-          <div style="font-size:9.5px;font-weight:700;color:#d4a850;letter-spacing:1.5px;margin-top:3px;">MONTHLY · PIN-LOCKED 🔒</div>
-          <div class="lg-home-sub" style="margin-top:4px;">महीनेवार · बिक्री · कैलेंडर</div>
-        </div>
-        <div class="lg-home-cta">खोलें →</div>
-      </div>
-    </div>
-    
-    <!-- NEW: Statement / रिपोर्ट tile -> opens s-statement hub -->
-    <div class="lg-home-tile" id="stmt-tile" onclick="go('s-statement')" style="margin-top:14px;box-shadow:0 6px 22px rgba(232,200,112,.22);">
-      <div class="lg-home-stripe" style="background:linear-gradient(90deg,#e8c870,#4a90d4,#3ec873,#e8c870);"></div>
-      <div class="lg-home-body">
-        <div class="lg-home-icon" style="background:linear-gradient(135deg,#243150,#141d33);border:2.5px solid #e8c870;"><svg width="44" height="44" viewBox="0 0 56 56" aria-label="Statement"><rect x="12" y="6" width="30" height="42" rx="4" fill="#f4ead0" stroke="#b8902f" stroke-width="1.4"/><rect x="12" y="6" width="30" height="8.5" rx="4" fill="#e8c870"/><line x1="18" y1="22" x2="38" y2="22" stroke="#9aa0b0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="28" x2="38" y2="28" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="34" x2="30" y2="34" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="42" r="10" fill="#1e7a46" stroke="#fff" stroke-width="1.7"/><path d="M35.5 42l3 3 5.5-6" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="lg-home-text">
-          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
-            <div class="lg-home-title">Statement<span style="color:#a8b8d8;font-weight:700;font-size:16px;">/रिपोर्ट</span></div>
-            <div class="lg-pill" style="background:linear-gradient(135deg,#f0d890,#d4a850);color:#1a1208;font-weight:900;letter-spacing:.5px;padding:2px 9px;border-radius:10px;font-size:10px;">NEW</div>
+    <!-- Mahina Totals (PIN-locked) + Statement — paired -->
+    <div class="home-pair">
+      <div class="pair-tile" id="mahina-tile" onclick="openMahina()">
+        <div class="lg-home-stripe" style="background:linear-gradient(90deg,#d4a850,#e8c870,#cc7a47);"></div>
+        <div class="pair-body">
+          <div class="pair-top">
+            <div class="pair-icon" style="background:#0d1838;border:2px solid #e8c870;font-size:21px;">📊<div style="position:absolute;right:-4px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:#2a1018;border:1.5px solid #e23a3a;display:flex;align-items:center;justify-content:center;font-size:9px;">🔒</div></div>
+            <div class="pair-tx"><div class="pair-title" style="color:#f0c890;">Mahina</div><div class="pair-mono">PIN-LOCKED 🔒</div></div>
           </div>
-          <div class="lg-home-sub">PDF · Excel · Tally-ready — For Accounting</div>
+          <div class="pair-cta">खोलें →</div>
         </div>
-        <div class="lg-home-cta">खोलें →</div>
+      </div>
+      <div class="pair-tile" id="stmt-tile" onclick="go('s-statement')" style="box-shadow:0 6px 22px rgba(232,200,112,.22);">
+        <div class="lg-home-stripe" style="background:linear-gradient(90deg,#e8c870,#4a90d4,#3ec873,#e8c870);"></div>
+        <div class="pair-body">
+          <div class="pair-top">
+            <div class="pair-icon" style="background:linear-gradient(135deg,#243150,#141d33);border:2px solid #e8c870;"><svg viewBox="0 0 56 56" aria-label="Statement"><rect x="12" y="6" width="30" height="42" rx="4" fill="#f4ead0" stroke="#b8902f" stroke-width="1.4"/><rect x="12" y="6" width="30" height="8.5" rx="4" fill="#e8c870"/><line x1="18" y1="22" x2="38" y2="22" stroke="#9aa0b0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="28" x2="38" y2="28" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="34" x2="30" y2="34" stroke="#b9c0d0" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="42" r="10" fill="#1e7a46" stroke="#fff" stroke-width="1.7"/><path d="M35.5 42l3 3 5.5-6" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="pair-tx"><div class="pair-title">Statement</div><div class="pair-sub">PDF · Excel · Tally</div></div>
+          </div>
+          <div class="pair-cta">खोलें →</div>
+        </div>
       </div>
     </div>
+
         <span id="w-maal" style="display:none;">₹0</span>
     
    </div>
@@ -4756,8 +4795,8 @@ textarea.st-biz-in{resize:none;}
 #np-s2{padding:16px;}#np-s1{padding:16px;flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;}
 .np-cam{border:2px dashed #c9a24b;border-radius:20px;background:linear-gradient(160deg,#16203f,#0d1528);padding:34px 18px;text-align:center;cursor:pointer;touch-action:manipulation;box-shadow:0 8px 22px rgba(0,0,0,.35),inset 0 1px 0 rgba(240,200,144,.08);transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}.np-cam:active{transform:scale(.955);box-shadow:0 3px 10px rgba(0,0,0,.4),inset 0 1px 0 rgba(240,200,144,.05);filter:brightness(1.08);}
 /* ---- app-wide press feedback (button feel) ---- */
-.lg-home-tile,.ub-tile,.mk-tile,.kpi-card,.mk-card,.mk-addbtn,.mkp-new,.popup-btn,.ledger-pay-btn,.mkp-pay,.stmt-open-btn,.pbtn,.lgpur-tg,.uc-m,.np-chip,.edit-pay-pill,.mk-back,.mkc,.mk-f{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}
-.lg-home-tile:active,.ub-tile:active,.mk-tile:active,.kpi-card:active,.mk-card:active,.mkc:active{transform:scale(.975);filter:brightness(1.06);}
+.lg-home-tile,.pair-tile,.ub-tile,.mk-tile,.kpi-card,.mk-card,.mk-addbtn,.mkp-new,.popup-btn,.ledger-pay-btn,.mkp-pay,.stmt-open-btn,.pbtn,.lgpur-tg,.uc-m,.np-chip,.edit-pay-pill,.mk-back,.mkc,.mk-f{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}
+.lg-home-tile:active,.pair-tile:active,.ub-tile:active,.mk-tile:active,.kpi-card:active,.mk-card:active,.mkc:active{transform:scale(.975);filter:brightness(1.06);}
 .mk-f:active{transform:scale(.94);}
 .mk-addbtn:active,.mkp-new:active,.popup-btn:active,.ledger-pay-btn:active,.mkp-pay:active,.stmt-open-btn:active,.pbtn:active,.lgpur-tg:active,.uc-m:active,.np-chip:active,.edit-pay-pill:active,.mk-back:active{transform:scale(.94);filter:brightness(1.08);}
 .np-ci{width:86px;height:86px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(201,162,75,.16),rgba(201,162,75,.02) 70%);border:1.5px solid rgba(201,162,75,.5);box-shadow:0 0 18px rgba(240,200,144,.14),inset 0 1px 0 rgba(240,200,144,.12);}.np-ci svg{width:46px;height:46px;color:#f0c890;filter:drop-shadow(0 1px 3px rgba(240,200,144,.3));}.np-ci .sc-frame{stroke:#f0c890;}.np-ci .sc-txt{stroke:#d9c39a;}.np-ci .sc-beam{stroke:#ffe08a;filter:drop-shadow(0 0 2px rgba(255,224,138,.8));}

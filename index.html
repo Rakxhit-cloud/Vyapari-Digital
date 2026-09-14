@@ -7570,10 +7570,16 @@ function lgDirOf(b){
   if(b && (b.type==='cash' || b.type==='upi')) return 'in';
   return 'out';
 }
+// Cash actually moved for this box. A credit purchase carries a bill amount but
+// no cash leaves the galla until it is paid, so cashOut overrides amount.
+function lgCashOf(b){
+  if(b && typeof b.cashOut==='number') return Math.round(b.cashOut);
+  return Math.round((b && b.amount) || 0);
+}
 function lgInOut(boxes){
   var i=0,o=0;
   (boxes||[]).forEach(function(b){
-    var a=Math.round(b.amount||0); if(!(a>0)) return;
+    var a=lgCashOf(b); if(!(a>0)) return;
     if(lgDirOf(b)==='in') i+=a; else o+=a;
   });
   return {inward:i, outward:o, balance:i-o};
@@ -8376,7 +8382,14 @@ function lgpcFile(sup, phone){
   // Mirror a purchase box onto Live Hisaab (visual only; K.MAAL is the source of truth).
   if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
   var pboxes = r.lgBoxes.filter(function(b){return b.type==='purchase';});
-  var pbox = { n: pboxes.length+1, type:'purchase', amount:amt, note:('सप्लायर: '+sup).slice(0,80), pay: window.lgPurPay, supplier: sup, ts: Date.now() };
+  // Cash that actually left the galla today:
+  //   नकद purchase → the whole bill
+  //   उधार purchase → only the part-payment made at scan time (often 0)
+  var _cashOut = (pay==='नकद') ? amt : Math.max(0, Math.min(Number(window._lgpcPaid)||0, amt));
+  var pbox = { n: pboxes.length+1, type:'purchase', dir:'out', src:'maal', maalKind:'purchase',
+               amount:amt, cashOut:_cashOut, maalId:_maalId,
+               note:('सप्लायर: '+sup).slice(0,80),
+               pay: window.lgPurPay, supplier: sup, ts: Date.now() };
   if (_ph.thumb) pbox.billThumb = _ph.thumb;
   if (_ph.url)   pbox.billUrl   = _ph.url;
   if (_ph.path)  pbox.billPath  = _ph.path;
@@ -9147,7 +9160,7 @@ function calDayTotals(y,m){
     if(!r.date||r.date.indexOf(pre)!==0)return;
     var t=map[r.date]||(map[r.date]={inw:0,out:0,maal:0,kh:0});
     (Array.isArray(r.lgBoxes)?r.lgBoxes:[]).forEach(function(b){
-      var a=Math.round(b&&b.amount||0); if(!(a>0))return;
+      var a=lgCashOf(b); if(!(a>0))return;
       if(lgDirOf(b)==='in'){t.inw+=a;}
       else{t.out+=a; if(b.src==='maal')t.maal+=a; else t.kh+=a;}
     });
@@ -9415,7 +9428,7 @@ function openDatePopup(ds){
     // that is what gets glanced at -- the breakdown is opened occasionally, and
     // inline it pushed everything below it off screen.
     window._dpMaalHtml = itemsHtml;
-    window._dpMaalMeta = { n: maalEntries.length, total: totalMaal, date: dateStr };
+    window._dpMaalMeta = { n: maalEntries.length, total: totalMaal, date: ds };
     const maalCard = document.createElement('div');
     maalCard.className = 'dpx-maal-section';
     maalCard.style.cursor = 'pointer';

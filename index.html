@@ -693,7 +693,50 @@ body.notif-modal-open { overflow: hidden; }
 .cal-days-header { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 5px; }
 .cal-day-name { font-size: 10px; color: #8aa0d8; text-align: center; font-weight: 500; padding: 4px 0; }
 .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
-.cal-cell { height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; font-size: 11px; font-weight: 700; position: relative; flex-direction: column; }
+.cal-cell { height: 42px; border-radius: 7px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; font-size: 11px; font-weight: 700; position: relative; flex-direction: column; gap:1px; }
+.cal-cell .d{font-size:9.5px;font-weight:600;opacity:.62;line-height:1;}
+.cal-cell .a{font-size:10px;font-weight:800;line-height:1;}
+/* heat — four steps per lens */
+.cal-cell.h1.in{background:rgba(63,190,124,.10);border:1px solid rgba(45,122,74,.5);color:#6aba8a;}
+.cal-cell.h2.in{background:rgba(63,190,124,.18);border:1px solid #2d7a4a;color:#7ee0a4;}
+.cal-cell.h3.in{background:rgba(63,190,124,.30);border:1px solid #3fbe7c;color:#9cf0bc;}
+.cal-cell.h4.in{background:rgba(63,190,124,.46);border:1.5px solid #5dd88a;color:#d8ffe8;}
+.cal-cell.h1.out{background:rgba(224,112,90,.10);border:1px solid rgba(138,77,58,.5);color:#b88070;}
+.cal-cell.h2.out{background:rgba(224,112,90,.18);border:1px solid #8a4d3a;color:#f0a080;}
+.cal-cell.h3.out{background:rgba(224,112,90,.30);border:1px solid #cc6a4a;color:#ffb898;}
+.cal-cell.h4.out{background:rgba(224,112,90,.46);border:1.5px solid #e8896a;color:#ffe0d4;}
+.cal-cell.today-cell .d{opacity:.72;}
+/* lens tabs */
+.cal-lens{display:flex;gap:7px;margin-bottom:10px;}
+.cal-tb{flex:1;min-width:0;border-radius:10px;padding:9px 6px;text-align:center;border:1px solid #2a4078;background:#0d1428;cursor:pointer;}
+.cal-tb .n{font-size:12px;font-weight:700;color:#6d7fa8;white-space:nowrap;}
+.cal-tb .v{font-size:13px;font-weight:800;color:#6d7fa8;margin-top:2px;white-space:nowrap;}
+.cal-tb.on.in{background:linear-gradient(160deg,#0e2a1c,#081a12);border-color:#2d7a4a;}
+.cal-tb.on.in .n{color:#8fe0b4;} .cal-tb.on.in .v{color:#7ee0a4;}
+.cal-tb.on.out{background:linear-gradient(160deg,#2a1810,#1a0f08);border-color:#8a4d3a;}
+.cal-tb.on.out .n{color:#e8a890;} .cal-tb.on.out .v{color:#f0a080;}
+/* sub filter */
+.cal-sub{display:flex;gap:6px;margin-bottom:10px;}
+.cal-c{padding:5px 12px;border-radius:20px;font-size:10.5px;font-weight:600;background:rgba(255,255,255,.04);border:1px solid #2a4078;color:#8aa0d8;cursor:pointer;white-space:nowrap;}
+.cal-c.on{background:rgba(224,112,90,.14);border-color:#8a4d3a;color:#f0a080;}
+/* heat legend */
+.cal-heatleg{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:9px;color:#6d7fa8;}
+.cal-heatleg i{width:13px;height:9px;border-radius:3px;display:inline-block;}
+.cal-heatleg .tp{margin-left:auto;}
+/* insight box */
+.cal-ins{background:#0d1428;border:1px solid #1e2c52;border-radius:11px;padding:10px 12px;margin-top:11px;}
+.cal-ir{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#c8d4ec;margin-bottom:7px;}
+.cal-ir:last-child{margin-bottom:0;}
+.cal-ir .k{color:#6d7fa8;flex:1;min-width:0;}
+.cal-ir .v{font-weight:700;white-space:nowrap;}
+.cal-ir .v.o{color:#f0a080;} .cal-ir .v.i{color:#7ee0a4;} .cal-ir .v.n{color:#e8d8b8;}
+.cal-ir .pc{font-size:10px;color:#6d7fa8;font-weight:600;}
+.cal-tag{font-size:9px;background:rgba(224,112,90,.14);border:1px solid #8a4d3a;color:#f0a080;border-radius:20px;padding:1px 7px;white-space:nowrap;}
+/* कैलेंडर button in the Live हिसाब header */
+.lg-calbtn{margin-left:auto;width:42px;height:42px;border-radius:11px;background:#16224a;border:1.5px solid #d4a850;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;line-height:1;cursor:pointer;}
+.lg-calbtn .e{font-size:16px;}
+.lg-calbtn .l{font-size:6.5px;color:#d4a850;font-weight:700;margin-top:2px;white-space:nowrap;}
+
 .cal-cell.empty { background: transparent; cursor: default; pointer-events: none; }
 .cal-cell.no-entry { background: #14254a; color: #4a5aa8; border: 1px solid #2a4078; }
 .cal-cell.no-entry:active { opacity: .7; }
@@ -2783,15 +2826,20 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
     <div class="month-grid" id="month-grid"></div>
     <div id="cal-section" style="display:none;">
       <div class="cal-wrapper">
+        <div class="cal-lens">
+          <div class="cal-tb in" id="cal-tab-in" onclick="calSetLens('in')"><div class="n">↓ आया</div><div class="v">₹0</div></div>
+          <div class="cal-tb out on" id="cal-tab-out" onclick="calSetLens('out')"><div class="n">↑ गया</div><div class="v">₹0</div></div>
+        </div>
+        <div class="cal-sub" id="cal-sub">
+          <span class="cal-c on" id="cal-sub-all" onclick="calSetSub('all')">All</span>
+          <span class="cal-c" id="cal-sub-maal" onclick="calSetSub('maal')">माल · Stock</span>
+          <span class="cal-c" id="cal-sub-kharcha" onclick="calSetSub('kharcha')">खर्चा · Expense</span>
+        </div>
         <div class="cal-header"><div class="cal-month-label" id="cal-label"></div><div style="display:flex;gap:6px;"><div class="cal-nav" onclick="calPrev()">◀</div><div class="cal-nav" onclick="calNext()">▶</div></div></div>
         <div class="cal-days-header"><div class="cal-day-name">सो</div><div class="cal-day-name">मं</div><div class="cal-day-name">बु</div><div class="cal-day-name">गु</div><div class="cal-day-name">शु</div><div class="cal-day-name">श</div><div class="cal-day-name">र</div></div>
         <div class="cal-grid" id="cal-grid"></div>
-        <div class="cal-legend">
-          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#0a2a0a;border:1.5px solid #2dba4d;"></div><span class="cal-leg-txt" style="color:#d4a850;">एंट्री है</span></div>
-          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;outline:2px solid #2dba4d;outline-offset:1px;"></div><span class="cal-leg-txt" style="color:#70c0ff;">आज</span></div>
-          <div class="cal-leg-item"><div class="cal-leg-box" style="background:#1e1e1e;"></div><span class="cal-leg-txt" style="color:#555;">खाली — टैप करें</span></div>
-        </div>
-        <div style="margin-top:8px;background:#0d1a2a;border:1px solid #1a2a3a;border-radius:6px;padding:5px 10px;text-align:center;"><div style="font-size:8px;color:#4a90d4;font-weight:700;">👆 किसी भी तारीख पर टैप करें — popup खुलेगा</div></div>
+        <div class="cal-heatleg" id="cal-heatleg"></div>
+        <div class="cal-ins" id="cal-ins" style="display:none;"></div>
       </div>
     </div>
   </div>
@@ -2909,6 +2957,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
         <div class="header-sub" id="lg-screen-sub" style="color:#d4a850;">हर बिक्री · हर खर्चा</div>
       </div>
     </div>
+    <div class="lg-calbtn" onclick="calOpenFromLive()"><span class="e">📆</span><span class="l">कैलेंडर</span></div>
   </div>
   <div style="height:4px;background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%);"></div>
   <div class="fw">
@@ -9033,7 +9082,88 @@ function selectMonth(m){
   }
   calSelectedMonth=m;calYear=TODAY.getFullYear();calMonth=m;buildMonthGrid();document.getElementById('cal-section').style.display='block';renderCalendar();document.getElementById('mahiney-sub').textContent=HI_MONTHS[m]+' '+calYear+' — तारीख टैप करें';
 }
-function renderCalendar(){document.getElementById('cal-label').textContent=HI_MONTHS[calMonth]+' '+calYear;const bikri=DB.get(K.BIKRI);const maal=DB.get(K.MAAL)||[];const monthPrefix=calYear+'-'+String(calMonth+1).padStart(2,'0');const entryDates=new Set();bikri.forEach(r=>{if(r.date&&r.date.startsWith(monthPrefix))entryDates.add(r.date);});maal.forEach(r=>{if(r.date&&r.date.startsWith(monthPrefix))entryDates.add(r.date);});const firstDay=new Date(calYear,calMonth,1).getDay(),startOffset=(firstDay===0)?6:firstDay-1;const daysInMonth=new Date(calYear,calMonth+1,0).getDate();const grid=document.getElementById('cal-grid');grid.innerHTML='';for(let i=0;i<startOffset;i++){const c=document.createElement('div');c.className='cal-cell empty';grid.appendChild(c);}for(let d=1;d<=daysInMonth;d++){const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');const hasEntry=entryDates.has(ds),isToday=ds===TSTR;const c=document.createElement('div');c.className='cal-cell '+(hasEntry?'has-entry':'no-entry')+(isToday?' today-cell':'');c.textContent=d;if(hasEntry){const dot=document.createElement('div');dot.className='cal-entry-dot';c.appendChild(dot);}if(isToday){const lbl=document.createElement('div');lbl.className='cal-today-lbl';lbl.textContent='आज';c.appendChild(lbl);}c.onclick=()=>openDatePopup(ds);grid.appendChild(c);}}
+var calLens='out', calSub='all';
+function calShort(n){n=Math.round(n||0);if(n<1000)return String(n);if(n<100000){var k=n/1000;return (k<10?k.toFixed(1):String(Math.round(k)))+'k';}return (n/100000).toFixed(1)+'L';}
+function calDayTotals(y,m){
+  var pre=y+'-'+String(m+1).padStart(2,'0'), map={};
+  (DB.get(K.BIKRI)||[]).forEach(function(r){
+    if(!r.date||r.date.indexOf(pre)!==0)return;
+    var t=map[r.date]||(map[r.date]={inw:0,out:0,maal:0,kh:0});
+    (Array.isArray(r.lgBoxes)?r.lgBoxes:[]).forEach(function(b){
+      var a=Math.round(b&&b.amount||0); if(!(a>0))return;
+      if(lgDirOf(b)==='in'){t.inw+=a;}
+      else{t.out+=a; if(b.src==='maal')t.maal+=a; else t.kh+=a;}
+    });
+  });
+  return map;
+}
+function calSetLens(l){calLens=l;renderCalendar();}
+function calSetSub(s){calSub=s;renderCalendar();}
+function calOpenFromLive(){window._mpinDest='s-calendar';openMahina();}
+function _mpinGo(){
+  var dst=window._mpinDest||'s-mahina';window._mpinDest=null;go(dst);
+  if(dst==='s-calendar'){
+    calSelectedMonth=TODAY.getMonth();calYear=TODAY.getFullYear();calMonth=TODAY.getMonth();
+    try{buildMonthGrid();}catch(e){}
+    var cs=document.getElementById('cal-section');if(cs)cs.style.display='block';
+    renderCalendar();
+  }
+}
+function renderCalendar(){
+  var lblEl=document.getElementById('cal-label');if(lblEl)lblEl.textContent=HI_MONTHS[calMonth]+' '+calYear;
+  var map=calDayTotals(calYear,calMonth), mIn=0,mOut=0,mMaal=0,mKh=0;
+  Object.keys(map).forEach(function(k){var t=map[k];mIn+=t.inw;mOut+=t.out;mMaal+=t.maal;mKh+=t.kh;});
+  var isIn=(calLens==='in'), hue=isIn?'in':'out';
+  var tIn=document.getElementById('cal-tab-in'),tOut=document.getElementById('cal-tab-out');
+  if(tIn){tIn.className='cal-tb in'+(isIn?' on':'');tIn.querySelector('.v').textContent=fmt(mIn);}
+  if(tOut){tOut.className='cal-tb out'+(isIn?'':' on');tOut.querySelector('.v').textContent=fmt(mOut);}
+  var subEl=document.getElementById('cal-sub');if(subEl)subEl.style.display=isIn?'none':'flex';
+  ['all','maal','kharcha'].forEach(function(s){var e=document.getElementById('cal-sub-'+s);if(e)e.className='cal-c'+(calSub===s?' on':'');});
+  function valOf(t){if(isIn)return t.inw;if(calSub==='maal')return t.maal;if(calSub==='kharcha')return t.kh;return t.out;}
+  var mx=0;Object.keys(map).forEach(function(k){var v=valOf(map[k]);if(v>mx)mx=v;});
+  var firstDay=new Date(calYear,calMonth,1).getDay(),startOffset=(firstDay===0)?6:firstDay-1;
+  var daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  var grid=document.getElementById('cal-grid');if(!grid)return;grid.innerHTML='';
+  for(var i=0;i<startOffset;i++){var e0=document.createElement('div');e0.className='cal-cell empty';grid.appendChild(e0);}
+  var mkTap=function(x){return function(){openDatePopup(x);};};
+  for(var d=1;d<=daysInMonth;d++){
+    var ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var t=map[ds],v=t?valOf(t):0,cls='cal-cell';
+    if(v>0&&mx>0){var r=v/mx;cls+=' '+(r>0.75?'h4':(r>0.5?'h3':(r>0.25?'h2':'h1')))+' '+hue;}
+    else cls+=' no-entry';
+    if(ds===TSTR)cls+=' today-cell';
+    var c=document.createElement('div');c.className=cls;
+    c.innerHTML='<span class="d">'+d+'</span>'+(v>0?'<span class="a">'+calShort(v)+'</span>':'');
+    c.onclick=mkTap(ds);grid.appendChild(c);
+  }
+  var lg=document.getElementById('cal-heatleg');
+  if(lg)lg.innerHTML='<span>कम</span><i class="cal-cell h1 '+hue+'"></i><i class="cal-cell h2 '+hue+'"></i><i class="cal-cell h3 '+hue+'"></i><i class="cal-cell h4 '+hue+'"></i><span>ज़्यादा</span><span class="tp">किसी तारीज़ पर टैप करें</span>';
+  var box=document.getElementById('cal-ins');
+  if(box){
+    var bestD='',bestV=0,empty=0;
+    for(var q=1;q<=daysInMonth;q++){
+      var qs=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(q).padStart(2,'0');
+      var qt=map[qs],qv=qt?valOf(qt):0;
+      if(qv>bestV){bestV=qv;bestD=qs;}
+      if(!qv)empty++;
+    }
+    var tot=0;Object.keys(map).forEach(function(k){tot+=valOf(map[k]);});
+    var h='';
+    if(bestV>0){
+      var tag='';
+      if(!isIn&&map[bestD]&&map[bestD].maal>map[bestD].kh)tag='<span class="cal-tag">माल</span>';
+      h+='<div class="cal-ir"><span class="k">सबसे ज़्यादा</span><span class="v '+(isIn?'i':'o')+'">'+parseInt(bestD.slice(8),10)+' '+HI_MONTHS[calMonth]+' · '+fmt(bestV)+'</span>'+tag+'</div>';
+    }
+    h+='<div class="cal-ir"><span class="k">औसत प्रति दिन</span><span class="v n">'+fmt(Math.round(tot/daysInMonth))+'</span></div>';
+    if(isIn){h+='<div class="cal-ir"><span class="k">ख़ाली दिन</span><span class="v n">'+empty+' दिन</span></div>';}
+    else{
+      var T=(mMaal+mKh)||1;
+      h+='<div class="cal-ir"><span class="k">माल · Stock</span><span class="v o">'+fmt(mMaal)+'</span><span class="pc">'+Math.round(mMaal/T*100)+'%</span></div>';
+      h+='<div class="cal-ir"><span class="k">खर्चा · Expense</span><span class="v o">'+fmt(mKh)+'</span><span class="pc">'+Math.round(mKh/T*100)+'%</span></div>';
+    }
+    box.innerHTML=h;box.style.display=tot>0?'block':'none';
+  }
+}
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
 let dpCurrentDate=null,dpDeleteId=null;
@@ -11254,7 +11384,7 @@ async function mpinSubmit(){
     var p=_mahinaGetLocal();
     if(!p){window.mpin.buf='';_mpinRender();return;}
     var h=await _pinDigest(buf,p.salt);
-    if(h===p.hash){mpinClose();go('s-mahina');}
+    if(h===p.hash){mpinClose();_mpinGo();}
     else{window.mpin.buf='';_mpinRender();_mpinErr('गलत PIN — दुबारा कोशिश करें');}
   } else if(mode==='create'){
     window.mpin.first=buf;window.mpin.buf='';window.mpin.mode='create2';
@@ -11266,7 +11396,7 @@ async function mpinSubmit(){
     if(buf===window.mpin.first){
       var salt=_randSalt(),hash=await _pinDigest(buf,salt);
       await _mahinaSaveSynced(hash,salt);
-      mpinClose();toast('✅ PIN सेट हो गया');go('s-mahina');
+      mpinClose();toast('✅ PIN सेट हो गया');_mpinGo();
     } else {
       window.mpin.first='';window.mpin.buf='';window.mpin.mode='create';
       document.getElementById('mpin-title').textContent='नया PIN बनाएं';

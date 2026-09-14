@@ -1822,6 +1822,33 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .mk-fldrow{display:flex;gap:10px;}
 .mk-fldrow .mk-fld{flex:1;}
 .mk-fld-lbl{font-size:11px;color:#b0a0e8;font-weight:600;margin-bottom:7px;}
+/* ── data reset sheet ── */
+.dr-warn{font-size:12.5px;color:#e8c0c0;line-height:1.6;background:rgba(192,57,43,.1);border:1px solid #5a2020;border-radius:10px;padding:11px 13px;margin-bottom:13px;}
+.dr-warn b{color:#ff9a8a;}
+.dr-grp{border-radius:11px;border:1px solid;overflow:hidden;margin-bottom:10px;}
+.dr-h{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:11.5px;font-weight:700;}
+.dr-h .n{margin-left:auto;font-size:11px;font-weight:700;}
+.dr-b{padding:2px 12px 9px;}
+.dr-r{display:flex;align-items:center;font-size:11.5px;padding:5px 0;color:#b8c4dc;}
+.dr-r .c{margin-left:auto;font-weight:700;font-size:12px;white-space:nowrap;}
+.dr-go{border-color:#7a3030;background:rgba(226,58,58,.06);}
+.dr-go .dr-h{color:#ff8a7a;background:rgba(226,58,58,.09);} .dr-go .dr-h .n{color:#ff8a7a;}
+.dr-go .dr-r .c{color:#ff9a85;}
+.dr-keep{border-color:#2d7a4a;background:rgba(62,200,115,.05);}
+.dr-keep .dr-h{color:#5dd88a;background:rgba(62,200,115,.09);} .dr-keep .dr-h .n{color:#5dd88a;}
+.dr-keep .dr-r .c{color:#8aef7a;}
+.dr-mode{display:flex;gap:7px;margin-bottom:12px;}
+.dr-m{flex:1;min-width:0;border-radius:10px;padding:9px 7px;text-align:center;border:1px solid #2a4078;background:#0d1428;cursor:pointer;}
+.dr-m .t{font-size:11.5px;font-weight:700;color:#8aa0d8;}
+.dr-m .s{font-size:9px;color:#6d7fa8;margin-top:2px;}
+.dr-m.on{background:rgba(226,58,58,.1);border-color:#7a3030;}
+.dr-m.on .t{color:#ff9a85;} .dr-m.on .s{color:#c08878;}
+.dr-lbl{font-size:11.5px;color:#9ab0e0;margin:13px 0 7px;font-weight:600;}
+.dr-lbl b{color:#ffd0d0;font-family:ui-monospace,monospace;letter-spacing:1px;}
+.dr-hint{font-size:10.5px;color:#7d90c4;margin-top:9px;line-height:1.6;}
+.dr-chk{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:#cdd8f8;margin:13px 0 4px;}
+.dr-chk input{margin-top:2px;width:16px;height:16px;flex-shrink:0;}
+.dr-dis{opacity:.42;pointer-events:none;}
 .mk-in{width:100%;background:#0d1838;border:1px solid #2a4078;border-radius:11px;padding:13px 14px;color:#f4f6fa;font-size:15px;box-shadow:inset 0 1px 3px rgba(0,0,0,0.25);outline:none;}
 .mk-in.mk-amt{font-size:20px;font-weight:700;color:#d4a850;}
 .mk-save{width:100%;margin-top:8px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#d4a850,#e8c870);border:2px solid #f0d890;color:#1a1208;font-size:15px;font-weight:700;text-align:center;box-shadow:0 3px 0 #8a6818,0 5px 14px rgba(212,168,80,0.25);cursor:pointer;}
@@ -2459,6 +2486,7 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
   <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4a3818 0%,#2a1808 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📅</div> <span style="color:#e8d8b8;font-weight:500;">महीने का हिसाब</span></div>
   <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1810 0%,#1a0f08 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎯</div> <span style="color:#e8d8b8;font-weight:500;">लक्ष्य</span></div>
   <div class="more-item" onclick="signOut();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
+  <div class="more-item" onclick="toggleMore();drOpen();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1408 0%,#1a0c05 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🧹</div> <span style="color:#f0a878;font-weight:500;">डेटा मिटाएं · Reset data</span></div>
   <div class="more-item" style="border-bottom:none;" onclick="toggleMore();openDeleteAccount();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3a0a0a 0%,#220505 100%);border:1.5px solid #c0392b;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🗑️</div> <span style="color:#ff7a7a;font-weight:500;">मेरा खाता और डेटा मिटाएं</span></div>
 </div>
 <div id="del-recaptcha-container"></div>
@@ -5119,6 +5147,35 @@ textarea.st-biz-in{resize:none;}
     <div style="margin-top:14px;" id="goal-list"><div class="loading">⏳</div></div>
   </div>
 </div>
+<div class="popup-overlay mk-center-overlay" id="dreset-overlay">
+  <div class="mk-edit-modal" style="border-color:#c0392b;">
+    <div class="mk-edit-head">
+      <div class="mk-pop-title" style="color:#ff7a7a;">🧹 डेटा मिटाएं</div>
+      <div class="mk-pop-x" onclick="drClose()">✕</div>
+    </div>
+    <div id="dr-step1">
+      <div class="dr-mode">
+        <div class="dr-m on" id="dr-m-legacy" onclick="drSetMode('legacy')"><div class="t">पुराना डेटा</div><div class="s">बिक्री · गल्ला · उधार</div></div>
+        <div class="dr-m" id="dr-m-current" onclick="drSetMode('current')"><div class="t">सारा हिसाब</div><div class="s">आया · गया भी</div></div>
+      </div>
+      <div class="dr-warn" id="dr-warn"></div>
+      <div class="dr-grp dr-go"><div class="dr-h">🗑️ मिटेगा<span class="n" id="dr-go-n"></span></div><div class="dr-b" id="dr-go-b"></div></div>
+      <div class="dr-grp dr-keep"><div class="dr-h">✓ सुरक्षित रहेगा<span class="n" id="dr-keep-n"></span></div><div class="dr-b" id="dr-keep-b"></div></div>
+      <label class="dr-chk"><input type="checkbox" id="dr-chk" onchange="drGate()"><span id="dr-chk-t"></span></label>
+      <div class="mk-save dr-dis" id="dr-next" style="margin-top:12px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="drStep2()">आगे बढ़ें</div>
+      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="drClose()">रद्द करें · Cancel</div>
+    </div>
+    <div id="dr-step2" style="display:none;">
+      <div class="dr-warn" id="dr-warn2"></div>
+      <div class="dr-lbl">पक्का करने के लिए <b>MITAO</b> टाइप करें</div>
+      <input type="text" class="mk-in" id="dr-word" placeholder="MITAO" autocomplete="off" style="text-align:center;letter-spacing:4px;" oninput="drGate2()">
+      <div class="dr-hint">⏳ मिटाने के बाद app अपने आप refresh होगा। दूसरे phone पर भी sync होकर मिटेगा।</div>
+      <div class="mk-save dr-dis" id="dr-final" style="margin-top:13px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="drRun()">🗑️ हमेशा के लिए मिटाएं</div>
+      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="drClose()">रद्द करें · Cancel</div>
+    </div>
+  </div>
+</div>
+
 <div class="popup-overlay mk-center-overlay" id="del-acct-overlay">
   <div class="mk-edit-modal" style="border-color:#c0392b;">
     <div class="mk-edit-head">
@@ -9993,6 +10050,110 @@ function openMaalEdit(id){
 function closeMaalEdit(){document.getElementById('maal-edit-overlay').classList.remove('show');_maalEditId=null;_maalDelArmed=false;clearTimeout(_maalDelTimer);}
 
 // ===== Delete account & data — UI flow =====
+/* ══ Data reset — Purchase (src:"maal") is never touched ══ */
+var _drMode='legacy';
+function _drKeepBox(b,mode){
+  if(!b) return false;
+  if(b.src==='maal') return true;                       // Purchase bill mirror + payment rows
+  if(mode==='current') return false;                     // आया/गया also goes
+  return (b.dir==='in'||b.dir==='out');                  // legacy purge keeps new-style boxes
+}
+function _drScan(mode){
+  var bikri=DB.get(K.BIKRI)||[], out={drop:0,strip:0,gone:0,keptBox:0,payRow:0,ud:(DB.get(K.UDHAAR)||[]).length,
+    maal:(DB.get(K.MAAL)||[]).length, payable:0};
+  bikri.forEach(function(r){
+    var bs=Array.isArray(r.lgBoxes)?r.lgBoxes:[];
+    var keep=bs.filter(function(b){return _drKeepBox(b,mode);});
+    out.gone+=bs.length-keep.length; out.keptBox+=keep.length;
+    keep.forEach(function(b){if(b.maalKind==='payment')out.payRow++;});
+    if(keep.length===0)out.drop++; else if(keep.length!==bs.length)out.strip++;
+  });
+  (DB.get(K.MAAL)||[]).forEach(function(r){
+    if(r.pay==='उधार')out.payable+=Math.max(0,(r.amount||0)-(r.paid||0));
+  });
+  return out;
+}
+function drOpen(){
+  _drMode='legacy';
+  document.getElementById('dr-step1').style.display='block';
+  document.getElementById('dr-step2').style.display='none';
+  document.getElementById('dr-chk').checked=false;
+  document.getElementById('dr-word').value='';
+  drSetMode(_drMode);
+  document.getElementById('dreset-overlay').classList.add('show');
+}
+function drClose(){document.getElementById('dreset-overlay').classList.remove('show');}
+function drSetMode(m){
+  _drMode=m;
+  document.getElementById('dr-m-legacy').className='dr-m'+(m==='legacy'?' on':'');
+  document.getElementById('dr-m-current').className='dr-m'+(m==='current'?' on':'');
+  var s=_drScan(m), rows=[];
+  if(m==='legacy'){
+    rows.push(['पुरानी बिक्री / गल्ला एंट्री', s.gone+' बॉक्स']);
+  }else{
+    rows.push(['बिक्री / गल्ला + आया/गया', s.gone+' बॉक्स']);
+  }
+  rows.push(['उधार (बंद feature)', s.ud+' रिकॉर्ड']);
+  rows.push(['खाली दिन हटेंगे', s.drop+' दिन']);
+  document.getElementById('dr-go-n').textContent=rows.length+' तरह';
+  document.getElementById('dr-go-b').innerHTML=rows.map(function(p){
+    return '<div class="dr-r">'+p[0]+'<span class="c">'+p[1]+'</span></div>';}).join('');
+  var kept=[
+    ['Purchase बिल', s.maal+' बिल'],
+    ['सप्लायर payment रो', s.payRow+' रो'],
+    ['बाकी / Payable', fmt(s.payable)]
+  ];
+  if(m==='legacy')kept.unshift(['आया / गया एंट्री', (s.keptBox-s.payRow)+' बॉक्स']);
+  document.getElementById('dr-keep-n').textContent=kept.length+' तरह';
+  document.getElementById('dr-keep-b').innerHTML=kept.map(function(p){
+    return '<div class="dr-r">'+p[0]+'<span class="c">'+p[1]+'</span></div>';}).join('');
+  document.getElementById('dr-warn').innerHTML=(m==='legacy')
+    ? 'पुराने <b>बिक्री / गल्ला</b> और <b>उधार</b> का डेटा मिटेगा।<br>आया/गया और Purchase नहीं छुएंगे।'
+    : '<b>सारा हिसाब</b> मिटेगा — पुराना भी, आया/गया भी।<br><b>Purchase नहीं छुएगा।</b>';
+  document.getElementById('dr-chk-t').textContent=(m==='legacy')
+    ? 'मैं समझता हूँ कि पुराना डेटा हमेशा के लिए मिट जाएगा'
+    : 'मैं समझता हूँ कि आया/गया समेत सारा हिसाब मिट जाएगा';
+  document.getElementById('dr-chk').checked=false;drGate();
+}
+function drGate(){var ok=document.getElementById('dr-chk').checked;
+  document.getElementById('dr-next').className='mk-save'+(ok?'':' dr-dis');}
+function drGate2(){var ok=(document.getElementById('dr-word').value||'').trim().toUpperCase()==='MITAO';
+  document.getElementById('dr-final').className='mk-save'+(ok?'':' dr-dis');}
+function drStep2(){
+  var s=_drScan(_drMode);
+  document.getElementById('dr-warn2').innerHTML='<b>'+s.gone+' बॉक्स · '+s.ud+' उधार रिकॉर्ड · '+s.drop+' दिन</b> मिटने वाले हैं।<br>Purchase के <b>'+s.maal+' बिल और '+s.payRow+' payment रो</b> सुरक्षित रहेंगे।';
+  document.getElementById('dr-step1').style.display='none';
+  document.getElementById('dr-step2').style.display='block';
+  document.getElementById('dr-word').value='';drGate2();
+}
+function drRun(){
+  if((document.getElementById('dr-word').value||'').trim().toUpperCase()!=='MITAO')return;
+  var mode=_drMode, all=DB.get(K.BIKRI)||[], keepLocal=[], toRemove=[], toUpdate=[];
+  all.forEach(function(r){
+    var bs=Array.isArray(r.lgBoxes)?r.lgBoxes:[];
+    var keep=bs.filter(function(b){return _drKeepBox(b,mode);});
+    if(keep.length===0){ if(r.id)toRemove.push(r.id); return; }
+    var exp=0,cash=0,upi=0;
+    keep.forEach(function(b){
+      var a=Math.round(b.amount||0);
+      if(lgDirOf(b)==='in'){ if(b.type==='upi')upi+=a; else cash+=a; } else exp+=a;
+    });
+    var patch={lgBoxes:keep,sales:0,udhaar:0,profit:0,margin:0,cash:cash,upi:upi,expense:exp};
+    var nr=Object.assign({},r,patch); keepLocal.push(nr);
+    if(r.id)toUpdate.push([r.id,patch]);
+  });
+  DB.set(K.BIKRI,keepLocal);
+  toRemove.forEach(function(id){ try{DB.remove(K.BIKRI,id);}catch(e){} });
+  toUpdate.forEach(function(p){ try{DB.update(K.BIKRI,p[0],p[1]);}catch(e){} });
+  var ud=DB.get(K.UDHAAR)||[];
+  var udNoId=ud.filter(function(x){return !x.id;});
+  if(udNoId.length!==ud.length){ DB.set(K.UDHAAR,udNoId); }
+  ud.forEach(function(x){ if(x.id){ try{DB.remove(K.UDHAAR,x.id);}catch(e){} } });
+  if(udNoId.length) DB.set(K.UDHAAR,[]);
+  try{toast('✅ डेटा मिट गया — refresh हो रहा है');}catch(e){}
+  drClose();
+  setTimeout(function(){ location.reload(); },1100);
+}
 function openDeleteAccount(){
   document.getElementById('del-step1').style.display='block';
   document.getElementById('del-step2').style.display='none';

@@ -694,6 +694,10 @@ body.notif-modal-open { overflow: hidden; }
 .cal-day-name { font-size: 10px; color: #8aa0d8; text-align: center; font-weight: 500; padding: 4px 0; }
 .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
 .cal-cell { height: 42px; border-radius: 7px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; font-size: 11px; font-weight: 700; position: relative; flex-direction: column; gap:1px; }
+.cal-cell{transition:transform .12s cubic-bezier(.34,1.45,.5,1),filter .12s;}
+.cal-cell:not(.empty):active{transform:scale(.9);filter:brightness(1.35);}
+.month-pill,.cal-nav,.cal-tb,.cal-c{transition:transform .12s cubic-bezier(.34,1.45,.5,1);}
+.month-pill:active,.cal-nav:active,.cal-tb:active,.cal-c:active{transform:scale(.94);}
 .cal-cell .d{font-size:9.5px;font-weight:600;opacity:.62;line-height:1;}
 .cal-cell .a{font-size:10px;font-weight:800;line-height:1;}
 /* heat — four steps per lens */
@@ -4872,7 +4876,7 @@ textarea.st-biz-in{resize:none;}
 #np-s2{padding:16px;}#np-s1{padding:16px;flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;}
 .np-cam{border:2px dashed #c9a24b;border-radius:20px;background:linear-gradient(160deg,#16203f,#0d1528);padding:34px 18px;text-align:center;cursor:pointer;touch-action:manipulation;box-shadow:0 8px 22px rgba(0,0,0,.35),inset 0 1px 0 rgba(240,200,144,.08);transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}.np-cam:active{transform:scale(.955);box-shadow:0 3px 10px rgba(0,0,0,.4),inset 0 1px 0 rgba(240,200,144,.05);filter:brightness(1.08);}
 /* ---- app-wide press feedback (button feel) ---- */
-.lg-home-tile,.pair-tile,.ub-tile,.mk-tile,.kpi-card,.mk-card,.mk-addbtn,.mkp-new,.popup-btn,.ledger-pay-btn,.mkp-pay,.stmt-open-btn,.pbtn,.lgpur-tg,.uc-m,.np-chip,.edit-pay-pill,.mk-back,.mkc,.mk-f{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}
+.lg-home-tile,.pair-tile,.ub-tile,.mk-tile,.kpi-card,.mk-card,.mk-addbtn,.mkp-new,.popup-btn,.ledger-pay-btn,.mkp-pay,.stmt-open-btn,.pbtn,.lgpur-tg,.uc-m,.np-chip,.edit-pay-pill,.mk-back,.mkc,.mk-f,.cal-cell,.cal-nav,.cal-tb,.cal-c,.month-pill{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.34,1.45,.5,1),box-shadow .16s ease,filter .16s ease;}
 .lg-home-tile:active,.pair-tile:active,.ub-tile:active,.mk-tile:active,.kpi-card:active,.mk-card:active,.mkc:active{transform:scale(.975);filter:brightness(1.06);}
 .mk-f:active{transform:scale(.94);}
 .mk-addbtn:active,.mkp-new:active,.popup-btn:active,.ledger-pay-btn:active,.mkp-pay:active,.stmt-open-btn:active,.pbtn:active,.lgpur-tg:active,.uc-m:active,.np-chip:active,.edit-pay-pill:active,.mk-back:active{transform:scale(.94);filter:brightness(1.08);}
@@ -9222,6 +9226,9 @@ function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalend
 let dpCurrentDate=null,dpDeleteId=null;
 function openDatePopup(ds){
   if(!ds) return;
+  if(window._dpBusy) return;
+  window._dpBusy=true;
+  setTimeout(function(){window._dpBusy=false;},400);
   dpCurrentDate = ds;
 
   const bikri = DB.get(K.BIKRI);
@@ -9447,9 +9454,13 @@ function openDatePopup(ds){
 
   const _sheet=document.getElementById('date-popup-sheet');
   if(_sheet){_sheet.classList.remove('closing');_sheet.style.transition='';_sheet.style.transform='';}
+  window._dpOpenedAt=Date.now();
   document.getElementById('date-popup-overlay').classList.add('show');
 }
-function closeDatePopup(e){if(e.target===document.getElementById('date-popup-overlay'))closeDatePopupDirect();}
+function closeDatePopup(e){
+  if(Date.now()-(window._dpOpenedAt||0)<450)return;   // the tap that opened it must not close it
+  if(e&&e.target===document.getElementById('date-popup-overlay'))closeDatePopupDirect();
+}
 function closeDatePopupDirect(){
   const overlay=document.getElementById('date-popup-overlay');
   const sheet=document.getElementById('date-popup-sheet');

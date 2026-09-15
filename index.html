@@ -6742,8 +6742,23 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
+// A real 'open' = the app became visible after being away >=20 min.
+// Guards both ways: a TWA left in memory still logs, and tab-flipping cannot farm opens.
+function aoTouch(){
+  try{
+    var now=Date.now(), k='hk_ao_last_'+(window.CURRENT_UID||'x');
+    var last=parseInt(localStorage.getItem(k)||'0',10);
+    if(now-last < 20*60*1000) return;
+    localStorage.setItem(k,String(now));
+    if(window.logEvent) window.logEvent('app_open');
+  }catch(e){}
+}
+try{
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) aoTouch(); });
+  window.addEventListener('pageshow',function(){ aoTouch(); });
+}catch(e){}
 function launchApp(uid) {
-  try { if (!window._aoLogged) { window._aoLogged = true; logEvent('app_open'); } } catch(e){}
+  try { aoTouch(); } catch(e){}
   // GUARD: launchApp must only run in PWA mode.
   // If somehow called in browser, redirect to "Already Registered" screen.
   //
@@ -7686,6 +7701,7 @@ function lgAddExpenseBox(date, amount, note, maalId, maalKind){
   }
   const eCount=rec.lgBoxes.filter(b=>b.type==='expense').length;
   rec.lgBoxes.push({n:eCount+1, type:'expense', amount:amount, note:(note||'').slice(0,80), ts:Date.now(), src:'maal', maalId:maalId||null, maalKind:maalKind||'purchase'});
+  try{ if(window.logEvent) window.logEvent('box_added',{dir:'out',method:'expense',src:'maal',kind:maalKind||'purchase',amount:amount}); }catch(e){}
   lgPersistRec(rec);
   if(typeof loadHome==='function')setTimeout(loadHome,50);
 }
@@ -8392,6 +8408,15 @@ function lgpcFile(sup, phone){
   if (_ph.path)  _maal.billPath  = _ph.path;
   DB.push(K.MAAL, _maal);
   var _maalId = _maal.id;
+  // Fingerprint = GSTIN + bill no + total. A re-scanned old bill repeats this key,
+  // so the admin can separate genuine scans from padded ones.
+  try{
+    if(window.logEvent){
+      var _fp=[(_maal.supGstin||'').toUpperCase(),(_maal.billNo||''),Math.round(amt||0)].join('|');
+      window.logEvent('bill_scanned',{fp:_fp,gstin:_maal.supGstin||'',billNo:_maal.billNo||'',
+        total:Math.round(amt||0),supplier:(sup||'').slice(0,40),pay:pay||''});
+    }
+  }catch(e){}
   // Mirror a purchase box onto Live Hisaab (visual only; K.MAAL is the source of truth).
   if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
   var pboxes = r.lgBoxes.filter(function(b){return b.type==='purchase';});
@@ -12292,6 +12317,7 @@ function lgAddIncomeBox(date, amount, note, method){
   }
   var cnt=rec.lgBoxes.filter(function(b){return b.type===type;}).length;
   rec.lgBoxes.push({n:cnt+1,type:type,amount:amount,note:(note||'').slice(0,80),ts:Date.now(),src:'udhaar'});
+  try{ if(window.logEvent) window.logEvent('box_added',{dir:'in',method:type,src:'udhaar',amount:amount}); }catch(e){}
   lgPersistRec(rec);
   if(typeof loadHome==='function')setTimeout(loadHome,50);
 }

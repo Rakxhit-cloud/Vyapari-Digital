@@ -233,6 +233,68 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
   .user-row > div::before{content:attr(data-label);font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:1px;font-weight:500}
   .action-bar{grid-template-columns:1fr 1fr}
 }
+/* ───── Testers tab ───── */
+.cohort{background:linear-gradient(180deg,#0e2018 0%,#050f0c 100%);border:1.5px solid #2d7a4a;border-radius:16px;padding:17px 20px;margin-bottom:20px;}
+.cohort.broken{background:linear-gradient(180deg,#22100e 0%,#120705 100%);border-color:#7a3030;}
+.co-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
+.co-t{font-size:14px;font-weight:600;color:#e8d8b8;}
+.co-s{font-size:11.5px;color:#7f90b8;margin-top:4px;line-height:1.5;}
+.co-big{text-align:right;flex-shrink:0;}
+.co-big .v{font-size:31px;font-weight:700;color:#5dd88a;line-height:1;letter-spacing:-1px;}
+.co-big .k{font-size:10px;color:#7f90b8;margin-top:4px;}
+.co-grid{display:flex;gap:4px;margin-bottom:8px;}
+.co-d{flex:1;height:22px;border-radius:3px;background:rgba(62,200,115,.45);border:1px solid #2d7a4a;}
+.co-d.now{background:rgba(212,168,80,.35);border:1.5px solid #d4a850;}
+.co-d.todo{background:#0b142c;border:1px solid #243458;}
+.co-legend{display:flex;justify-content:space-between;font-size:10px;color:#7f90b8;}
+.co-in{background:#0b142c;border:1px solid #243458;color:#e8d8b8;border-radius:8px;padding:6px 9px;font-size:12px;font-family:inherit;width:74px;}
+.co-lab{font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:4px;}
+.silent{margin-top:13px;background:rgba(240,176,96,.07);border:1px solid #6a4420;border-left:3px solid #d4a850;border-radius:8px;padding:9px 12px;font-size:11.5px;color:#e8cfa8;line-height:1.55;}
+.silent b{color:#f0b060;}
+.trow{background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:1px solid #2a4078;border-radius:14px;padding:15px 18px;margin-bottom:12px;cursor:pointer;}
+.trow.risk{border-color:#6a4420;} .trow.flag{border-color:#7a3030;}
+.thead{display:flex;align-items:center;gap:13px;margin-bottom:13px;flex-wrap:wrap;}
+.tav{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#2a4078,#16224a);border:1px solid #3d5aa6;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#cfe0ff;flex-shrink:0;}
+.tid{flex:1;min-width:140px;} .tname{font-size:15px;font-weight:600;color:#e8d8b8;}
+.tmeta{font-size:11px;color:#7f90b8;margin-top:3px;}
+.tmeta code{font-family:ui-monospace,Consolas,monospace;color:#9fb0d8;}
+.tpill{font-size:10px;font-weight:700;letter-spacing:.5px;padding:4px 10px;border-radius:7px;white-space:nowrap;}
+.tp-ok{background:rgba(62,200,115,.13);border:1px solid #2d7a4a;color:#5dd88a;}
+.tp-risk{background:rgba(240,176,96,.13);border:1px solid #8a5828;color:#f0b060;}
+.tp-flag{background:rgba(226,58,58,.13);border:1px solid #7a3030;color:#ff8a7a;}
+.tpay{text-align:right;flex-shrink:0;} .tpay .v{font-size:17px;font-weight:700;color:#e8c870;line-height:1.1;}
+.tpay .k{font-size:9.5px;color:#7f90b8;margin-top:2px;}
+.params{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px;}
+.par{background:#0b142c;border:1px solid #243458;border-radius:10px;padding:8px 10px;}
+.par .k{font-size:9.5px;color:#7f90b8;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.par .v{font-size:15px;font-weight:700;margin-top:4px;letter-spacing:-.3px;color:#9fb0d8;}
+.par.hit{border-color:#2d7a4a;} .par.hit .v{color:#5dd88a;}
+.par.miss{border-color:#7a3030;} .par.miss .v{color:#ff8a7a;}
+.par.part{border-color:#8a5828;} .par.part .v{color:#f0b060;}
+.tbar{height:4px;border-radius:2px;background:#0a1020;margin-top:6px;overflow:hidden;}
+.tbar i{display:block;height:100%;}
+.striprow{display:flex;align-items:center;gap:11px;}
+.striplab{font-size:10px;color:#7f90b8;width:74px;flex-shrink:0;line-height:1.35;}
+.strip{display:flex;gap:3px;flex:1;}
+.dcell{flex:1;height:18px;border-radius:3px;background:#0b142c;border:1px solid #243458;}
+.dcell.ok{background:rgba(62,200,115,.5);border-color:#2d7a4a;}
+.dcell.now{background:rgba(212,168,80,.35);border:1.5px solid #d4a850;}
+.stripend{font-size:11px;color:#9fb0d8;font-weight:600;width:96px;text-align:right;flex-shrink:0;line-height:1.4;}
+.flagline{margin-top:11px;background:rgba(226,58,58,.07);border:1px solid #5a2020;border-left:3px solid #e84545;border-radius:8px;padding:8px 11px;font-size:11.5px;color:#e8bcbc;line-height:1.5;}
+.flagline b{color:#ff9a8a;} .flagline code{font-family:ui-monospace,Consolas,monospace;color:#ffb0a0;}
+.tdd{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px;}
+.tdd th{text-align:left;font-size:9.5px;letter-spacing:.7px;text-transform:uppercase;color:#d4a850;font-weight:600;padding:8px 10px;border-bottom:1px solid #243458;}
+.tdd td{padding:8px 10px;border-bottom:1px solid #16223f;color:#c3d0ec;}
+.tdd .num{text-align:center;font-weight:600;}
+.tok{color:#5dd88a;} .tbad{color:#ff8a7a;} .tdim{color:#66779c;}
+/* tester toggle inside the profile modal */
+.tst-box{margin:14px 0 0;background:#0b142c;border:1px solid #243458;border-radius:12px;padding:13px 15px;}
+.tst-h{font-size:12px;font-weight:600;color:#e8c870;margin-bottom:10px;}
+.tst-row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;}
+.tst-f{flex:1;min-width:84px;} .tst-f label{font-size:9.5px;color:#7f90b8;display:block;margin-bottom:4px;}
+.tst-f input,.tst-f select{width:100%;background:#0a1530;border:1px solid #2a4078;color:#e8d8b8;border-radius:8px;padding:7px 9px;font-size:12.5px;font-family:inherit;}
+.tst-save{background:linear-gradient(180deg,rgba(212,168,80,.22),rgba(16,28,58,.6));border:1px solid #5a4420;color:#e8c870;border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+.tst-off{background:transparent;border:1px solid #7a3030;color:#ff8a7a;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;}
 </style>
 <style id="analytics-css">
 .view-tabs{display:flex;gap:8px;margin:14px 0 4px;padding:0 2px;}
@@ -346,6 +408,7 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
   <div class="view-tabs">
     <button class="view-tab active" id="tab-users">👥 Users</button>
     <button class="view-tab" id="tab-analytics">📊 Analytics</button>
+    <button class="view-tab" id="tab-testers">🧪 Testers</button>
   </div>
 
   <div id="users-view">
@@ -437,6 +500,19 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
     </div>
   </div>
 
+<div id="testers-view" style="display:none">
+    <div class="av-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div class="av-sect" style="margin-top:14px">Google Play cohort · the clock that can delay launch</div>
+      <button class="av-refresh" id="tv-refresh" style="border:1px solid #243458;background:#101c3a;color:#9fb0d8;border-radius:9px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-family:inherit">↻ Refresh</button>
+    </div>
+    <div class="cohort" id="tv-cohort"><div class="av-empty">Loading…</div></div>
+    <div class="av-sect">Payment clock · per tester</div>
+    <div class="stats-grid" id="tv-kpis"></div>
+    <div class="av-sect">Testers · today</div>
+    <div id="tv-list"><div class="av-empty">Loading…</div></div>
+    <div class="av-note" id="tv-note">Reads only from analytics_events (admin-read-only).</div>
+  </div>
+
 </div>
 
 <!-- PROFILE DRILL-DOWN MODAL -->
@@ -475,6 +551,7 @@ const ADMIN_UID = 'D4jcD5Y02NXmx7mXMQjg4VoHEyy1';
 
 // Expose to window so the non-module script below can call these
 window._fb = { auth, db, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut };
+window._fbx = { collection, getDocs, doc, getDoc, setDoc };
 window._ADMIN_UID = ADMIN_UID;
 
 window._loadUsersFromFirestore = async function() {
@@ -603,16 +680,22 @@ async function loadAnalytics(){
   }
 }
 function _showAdminView(which){
-  const uv=document.getElementById('users-view'), av=document.getElementById('analytics-view');
-  const tu=document.getElementById('tab-users'), ta=document.getElementById('tab-analytics');
+  const uv=document.getElementById('users-view'), av=document.getElementById('analytics-view'), tv=document.getElementById('testers-view');
+  const tu=document.getElementById('tab-users'), ta=document.getElementById('tab-analytics'), tt=document.getElementById('tab-testers');
   if(!uv||!av) return;
-  if(which==='analytics'){ uv.style.display='none'; av.style.display='block'; ta.classList.add('active'); tu.classList.remove('active'); if(!_analyticsLoaded) loadAnalytics(); }
-  else { av.style.display='none'; uv.style.display='block'; tu.classList.add('active'); ta.classList.remove('active'); }
+  const show=(el,on)=>{ if(el) el.style.display = on ? 'block' : 'none'; };
+  const act=(el,on)=>{ if(el) el.classList[on?'add':'remove']('active'); };
+  show(uv, which==='users'); show(av, which==='analytics'); show(tv, which==='testers');
+  act(tu, which==='users'); act(ta, which==='analytics'); act(tt, which==='testers');
+  if(which==='analytics' && !_analyticsLoaded) loadAnalytics();
+  if(which==='testers' && window.loadTesters) window.loadTesters();
 }
 (function _wireAnalyticsTabs(){
   const tu=document.getElementById('tab-users'), ta=document.getElementById('tab-analytics'), rb=document.getElementById('av-refresh');
   if(tu) tu.addEventListener('click',()=>_showAdminView('users'));
   if(ta) ta.addEventListener('click',()=>_showAdminView('analytics'));
+  const tt=document.getElementById('tab-testers');
+  if(tt) tt.addEventListener('click',()=>_showAdminView('testers'));
   if(rb) rb.addEventListener('click',()=>{ _analyticsLoaded=false; loadAnalytics(); });
 })();
 
@@ -1081,6 +1164,7 @@ function openProfile(uid) {
   card.innerHTML = profileCardHTML(u);
   card.className = 'profile-card ' + classifyStage(u.profile, u);
   document.getElementById('profile-modal').classList.add('show');
+  try { _tvInjectToggle(uid); } catch(e) {}
   // Bind close button
   card.querySelector('.profile-close').addEventListener('click', closeProfile);
   // Bind +Days buttons
@@ -1541,6 +1625,212 @@ setInterval(() => {
     loadUsers();
   }
 }, 60000);
+
+/* ══════════════════ TESTERS TAB ══════════════════
+   Targets come straight off the pamphlet. Scans are weekly, so a
+   zero-scan day is NOT a failed day — only a week closing under 5 is.  */
+const T_TARGET = { opens: 3, inw: 3, outw: 2, scansWeek: 5 };
+let _tvEvents = null;
+
+function _tvDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function _tvAddDays(ds, n){ const d=new Date(ds+'T00:00:00'); d.setDate(d.getDate()+n); return _tvDay(d); }
+function _tvDiff(a,b){ return Math.round((new Date(a+'T00:00:00') - new Date(b+'T00:00:00'))/86400000); }
+function _tvWeek(ds){ const d=new Date(ds+'T00:00:00'); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return _tvDay(d); }
+function _tvCohort(){
+  try { return JSON.parse(localStorage.getItem('hk_admin_cohort')||'{}'); } catch(e){ return {}; }
+}
+function _tvSaveCohort(o){ try { localStorage.setItem('hk_admin_cohort', JSON.stringify(o)); } catch(e){} }
+
+/* roll raw events into per-day counters for one uid */
+function _tvAggregate(uid){
+  const days = {}, weeks = {};
+  (_tvEvents||[]).forEach(e => {
+    if (e.uid !== uid || !e.day) return;
+    const d = days[e.day] || (days[e.day] = { opens:0, inw:0, outw:0, scans:0, fps:{} });
+    const m = e.meta || {};
+    if (e.event === 'app_open') d.opens++;
+    else if (e.event === 'box_added') { if (m.dir === 'in') d.inw++; else if (m.dir === 'out') d.outw++; }
+    else if (e.event === 'bill_scanned') {
+      d.scans++;
+      const wk = _tvWeek(e.day), w = weeks[wk] || (weeks[wk] = { total:0, fps:{} });
+      w.total++; const fp = m.fp || ('?'+e.day); w.fps[fp] = (w.fps[fp]||0)+1; d.fps[fp]=1;
+    }
+  });
+  return { days, weeks };
+}
+function _tvQualified(c){ return c && c.opens>=T_TARGET.opens && c.inw>=T_TARGET.inw && c.outw>=T_TARGET.outw; }
+function _tvEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+async function loadTesters(){
+  const box = document.getElementById('tv-list');
+  const note = document.getElementById('tv-note');
+  try {
+    const fx = window._fbx, db = window._fb && window._fb.db;
+    if (!fx || !db) throw new Error('Firestore bridge missing');
+    const snap = await fx.getDocs(fx.collection(db, 'analytics_events'));
+    _tvEvents = snap.docs.map(x => x.data()).filter(e => e && e.uid && e.day);
+
+    const testers = (window.allUsers || allUsers || []).filter(u => u.profile && u.profile.tester);
+    const today = _tvDay(new Date());
+
+    /* ── cohort card ── */
+    const co = _tvCohort();
+    const cStart = co.start || '';
+    const cCount = Number(co.count || 0);
+    let unbroken = cStart ? Math.min(14, _tvDiff(today, cStart) + 1) : 0;
+    if (unbroken < 0) unbroken = 0;
+    const cells = [];
+    for (let i=0;i<14;i++){
+      cells.push('<span class="co-d'+(i<unbroken-1?'':(i===unbroken-1?' now':' todo'))+'"></span>');
+    }
+    const silent = testers.filter(u => {
+      const a = _tvAggregate(u.uid).days;
+      let last = null; Object.keys(a).forEach(d => { if (a[d].opens>0 && (!last||d>last)) last = d; });
+      return !last || _tvDiff(today, last) >= 2;
+    });
+    const ok = cCount >= 12;
+    document.getElementById('tv-cohort').className = 'cohort' + (ok ? '' : ' broken');
+    document.getElementById('tv-cohort').innerHTML =
+      '<div class="co-top"><div>'
+      + '<div class="co-t">'+cCount+' testers opted in · '+(ok?'unbroken':'below 12 — counter will not run')+'</div>'
+      + '<div class="co-s">Counts <b style="color:#9fe3bb">opt-in only</b> — not app usage. Breaks only if someone opts out.<br>'
+      + 'Enter these from Play Console; the app cannot see the Play track.</div>'
+      + '<div style="display:flex;gap:10px;margin-top:11px;align-items:flex-end">'
+      + '<div><span class="co-lab">Opted in</span><input class="co-in" id="co-count" type="number" min="0" value="'+cCount+'"></div>'
+      + '<div><span class="co-lab">Start date</span><input class="co-in" id="co-start" type="date" style="width:132px" value="'+cStart+'"></div>'
+      + '<button class="tst-save" id="co-save">Save</button></div>'
+      + '</div><div class="co-big"><div class="v">'+unbroken+'<span style="font-size:18px;color:#7f90b8">/14</span></div>'
+      + '<div class="k">unbroken days</div></div></div>'
+      + '<div class="co-grid">'+cells.join('')+'</div>'
+      + '<div class="co-legend"><span>'+(cStart?('started '+cStart):'set a start date')+'</span><span>'
+      + (cStart?('eligible to apply '+_tvAddDays(cStart,13)):'—')+'</span></div>'
+      + (silent.length ? ('<div class="silent"><b>'+silent.length+' tester'+(silent.length>1?'s':'')+' silent 2+ days.</b> '
+          + silent.map(u=>_tvEsc(u.profile.businessName||u.profile.name||u.uid.slice(0,6))).join(', ')
+          + '. Not a Google problem yet — but silence is the only early warning before an uninstall. <b>Call them.</b></div>') : '');
+    const cs = document.getElementById('co-save');
+    if (cs) cs.addEventListener('click', () => {
+      _tvSaveCohort({ count: Number(document.getElementById('co-count').value||0),
+                      start: document.getElementById('co-start').value || '' });
+      loadTesters();
+    });
+
+    /* ── per-tester rows ── */
+    let qualToday = 0, committed = 0, flagged = 0;
+    const rows = testers.map(u => {
+      const p = u.profile, ag = _tvAggregate(u.uid);
+      const plan = Number(p.testerPlan || 20), rate = Number(p.testerRate || 200);
+      const start = p.testerStart || '';
+      const t = ag.days[today] || { opens:0, inw:0, outw:0, scans:0, fps:{} };
+      const wk = ag.weeks[_tvWeek(today)] || { total:0, fps:{} };
+      const uniqScans = Object.keys(wk.fps).length;
+      const dupes = wk.total - uniqScans;
+      let banked = 0, lost = 0;
+      Object.keys(ag.days).forEach(d => {
+        if (start && d < start) return;
+        if (d === today) return;
+        _tvQualified(ag.days[d]) ? banked++ : lost++;
+      });
+      if (_tvQualified(t)) { banked++; qualToday++; }
+      committed += banked * rate;
+      if (dupes > 0) flagged++;
+
+      const par = (k, got, need, weekly) => {
+        const hit = got >= need;
+        const cls = hit ? 'hit' : (weekly ? 'part' : (got > 0 ? 'part' : 'part'));
+        const pct = Math.max(3, Math.min(100, Math.round(got/need*100)));
+        const col = hit ? '#3ec873' : '#f0b060';
+        return '<div class="par '+cls+'"><div class="k">'+k+'</div><div class="v">'+got+'/'+need+'</div>'
+             + '<div class="tbar"><i style="width:'+pct+'%;background:'+col+'"></i></div></div>';
+      };
+      const cellsB = [];
+      for (let i=0;i<plan;i++) cellsB.push('<span class="dcell'+(i<banked?' ok':(i===banked?' now':''))+'"></span>');
+      const left = (T_TARGET.opens-t.opens>0?1:0)+(T_TARGET.inw-t.inw>0?1:0)+(T_TARGET.outw-t.outw>0?1:0);
+      const pill = dupes>0 ? '<div class="tpill tp-flag">REVIEW</div>'
+                 : (left===0 ? '<div class="tpill tp-ok">ON TRACK</div>'
+                             : '<div class="tpill tp-risk">'+left+' LEFT TODAY</div>');
+      const nm = p.businessName || p.name || ('uid '+u.uid.slice(0,6));
+      return '<div class="trow'+(dupes>0?' flag':(left>0?' risk':''))+'" data-uid="'+u.uid+'">'
+        + '<div class="thead"><div class="tav">'+_tvEsc((nm||'?').charAt(0).toUpperCase())+'</div>'
+        + '<div class="tid"><div class="tname">'+_tvEsc(nm)+'</div><div class="tmeta">'
+        + _tvEsc(p.name||'') + ' · ' + _tvEsc(p.phone||'') + ' · <code>'+_tvEsc(p.testerId||'—')+'</code> · ₹'+rate+' plan'
+        + (start?(' · started '+start):'') + '</div></div>'
+        + pill
+        + '<div class="tpay"><div class="v">₹'+(banked*rate).toLocaleString('en-IN')+'</div>'
+        + '<div class="k">'+banked+' qualified day'+(banked===1?'':'s')+'</div></div></div>'
+        + '<div class="params">'
+        + par('App opens', t.opens, T_TARGET.opens)
+        + par('आया', t.inw, T_TARGET.inw)
+        + par('गया', t.outw, T_TARGET.outw)
+        + par('Scans · week', uniqScans, T_TARGET.scansWeek, true)
+        + '</div>'
+        + '<div class="striprow"><div class="striplab">'+plan+' qualified<br>days needed</div>'
+        + '<div class="strip">'+cellsB.join('')+'</div>'
+        + '<div class="stripend">'+banked+' banked<br><span style="color:'+(lost?'#ff8a7a':'#66779c')+';font-weight:500">'+lost+' lost</span></div></div>'
+        + (dupes>0 ? ('<div class="flagline"><b>'+dupes+' duplicate scan'+(dupes>1?'s':'')+' this week.</b> '
+            + 'Same bill fingerprint re-uploaded. Genuine unique bills: <b>'+uniqScans+' of '+wk.total+'</b>.</div>') : '')
+        + '</div>';
+    });
+
+    document.getElementById('tv-kpis').innerHTML =
+      '<div class="stat-card"><div class="stat-label">Active testers</div><div class="stat-value">'+testers.length+'</div><div class="stat-sub">of 12 needed for Play</div></div>'
+    + '<div class="stat-card"><div class="stat-label">Qualified today</div><div class="stat-value">'+qualToday+'<span style="font-size:17px;color:#7f90b8">/'+testers.length+'</span></div><div class="stat-sub">hit all daily targets</div></div>'
+    + '<div class="stat-card"><div class="stat-label">Committed payout</div><div class="stat-value">₹'+committed.toLocaleString('en-IN')+'</div><div class="stat-sub">earned so far, not yet due</div></div>'
+    + '<div class="stat-card"><div class="stat-label">Flagged</div><div class="stat-value" style="color:'+(flagged?'#ff8a7a':'#e8d8b8')+'">'+flagged+'</div><div class="stat-sub">duplicate bill scans</div></div>';
+
+    box.innerHTML = rows.length ? rows.join('')
+      : '<div class="av-empty">No testers yet. Open a user from the Users tab and use <b>Mark as tester</b>.</div>';
+    box.querySelectorAll('.trow').forEach(r =>
+      r.addEventListener('click', () => { if (window.openProfile) openProfile(r.getAttribute('data-uid')); }));
+    if (note) note.textContent = 'Reads only from analytics_events (admin-read-only) · '+_tvEvents.length+' events loaded.';
+  } catch(e) {
+    if (box) box.innerHTML = '<div class="av-empty">⚠️ Could not load testers: '+_tvEsc(e && e.message ? e.message : e)+'</div>';
+  }
+}
+window.loadTesters = loadTesters;
+
+/* ── 'Mark as tester' control, appended to the profile modal ── */
+function _tvInjectToggle(uid){
+  const card = document.getElementById('profile-card');
+  if (!card || card.querySelector('.tst-box')) return;
+  const u = (window.allUsers||allUsers||[]).find(x => x.uid === uid);
+  if (!u) return;
+  const p = u.profile || {};
+  const on = !!p.tester;
+  const box = document.createElement('div');
+  box.className = 'tst-box';
+  box.innerHTML = '<div class="tst-h">🧪 '+(on?'Tester':'Mark as tester')+'</div>'
+    + '<div class="tst-row">'
+    + '<div class="tst-f"><label>Tester ID</label><input id="tst-id" value="'+_tvEsc(p.testerId||'')+'" placeholder="T-03"></div>'
+    + '<div class="tst-f"><label>Plan (days)</label><select id="tst-plan"><option value="15"'+(String(p.testerPlan)==='15'?' selected':'')+'>15</option><option value="20"'+(String(p.testerPlan)!=='15'?' selected':'')+'>20</option></select></div>'
+    + '<div class="tst-f"><label>Rate ₹/day</label><select id="tst-rate"><option value="100"'+(String(p.testerRate)==='100'?' selected':'')+'>100</option><option value="200"'+(String(p.testerRate)!=='100'?' selected':'')+'>200</option></select></div>'
+    + '<div class="tst-f"><label>Start date</label><input id="tst-start" type="date" value="'+_tvEsc(p.testerStart||'')+'"></div>'
+    + '<button class="tst-save" id="tst-save">'+(on?'Update':'Mark as tester')+'</button>'
+    + (on?'<button class="tst-off" id="tst-off">Remove</button>':'')
+    + '</div>';
+  card.appendChild(box);
+  const write = async (payload) => {
+    const fx = window._fbx, db = window._fb && window._fb.db;
+    await fx.setDoc(fx.doc(db,'users',uid,'profile','info'), payload, { merge:true });
+    if (window.loadUsers) await loadUsers();
+    if (window.loadTesters) window.loadTesters();
+  };
+  box.querySelector('#tst-save').addEventListener('click', async () => {
+    try {
+      await write({ tester:true,
+        testerId: document.getElementById('tst-id').value.trim(),
+        testerPlan: Number(document.getElementById('tst-plan').value),
+        testerRate: Number(document.getElementById('tst-rate').value),
+        testerStart: document.getElementById('tst-start').value || '' });
+      alert('✅ Saved');
+    } catch(e){ alert('❌ '+e.message); }
+  });
+  const off = box.querySelector('#tst-off');
+  if (off) off.addEventListener('click', async () => {
+    if (!confirm('Remove tester status?')) return;
+    try { await write({ tester:false }); alert('Removed'); } catch(e){ alert('❌ '+e.message); }
+  });
+}
+
 </script>
 
 

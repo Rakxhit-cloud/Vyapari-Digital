@@ -2022,6 +2022,9 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 @keyframes lgvPulse{0%{box-shadow:0 0 0 0 rgba(232,69,69,.5)}70%{box-shadow:0 0 0 13px rgba(232,69,69,0)}100%{box-shadow:0 0 0 0 rgba(232,69,69,0)}}
 .lg-voice-wave{display:flex;align-items:center;gap:3px;height:22px;}
 .lg-voice-wave i{width:3px;height:5px;background:#e84545;border-radius:2px;transition:height .06s linear;}
+.lg-live{min-height:16px;margin-top:6px;font-size:13px;color:#8aef7a;font-weight:600;text-align:center;
+  line-height:1.35;padding:0 8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.lg-live .dim{color:#6a8ab0;font-weight:500;}
 .lg-voice-recmsg{font-size:11.5px;color:#e8d8b8;font-weight:600;}
 .lg-voice-recmsg b{color:#e07a7a;font-weight:700;}
 .lg-voice-rd{display:inline-block;width:7px;height:7px;border-radius:50%;background:#e84545;margin-right:5px;box-shadow:0 0 6px #e84545;animation:lgvBlink 1s infinite;vertical-align:middle;}
@@ -3058,6 +3061,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('entry')" aria-label="रोकें"><span></span></button>
         <div class="lg-voice-wave" id="lg-wave-entry"></div>
         <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-entry">0.0s</b></div>
+        <div class="lg-live" id="lg-live-entry"></div>
       </div>
       <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
       <div class="lg-voice-res">
@@ -13605,11 +13609,81 @@ function npReopenPreview(){
   function setState(type, st){ var z=zone(type); if(!z) return; z.classList.remove('rec','proc','res','err'); if(st) z.classList.add(st); }
   function buildWave(type){ var w=el('lg-wave-'+type); if(!w) return []; w.innerHTML=''; var bars=[]; for(var i=0;i<11;i++){ var b=document.createElement('i'); w.appendChild(b); bars.push(b); } return bars; }
 
+  /* ══ Fast path: stream the words while the user speaks, parse locally. ══
+     The recorder still runs in parallel — if the transcript yields no amount
+     we fall back to the existing audio upload, so nothing regresses. */
+  var _HI_NUM={'शून्य':0,'एक':1,'दो':2,'तीन':3,'चार':4,'पांच':5,'पाँच':5,'छह':6,'छे':6,'सात':7,'आठ':8,'नौ':9,
+  'दस':10,'ग्यारह':11,'बारह':12,'तेरह':13,'चौदह':14,'पंद्रह':15,'पन्द्रह':15,'सोलह':16,'सत्रह':17,'अठारह':18,'उन्नीस':19,
+  'बीस':20,'पच्चीस':25,'तीस':30,'पैंतीस':35,'चालीस':40,'पैंतालीस':45,'पचास':50,'पचपन':55,'साठ':60,'पैंसठ':65,
+  'सत्तर':70,'पचहत्तर':75,'अस्सी':80,'पचासी':85,'नब्बे':90,'पंचानबे':95,
+  'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,'fifteen':15,'twenty':20,'fifty':50};
+  var _HI_MUL={'सौ':100,'हज़ार':1000,'हजार':1000,'लाख':100000,'करोड़':10000000,'hundred':100,'thousand':1000,'lakh':100000,'k':1000};
+  var _DIR_IN=['मिले','मिला','मिली','आया','आये','आए','लिया','लिये','लिए','जमा','वसूल','वापस','received','aaya','mila','mile','liya','jama'];
+  var _DIR_OUT=['दिए','दिया','दिये','गया','गए','गये','भरा','भरे','खर्च','खर्चा','चुकाया','भेजे','भेजा','diya','diye','gaya','kharch','paid','bheja'];
+  function _lgNorm(t){ return String(t||'').replace(/[०-९]/g,function(d){return '०१२३४५६७८९'.indexOf(d);}).replace(/[,\u200b]/g,'').trim(); }
+  function _lgParseHi(raw){
+    var t=_lgNorm(raw), lower=t.toLowerCase(), amt=0;
+    var m=lower.match(/(\d+(?:\.\d+)?)\s*(सौ|हज़ार|हजार|लाख|करोड़|hundred|thousand|lakh|k)?/);
+    if(m){ amt=parseFloat(m[1]); if(m[2]) amt*= (_HI_MUL[m[2]]||1); }
+    if(!amt){
+      var w=t.split(/\s+/), tot=0, cur=0, saw=false;
+      for(var i=0;i<w.length;i++){ var x=w[i], xl=x.toLowerCase();
+        if(_HI_NUM[x]!==undefined||_HI_NUM[xl]!==undefined){ cur+=(_HI_NUM[x]!==undefined?_HI_NUM[x]:_HI_NUM[xl]); saw=true; }
+        else if(_HI_MUL[x]||_HI_MUL[xl]){ var mu=_HI_MUL[x]||_HI_MUL[xl]; cur=(cur||1)*mu; if(mu>=1000){ tot+=cur; cur=0; } saw=true; } }
+      if(saw) amt=tot+cur;
+    }
+    var dir='unclear', best=-1;
+    _DIR_IN.forEach(function(k){ var p=lower.lastIndexOf(k); if(p>best){best=p;dir='in';} });
+    _DIR_OUT.forEach(function(k){ var p=lower.lastIndexOf(k); if(p>best){best=p;dir='out';} });
+    return { amount: Math.round(amt)||0, direction: dir, note: t.slice(0,40) };
+  }
+  function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
+  function _srStart(type){
+    var S=LGV[type]; if(!_srAvail()) return;
+    try{
+      var R=window.SpeechRecognition||window.webkitSpeechRecognition;
+      var r=new R(); S.sr=r; S.srText=''; S.srDone=false;
+      r.lang='hi-IN'; r.interimResults=true; r.continuous=false; r.maxAlternatives=1;
+      var live=el('lg-live-'+type);
+      r.onresult=function(ev){
+        var fin='', int='';
+        for(var i=ev.resultIndex;i<ev.results.length;i++){
+          var tr=ev.results[i][0].transcript;
+          if(ev.results[i].isFinal) fin+=tr; else int+=tr;
+        }
+        if(fin) S.srText+=fin;
+        if(live) live.innerHTML = _esc(S.srText) + (int?('<span class="dim"> '+_esc(int)+'</span>'):'');
+      };
+      r.onerror=function(){ S.srErr=true; };
+      r.onend=function(){ S.srDone=true; if(S.pendingFinish) _srFinish(type); };
+      r.start(); S.srT0=Date.now();
+    }catch(e){ S.srErr=true; }
+  }
+  function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  /* Returns true when the transcript alone answered it — audio never leaves the phone. */
+  function _srFinish(type){
+    var S=LGV[type];
+    if(S.srUsed) return true;
+    var txt=(S.srText||'').trim();
+    if(!txt || S.srErr) return false;
+    var p=_lgParseHi(txt);
+    if(!p.amount || p.amount<=0) return false;
+    S.srUsed=true;
+    S.amt=p.amount; S.note=p.note; S.dir=p.direction;
+    var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+p.amount.toLocaleString('en-IN');
+    var nel=el('lg-vnote-'+type); if(nel) nel.textContent=p.note||'';
+    setState(type,'res');
+    try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now())}); }catch(e){}
+    return true;
+  }
   window.lgVoiceStart = function(type){
     var S = LGV[type];
     _cleanup(type);
     setState(type,'rec');
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ return _fail(type,'इस डिवाइस पर voice नहीं — नीचे + से टाइप करें'); }
+    S.srUsed=false; S.srErr=false; S.srText=''; S.pendingFinish=false;
+    var _lv=el('lg-live-'+type); if(_lv) _lv.innerHTML='';
+    _srStart(type);
     navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
       S.stream = stream;
       try{
@@ -13624,7 +13698,7 @@ function npReopenPreview(){
           var sum=0; for(var i=0;i<11;i++){ var v=S.data[i+1]||0; bars[i].style.height=Math.max(5,(v/255)*22)+'px'; sum+=v; }
           var level=sum/11;
           if(level>18){ S.spoke=true; S.silence=0; }
-          else if(S.spoke){ S.silence++; if(S.silence>70){ window.lgVoiceStop(type); } }
+          else if(S.spoke){ S.silence++; if(S.silence>40){ window.lgVoiceStop(type); } }
         })();
       }catch(e){}
       S.chunks=[];
@@ -13640,6 +13714,7 @@ function npReopenPreview(){
 
   window.lgVoiceStop = function(type){
     var S = LGV[type];
+    try{ if(S.sr){ S.pendingFinish=true; S.sr.stop(); } }catch(e){}
     if(S.timer){ clearInterval(S.timer); S.timer=null; }
     if(S.cap){ clearTimeout(S.cap); S.cap=null; }
     if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }
@@ -13647,10 +13722,12 @@ function npReopenPreview(){
     else { _onStop(type); }
   };
 
-  function _stopTracks(S){ if(S.stream){ S.stream.getTracks().forEach(function(t){ t.stop(); }); S.stream=null; } if(S.ac){ try{ S.ac.close(); }catch(e){} S.ac=null; } }
+  function _stopTracks(S){ try{ if(S.sr){ S.sr.onresult=null; S.sr.onend=null; S.sr.abort&&S.sr.abort(); S.sr=null; } }catch(e){} if(S.stream){ S.stream.getTracks().forEach(function(t){ t.stop(); }); S.stream=null; } if(S.ac){ try{ S.ac.close(); }catch(e){} S.ac=null; } }
 
   function _onStop(type){
     var S = LGV[type]; _stopTracks(S);
+    // transcript first — if it carries an amount we are done, no upload
+    try{ if(_srFinish(type)) return; }catch(e){}
     var chunks = S.chunks||[];
     if(!chunks.length){ return _fail(type,'कुछ सुनाई नहीं दिया — फिर से बोलें'); }
     if(S.sawAudio && !S.spoke){ return _fail(type,'कुछ नहीं सुना — फिर से बोलिए'); }
@@ -13666,6 +13743,7 @@ function npReopenPreview(){
       S.amt=amt;
       S.note=(res && res.data && res.data.note) ? String(res.data.note).slice(0,40) : '';
       S.dir =(res && res.data && res.data.direction) || 'unclear';
+      try{ if(window.logEvent) window.logEvent('voice_path',{path:'audio',ms:Date.now()-(S.t0||Date.now())}); }catch(e){}
       var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+amt.toLocaleString('en-IN');
       var nel=el('lg-vnote-'+type); if(nel) nel.textContent=S.note||'';
       setState(type,'res');

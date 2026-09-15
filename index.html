@@ -13719,6 +13719,10 @@ function npReopenPreview(){
     r.lgBoxes.push({ n: typeBoxes.length+1, type: _bt, amount: amt,
       note: (type==='entry' ? (S.note||'') : ''), ts: Date.now(), src: 'voice',
       dir: (type==='entry' ? S.dir : undefined) });
+    try{ if(window.logEvent) window.logEvent('box_added',{
+      dir: (type==='entry' ? (S.dir||'') : (_bt==='expense'?'out':'in')),
+      method: _bt, src:'voice', amount: amt, voice: !!S.viaVoice });
+    }catch(e){}
     if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
     else if(window.lgState.isToday){ r.lgSaved=false; r.lgSavedAt=null; }
     if(typeof lgPersistRec==='function') lgPersistRec(r);

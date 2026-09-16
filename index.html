@@ -1973,6 +1973,54 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .lg-el{max-height:252px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:2px;}
 .lg-el::-webkit-scrollbar{width:3px;}
 .lg-el::-webkit-scrollbar-thumb{background:#2a4078;border-radius:3px;}
+/* ── same-day entry edit sheet ── */
+.ee-ov{position:fixed;inset:0;z-index:9000;display:none;align-items:flex-end;justify-content:center;background:rgba(4,7,16,.72);}
+.ee-ov.show{display:flex;}
+.ee-sheet{width:100%;max-width:520px;background:linear-gradient(180deg,#14254c 0%,#0a1224 100%);
+  border-top:1px solid #3d5aa6;border-radius:22px 22px 0 0;padding:10px 16px 20px;
+  box-shadow:0 -14px 44px rgba(0,0,0,.6),inset 0 1px 0 rgba(150,180,255,.14);
+  max-height:92vh;overflow-y:auto;animation:eeUp .22s cubic-bezier(.22,1,.36,1);}
+@keyframes eeUp{from{transform:translateY(24px);opacity:.4;}to{transform:translateY(0);opacity:1;}}
+.ee-grab{width:38px;height:4px;border-radius:99px;background:#33507f;margin:0 auto 14px;}
+.ee-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;}
+.ee-t{font-size:16.5px;font-weight:600;color:#f0f4fb;letter-spacing:-.2px;}
+.ee-s{font-size:11px;color:#7d90c4;margin-top:3px;}
+.ee-x{width:32px;height:32px;border-radius:50%;background:rgba(122,140,200,.09);border:1px solid #2a4078;
+  color:#9ab0e0;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;cursor:pointer;}
+.ee-seg{display:flex;background:#0a1020;border:1px solid #223558;border-radius:14px;padding:4px;gap:4px;margin-bottom:18px;}
+.ee-seg > div{flex:1;border-radius:10px;padding:11px 6px;text-align:center;cursor:pointer;transition:background .18s;}
+.ee-seg .k{font-size:13.5px;font-weight:600;color:#6d80a8;}
+.ee-seg .s{font-size:9.5px;color:#4e5f80;margin-top:2px;}
+.ee-seg .on.in{background:linear-gradient(180deg,rgba(62,200,115,.20),rgba(62,200,115,.07));box-shadow:0 1px 0 rgba(120,240,170,.18) inset,0 2px 8px rgba(0,0,0,.35);}
+.ee-seg .on.in .k{color:#8aefb0;} .ee-seg .on.in .s{color:#5fa77e;}
+.ee-seg .on.out{background:linear-gradient(180deg,rgba(232,137,106,.20),rgba(232,137,106,.07));box-shadow:0 1px 0 rgba(255,180,150,.18) inset,0 2px 8px rgba(0,0,0,.35);}
+.ee-seg .on.out .k{color:#ffb094;} .ee-seg .on.out .s{color:#b07a60;}
+.ee-fl{font-size:9.5px;letter-spacing:1.1px;text-transform:uppercase;color:#6d80a8;font-weight:600;margin:0 0 7px 3px;}
+.ee-amtf{display:flex;align-items:baseline;gap:8px;background:#0a1020;border:1px solid #223558;border-radius:14px;padding:13px 16px;}
+.ee-amtf:focus-within{border-color:#4a78c8;box-shadow:0 0 0 3px rgba(74,120,200,.14);}
+.ee-amtf .cur{font-size:22px;font-weight:600;color:#5f7398;}
+.ee-amtf input{flex:1;min-width:0;font-size:32px;font-weight:700;letter-spacing:-1.2px;background:transparent;
+  border:none;outline:none;font-family:inherit;width:100%;-moz-appearance:textfield;}
+.ee-amtf input::-webkit-outer-spin-button,.ee-amtf input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.ee-amtf.in input{color:#8aefb0;} .ee-amtf.out input{color:#ffb094;}
+.ee-txt{width:100%;background:#0a1020;border:1px solid #223558;border-radius:12px;padding:12px 14px;
+  font-size:14px;color:#e8eefb;outline:none;font-family:inherit;}
+.ee-txt::placeholder{color:#4e5f80;} .ee-txt:focus{border-color:#4a78c8;box-shadow:0 0 0 3px rgba(74,120,200,.14);}
+.ee-row{display:flex;gap:10px;margin-top:20px;align-items:stretch;}
+.ee-save{flex:1;padding:15px;border-radius:14px;background:linear-gradient(180deg,#e8c870,#cfa544);
+  border:1px solid #f4dc9a;color:#1a1208;font-size:15px;font-weight:700;text-align:center;cursor:pointer;
+  box-shadow:0 4px 14px rgba(212,168,80,.28),inset 0 1px 0 rgba(255,255,255,.45);}
+.ee-del{width:54px;border-radius:14px;background:rgba(226,58,58,.08);border:1px solid #5a2530;
+  color:#ff8a7a;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;}
+.ee-cov{position:fixed;inset:0;z-index:9100;display:none;align-items:center;justify-content:center;background:rgba(4,7,16,.78);padding:20px;}
+.ee-cov.show{display:flex;}
+.ee-cnf{width:100%;max-width:330px;background:#101a30;border:1px solid #5a2530;border-radius:18px;padding:20px 18px;}
+.ee-cnf .t{font-size:15.5px;font-weight:700;color:#ff9a8a;margin-bottom:8px;}
+.ee-cnf .s{font-size:13px;color:#c3d0ec;line-height:1.6;margin-bottom:16px;}
+.ee-cnf .b{display:flex;gap:9px;}
+.ee-cnf .no{flex:1;padding:12px;border-radius:11px;background:rgba(122,140,200,.08);border:1px solid #2a4078;color:#9ab0e0;text-align:center;font-size:13px;font-weight:600;cursor:pointer;}
+.ee-cnf .yes{flex:1;padding:12px;border-radius:11px;background:linear-gradient(180deg,#c0392b,#96271b);border:1px solid #e05a45;color:#fff;text-align:center;font-size:13px;font-weight:700;cursor:pointer;}
+.lg-en{cursor:pointer;}
 .lg-en{display:flex;align-items:flex-start;gap:9px;border-radius:12px;padding:9px 11px;
   margin-bottom:6px;border:1px solid;}
 .lg-en.i{background:linear-gradient(160deg,rgba(63,190,124,.09),rgba(63,190,124,.03));border-color:#2d7a4a;}
@@ -5160,6 +5208,38 @@ textarea.st-biz-in{resize:none;}
     <div style="margin-top:14px;" id="goal-list"><div class="loading">⏳</div></div>
   </div>
 </div>
+
+<div class="ee-ov" id="ee-ov">
+  <div class="ee-sheet">
+    <div class="ee-grab"></div>
+    <div class="ee-hd">
+      <div><div class="ee-t">एंट्री सुधारें</div><div class="ee-s" id="ee-when"></div></div>
+      <div class="ee-x" onclick="eeClose()">✕</div>
+    </div>
+    <div class="ee-seg" id="ee-seg">
+      <div class="in" id="ee-in" onclick="eeSetDir('in')"><div class="k">↓ आया</div><div class="s">पैसा मिला</div></div>
+      <div class="out" id="ee-out" onclick="eeSetDir('out')"><div class="k">↑ गया</div><div class="s">पैसा दिया</div></div>
+    </div>
+    <div class="ee-fl">रकम</div>
+    <div class="ee-amtf" id="ee-amtf"><span class="cur">₹</span>
+      <input id="ee-amt" type="number" inputmode="numeric" enterkeyhint="done" autocomplete="off">
+    </div>
+    <div class="ee-fl" style="margin-top:15px;">नोट</div>
+    <input class="ee-txt" id="ee-note" type="text" enterkeyhint="done" autocomplete="off" placeholder="जैसे: राहुल से मिले">
+    <div class="ee-row">
+      <div class="ee-save" onclick="eeSave()">✓ सुधारें</div>
+      <div class="ee-del" onclick="eeAskDelete()">🗑</div>
+    </div>
+  </div>
+</div>
+<div class="ee-cov" id="ee-cov">
+  <div class="ee-cnf">
+    <div class="t">Delete entry?</div>
+    <div class="s">This entry will be permanently deleted.</div>
+    <div class="b"><div class="no" onclick="eeCancelDelete()">Cancel</div>
+      <div class="yes" onclick="eeDoDelete()">Confirm</div></div>
+  </div>
+</div>
 <div class="popup-overlay mk-center-overlay" id="dreset-overlay">
   <div class="mk-edit-modal" style="border-color:#c0392b;">
     <div class="mk-edit-head">
@@ -7952,22 +8032,89 @@ function lgRenderEntries(){
       billTxt = ' · <span class="lg-en-bill">बिल ₹'+bill.toLocaleString('en-IN')+'</span>';
     }
     var clip=(b.src==='maal'||b.type==='purchase')?' <span class="cl">📎</span>':'';
-    return '<div class="lg-en '+(d==='in'?'i':'o')+'">'
+    var _isP=(b.src==='maal'||b.type==='purchase');
+    return '<div class="lg-en '+(d==='in'?'i':'o')+'" onclick="lgEditEntry('+i+')">'
       +'<span class="ar">'+(d==='in'?_LG_AR_IN:_LG_AR_OUT)+'</span>'
       +'<span class="m"><span class="a">₹'+amt.toLocaleString('en-IN')+'</span>'+tag
       +'<div class="nt">'+_lgLabel(b)+clip+billTxt+'</div></span>'
       +'<span class="rt"><div class="tm">'+_lgTime(b.ts)+'</div>'
-      +'<div class="ed" onclick="lgEditEntry('+i+')">✏️</div></span></div>';
+      +'<div class="ed">'+(_isP?'→':'✏️')+'</div></span></div>';
   }).join('');
 }
 // Editing works on the sorted view, so map the row back to the real box by ts.
-function lgEditEntry(i){
-  var r=window.lgState && window.lgState.rec; if(!r||!Array.isArray(r.lgBoxes)) return;
-  var sorted=r.lgBoxes.slice().sort(function(a,b){return (b.ts||0)-(a.ts||0);});
-  var box=sorted[i]; if(!box) return;
-  if(typeof lgBoxTap==='function'){ try{ return lgBoxTap(box.type, box.n); }catch(e){} }
-  if(typeof toast==='function') toast('एडिट अभी उपलब्ध नहीं');
+/* ══ Same-day entry edit — आया/गया only. Purchase rows route to their bill,
+   because a src:"maal" box mirrors a K.MAAL record and editing it here would
+   desync the supplier ledger and the payable. ══ */
+var _eeBox=null, _eeDir="in";
+function eeClose(){ var o=document.getElementById("ee-ov"); if(o) o.classList.remove("show"); _eeBox=null; }
+function eeSetDir(d){
+  _eeDir=d;
+  var i=document.getElementById("ee-in"), o=document.getElementById("ee-out"), f=document.getElementById("ee-amtf");
+  if(i) i.className = "in"+(d==="in"?" on":"");
+  if(o) o.className = "out"+(d==="out"?" on":"");
+  if(f) f.className = "ee-amtf "+(d==="in"?"in":"out");
 }
+function eeAskDelete(){ var c=document.getElementById("ee-cov"); if(c) c.classList.add("show"); }
+function eeCancelDelete(){ var c=document.getElementById("ee-cov"); if(c) c.classList.remove("show"); }
+function eeDoDelete(){
+  eeCancelDelete();
+  var r=window.lgState && window.lgState.rec;
+  if(!r || !_eeBox || !Array.isArray(r.lgBoxes)) return eeClose();
+  var ix=r.lgBoxes.indexOf(_eeBox);
+  if(ix>-1) r.lgBoxes.splice(ix,1);
+  eeClose();
+  try{ lgPersistRec(r); }catch(e){}
+  try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
+  try{ toast("🗑 एंट्री हट गई"); }catch(e){}
+}
+function eeSave(){
+  var r=window.lgState && window.lgState.rec;
+  if(!r || !_eeBox) return eeClose();
+  var v=parseFloat(document.getElementById("ee-amt").value);
+  if(!(v>0)){ try{ toast("⚠️ रकम डालिए"); }catch(e){} return; }
+  var note=(document.getElementById("ee-note").value||"").slice(0,80);
+  _eeBox.amount=Math.round(v);
+  if(typeof _eeBox.cashOut==="number") _eeBox.cashOut=Math.round(v);
+  _eeBox.note=note;
+  _eeBox.dir=_eeDir;
+  _eeBox.type=(_eeDir==="in")?"cash":"expense";   // keep the legacy field consistent
+  _eeBox.edited=Date.now();
+  eeClose();
+  try{ lgPersistRec(r); }catch(e){}
+  try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
+  try{ if(window.logEvent) window.logEvent("entry_edited",{dir:_eeDir,amount:Math.round(v)}); }catch(e){}
+  try{ toast("✓ एंट्री सुधर गई"); }catch(e){}
+}
+function lgEditEntry(i){
+  var r=window.lgState && window.lgState.rec;
+  if(!r || !Array.isArray(r.lgBoxes)) return;
+  var sorted=r.lgBoxes.slice().sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+  var box=sorted[i]; if(!box) return;
+  // purchase rows are owned by the supplier screen, not by this sheet
+  if(box.src==="maal" || box.type==="purchase"){
+    if(box.supplier && typeof openSupplierProfile==="function"){
+      try{ return openSupplierProfile(box.supplier); }catch(e){}
+    }
+    try{ toast("खरीद की एंट्री Purchase से बदलें"); }catch(e){}
+    return;
+  }
+  _eeBox=box;
+  eeSetDir(lgDirOf(box)==="in"?"in":"out");
+  var a=document.getElementById("ee-amt"); if(a) a.value=Math.round(lgCashOf(box))||"";
+  var n=document.getElementById("ee-note"); if(n) n.value=box.note||"";
+  var w=document.getElementById("ee-when");
+  if(w) w.textContent="आज · "+(typeof _lgTime==="function"?_lgTime(box.ts):"")+" पर बनाई";
+  var o=document.getElementById("ee-ov"); if(o) o.classList.add("show");
+  setTimeout(function(){ try{ a && a.focus(); }catch(e){} },140);
+}
+/* tap the backdrop to dismiss, same as swipe-down */
+try{
+  document.addEventListener("click",function(e){
+    var o=document.getElementById("ee-ov");
+    if(o && o.classList.contains("show") && e.target===o) eeClose();
+  });
+}catch(e){}
+
 
 function lgRenderGrid(type) {
   const grid = document.getElementById('lg-grid-' + type);

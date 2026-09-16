@@ -3060,7 +3060,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       <div class="lg-voice-rec">
         <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('entry')" aria-label="रोकें"><span></span></button>
         <div class="lg-voice-wave" id="lg-wave-entry"></div>
-        <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-entry">0.0s</b></div>
+        <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>Listening… <b id="lg-timer-entry">0.0s</b></div>
         <div class="lg-live" id="lg-live-entry"></div>
       </div>
       <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
@@ -3097,7 +3097,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         <div class="lg-voice-rec">
           <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('cash')" aria-label="रोकें"><span></span></button>
           <div class="lg-voice-wave" id="lg-wave-cash"></div>
-          <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-cash">0.0s</b></div>
+          <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>Listening… <b id="lg-timer-cash">0.0s</b></div>
         </div>
         <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
         <div class="lg-voice-res">
@@ -3132,7 +3132,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         <div class="lg-voice-rec">
           <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('upi')" aria-label="रोकें"><span></span></button>
           <div class="lg-voice-wave" id="lg-wave-upi"></div>
-          <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>सुन रहा हूँ… <b id="lg-timer-upi">0.0s</b></div>
+          <div class="lg-voice-recmsg"><span class="lg-voice-rd"></span>Listening… <b id="lg-timer-upi">0.0s</b></div>
         </div>
         <div class="lg-voice-proc"><div class="lg-voice-spin"></div><div class="lg-voice-procmsg">Processing…</div></div>
         <div class="lg-voice-res">
@@ -13697,10 +13697,13 @@ function npReopenPreview(){
     var R=window.SpeechRecognition||window.webkitSpeechRecognition, r;
     try{ r=new R(); }catch(e){ _srBlock(); return _audioStart(type); }
     S.sr=r; r.lang='hi-IN'; r.interimResults=true; r.continuous=false; r.maxAlternatives=1;
-    S.trace=[]; var _tr=function(n){ S.trace.push(n+'@'+(Date.now()-S.t0)+'ms');
-      if(live) live.innerHTML='<span class="dim">'+S.trace.join(' → ')+'</span>'; };
+    S.trace=[]; var _tr=function(n){ S.trace.push(n+'@'+(Date.now()-S.t0)+'ms'); };
     r.onstart      = function(){ _tr('start'); };
-    r.onaudiostart = function(){ _tr('mic'); };
+    r.onaudiostart = function(){
+      S.gotMic=true;
+      if(S.micWatch){ clearTimeout(S.micWatch); S.micWatch=null; }
+      _tr('mic');
+    };
     r.onsoundstart = function(){ _tr('sound'); };
     r.onspeechstart= function(){ _tr('speech'); };
     r.onaudioend   = function(){ _tr('micEnd'); };
@@ -13717,12 +13720,13 @@ function npReopenPreview(){
     r.onerror=function(ev){ S.srErr=(ev&&ev.error)||'err'; };
     r.onend=function(){
       S.srActive=false;
+      if(S.micWatch){ clearTimeout(S.micWatch); S.micWatch=null; }
       if(S.wave){ clearInterval(S.wave); S.wave=null; }
       if(S.timer){ clearInterval(S.timer); S.timer=null; }
       if(S.cap){ clearTimeout(S.cap); S.cap=null; }
       if(_srFinish(type)) return;
       // an abort with nothing captured is transient — give it one clean retry
-      if(!(S.srText||'').trim() && !S.srRetried){
+      if(S.gotMic && !(S.srText||'').trim() && !S.srRetried){
         S.srRetried=true; S.sr=null;
         return setTimeout(function(){ _srOnlyStart(type); }, 120);
       }
@@ -13738,17 +13742,30 @@ function npReopenPreview(){
       if(er==='audio-capture'||er==='not-allowed'||er==='service-not-allowed'||er==='network'){
         _srBlock(); return _audioStart(type);
       }
-      var _dbg=' [SR:'+(er||'empty')+' | '+((S.trace||[]).join('>')||'no-events')+']';
-      if((S.srText||'').trim()) return _fail(type,'समझ नहीं आया — "'+S.srText.slice(0,24)+'"'+_dbg);
-      return _fail(type,'कुछ नहीं सुना'+_dbg);
+      if((S.srText||'').trim()) return _fail(type,'समझ नहीं आया — फिर से बोलें');
+      return _fail(type,'कुछ नहीं सुना — फिर से बोलिए');
     };
+    S.gotMic=false;
+    S.micWatch=setTimeout(function(){
+      if(S.gotMic) return;
+      // recogniser started but the speech service never took the mic on this device.
+      // Remember it (versioned) and switch to the audio pipeline immediately.
+      try{ if(window.logEvent) window.logEvent('voice_sr',{err:'no-mic',trace:(S.trace||[]).join('>'),ua:(navigator.userAgent||'').slice(-42)}); }catch(e){}
+      _srBlock();
+      try{ toast('⚠️ Google app को mic की अनुमति दें — तब voice तेज़ चलेगा'); }catch(e){}
+      S.srActive=false; S.srMode=false;
+      if(S.wave){ clearInterval(S.wave); S.wave=null; }
+      if(S.timer){ clearInterval(S.timer); S.timer=null; }
+      if(S.cap){ clearTimeout(S.cap); S.cap=null; }
+      _srKill(S);
+      _audioStart(type);
+    }, 800);
     S.cap=setTimeout(function(){ try{ r.stop(); }catch(e){} },6000);
     try{ r.start(); }catch(e){ _srBlock(); return _audioStart(type); }
   }
   window.lgVoiceStart = function(type){
     try{ LGV[type].srRetried=false; }catch(e){}
-    var _p = _srAvail() ? (_srBlocked() ? 'AUDIO (SR blocked earlier)' : 'SR') : 'AUDIO (no SR on device)';
-    try{ var _l=el('lg-live-'+type); if(_l) _l.innerHTML='<span class="dim">path: '+_p+'</span>'; }catch(e){}
+    try{ var _l=el('lg-live-'+type); if(_l) _l.innerHTML=''; }catch(e){}
     if(_srAvail() && !_srBlocked()) return _srOnlyStart(type);
     return _audioStart(type);
   };
@@ -13803,8 +13820,8 @@ function npReopenPreview(){
     // transcript first — if it carries an amount we are done, no upload
     try{ if(_srFinish(type)) return; }catch(e){}
     var chunks = S.chunks||[];
-    if(!chunks.length){ return _fail(type,'कुछ सुनाई नहीं दिया [AUDIO:no-chunks]'); }
-    if(S.sawAudio && !S.spoke){ return _fail(type,'कुछ नहीं सुना [AUDIO:silent]'); }
+    if(!chunks.length){ return _fail(type,'कुछ सुनाई नहीं दिया — फिर से बोलें'); }
+    if(S.sawAudio && !S.spoke){ return _fail(type,'कुछ नहीं सुना — फिर से बोलिए'); }
     var blob = new Blob(chunks, { type:(chunks[0] && chunks[0].type) || 'audio/webm' });
     setState(type,'proc');
     _toWav(blob).then(function(wav){ return _blobToB64(wav); }).then(function(b64){

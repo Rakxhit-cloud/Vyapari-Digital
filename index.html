@@ -13644,7 +13644,7 @@ function npReopenPreview(){
     var S=LGV[type];
     if(S.srUsed) return true;
     var txt=(S.srText||'').trim();
-    if(!txt || S.srErr) return false;
+    if(!txt) return false;   // an error after a good transcript is irrelevant — the words are the result
     var p=_lgParseHi(txt);
     if(!p.amount || p.amount<=0) return false;
     S.srUsed=true;
@@ -13655,14 +13655,27 @@ function npReopenPreview(){
     try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now())}); }catch(e){}
     return true;
   }
+  function _srKill(S){
+    var r=S.sr; S.sr=null;
+    if(!r) return;
+    try{ r.onresult=null; r.onerror=null; r.onend=null; r.onspeechend=null; }catch(e){}
+    try{ r.abort && r.abort(); }catch(e){}
+  }
   function _srBlocked(){ try{ return localStorage.getItem('hk_sr_block')==='1'; }catch(e){ return false; } }
   function _srBlock(){ try{ localStorage.setItem('hk_sr_block','1'); }catch(e){} }
   window.lgSrReset=function(){ try{ localStorage.removeItem('hk_sr_block'); }catch(e){} alert('SR reset — ab dobara try karo'); };
   /* The recogniser opens its own microphone. Calling getUserMedia alongside it
      kills it with audio-capture, so on the fast path we never touch getUserMedia. */
   function _srOnlyStart(type){
-    var S=LGV[type]; _cleanup(type); setState(type,'rec');
-    S.srMode=true; S.srUsed=false; S.srErr=null; S.srText=''; S.t0=Date.now();
+    var S=LGV[type];
+    if(S.srActive) return;                       // a second tap must not kill the live session
+    _srKill(S);
+    if(S.wave){ clearInterval(S.wave); S.wave=null; }
+    if(S.timer){ clearInterval(S.timer); S.timer=null; }
+    if(S.cap){ clearTimeout(S.cap); S.cap=null; }
+    setState(type,'rec');
+    S.srMode=true; S.srActive=true; S.srUsed=false; S.srErr=null; S.srText=''; S.t0=Date.now();
+    if(S.srRetried===undefined) S.srRetried=false;
     var live=el('lg-live-'+type); if(live) live.innerHTML='';
     var bars=buildWave(type);
     S.wave=setInterval(function(){ for(var i=0;i<bars.length;i++){ bars[i].style.height=(5+Math.random()*17)+'px'; } },110);
@@ -13683,10 +13696,16 @@ function npReopenPreview(){
     r.onspeechend=function(){ try{ r.stop(); }catch(e){} };
     r.onerror=function(ev){ S.srErr=(ev&&ev.error)||'err'; };
     r.onend=function(){
+      S.srActive=false;
       if(S.wave){ clearInterval(S.wave); S.wave=null; }
       if(S.timer){ clearInterval(S.timer); S.timer=null; }
       if(S.cap){ clearTimeout(S.cap); S.cap=null; }
       if(_srFinish(type)) return;
+      // an abort with nothing captured is transient — give it one clean retry
+      if(S.srErr==='aborted' && !(S.srText||'').trim() && !S.srRetried){
+        S.srRetried=true; S.sr=null;
+        return setTimeout(function(){ _srOnlyStart(type); }, 120);
+      }
       var er=S.srErr||'';
       try{ if(window.logEvent) window.logEvent('voice_sr',{err:er||'no-amount',txt:(S.srText||'').slice(0,40)}); }catch(e){}
       if(er==='audio-capture'||er==='not-allowed'||er==='service-not-allowed'||er==='network'){
@@ -13700,6 +13719,7 @@ function npReopenPreview(){
     try{ r.start(); }catch(e){ _srBlock(); return _audioStart(type); }
   }
   window.lgVoiceStart = function(type){
+    try{ LGV[type].srRetried=false; }catch(e){}
     var _p = _srAvail() ? (_srBlocked() ? 'AUDIO (SR blocked earlier)' : 'SR') : 'AUDIO (no SR on device)';
     try{ var _l=el('lg-live-'+type); if(_l) _l.innerHTML='<span class="dim">path: '+_p+'</span>'; }catch(e){}
     if(_srAvail() && !_srBlocked()) return _srOnlyStart(type);
@@ -13741,7 +13761,7 @@ function npReopenPreview(){
 
   window.lgVoiceStop = function(type){
     var S = LGV[type];
-    if(S.srMode){ try{ if(S.sr) S.sr.stop(); }catch(e){} return; }
+    if(S.srMode){ try{ if(S.sr) S.sr.stop(); }catch(e){} return; }   // stop() keeps results; abort() discards them
     if(S.timer){ clearInterval(S.timer); S.timer=null; }
     if(S.cap){ clearTimeout(S.cap); S.cap=null; }
     if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }
@@ -13749,7 +13769,7 @@ function npReopenPreview(){
     else { _onStop(type); }
   };
 
-  function _stopTracks(S){ try{ if(S.sr){ S.sr.onresult=null; S.sr.onend=null; S.sr.abort&&S.sr.abort(); S.sr=null; } }catch(e){} if(S.stream){ S.stream.getTracks().forEach(function(t){ t.stop(); }); S.stream=null; } if(S.ac){ try{ S.ac.close(); }catch(e){} S.ac=null; } }
+  function _stopTracks(S){ if(S.stream){ S.stream.getTracks().forEach(function(t){ t.stop(); }); S.stream=null; } if(S.ac){ try{ S.ac.close(); }catch(e){} S.ac=null; } }
 
   function _onStop(type){
     var S = LGV[type]; _stopTracks(S);

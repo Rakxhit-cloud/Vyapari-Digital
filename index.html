@@ -13661,8 +13661,21 @@ function npReopenPreview(){
     try{ r.onresult=null; r.onerror=null; r.onend=null; r.onspeechend=null; }catch(e){}
     try{ r.abort && r.abort(); }catch(e){}
   }
-  function _srBlocked(){ try{ return localStorage.getItem('hk_sr_block')==='1'; }catch(e){ return false; } }
-  function _srBlock(){ try{ localStorage.setItem('hk_sr_block','1'); }catch(e){} }
+  /* Bump this whenever the voice path changes. A block written by an older build
+     is stale by definition — that device gets a fresh chance instead of being
+     stuck on the slow path forever with no way to clear it from an update. */
+  var SR_GUARD_VER = 3;
+  function _srBlocked(){
+    try{
+      var raw=localStorage.getItem('hk_sr_block');
+      if(!raw) return false;
+      if(raw==='1'){ localStorage.removeItem('hk_sr_block'); return false; }   // legacy flag from the broken builds
+      var o=JSON.parse(raw);
+      if(!o || o.v!==SR_GUARD_VER){ localStorage.removeItem('hk_sr_block'); return false; }
+      return true;
+    }catch(e){ return false; }
+  }
+  function _srBlock(){ try{ localStorage.setItem('hk_sr_block', JSON.stringify({v:SR_GUARD_VER,t:Date.now()})); }catch(e){} }
   window.lgSrReset=function(){ try{ localStorage.removeItem('hk_sr_block'); }catch(e){} alert('SR reset — ab dobara try karo'); };
   /* The recogniser opens its own microphone. Calling getUserMedia alongside it
      kills it with audio-capture, so on the fast path we never touch getUserMedia. */

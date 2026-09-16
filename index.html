@@ -13638,27 +13638,6 @@ function npReopenPreview(){
     return { amount: Math.round(amt)||0, direction: dir, note: t.slice(0,40) };
   }
   function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
-  function _srStart(type){
-    var S=LGV[type]; if(!_srAvail()) return;
-    try{
-      var R=window.SpeechRecognition||window.webkitSpeechRecognition;
-      var r=new R(); S.sr=r; S.srText=''; S.srDone=false;
-      r.lang='hi-IN'; r.interimResults=true; r.continuous=false; r.maxAlternatives=1;
-      var live=el('lg-live-'+type);
-      r.onresult=function(ev){
-        var fin='', int='';
-        for(var i=ev.resultIndex;i<ev.results.length;i++){
-          var tr=ev.results[i][0].transcript;
-          if(ev.results[i].isFinal) fin+=tr; else int+=tr;
-        }
-        if(fin) S.srText+=fin;
-        if(live) live.innerHTML = _esc(S.srText) + (int?('<span class="dim"> '+_esc(int)+'</span>'):'');
-      };
-      r.onerror=function(){ S.srErr=true; };
-      r.onend=function(){ S.srDone=true; if(S.pendingFinish) _srFinish(type); };
-      r.start(); S.srT0=Date.now();
-    }catch(e){ S.srErr=true; }
-  }
   function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   /* Returns true when the transcript alone answered it — audio never leaves the phone. */
   function _srFinish(type){
@@ -13676,14 +13655,58 @@ function npReopenPreview(){
     try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now())}); }catch(e){}
     return true;
   }
+  function _srBlocked(){ try{ return localStorage.getItem('hk_sr_block')==='1'; }catch(e){ return false; } }
+  function _srBlock(){ try{ localStorage.setItem('hk_sr_block','1'); }catch(e){} }
+  /* The recogniser opens its own microphone. Calling getUserMedia alongside it
+     kills it with audio-capture, so on the fast path we never touch getUserMedia. */
+  function _srOnlyStart(type){
+    var S=LGV[type]; _cleanup(type); setState(type,'rec');
+    S.srMode=true; S.srUsed=false; S.srErr=null; S.srText=''; S.t0=Date.now();
+    var live=el('lg-live-'+type); if(live) live.innerHTML='';
+    var bars=buildWave(type);
+    S.wave=setInterval(function(){ for(var i=0;i<bars.length;i++){ bars[i].style.height=(5+Math.random()*17)+'px'; } },110);
+    var tel=el('lg-timer-'+type);
+    S.timer=setInterval(function(){ if(tel) tel.textContent=((Date.now()-S.t0)/1000).toFixed(1)+'s'; },100);
+    var R=window.SpeechRecognition||window.webkitSpeechRecognition, r;
+    try{ r=new R(); }catch(e){ _srBlock(); return _audioStart(type); }
+    S.sr=r; r.lang='hi-IN'; r.interimResults=true; r.continuous=false; r.maxAlternatives=1;
+    r.onresult=function(ev){
+      var fin='', itm='';
+      for(var i=ev.resultIndex;i<ev.results.length;i++){
+        var tr=ev.results[i][0].transcript;
+        if(ev.results[i].isFinal) fin+=tr; else itm+=tr;
+      }
+      if(fin) S.srText+=fin;
+      if(live) live.innerHTML=_esc(S.srText)+(itm?('<span class="dim"> '+_esc(itm)+'</span>'):'');
+    };
+    r.onspeechend=function(){ try{ r.stop(); }catch(e){} };
+    r.onerror=function(ev){ S.srErr=(ev&&ev.error)||'err'; };
+    r.onend=function(){
+      if(S.wave){ clearInterval(S.wave); S.wave=null; }
+      if(S.timer){ clearInterval(S.timer); S.timer=null; }
+      if(S.cap){ clearTimeout(S.cap); S.cap=null; }
+      if(_srFinish(type)) return;
+      var er=S.srErr||'';
+      try{ if(window.logEvent) window.logEvent('voice_sr',{err:er||'no-amount',txt:(S.srText||'').slice(0,40)}); }catch(e){}
+      if(er==='audio-capture'||er==='not-allowed'||er==='service-not-allowed'||er==='network'){
+        _srBlock(); return _audioStart(type);
+      }
+      if((S.srText||'').trim()) return _fail(type,'समझ नहीं आया — फिर से बोलें');
+      return _fail(type,'कुछ नहीं सुना — फिर से बोलिए');
+    };
+    S.cap=setTimeout(function(){ try{ r.stop(); }catch(e){} },6000);
+    try{ r.start(); }catch(e){ _srBlock(); return _audioStart(type); }
+  }
   window.lgVoiceStart = function(type){
+    if(_srAvail() && !_srBlocked()) return _srOnlyStart(type);
+    return _audioStart(type);
+  };
+  function _audioStart(type){
     var S = LGV[type];
     _cleanup(type);
     setState(type,'rec');
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ return _fail(type,'इस डिवाइस पर voice नहीं — नीचे + से टाइप करें'); }
-    S.srUsed=false; S.srErr=false; S.srText=''; S.pendingFinish=false;
-    var _lv=el('lg-live-'+type); if(_lv) _lv.innerHTML='';
-    _srStart(type);
+    S.srMode=false;
     navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
       S.stream = stream;
       try{
@@ -13710,11 +13733,11 @@ function npReopenPreview(){
       S.timer=setInterval(function(){ if(tel) tel.textContent=((Date.now()-S.t0)/1000).toFixed(1)+'s'; },100);
       S.cap=setTimeout(function(){ window.lgVoiceStop(type); },6000);
     }).catch(function(err){ _fail(type,'माइक की अनुमति नहीं मिली — नीचे + से टाइप करें'); });
-  };
+  }
 
   window.lgVoiceStop = function(type){
     var S = LGV[type];
-    try{ if(S.sr){ S.pendingFinish=true; S.sr.stop(); } }catch(e){}
+    if(S.srMode){ try{ if(S.sr) S.sr.stop(); }catch(e){} return; }
     if(S.timer){ clearInterval(S.timer); S.timer=null; }
     if(S.cap){ clearTimeout(S.cap); S.cap=null; }
     if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }

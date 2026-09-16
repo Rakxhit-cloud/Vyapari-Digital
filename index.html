@@ -13657,6 +13657,7 @@ function npReopenPreview(){
   }
   function _srBlocked(){ try{ return localStorage.getItem('hk_sr_block')==='1'; }catch(e){ return false; } }
   function _srBlock(){ try{ localStorage.setItem('hk_sr_block','1'); }catch(e){} }
+  window.lgSrReset=function(){ try{ localStorage.removeItem('hk_sr_block'); }catch(e){} alert('SR reset — ab dobara try karo'); };
   /* The recogniser opens its own microphone. Calling getUserMedia alongside it
      kills it with audio-capture, so on the fast path we never touch getUserMedia. */
   function _srOnlyStart(type){
@@ -13691,13 +13692,16 @@ function npReopenPreview(){
       if(er==='audio-capture'||er==='not-allowed'||er==='service-not-allowed'||er==='network'){
         _srBlock(); return _audioStart(type);
       }
-      if((S.srText||'').trim()) return _fail(type,'समझ नहीं आया — फिर से बोलें');
-      return _fail(type,'कुछ नहीं सुना — फिर से बोलिए');
+      var _dbg=' [SR:'+(er||'empty')+']';
+      if((S.srText||'').trim()) return _fail(type,'समझ नहीं आया — "'+S.srText.slice(0,24)+'"'+_dbg);
+      return _fail(type,'कुछ नहीं सुना'+_dbg);
     };
     S.cap=setTimeout(function(){ try{ r.stop(); }catch(e){} },6000);
     try{ r.start(); }catch(e){ _srBlock(); return _audioStart(type); }
   }
   window.lgVoiceStart = function(type){
+    var _p = _srAvail() ? (_srBlocked() ? 'AUDIO (SR blocked earlier)' : 'SR') : 'AUDIO (no SR on device)';
+    try{ var _l=el('lg-live-'+type); if(_l) _l.innerHTML='<span class="dim">path: '+_p+'</span>'; }catch(e){}
     if(_srAvail() && !_srBlocked()) return _srOnlyStart(type);
     return _audioStart(type);
   };
@@ -13752,8 +13756,8 @@ function npReopenPreview(){
     // transcript first — if it carries an amount we are done, no upload
     try{ if(_srFinish(type)) return; }catch(e){}
     var chunks = S.chunks||[];
-    if(!chunks.length){ return _fail(type,'कुछ सुनाई नहीं दिया — फिर से बोलें'); }
-    if(S.sawAudio && !S.spoke){ return _fail(type,'कुछ नहीं सुना — फिर से बोलिए'); }
+    if(!chunks.length){ return _fail(type,'कुछ सुनाई नहीं दिया [AUDIO:no-chunks]'); }
+    if(S.sawAudio && !S.spoke){ return _fail(type,'कुछ नहीं सुना [AUDIO:silent]'); }
     var blob = new Blob(chunks, { type:(chunks[0] && chunks[0].type) || 'audio/webm' });
     setState(type,'proc');
     _toWav(blob).then(function(wav){ return _blobToB64(wav); }).then(function(b64){
@@ -13840,6 +13844,7 @@ function npReopenPreview(){
   function _fail(type,msg){ _cleanup(type); var e=el('lg-verr-'+type); if(e) e.textContent=msg||'फिर से कोशिश करें'; setState(type,'err'); }
   function _cleanup(type){
     var S=LGV[type];
+    if(S.wave){ clearInterval(S.wave); S.wave=null; }
     if(S.timer){ clearInterval(S.timer); S.timer=null; }
     if(S.cap){ clearTimeout(S.cap); S.cap=null; }
     if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }

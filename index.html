@@ -8651,6 +8651,7 @@ function lgpcFile(sup, phone){
   if(window._lgpcInvDate)_maal.invoiceDate=window._lgpcInvDate;
   if(window._lgpcPaid>0&&window._lgpcPaid<amt)_maal.paid=window._lgpcPaid;
   if (phone) _maal.supplierPhone = phone;
+  try{ if(Array.isArray(window._lgpcTaxLines) && window._lgpcTaxLines.length) tlApply(_maal, window._lgpcTaxLines); }catch(e){}
   var _tv=Number(window._lgpcTaxable)||0, _tx=Number(window._lgpcTax)||0;
   if (_tv > 0 && _tx > 0 && Math.abs((_tv + _tx) - amt) <= 2) {
     _maal.taxable = Math.round(_tv * 100) / 100;
@@ -9974,6 +9975,166 @@ function loadMaalHome(){const rows=DB.get(K.MAAL);let tot=0;rows.forEach(r=>{if(
 //   'assumed' own GSTIN not set -- intra assumed, the common case, but flagged
 function ownGstin(){
   try{return String(localStorage.getItem('hk_business_gstin')||'').toUpperCase().replace(/[^0-9A-Z]/g,'');}catch(e){return '';}
+}
+/* ══ TAX LINES — per-slab breakup of a purchase bill ══
+   A pharma invoice routinely mixes 5% and 12%. Storing one blended rate
+   (tax/taxable) produces slabs like 9.05% that exist nowhere in GST and can
+   never match GSTR-2B. maal.taxLines holds the real breakup; taxable/tax stay
+   as derived totals so every existing reader keeps working. */
+// GST 2.0 (22 Sep 2025): core slabs are 0/5/18 with 40 for luxury-sin goods.
+// 0.25/1.5/3 survive for precious metals. 12 and 28 are abolished for new
+// invoices but stay VALID here, because bills from before the reform carry them.
+var GST_SLABS=[0,0.1,0.25,1,1.5,3,5,6,12,18,28,40];
+var GST_ABOLISHED=[12,28];
+var GST_20_DATE='2025-09-22';
+function tlNearSlab(r){
+  var best=null,bd=1e9;
+  GST_SLABS.forEach(function(s){ var d=Math.abs(s-r); if(d<bd){bd=d;best=s;} });
+  return (bd<=0.26)?best:null;          // 0.26 absorbs rounding, not a wrong slab
+}
+function tlRound(n){ return Math.round((Number(n)||0)*100)/100; }
+/* One line = one slab on one bill. */
+function tlMake(rate,taxable,tax){
+  return { rate:Number(rate)||0, taxable:tlRound(taxable), tax:tlRound(tax) };
+}
+/* Normalise whatever we were given into clean lines. Drops empties, merges
+   duplicate rates, and never invents a line. */
+function tlNormalize(lines){
+  var by={};
+  (Array.isArray(lines)?lines:[]).forEach(function(l){
+    if(!l) return;
+    var tv=tlRound(l.taxable), tx=tlRound(l.tax);
+    if(!(tv>0) && !(tx>0)) return;
+    var r=Number(l.rate);
+    if(!isFinite(r) || r<0){ r=(tv>0)?tlRound((tx/tv)*100):0; }
+    var k=String(r);
+    if(!by[k]) by[k]=tlMake(r,0,0);
+    by[k].taxable=tlRound(by[k].taxable+tv);
+    by[k].tax=tlRound(by[k].tax+tx);
+  });
+  return Object.keys(by).map(function(k){return by[k];})
+    .sort(function(a,b){ return a.rate-b.rate; });
+}
+/* Build lines from a scan payload. Server may send rate-wise rows one day;
+   until then we fall back to a single derived line and mark it as such. */
+function tlFromScan(p){
+  if(!p) return [];
+  var raw = p.taxLines || p.rateWise || p.gstSummary;
+  if(Array.isArray(raw) && raw.length){
+    var lines=tlNormalize(raw.map(function(r){
+      return { rate:(r.rate!==undefined?r.rate:r.gstRate), taxable:(r.taxable!==undefined?r.taxable:r.taxableValue),
+               tax:(r.tax!==undefined?r.tax:( (Number(r.cgst)||0)+(Number(r.sgst)||0)+(Number(r.igst)||0) )) };
+    }));
+    if(lines.length) return lines;
+  }
+  var tv=Number(p.taxable)||0, tx=Number(p.tax)||0;
+  if(tv>0 && tx>0){
+    var l=tlMake(tlRound((tx/tv)*100),tv,tx); l.derived=true; return [l];
+  }
+  return [];
+}
+/* Heads follow the STATE CODES, not the rate. Same state -> CGST+SGST,
+   different state -> IGST. Unknown -> flagged, never guessed silently. */
+function tlHeads(line,supGstin){
+  var t=tlRound(line&&line.tax);
+  if(!(t>0)) return {cgst:0,sgst:0,igst:0,basis:"none"};
+  var s=String(supGstin||"").toUpperCase().replace(/[^0-9A-Z]/g,"").slice(0,2);
+  var o=(typeof ownGstin==="function"?ownGstin():"").slice(0,2);
+  var half=Math.round(t*50)/100, rest=tlRound(t-half);
+  if(!s||!o) return {cgst:half,sgst:rest,igst:0,basis:"unknown"};
+  if(s===o)  return {cgst:half,sgst:rest,igst:0,basis:"intra"};
+  return {cgst:0,sgst:0,igst:t,basis:"inter"};
+}
+function tlSum(lines){
+  var tv=0,tx=0;
+  (lines||[]).forEach(function(l){ tv+=Number(l.taxable)||0; tx+=Number(l.tax)||0; });
+  return { taxable:tlRound(tv), tax:tlRound(tx), total:tlRound(tv+tx) };
+}
+/* Read lines off a bill, falling back to the legacy scalars. */
+function tlOf(m){
+  if(!m) return [];
+  if(Array.isArray(m.taxLines) && m.taxLines.length) return m.taxLines;
+  var tv=Number(m.taxable)||0, tx=Number(m.tax)||0;
+  if(tv>0&&tx>0){ var l=tlMake(tlRound((tx/tv)*100),tv,tx); l.derived=true; return [l]; }
+  return [];
+}
+/* Write lines onto a bill and keep the derived totals in step. */
+function tlApply(m,lines){
+  var L=tlNormalize(lines), s=tlSum(L);
+  m.taxLines=L;
+  if(L.length){ m.taxable=s.taxable; m.tax=s.tax; }
+  else { delete m.taxLines; }
+  return m;
+}
+/* Everything an accountant would otherwise have to check by hand. */
+function tlValidate(m){
+  var out=[], L=tlOf(m), amt=Math.round(Number(m&&m.amount)||0);
+  if(!L.length){ out.push({code:"no-split",msg:"Tax breakup not captured"}); return out; }
+  var s=tlSum(L);
+  if(amt>0 && Math.abs(s.total-amt)>2)
+    out.push({code:"total-mismatch",msg:"Taxable + tax = "+s.total+" but bill total is "+amt});
+  L.forEach(function(l){
+    if(tlNearSlab(l.rate)===null)
+      out.push({code:"odd-slab",msg:l.rate+"% is not a GST slab",rate:l.rate});
+    if(l.taxable>0){
+      var implied=tlRound((l.tax/l.taxable)*100);
+      if(l.rate>0 && Math.abs(implied-l.rate)>0.6)
+        out.push({code:"rate-mismatch",msg:l.rate+"% line computes to "+implied+"%",rate:l.rate});
+    }
+    if(l.derived) out.push({code:"derived",msg:"Single blended rate, not read per slab"});
+    // A 12% or 28% line on a bill issued after 22 Sep 2025 is not a reading error —
+    // the slab no longer exists, so the supplier has billed at an abolished rate.
+    var _bd=(m&&(m.invoiceDate||m.date))||'';
+    if(_bd>=GST_20_DATE && GST_ABOLISHED.indexOf(l.rate)>-1)
+      out.push({code:"abolished-slab",msg:l.rate+"% was abolished on 22 Sep 2025 — check with the supplier",rate:l.rate});
+  });
+  if(!(m&&m.supGstin)) out.push({code:"no-gstin",msg:"Supplier GSTIN missing — CGST/SGST vs IGST unverified"});
+  return out;
+}
+/* ITC buckets keyed by real slab + head basis, so 12% intra and 12% IGST
+   never merge — they are different ledgers. */
+function tlItcBuckets(bills){
+  var b={};
+  (bills||[]).forEach(function(m){
+    tlOf(m).forEach(function(l){
+      var h=tlHeads(l,m.supGstin);
+      var key=String(l.rate)+(h.basis==="inter"?"|igst":"|intra");
+      if(!b[key]) b[key]={rate:l.rate,inter:(h.basis==="inter"),taxable:0,cgst:0,sgst:0,igst:0,tax:0,bills:0,_seen:{}};
+      var o=b[key];
+      o.taxable=tlRound(o.taxable+l.taxable); o.tax=tlRound(o.tax+l.tax);
+      o.cgst=tlRound(o.cgst+h.cgst); o.sgst=tlRound(o.sgst+h.sgst); o.igst=tlRound(o.igst+h.igst);
+      var id=m.id||m.billNo||m.date;
+      if(id && !o._seen[id]){ o._seen[id]=1; o.bills++; }
+    });
+  });
+  return Object.keys(b).map(function(k){ var o=b[k]; delete o._seen; return o; })
+    .sort(function(x,y){ return (x.rate-y.rate) || (x.inter?1:-1); });
+}
+/* Rule 37: pay the supplier within 180 days of the INVOICE date or reverse the
+   ITC on the unpaid portion, with interest. GSTR-2B cannot answer this — it
+   knows the invoice, not whether it was paid. This is the one number only we hold. */
+function tlRule37(bills,asOfISO,windowDays){
+  var asOf=asOfISO||(new Date()).toISOString().slice(0,10);
+  var win=(windowDays===undefined)?30:windowDays;
+  var out=[];
+  (bills||[]).forEach(function(m){
+    if(!m || m.pay==="नकद") return;                       // cash bills are paid on delivery
+    var amt=Math.round(Number(m.amount)||0);
+    var paid=Math.round(Number(m.paid)||0);
+    var open=Math.max(0,amt-paid);
+    if(!(open>0)) return;
+    var inv=m.invoiceDate||m.date; if(!inv) return;
+    var days=Math.round((new Date(asOf+"T00:00:00")-new Date(inv+"T00:00:00"))/86400000);
+    var left=180-days;
+    if(left>win) return;
+    var s=tlSum(tlOf(m));
+    // proportionate: only the ITC on the unpaid share must be reversed
+    var share=(amt>0)?(open/amt):0;
+    out.push({ billNo:m.billNo||"", invoiceDate:inv, supplier:m.supplier||"",
+      total:amt, paid:paid, open:open, days:days, daysLeft:left,
+      itcAtRisk:tlRound(s.tax*share), breached:(left<0) });
+  });
+  return out.sort(function(a,b){ return a.daysLeft-b.daysLeft; });
 }
 function gstSplit(supG,taxAmt){
   var t=Math.round((Number(taxAmt)||0)*100)/100;
@@ -13689,7 +13850,7 @@ function npShow(scr){
 }
 function npOpen(){
   window.lgPhoto={rawFile:null,blob:null,thumb:'',url:'',path:'',pages:[],isPdf:false,pageCount:0};
-  window._lgpcBillNo='';window._lgpcDueDate='';window._lgpcInvDate='';window._lgpcPaid=0;window._lgpcGstin='';window._lgpcSupName='';window._lgpcTaxable=0;window._lgpcTax=0;window.lgPurPay='nakad';
+  window._lgpcBillNo='';window._lgpcDueDate='';window._lgpcInvDate='';window._lgpcPaid=0;window._lgpcGstin='';window._lgpcSupName='';window._lgpcTaxable=0;window._lgpcTax=0;window._lgpcTaxLines=[];window.lgPurPay='nakad';
   npSplitHide();
   window.lgKeypad=window.lgKeypad||{};window.lgKeypad.note='';
   window._npFlow=false;
@@ -13730,7 +13891,7 @@ function npShowAuto(k,on){var t=document.getElementById('np-auto-'+k);if(t)t.sty
 function npClearAuto(k){npShowAuto(k,false);}
 function npScanReset(){var sb=document.getElementById('np-scanbar');if(sb)sb.style.display='none';var fb=document.getElementById('np-fallback');if(fb)fb.style.display='none';var iw=document.getElementById('np-imgwrap');if(iw)iw.classList.remove('scanning');['total','billno','due'].forEach(function(k){npShowAuto(k,false);});var cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');}
 function npScanUI(state,why){var sb=document.getElementById('np-scanbar'),fb=document.getElementById('np-fallback'),cn=document.getElementById('np-chip-nakad'),cu=document.getElementById('np-chip-udhaar'),iw=document.getElementById('np-imgwrap');if(state==='reading'){if(sb)sb.style.display='flex';if(fb)fb.style.display='none';if(iw)iw.classList.add('scanning');if(cn)cn.classList.add('reading');if(cu)cu.classList.add('reading');}else{if(sb)sb.style.display='none';if(iw)iw.classList.remove('scanning');if(cn)cn.classList.remove('reading');if(cu)cu.classList.remove('reading');if(state==='fail'){if(fb)fb.style.display='flex';var _w=document.getElementById('np-fail-why');if(_w)_w.textContent=why||'\u0906\u092a\u0915\u0940 \u092b\u093c\u094b\u091f\u094b \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0939\u0948';}else{if(fb)fb.style.display='none';}}}
-function npApplyScan(p){window._lgpcGstin=(p&&p.supGstin)||'';window._lgpcTaxable=Number((p&&p.taxable)||0);window._lgpcTax=Number((p&&p.tax)||0);window._lgpcSupName=(p&&p.supplier)||'';var _pd=Number((p&&p.paid)||0);if(_pd>0){var _tt=Number(p.total||0);var _db=(p.paidOk&&Number(p.dueBal||0)>0)?Number(p.dueBal):Math.max(0,_tt-_pd);npSplitShow(_pd,(p.paidOk?_db:Number(p.dueBal||_db)),_tt,!!p.paidOk);}var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
+function npApplyScan(p){window._lgpcTaxLines=(typeof tlFromScan==='function')?tlFromScan(p):[];window._lgpcGstin=(p&&p.supGstin)||'';window._lgpcTaxable=Number((p&&p.taxable)||0);window._lgpcTax=Number((p&&p.tax)||0);window._lgpcSupName=(p&&p.supplier)||'';var _pd=Number((p&&p.paid)||0);if(_pd>0){var _tt=Number(p.total||0);var _db=(p.paidOk&&Number(p.dueBal||0)>0)?Number(p.dueBal):Math.max(0,_tt-_pd);npSplitShow(_pd,(p.paidOk?_db:Number(p.dueBal||_db)),_tt,!!p.paidOk);}var t=document.getElementById('np-total');if(t&&!t.value&&p.total&&p.total>0){t.value=Number(p.total).toLocaleString('en-IN');npShowAuto('total',true);}var bn=document.getElementById('np-billno');if(bn&&!bn.value&&p.billNo){bn.value=p.billNo;npShowAuto('billno',true);}if(p.type==='credit'){npSetType('udhaar');}else if(p.type==='cash'){npSetType('nakad');}var du=document.getElementById('np-due');if(du&&!du.value&&p.dueDate){du.value=p.dueDate;if(p.type==='credit')npShowAuto('due',true);}var iv=document.getElementById('np-inv');if(iv&&!iv.value&&p.invoiceDate){iv.value=p.invoiceDate;npShowAuto('inv',true);}}
 // Full resolution for OCR. 1600px was tried and REGRESSED accuracy: a bill
 // photographed at an angle occupies only part of the frame, so the small
 // CGST/SGST figures fell below the readable threshold and the arithmetic

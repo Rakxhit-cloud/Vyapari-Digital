@@ -6893,7 +6893,8 @@ onAuthStateChanged(auth, async user => {
 // Guards both ways: a TWA left in memory still logs, and tab-flipping cannot farm opens.
 function aoTouch(){
   try{
-    var now=Date.now(), k='hk_ao_last_'+(window.CURRENT_UID||'x');
+    var _au=window._currentAuthUser; if(!_au||!_au.uid) return;
+    var now=Date.now(), k='hk_ao_last_'+_au.uid;
     var last=parseInt(localStorage.getItem(k)||'0',10);
     if(now-last < 20*60*1000) return;
     localStorage.setItem(k,String(now));
@@ -7751,6 +7752,36 @@ function lgInOut(boxes){
   });
   return {inward:i, outward:o, balance:i-o};
 }
+// A box is an entry only if cash actually moved. A credit bill with nothing paid
+// stays in the Purchase strip and supplier ledger, never in the आया/गया list.
+function lgVisibleBoxes(boxes){
+  return (Array.isArray(boxes)?boxes:[]).filter(function(b){ return b && lgCashOf(b)>0; });
+}
+// Keep window.lgState.rec pointing at the persisted record. Supplier payments,
+// udhaar receipts and purchase edits write a FRESH copy from DB.get; without this
+// the screen shows the old list and the next entry overwrites the new box.
+function _lgRenderLive(){
+  try{
+    if(typeof lgRenderTotals==='function') lgRenderTotals();
+    ['cash','upi','expense','purchase'].forEach(function(t){ if(document.getElementById('lg-grid-'+t) && typeof lgRenderGrid==='function') lgRenderGrid(t); });
+    if(typeof lgRenderSaveArea==='function') lgRenderSaveArea();
+  }catch(e){}
+}
+function _lgAdoptRec(rec){
+  try{
+    var st=window.lgState; if(!st||!rec||!rec.date) return;
+    if(st.rec===rec || st.date!==rec.date) return;
+    st.rec=rec;
+    setTimeout(function(){ if(st.rec===rec) _lgRenderLive(); },0);
+  }catch(e){}
+}
+function _lgRefreshLive(){
+  try{
+    var st=window.lgState; if(!st||!st.date||typeof lgGetOrCreateRec!=='function') return;
+    st.rec=lgGetOrCreateRec(st.date);
+    _lgRenderLive();
+  }catch(e){}
+}
 
 // Closing balance of every day BEFORE dateStr. Dates are YYYY-MM-DD so plain
 // string comparison orders them correctly.
@@ -7804,6 +7835,7 @@ function lgPersistRec(rec) {
   const isEmpty = (!Array.isArray(rec.lgBoxes) || rec.lgBoxes.length === 0)
                   && (!rec.udhaar || rec.udhaar === 0)
                   && (!rec.notes || rec.notes === '');
+  _lgAdoptRec(rec);
   const list = DB.get(K.BIKRI);
   const idx = list.findIndex(r => r.date === rec.date);
   if (isEmpty) {
@@ -8033,7 +8065,7 @@ function lgFormatDate(ds) {
 function lgRenderTotals() {
   const r = window.lgState.rec;
   const boxes = r.lgBoxes || [];
-  let cash = 0, upi = 0, expense = 0, count = boxes.length;
+  let cash = 0, upi = 0, expense = 0, count = lgVisibleBoxes(boxes).length;
   boxes.forEach(b => {
     if (b.type === 'cash') cash += b.amount;
     else if (b.type === 'upi') upi += b.amount;
@@ -8076,7 +8108,7 @@ function lgRenderEntries(){
   var host=document.getElementById('lg-entry-list');
   if(!host) return;
   var r=window.lgState && window.lgState.rec;
-  var boxes=(r && Array.isArray(r.lgBoxes)) ? r.lgBoxes.slice() : [];
+  var boxes=lgVisibleBoxes(r && r.lgBoxes);
   var cEl=document.getElementById('lg-el-count');
   if(cEl) cEl.textContent = boxes.length ? (boxes.length+' एंट्री') : '';
   if(!boxes.length){
@@ -8194,7 +8226,7 @@ function eeSave(){
 function lgEditEntry(i){
   var r=window.lgState && window.lgState.rec;
   if(!r || !Array.isArray(r.lgBoxes)) return;
-  var sorted=r.lgBoxes.slice().sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+  var sorted=lgVisibleBoxes(r.lgBoxes).sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
   var box=sorted[i]; if(!box) return;
   // purchase rows are owned by the supplier screen, not by this sheet
   if(box.src==="maal" || box.type==="purchase"){
@@ -8690,6 +8722,7 @@ function lgpcFile(sup, phone){
   if (_ph.url)   pbox.billUrl   = _ph.url;
   if (_ph.path)  pbox.billPath  = _ph.path;
   r.lgBoxes.push(pbox);
+  if (_cashOut > 0) { try{ if(window.logEvent) window.logEvent('box_added',{dir:'out',method:'purchase',src:'maal',kind:(pay==='नकद'?'cash':'partial'),amount:_cashOut}); }catch(e){} }
   if (window.lgState.isToday) { r.lgSaved = false; r.lgSavedAt = null; }
   if (typeof lgPersistRec === 'function') lgPersistRec(r);
   if (_ph.blob && typeof lgpUpload === 'function') lgpUpload(pbox, _ph.blob, r, function(url, path){
@@ -8967,6 +9000,7 @@ function go(id){
   document.querySelectorAll('.nav-item').forEach(n=>{n.classList.remove('active');const d=n.querySelector('.nav-dot');if(d)d.remove();});
   const nid=NM[id];
   if(nid){const n=document.getElementById(nid);n.classList.add('active');const d=document.createElement('div');d.className='nav-dot';n.appendChild(d);}
+  if(id==='s-livegalla')_lgRefreshLive();
   if(id==='s-home')loadHome();
   if(id==='s-home'&&window._syncEngagementCounts)window._syncEngagementCounts();
   if(id==='s-mahina'&&window.loadHome)loadHome();
@@ -9558,7 +9592,7 @@ function openDatePopup(ds){
   const subParts = [];
   if (bikriEntries.length) {
     let _n = 0;
-    bikriEntries.forEach(r => { if (Array.isArray(r.lgBoxes)) _n += r.lgBoxes.length; });
+    bikriEntries.forEach(r => { if (Array.isArray(r.lgBoxes)) _n += lgVisibleBoxes(r.lgBoxes).length; });
     subParts.push((_n || bikriEntries.length) + ' एंट्री');
   }
   if (maalEntries.length) subParts.push(maalEntries.length + ' माल');
@@ -9593,7 +9627,7 @@ function openDatePopup(ds){
         : { inward: (r.sales||0), outward: (r.expense||0), balance: (r.sales||0)-(r.expense||0) };
       const card = document.createElement('div');
       card.className = 'dpx-bikri-card';
-      const _boxes = Array.isArray(r.lgBoxes) ? r.lgBoxes.filter(b => b && (b.amount || b.amount === 0)) : [];
+      const _boxes = Array.isArray(r.lgBoxes) ? lgVisibleBoxes(r.lgBoxes) : [];
       let _entryListHtml = '';
       if (_boxes.length > 0) {
         const _lbl = { cash: '↓ आया', upi: '↓ आया', expense: '↑ गया' };
@@ -9611,7 +9645,7 @@ function openDatePopup(ds){
           const _bthumb = b.billThumb || b.billUrl || '';
           const _bfull = b.billUrl || b.billThumb || '';
           const _bimg = _bthumb ? `<img class="lgent-thumb" src="${_bthumb}" data-full="${_bfull}" onclick="lgpViewBillSrc(this.dataset.full, this.src)" decoding="async" alt="bill">` : '';
-          return `<div class="lgent-row t-${t}"><span class="lgent-num">${_i + 1}</span><span class="lgent-chip t-${t}">${_lbl[t]}</span>${_bimg}${noteHtml}<span class="lgent-amt">${fmt(b.amount || 0)}</span></div>`;
+          return `<div class="lgent-row t-${t}"><span class="lgent-num">${_i + 1}</span><span class="lgent-chip t-${t}">${_lbl[t]}</span>${_bimg}${noteHtml}<span class="lgent-amt">${fmt(lgCashOf(b))}</span></div>`;
         }).join('');
         const _scrollable = _boxes.length > 4;
         _entryListHtml = `
@@ -12051,10 +12085,13 @@ function _syncEngagementCounts(){
     });
     var udhaar=(DB.get(K.UDHAAR)||[]).filter(function(x){return x&&x.type!=='payment';}).length;
     var maal=(DB.get(K.MAAL)||[]).filter(function(x){return x&&!x.placeholder;}).length;
-    var key=cash+'|'+upi+'|'+kharcha+'|'+udhaar+'|'+maal;
+    var inC=0,outC=0;
+    (DB.get(K.BIKRI)||[]).forEach(function(rec){ lgVisibleBoxes(rec.lgBoxes).forEach(function(b){ if(lgDirOf(b)==='in')inC++; else outC++; }); });
+    var scan=(DB.get(K.MAAL)||[]).filter(function(x){return x&&!x.placeholder&&(x.billThumb||x.billUrl||x.billPath);}).length;
+    var key=cash+'|'+upi+'|'+kharcha+'|'+udhaar+'|'+maal+'|'+inC+'|'+outC+'|'+scan;
     if(key===_engCountKey)return; _engCountKey=key;
     import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(function(m){
-      m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{cashCount:cash,upiCount:upi,kharchaCount:kharcha,udhaarCount:udhaar,maalCount:maal,countsUpdatedAt:Date.now()},{merge:true}).catch(function(){});
+      m.setDoc(m.doc(window._db,'users',uid,'profile','info'),{cashCount:cash,upiCount:upi,kharchaCount:kharcha,udhaarCount:udhaar,maalCount:maal,inCount:inC,outCount:outC,scanCount:scan,countsUpdatedAt:Date.now()},{merge:true}).catch(function(){});
     }).catch(function(){});
   }catch(e){}
 }

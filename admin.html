@@ -63,9 +63,9 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 
 /* USER LIST - card-style rows */
 .table-wrap{background:transparent;border:none;border-radius:0;overflow:visible;margin-bottom:22px}
-.table-head{display:grid;grid-template-columns:44px 1.4fr 1.4fr 0.95fr 0.9fr 1.1fr 1fr 90px;gap:12px;padding:8px 22px 12px;font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:1px;font-weight:500}
+.table-head{display:grid;grid-template-columns:44px 1.3fr 1.4fr 0.85fr 0.7fr 1fr 1.55fr 90px;gap:12px;padding:8px 22px 12px;font-size:10px;color:#d4a850;text-transform:uppercase;letter-spacing:1px;font-weight:500}
 #user-list{display:flex;flex-direction:column;gap:10px}
-.user-row{position:relative;display:grid;grid-template-columns:44px 1.4fr 1.4fr 0.95fr 0.9fr 1.1fr 1fr 90px;gap:12px;padding:16px 20px 16px 24px;align-items:center;cursor:pointer;background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:2px solid #2a4078;border-radius:14px;transition:all .18s ease;overflow:hidden}
+.user-row{position:relative;display:grid;grid-template-columns:44px 1.3fr 1.4fr 0.85fr 0.7fr 1fr 1.55fr 90px;gap:12px;padding:16px 20px 16px 24px;align-items:center;cursor:pointer;background:linear-gradient(180deg,#0a1530 0%,#050a1c 100%);border:2px solid #2a4078;border-radius:14px;transition:all .18s ease;overflow:hidden}
 .user-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#2a4078;transition:background .18s ease}
 .user-row:hover{transform:translateY(-1px);border-color:#3d5a9e;box-shadow:0 6px 20px rgba(0,0,0,0.35)}
 .user-row.stage-row-complete{border-color:rgba(93,202,165,0.45)}
@@ -295,6 +295,36 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .tst-f input,.tst-f select{width:100%;background:#0a1530;border:1px solid #2a4078;color:#e8d8b8;border-radius:8px;padding:7px 9px;font-size:12.5px;font-family:inherit;}
 .tst-save{background:linear-gradient(180deg,rgba(212,168,80,.22),rgba(16,28,58,.6));border:1px solid #5a4420;color:#e8c870;border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;}
 .tst-off{background:transparent;border:1px solid #7a3030;color:#ff8a7a;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;}
+/* ── Users + Testers upgrade ── */
+.tester-badge{display:inline-block;margin-top:5px;margin-left:4px;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;letter-spacing:.3px;background:rgba(212,168,80,0.12);border:1px solid #8a6818;color:#e8c870}
+.entry-chip.in{background:rgba(93,202,165,0.12);color:#5dcaa5;border:1px solid rgba(93,202,165,0.25)}
+.entry-chip.out{background:rgba(204,122,71,0.12);color:#f0a868;border:1px solid rgba(204,122,71,0.3)}
+.entry-chip.bill{background:rgba(212,168,80,0.14);color:#e8c06a;border:1px solid rgba(212,168,80,0.32)}
+.entry-chip.scan{background:rgba(74,144,212,0.12);color:#4a90d4;border:1px solid rgba(74,144,212,0.25)}
+.entry-chip.ud{background:rgba(176,124,255,0.12);color:#b07cff;border:1px solid rgba(176,124,255,0.25)}
+.act7{display:flex;align-items:center;gap:3px;margin-top:7px;font-size:10px;color:#8aa0d8}
+.act7 i{display:inline-block;width:10px;height:10px;border-radius:2px;background:#101c3a;border:1px solid #243458}
+.act7 i.on{background:rgba(93,202,165,.55);border-color:#5dcaa5}
+.act7 span{margin-left:6px}
+.oldver{font-size:10.5px;color:#6a78b8;font-style:italic}
+.tst-link{display:flex;align-items:center;gap:10px;margin:0 22px 16px;padding:11px 14px;background:#0b142c;border:1px solid #5a4420;border-radius:12px}
+.tst-link .t{font-size:12.5px;font-weight:600;color:#e8c870}
+.tst-link .s{font-size:11px;color:#8aa0d8;margin-top:2px}
+.tst-link .go{margin-left:auto;background:rgba(212,168,80,0.08);border:1px solid #d4a850;color:#d4a850;padding:7px 12px;border-radius:8px;font-size:11.5px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.tv-add{background:linear-gradient(135deg,#d4a850 0%,#e8c870 100%);border:1px solid #f0d890;color:#1a1208;border-radius:9px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.sync-ok{font-size:10.5px;color:#5dd88a;align-self:center}
+.sync-no{font-size:10.5px;color:#f0b060;align-self:center}
+.pick-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #243458;border-radius:10px;background:#0b142c;cursor:pointer}
+.pick-row.sel{border:1.5px solid #d4a850;background:rgba(212,168,80,.07)}
+.pick-row.dis{opacity:.5;cursor:default}
+.pick-av{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#2a4078,#16224a);border:1px solid #3d5aa6;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#cfe0ff;flex-shrink:0}
+.pick-in{flex:1;min-width:0}.pick-name{font-size:13px;color:#e8d8b8;font-weight:500}.pick-sub{font-size:11px;color:#8aa0d8;margin-top:2px}
+.pick-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+.trow{cursor:default}
+.trow-actions{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #16223f;flex-wrap:wrap}
+.tmini{border:1px solid #243458;background:#101c3a;color:#9fb0d8;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.tmini:hover{border-color:#d4a850;color:#d4a850}
+@media(max-width:820px){.params{grid-template-columns:repeat(2,1fr)}}
 </style>
 <style id="analytics-css">
 .view-tabs{display:flex;gap:8px;margin:14px 0 4px;padding:0 2px;}
@@ -432,6 +462,7 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
       <button class="filter-tab" data-filter="expiring">Expiring</button>
       <button class="filter-tab" data-filter="web">🌐 Web</button>
       <button class="filter-tab" data-filter="play">▶ Play</button>
+      <button class="filter-tab" data-filter="testers">🧪 Testers</button>
     </div>
     <button class="refresh-btn" id="refresh-btn">🔄 Refresh</button>
   </div>
@@ -503,7 +534,8 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 <div id="testers-view" style="display:none">
     <div class="av-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div class="av-sect" style="margin-top:14px">Google Play cohort · the clock that can delay launch</div>
-      <button class="av-refresh" id="tv-refresh" style="border:1px solid #243458;background:#101c3a;color:#9fb0d8;border-radius:9px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-family:inherit">↻ Refresh</button>
+      <div style="display:flex;gap:8px"><button class="tv-add" id="tv-add">+ Add tester</button>
+      <button class="av-refresh" id="tv-refresh" style="border:1px solid #243458;background:#101c3a;color:#9fb0d8;border-radius:9px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-family:inherit">↻ Refresh</button></div>
     </div>
     <div class="cohort" id="tv-cohort"><div class="av-empty">Loading…</div></div>
     <div class="av-sect">Payment clock · per tester</div>
@@ -518,6 +550,9 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 <!-- PROFILE DRILL-DOWN MODAL -->
 <div class="profile-backdrop" id="profile-modal">
   <div class="profile-card" id="profile-card"></div>
+</div>
+<div class="profile-backdrop" id="tv-modal">
+  <div class="profile-card complete" id="tv-card" style="max-width:520px"></div>
 </div>
 
 <script type="module">
@@ -1002,6 +1037,7 @@ window.loadUsers = async function loadUsers() {
     allUsers = await window._loadUsersFromFirestore();
     renderStats();
     renderUserList();
+    _admLoadEvents().then(() => renderUserList()).catch(() => {});
   } catch(e) {
     console.error('Load error:', e);
     const msg = (e.code === 'permission-denied' || /permission/i.test(e.message || ''))
@@ -1039,6 +1075,7 @@ function renderUserList() {
     }
     if (currentFilter === 'web' && (u.profile.regSource || 'web') !== 'web') return false;
     if (currentFilter === 'play' && u.profile.regSource !== 'play') return false;
+    if (currentFilter === 'testers' && !u.profile.tester) return false;
     if (currentSearch) {
       const q = currentSearch.toLowerCase();
       const hay = [u.uid, u.profile.phone || '', u.profile.name || '', u.profile.businessName || ''].join(' ').toLowerCase();
@@ -1109,7 +1146,7 @@ function userRowHTML(u, num) {
         <div>
           ${nameHTML}
           ${bizHTML}
-          ${srcBadge}
+          ${srcBadge}${p.tester ? `<span class="tester-badge">🧪 ${escapeHTML(p.testerId || 'Tester')}</span>` : ''}
         </div>
       </div>
       <div data-label="Stage">${stagePill}</div>
@@ -1139,16 +1176,39 @@ function stagePillHTML(stage) {
 }
 
 function entriesMiniHTML(u) {
-  const arr = [
-    { c: 'b', l: 'Cash', n: u.cashCount },
-    { c: 'm', l: 'UPI', n: u.upiCount },
-    { c: 'p', l: 'खरीद', n: u.maalCount },
-    { c: 'k', l: 'खर्चा', n: u.kharchaCount },
-    { c: 'u', l: 'उधार', n: u.udhaarCount }
-  ];
-  return '<div class="entries-mini">' + arr.map(x =>
-    `<span class="entry-chip ${x.n === 0 ? 'zero' : x.c}">${x.l} ${x.n}</span>`
-  ).join('') + '</div>';
+  const p = u.profile || {};
+  let chips;
+  if (typeof p.inCount !== 'number') {
+    chips = '<div class="entries-mini"><span class="oldver">counts show after app update</span></div>';
+  } else {
+    const arr = [
+      { c: 'in',   l: 'आया',  n: p.inCount || 0 },
+      { c: 'out',  l: 'गया',  n: p.outCount || 0 },
+      { c: 'bill', l: 'Bills', n: p.maalCount || 0 },
+      { c: 'scan', l: 'Scans', n: p.scanCount || 0 },
+      { c: 'ud',   l: 'उधार', n: p.udhaarCount || 0 }
+    ];
+    chips = '<div class="entries-mini">' + arr.map(x =>
+      `<span class="entry-chip ${x.n === 0 ? 'zero' : x.c}">${x.l} ${x.n}</span>`
+    ).join('') + '</div>';
+  }
+  return '<div>' + chips + act7HTML(u.uid) + '</div>';
+}
+
+// Last 7 days of analytics activity, oldest → today. Empty until events load.
+function _act7Days(uid) {
+  const set = (window._admActDays && window._admActDays[uid]) || null;
+  const out = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    out.push(!!(set && set.has(_tvDay(d))));
+  }
+  return out;
+}
+function act7HTML(uid) {
+  if (!window._admActDays) return '';
+  const days = _act7Days(uid), n = days.filter(Boolean).length;
+  return '<div class="act7">' + days.map(on => `<i class="${on ? 'on' : ''}"></i>`).join('') + `<span>${n} of 7 days</span></div>`;
 }
 
 function escapeHTML(s) {
@@ -1164,7 +1224,8 @@ function openProfile(uid) {
   card.innerHTML = profileCardHTML(u);
   card.className = 'profile-card ' + classifyStage(u.profile, u);
   document.getElementById('profile-modal').classList.add('show');
-  try { _tvInjectToggle(uid); } catch(e) {}
+  const _tg = card.querySelector('.tst-go');
+  if (_tg) _tg.addEventListener('click', () => { closeProfile(); const t = document.getElementById('tab-testers'); if (t) t.click(); });
   // Bind close button
   card.querySelector('.profile-close').addEventListener('click', closeProfile);
   // Bind +Days buttons
@@ -1202,12 +1263,12 @@ function openProfile(uid) {
   if (_wb) _wb.addEventListener('click', () => {
     const WELCOME_MSG = `नमस्ते 🙏 Welcome to *Live Khaata*
 
-आपकी दुकान का पूरा हिसाब — *Sales, Purchase और Expense* — एक ही app में, fast और organised.
+आपकी दुकान का रोज़ का पूरा हिसाब — एक ही app में, fast और organised.
 
-📸 बिल की photo खींचिए — amount, date और bill number अपने आप capture
-🧾 Cash व UPI sales और रोज़ का expense — एक tap में record
-🛒 हर supplier का purchase record, bills securely सुरक्षित
-📄 Professional statement बनाइए और WhatsApp पर share कीजिए
+🎤 बोलकर आया-गया लिखिए — "पंद्रह सौ राहुल से मिले"
+📸 बिल स्कैन कीजिए — amount, date और bill number अपने आप
+🛒 हर supplier का बाकी और payment एक जगह
+📄 Statement बनाइए और WhatsApp पर भेजिए
 🔒 PIN security और cloud backup — phone बदलें, तो भी data सुरक्षित
 
 *पहले 90 दिन निःशुल्क।* अपनी पहली entry से आज ही शुरुआत कीजिए।
@@ -1250,6 +1311,8 @@ function profileCardHTML(u) {
         <div class="profile-meta-row"><span class="profile-meta-icon">🆔</span><span class="profile-meta-val dim">${u.uid}</span></div>
       </div>
     </div>
+
+    ${testerStripHTML(u)}
 
     ${funnelSectionHTML(p)}
 
@@ -1383,14 +1446,15 @@ function trialSectionHTML(p) {
 }
 
 function engagementSectionHTML(u, p, stage) {
-  const zero = u.cashCount + u.upiCount + u.kharchaCount + u.udhaarCount + u.maalCount === 0;
+  const hasNew = typeof p.inCount === 'number';
   const cells = [
-    { cls: 'b', label: 'Cash', n: u.cashCount },
-    { cls: 'm', label: 'UPI', n: u.upiCount },
-    { cls: 'p', label: 'खरीद', n: u.maalCount },
-    { cls: 'k', label: 'खर्चा', n: u.kharchaCount },
-    { cls: 'u', label: 'उधार', n: u.udhaarCount }
+    { cls: 'b', label: 'आया',  n: p.inCount || 0 },
+    { cls: 'u', label: 'गया',  n: p.outCount || 0 },
+    { cls: 'p', label: 'Bills', n: p.maalCount || 0 },
+    { cls: 'm', label: 'Scans', n: p.scanCount || 0 },
+    { cls: 'k', label: 'उधार', n: p.udhaarCount || 0 }
   ];
+  const zero = !hasNew || cells.every(c => c.n === 0);
   const cellsHTML = cells.map(c => `
     <div class="engagement-card ${c.cls}${c.n === 0 ? ' zero' : ''}">
       <div class="engagement-num">${c.n}</div>
@@ -1443,8 +1507,11 @@ function engagementSectionHTML(u, p, stage) {
 
   return `
     <div class="profile-section">
-      <div class="section-label">Engagement</div>
-      <div class="engagement-grid">${cellsHTML}</div>
+      <div class="section-label">Engagement · lifetime</div>
+      ${hasNew
+        ? `<div class="engagement-grid" style="grid-template-columns:repeat(5,1fr)">${cellsHTML}</div>`
+        : `<div class="priority-alert" style="background:rgba(74,144,212,0.08);border-color:rgba(74,144,212,0.3);color:#4a90d4;margin:0 0 12px">⏳ <span>On an older app version — entry counts appear after the next app update</span></div>`}
+      ${window._admActDays ? `<div class="last-active-row" style="margin-bottom:10px"><span class="last-active-label">Active last 7 days</span><span class="last-active-val">${_act7Days(u.uid).filter(Boolean).length} of 7${u.lastActive ? ' · last seen ' + timeSince(new Date(u.lastActive)) : ''}</span></div>` : ''}
       ${footer}
     </div>
   `;
@@ -1617,7 +1684,7 @@ document.getElementById('search-box').addEventListener('input', e => {
   renderUserList();
 });
 
-document.getElementById('refresh-btn').addEventListener('click', loadUsers);
+document.getElementById('refresh-btn').addEventListener('click', () => { _admEventsP = null; loadUsers(); });
 
 // Auto-refresh every 60 seconds (lighter than the previous 10s poll)
 setInterval(() => {
@@ -1636,10 +1703,39 @@ function _tvDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2
 function _tvAddDays(ds, n){ const d=new Date(ds+'T00:00:00'); d.setDate(d.getDate()+n); return _tvDay(d); }
 function _tvDiff(a,b){ return Math.round((new Date(a+'T00:00:00') - new Date(b+'T00:00:00'))/86400000); }
 function _tvWeek(ds){ const d=new Date(ds+'T00:00:00'); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return _tvDay(d); }
-function _tvCohort(){
-  try { return JSON.parse(localStorage.getItem('hk_admin_cohort')||'{}'); } catch(e){ return {}; }
+let _admEventsP = null;
+function _admLoadEvents(force){
+  if (_admEventsP && !force) return _admEventsP;
+  const fx = window._fbx, db = window._fb && window._fb.db;
+  if (!fx || !db) return Promise.reject(new Error('Firestore bridge missing'));
+  _admEventsP = fx.getDocs(fx.collection(db, 'analytics_events')).then(snap => {
+    const ev = snap.docs.map(x => x.data()).filter(e => e && e.uid && e.day);
+    _tvEvents = ev; window._admEvents = ev;
+    const m = {}; ev.forEach(e => { (m[e.uid] = m[e.uid] || new Set()).add(e.day); });
+    window._admActDays = m;
+    return ev;
+  });
+  _admEventsP.catch(() => { _admEventsP = null; });
+  return _admEventsP;
 }
-function _tvSaveCohort(o){ try { localStorage.setItem('hk_admin_cohort', JSON.stringify(o)); } catch(e){} }
+
+/* Cohort lives on the admin's own profile doc so every device sees the same numbers.
+   localStorage is only a cache / offline fallback. */
+function _tvCohortLocal(){ try { return JSON.parse(localStorage.getItem('hk_admin_cohort')||'{}'); } catch(e){ return {}; } }
+async function _tvCohortLoad(){
+  const fx = window._fbx, db = window._fb && window._fb.db, aid = window._ADMIN_UID;
+  try {
+    const s = await fx.getDoc(fx.doc(db, 'users', aid, 'profile', 'info'));
+    const c = s.exists() && s.data().testerCohort;
+    if (c) { try { localStorage.setItem('hk_admin_cohort', JSON.stringify(c)); } catch(e){} return { data:c, cloud:true }; }
+  } catch(e) {}
+  return { data:_tvCohortLocal(), cloud:false };
+}
+async function _tvCohortSave(o){
+  try { localStorage.setItem('hk_admin_cohort', JSON.stringify(o)); } catch(e){}
+  const fx = window._fbx, db = window._fb && window._fb.db, aid = window._ADMIN_UID;
+  await fx.setDoc(fx.doc(db, 'users', aid, 'profile', 'info'), { testerCohort:o }, { merge:true });
+}
 
 /* roll raw events into per-day counters for one uid */
 function _tvAggregate(uid){
@@ -1658,47 +1754,68 @@ function _tvAggregate(uid){
   });
   return { days, weeks };
 }
-function _tvQualified(c){ return c && c.opens>=T_TARGET.opens && c.inw>=T_TARGET.inw && c.outw>=T_TARGET.outw; }
+function _tvQualified(c){ return !!c && c.opens>=T_TARGET.opens && c.inw>=T_TARGET.inw && c.outw>=T_TARGET.outw; }
 function _tvEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function _tvShort(ds){ if(!ds) return ''; const d=new Date(ds+'T00:00:00'); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
+function _tvLong(ds){ const d=new Date(ds+'T00:00:00'); return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}); }
 
-async function loadTesters(){
+/* One tester's standing. A LOST day is any day since start (before today) that did
+   not qualify — including days with no activity at all, which leave no events. */
+function _tvStats(u){
+  const p = u.profile || {}, ag = _tvAggregate(u.uid), today = _tvDay(new Date());
+  const plan = Number(p.testerPlan || 20), rate = Number(p.testerRate || 200);
+  const start = p.testerStart || '';
+  const t = ag.days[today] || { opens:0, inw:0, outw:0, scans:0, fps:{} };
+  const wk = ag.weeks[_tvWeek(today)] || { total:0, fps:{} };
+  const uniqScans = Object.keys(wk.fps).length, dupes = wk.total - uniqScans;
+  let from = start;
+  if (!from) { const ds = Object.keys(ag.days).sort(); from = ds[0] || today; }
+  let bankedPast = 0;
+  Object.keys(ag.days).forEach(d => { if (d < from || d >= today) return; if (_tvQualified(ag.days[d])) bankedPast++; });
+  const elapsed = Math.max(0, _tvDiff(today, from));
+  const lost = Math.max(0, elapsed - bankedPast);
+  const started = today >= from;
+  const qToday = started && _tvQualified(t);
+  const banked = Math.min(plan, bankedPast + (qToday ? 1 : 0));
+  const left = (T_TARGET.opens-t.opens>0?1:0)+(T_TARGET.inw-t.inw>0?1:0)+(T_TARGET.outw-t.outw>0?1:0);
+  let lastOpen = null; Object.keys(ag.days).forEach(d => { if (ag.days[d].opens>0 && (!lastOpen||d>lastOpen)) lastOpen = d; });
+  return { p, ag, plan, rate, start, from, today, t, wk, uniqScans, dupes, banked, lost, qToday, left, started, lastOpen };
+}
+
+const _tvOpenLog = new Set();
+
+async function loadTesters(force){
   const box = document.getElementById('tv-list');
   const note = document.getElementById('tv-note');
   try {
-    const fx = window._fbx, db = window._fb && window._fb.db;
-    if (!fx || !db) throw new Error('Firestore bridge missing');
-    const snap = await fx.getDocs(fx.collection(db, 'analytics_events'));
-    _tvEvents = snap.docs.map(x => x.data()).filter(e => e && e.uid && e.day);
-
-    const testers = (window.allUsers || allUsers || []).filter(u => u.profile && u.profile.tester);
+    await _admLoadEvents(!!force);
+    const testers = (allUsers || []).filter(u => u.profile && u.profile.tester);
     const today = _tvDay(new Date());
 
     /* ── cohort card ── */
-    const co = _tvCohort();
+    const coRes = await _tvCohortLoad();
+    const co = coRes.data || {};
     const cStart = co.start || '';
     const cCount = Number(co.count || 0);
     let unbroken = cStart ? Math.min(14, _tvDiff(today, cStart) + 1) : 0;
     if (unbroken < 0) unbroken = 0;
     const cells = [];
-    for (let i=0;i<14;i++){
-      cells.push('<span class="co-d'+(i<unbroken-1?'':(i===unbroken-1?' now':' todo'))+'"></span>');
-    }
-    const silent = testers.filter(u => {
-      const a = _tvAggregate(u.uid).days;
-      let last = null; Object.keys(a).forEach(d => { if (a[d].opens>0 && (!last||d>last)) last = d; });
-      return !last || _tvDiff(today, last) >= 2;
-    });
+    for (let i=0;i<14;i++) cells.push('<span class="co-d'+(i<unbroken-1?'':(i===unbroken-1?' now':' todo'))+'"></span>');
+    const stats = {}; testers.forEach(u => { stats[u.uid] = _tvStats(u); });
+    const silent = testers.filter(u => { const s = stats[u.uid]; return s.started && (!s.lastOpen ? _tvDiff(today, s.from) >= 2 : _tvDiff(today, s.lastOpen) >= 2); });
     const ok = cCount >= 12;
-    document.getElementById('tv-cohort').className = 'cohort' + (ok ? '' : ' broken');
-    document.getElementById('tv-cohort').innerHTML =
+    const syncTxt = (cCount || cStart) ? (coRes.cloud ? '<span class="sync-ok">☁ Saved to cloud</span>' : '<span class="sync-no">⚠ Only on this device — press Save</span>') : '';
+    const coEl = document.getElementById('tv-cohort');
+    coEl.className = 'cohort' + (ok ? '' : ' broken');
+    coEl.innerHTML =
       '<div class="co-top"><div>'
-      + '<div class="co-t">'+cCount+' testers opted in · '+(ok?'unbroken':'below 12 — counter will not run')+'</div>'
+      + '<div class="co-t">'+cCount+' tester'+(cCount===1?'':'s')+' opted in · '+(ok?'unbroken':'below 12 — counter will not run')+'</div>'
       + '<div class="co-s">Counts <b style="color:#9fe3bb">opt-in only</b> — not app usage. Breaks only if someone opts out.<br>'
       + 'Enter these from Play Console; the app cannot see the Play track.</div>'
-      + '<div style="display:flex;gap:10px;margin-top:11px;align-items:flex-end">'
+      + '<div style="display:flex;gap:10px;margin-top:11px;align-items:flex-end;flex-wrap:wrap">'
       + '<div><span class="co-lab">Opted in</span><input class="co-in" id="co-count" type="number" min="0" value="'+cCount+'"></div>'
-      + '<div><span class="co-lab">Start date</span><input class="co-in" id="co-start" type="date" style="width:132px" value="'+cStart+'"></div>'
-      + '<button class="tst-save" id="co-save">Save</button></div>'
+      + '<div><span class="co-lab">Start date</span><input class="co-in" id="co-start" type="date" style="width:132px" value="'+_tvEsc(cStart)+'"></div>'
+      + '<button class="tst-save" id="co-save">Save</button>'+syncTxt+'</div>'
       + '</div><div class="co-big"><div class="v">'+unbroken+'<span style="font-size:18px;color:#7f90b8">/14</span></div>'
       + '<div class="k">unbroken days</div></div></div>'
       + '<div class="co-grid">'+cells.join('')+'</div>'
@@ -1708,67 +1825,75 @@ async function loadTesters(){
           + silent.map(u=>_tvEsc(u.profile.businessName||u.profile.name||u.uid.slice(0,6))).join(', ')
           + '. Not a Google problem yet — but silence is the only early warning before an uninstall. <b>Call them.</b></div>') : '');
     const cs = document.getElementById('co-save');
-    if (cs) cs.addEventListener('click', () => {
-      _tvSaveCohort({ count: Number(document.getElementById('co-count').value||0),
-                      start: document.getElementById('co-start').value || '' });
+    if (cs) cs.addEventListener('click', async () => {
+      cs.disabled = true;
+      try {
+        await _tvCohortSave({ count: Number(document.getElementById('co-count').value||0),
+                              start: document.getElementById('co-start').value || '' });
+      } catch(e) { alert('❌ Cloud save failed — kept on this device only.\n' + (e && e.message ? e.message : e)); }
       loadTesters();
     });
 
     /* ── per-tester rows ── */
     let qualToday = 0, committed = 0, flagged = 0;
     const rows = testers.map(u => {
-      const p = u.profile, ag = _tvAggregate(u.uid);
-      const plan = Number(p.testerPlan || 20), rate = Number(p.testerRate || 200);
-      const start = p.testerStart || '';
-      const t = ag.days[today] || { opens:0, inw:0, outw:0, scans:0, fps:{} };
-      const wk = ag.weeks[_tvWeek(today)] || { total:0, fps:{} };
-      const uniqScans = Object.keys(wk.fps).length;
-      const dupes = wk.total - uniqScans;
-      let banked = 0, lost = 0;
-      Object.keys(ag.days).forEach(d => {
-        if (start && d < start) return;
-        if (d === today) return;
-        _tvQualified(ag.days[d]) ? banked++ : lost++;
-      });
-      if (_tvQualified(t)) { banked++; qualToday++; }
-      committed += banked * rate;
-      if (dupes > 0) flagged++;
-
-      const par = (k, got, need, weekly) => {
-        const hit = got >= need;
-        const cls = hit ? 'hit' : (weekly ? 'part' : (got > 0 ? 'part' : 'part'));
-        const pct = Math.max(3, Math.min(100, Math.round(got/need*100)));
-        const col = hit ? '#3ec873' : '#f0b060';
-        return '<div class="par '+cls+'"><div class="k">'+k+'</div><div class="v">'+got+'/'+need+'</div>'
-             + '<div class="tbar"><i style="width:'+pct+'%;background:'+col+'"></i></div></div>';
+      const s = stats[u.uid], p = s.p, t = s.t;
+      committed += s.banked * s.rate;
+      if (s.qToday) qualToday++;
+      if (s.dupes > 0) flagged++;
+      const par = (k, got, need) => {
+        const hit = got >= need, pct = Math.max(3, Math.min(100, Math.round(got/need*100)));
+        return '<div class="par '+(hit?'hit':'part')+'"><div class="k">'+k+'</div><div class="v">'+got+'/'+need+'</div>'
+             + '<div class="tbar"><i style="width:'+pct+'%;background:'+(hit?'#3ec873':'#f0b060')+'"></i></div></div>';
       };
-      const cellsB = [];
-      for (let i=0;i<plan;i++) cellsB.push('<span class="dcell'+(i<banked?' ok':(i===banked?' now':''))+'"></span>');
-      const left = (T_TARGET.opens-t.opens>0?1:0)+(T_TARGET.inw-t.inw>0?1:0)+(T_TARGET.outw-t.outw>0?1:0);
-      const pill = dupes>0 ? '<div class="tpill tp-flag">REVIEW</div>'
-                 : (left===0 ? '<div class="tpill tp-ok">ON TRACK</div>'
-                             : '<div class="tpill tp-risk">'+left+' LEFT TODAY</div>');
+      const strip = [];
+      for (let i=0;i<s.plan;i++) strip.push('<span class="dcell'+(i<s.banked?' ok':(i===s.banked&&s.started&&s.banked<s.plan?' now':''))+'"></span>');
+      const pill = s.dupes>0 ? '<div class="tpill tp-flag">REVIEW</div>'
+                 : (!s.started ? '<div class="tpill tp-ok">STARTS '+_tvEsc(_tvShort(s.from).toUpperCase())+'</div>'
+                 : (s.banked>=s.plan ? '<div class="tpill tp-ok">PLAN DONE</div>'
+                 : (s.left===0 ? '<div class="tpill tp-ok">ON TRACK</div>' : '<div class="tpill tp-risk">'+s.left+' LEFT TODAY</div>')));
       const nm = p.businessName || p.name || ('uid '+u.uid.slice(0,6));
-      return '<div class="trow'+(dupes>0?' flag':(left>0?' risk':''))+'" data-uid="'+u.uid+'">'
-        + '<div class="thead"><div class="tav">'+_tvEsc((nm||'?').charAt(0).toUpperCase())+'</div>'
+      let log = '';
+      if (_tvOpenLog.has(u.uid)) {
+        const lines = [];
+        let d = today, guard = 0;
+        while (d >= s.from && guard < 60) {
+          const c = s.ag.days[d] || { opens:0, inw:0, outw:0, scans:0 };
+          const q = _tvQualified(c), isToday = d === today;
+          const cls = (got, need) => got >= need ? 'tok' : (isToday ? 'tdim' : 'tbad');
+          const res = q ? '<span class="tok">✓ qualified</span>'
+                    : (isToday ? '<span class="tdim">in progress · till midnight</span>'
+                    : '<span class="tbad">✗ missed'+(s.ag.days[d]?'':' · no activity')+'</span>');
+          lines.push('<tr><td>'+_tvLong(d)+'</td><td class="num '+cls(c.opens,T_TARGET.opens)+'">'+c.opens+'/'+T_TARGET.opens+'</td>'
+            + '<td class="num '+cls(c.inw,T_TARGET.inw)+'">'+c.inw+'/'+T_TARGET.inw+'</td>'
+            + '<td class="num '+cls(c.outw,T_TARGET.outw)+'">'+c.outw+'/'+T_TARGET.outw+'</td>'
+            + '<td class="num">'+c.scans+'</td><td>'+res+'</td></tr>');
+          d = _tvAddDays(d, -1); guard++;
+        }
+        log = '<table class="tdd"><tr><th>Day</th><th class="num">Opens</th><th class="num">आया</th><th class="num">गया</th><th class="num">Scans</th><th>Result</th></tr>'
+            + (lines.length ? lines.join('') : '<tr><td colspan="6" class="tdim">Starts '+_tvEsc(_tvShort(s.from))+'</td></tr>') + '</table>';
+      }
+      return '<div class="trow'+(s.dupes>0?' flag':(s.started&&s.left>0&&s.banked<s.plan?' risk':''))+'">'
+        + '<div class="thead"><div class="tav">'+_tvEsc(nm.charAt(0).toUpperCase())+'</div>'
         + '<div class="tid"><div class="tname">'+_tvEsc(nm)+'</div><div class="tmeta">'
-        + _tvEsc(p.name||'') + ' · ' + _tvEsc(p.phone||'') + ' · <code>'+_tvEsc(p.testerId||'—')+'</code> · ₹'+rate+' plan'
-        + (start?(' · started '+start):'') + '</div></div>'
+        + _tvEsc(p.name||'') + ' · ' + _tvEsc(p.phone||'') + ' · <code>'+_tvEsc(p.testerId||'—')+'</code> · ₹'+s.rate+'/day · '+s.plan+'-day plan'
+        + (s.start?(' · started '+_tvEsc(_tvShort(s.start))):'') + '</div></div>'
         + pill
-        + '<div class="tpay"><div class="v">₹'+(banked*rate).toLocaleString('en-IN')+'</div>'
-        + '<div class="k">'+banked+' qualified day'+(banked===1?'':'s')+'</div></div></div>'
-        + '<div class="params">'
-        + par('App opens', t.opens, T_TARGET.opens)
-        + par('आया', t.inw, T_TARGET.inw)
-        + par('गया', t.outw, T_TARGET.outw)
-        + par('Scans · week', uniqScans, T_TARGET.scansWeek, true)
-        + '</div>'
-        + '<div class="striprow"><div class="striplab">'+plan+' qualified<br>days needed</div>'
-        + '<div class="strip">'+cellsB.join('')+'</div>'
-        + '<div class="stripend">'+banked+' banked<br><span style="color:'+(lost?'#ff8a7a':'#66779c')+';font-weight:500">'+lost+' lost</span></div></div>'
-        + (dupes>0 ? ('<div class="flagline"><b>'+dupes+' duplicate scan'+(dupes>1?'s':'')+' this week.</b> '
-            + 'Same bill fingerprint re-uploaded. Genuine unique bills: <b>'+uniqScans+' of '+wk.total+'</b>.</div>') : '')
-        + '</div>';
+        + '<div class="tpay"><div class="v">₹'+(s.banked*s.rate).toLocaleString('en-IN')+'</div>'
+        + '<div class="k">'+s.banked+' qualified day'+(s.banked===1?'':'s')+'</div></div></div>'
+        + '<div class="params">'+par('App opens',t.opens,T_TARGET.opens)+par('आया',t.inw,T_TARGET.inw)+par('गया',t.outw,T_TARGET.outw)+par('Scans · week',s.uniqScans,T_TARGET.scansWeek)+'</div>'
+        + '<div class="striprow"><div class="striplab">'+s.plan+' qualified<br>days needed</div>'
+        + '<div class="strip">'+strip.join('')+'</div>'
+        + '<div class="stripend">'+s.banked+' banked<br><span style="color:'+(s.lost?'#ff8a7a':'#66779c')+';font-weight:500">'+s.lost+' lost</span></div></div>'
+        + (s.dupes>0 ? ('<div class="flagline"><b>'+s.dupes+' duplicate scan'+(s.dupes>1?'s':'')+' this week.</b> '
+            + 'Same bill fingerprint re-uploaded. Genuine unique bills: <b>'+s.uniqScans+' of '+s.wk.total+'</b>.</div>') : '')
+        + log
+        + '<div class="trow-actions">'
+        + '<button class="tmini" data-tact="log" data-uid="'+u.uid+'">'+(_tvOpenLog.has(u.uid)?'▴ Hide day log':'▾ Day log')+'</button>'
+        + '<button class="tmini" data-tact="edit" data-uid="'+u.uid+'">✏️ Edit plan</button>'
+        + '<button class="tmini" data-tact="call" data-uid="'+u.uid+'">📞 Call</button>'
+        + '<button class="tmini" data-tact="wa" data-uid="'+u.uid+'">💬 WhatsApp</button>'
+        + '</div></div>';
     });
 
     document.getElementById('tv-kpis').innerHTML =
@@ -1778,58 +1903,138 @@ async function loadTesters(){
     + '<div class="stat-card"><div class="stat-label">Flagged</div><div class="stat-value" style="color:'+(flagged?'#ff8a7a':'#e8d8b8')+'">'+flagged+'</div><div class="stat-sub">duplicate bill scans</div></div>';
 
     box.innerHTML = rows.length ? rows.join('')
-      : '<div class="av-empty">No testers yet. Open a user from the Users tab and use <b>Mark as tester</b>.</div>';
-    box.querySelectorAll('.trow').forEach(r =>
-      r.addEventListener('click', () => { if (window.openProfile) openProfile(r.getAttribute('data-uid')); }));
-    if (note) note.textContent = 'Reads only from analytics_events (admin-read-only) · '+_tvEvents.length+' events loaded.';
+      : '<div class="av-empty">No testers yet. Tap <b>+ Add tester</b> to add one.</div>';
+    box.querySelectorAll('[data-tact]').forEach(b => b.addEventListener('click', () => {
+      const uid = b.getAttribute('data-uid'), act = b.getAttribute('data-tact');
+      const u = (allUsers || []).find(x => x.uid === uid); if (!u) return;
+      const phone = String(u.profile.phone || '').replace(/^\+/, '').replace(/\D/g, '');
+      if (act === 'log') { _tvOpenLog.has(uid) ? _tvOpenLog.delete(uid) : _tvOpenLog.add(uid); loadTesters(); }
+      else if (act === 'edit') _tvOpenEdit(u);
+      else if (act === 'call') { if (phone) window.location.href = 'tel:+' + phone; }
+      else if (act === 'wa') { if (phone) window.open('https://wa.me/' + phone, '_blank'); }
+    }));
+    if (note) note.textContent = 'Reads only from analytics_events · '+(_tvEvents||[]).length+' events loaded · a lost day = any day since start that missed a target, including days with no activity.';
   } catch(e) {
     if (box) box.innerHTML = '<div class="av-empty">⚠️ Could not load testers: '+_tvEsc(e && e.message ? e.message : e)+'</div>';
   }
 }
 window.loadTesters = loadTesters;
 
-/* ── 'Mark as tester' control, appended to the profile modal ── */
-function _tvInjectToggle(uid){
-  const card = document.getElementById('profile-card');
-  if (!card || card.querySelector('.tst-box')) return;
-  const u = (window.allUsers||allUsers||[]).find(x => x.uid === uid);
-  if (!u) return;
+/* ── Tester strip at the top of the user profile ── */
+function testerStripHTML(u){
   const p = u.profile || {};
-  const on = !!p.tester;
-  const box = document.createElement('div');
-  box.className = 'tst-box';
-  box.innerHTML = '<div class="tst-h">🧪 '+(on?'Tester':'Mark as tester')+'</div>'
-    + '<div class="tst-row">'
-    + '<div class="tst-f"><label>Tester ID</label><input id="tst-id" value="'+_tvEsc(p.testerId||'')+'" placeholder="T-03"></div>'
-    + '<div class="tst-f"><label>Plan (days)</label><select id="tst-plan"><option value="15"'+(String(p.testerPlan)==='15'?' selected':'')+'>15</option><option value="20"'+(String(p.testerPlan)!=='15'?' selected':'')+'>20</option></select></div>'
-    + '<div class="tst-f"><label>Rate ₹/day</label><select id="tst-rate"><option value="100"'+(String(p.testerRate)==='100'?' selected':'')+'>100</option><option value="200"'+(String(p.testerRate)!=='100'?' selected':'')+'>200</option></select></div>'
-    + '<div class="tst-f"><label>Start date</label><input id="tst-start" type="date" value="'+_tvEsc(p.testerStart||'')+'"></div>'
-    + '<button class="tst-save" id="tst-save">'+(on?'Update':'Mark as tester')+'</button>'
-    + (on?'<button class="tst-off" id="tst-off">Remove</button>':'')
+  if (!p.tester) return '';
+  let t = '🧪 Tester · ' + _tvEsc(p.testerId || '—');
+  let sub = 'Open the Testers tab for today’s status';
+  if (window._admEvents) {
+    const s = _tvStats(u);
+    t += ' · ' + (!s.started ? 'STARTS ' + _tvShort(s.from) : (s.banked>=s.plan ? 'PLAN DONE' : (s.left===0 ? 'ON TRACK' : s.left + ' LEFT TODAY')));
+    sub = s.banked + ' banked · ' + s.lost + ' lost · ₹' + (s.banked*s.rate).toLocaleString('en-IN') + ' earned' + (s.start ? ' · started ' + _tvShort(s.start) : '');
+  }
+  return '<div class="tst-link"><div><div class="t">'+t+'</div><div class="s">'+sub+'</div></div><button class="go tst-go">Open in Testers →</button></div>';
+}
+
+/* ── Modal: add tester / edit plan ── */
+function _tvModalOpen(html){ document.getElementById('tv-card').innerHTML = html; document.getElementById('tv-modal').classList.add('show'); }
+function _tvModalClose(){ document.getElementById('tv-modal').classList.remove('show'); }
+function _tvPlanFields(p, idVal){
+  const plan = String(p.testerPlan || 20), rate = String(p.testerRate || 200);
+  return '<div class="tst-row">'
+    + '<div class="tst-f"><label for="tvf-id">Tester ID</label><input id="tvf-id" value="'+_tvEsc(idVal)+'"></div>'
+    + '<div class="tst-f"><label for="tvf-plan">Plan (days)</label><select id="tvf-plan"><option value="20"'+(plan!=='15'?' selected':'')+'>20</option><option value="15"'+(plan==='15'?' selected':'')+'>15</option></select></div>'
+    + '<div class="tst-f"><label for="tvf-rate">Rate ₹/day</label><select id="tvf-rate"><option value="200"'+(rate!=='100'?' selected':'')+'>200</option><option value="100"'+(rate==='100'?' selected':'')+'>100</option></select></div>'
+    + '<div class="tst-f"><label for="tvf-start">Start date</label><input id="tvf-start" type="date" value="'+_tvEsc(p.testerStart || _tvDay(new Date()))+'"></div>'
     + '</div>';
-  card.appendChild(box);
-  const write = async (payload) => {
-    const fx = window._fbx, db = window._fb && window._fb.db;
-    await fx.setDoc(fx.doc(db,'users',uid,'profile','info'), payload, { merge:true });
-    if (window.loadUsers) await loadUsers();
-    if (window.loadTesters) window.loadTesters();
+}
+function _tvReadPlan(){
+  return { testerId: document.getElementById('tvf-id').value.trim(),
+           testerPlan: Number(document.getElementById('tvf-plan').value),
+           testerRate: Number(document.getElementById('tvf-rate').value),
+           testerStart: document.getElementById('tvf-start').value || '' };
+}
+async function _tvWrite(uid, payload){
+  const fx = window._fbx, db = window._fb && window._fb.db;
+  await fx.setDoc(fx.doc(db, 'users', uid, 'profile', 'info'), payload, { merge:true });
+  if (window.loadUsers) await window.loadUsers();
+  loadTesters();
+}
+function _tvNextId(){
+  let max = 0;
+  (allUsers || []).forEach(u => { const m = /(\d+)/.exec((u.profile && u.profile.tester && u.profile.testerId) || ''); if (m) max = Math.max(max, Number(m[1])); });
+  return 'T-' + String(max + 1).padStart(2, '0');
+}
+function _tvOpenAdd(){
+  let sel = null;
+  _tvModalOpen(
+    '<div class="profile-header" style="padding-bottom:12px"><div class="profile-id-row" style="margin-bottom:0">'
+    + '<div class="profile-name-block"><div class="profile-name">🧪 Add tester</div><div class="profile-biz complete">Pick a registered user, then set the plan</div></div>'
+    + '<button class="profile-close" id="tvf-x" aria-label="Close">✕</button></div></div>'
+    + '<div class="profile-section"><div class="section-label">1 · Find the user</div>'
+    + '<input type="text" class="search-box" id="tvf-q" style="width:100%;margin-bottom:12px" placeholder="🔍 Name, business or phone">'
+    + '<div class="pick-list" id="tvf-list"></div></div>'
+    + '<div class="profile-section"><div class="section-label">2 · Plan</div>' + _tvPlanFields({}, _tvNextId())
+    + '<button class="auth-btn" id="tvf-add" style="margin-top:16px">Select a user first</button></div>');
+  const list = document.getElementById('tvf-list'), btn = document.getElementById('tvf-add'), q = document.getElementById('tvf-q');
+  const draw = () => {
+    const ql = q.value.trim().toLowerCase();
+    const users = (allUsers || []).filter(u => {
+      if (!ql) return true;
+      const p = u.profile || {};
+      return [p.name, p.businessName, p.phone, u.uid].join(' ').toLowerCase().includes(ql);
+    }).sort((a, b) => (!!a.profile.tester - !!b.profile.tester) || ((b.lastActive||0) - (a.lastActive||0))).slice(0, 40);
+    list.innerHTML = users.length ? users.map(u => {
+      const p = u.profile || {}, nm = p.name || p.businessName || u.uid.slice(0,6);
+      const right = p.tester ? '<span class="tdim" style="font-size:11px">already '+_tvEsc(p.testerId||'tester')+'</span>'
+                  : (sel === u.uid ? '<span class="tpill tp-ok">SELECTED</span>' : '<span class="view-btn">Select</span>');
+      return '<div class="pick-row'+(p.tester?' dis':(sel===u.uid?' sel':''))+'" data-uid="'+u.uid+'">'
+        + '<div class="pick-av">'+_tvEsc(nm.charAt(0).toUpperCase())+'</div>'
+        + '<div class="pick-in"><div class="pick-name">'+_tvEsc(nm)+'</div><div class="pick-sub">'+_tvEsc(p.businessName||'—')+' · '+_tvEsc(p.phone||'')+'</div></div>'
+        + right + '</div>';
+    }).join('') : '<div class="av-empty">No matching user</div>';
+    list.querySelectorAll('.pick-row:not(.dis)').forEach(r => r.addEventListener('click', () => { sel = r.getAttribute('data-uid'); draw(); }));
+    const su = sel && (allUsers || []).find(x => x.uid === sel);
+    btn.textContent = su ? ('Add ' + (su.profile.name || su.profile.businessName || 'user') + ' as tester') : 'Select a user first';
   };
-  box.querySelector('#tst-save').addEventListener('click', async () => {
-    try {
-      await write({ tester:true,
-        testerId: document.getElementById('tst-id').value.trim(),
-        testerPlan: Number(document.getElementById('tst-plan').value),
-        testerRate: Number(document.getElementById('tst-rate').value),
-        testerStart: document.getElementById('tst-start').value || '' });
-      alert('✅ Saved');
-    } catch(e){ alert('❌ '+e.message); }
+  q.addEventListener('input', draw);
+  document.getElementById('tvf-x').addEventListener('click', _tvModalClose);
+  btn.addEventListener('click', async () => {
+    if (!sel) { alert('Pick a user first'); return; }
+    const plan = _tvReadPlan();
+    if (!plan.testerStart) { alert('Set a start date'); return; }
+    btn.disabled = true;
+    try { await _tvWrite(sel, Object.assign({ tester:true }, plan)); _tvModalClose(); }
+    catch(e) { alert('❌ ' + (e && e.message ? e.message : e)); btn.disabled = false; }
   });
-  const off = box.querySelector('#tst-off');
-  if (off) off.addEventListener('click', async () => {
-    if (!confirm('Remove tester status?')) return;
-    try { await write({ tester:false }); alert('Removed'); } catch(e){ alert('❌ '+e.message); }
+  draw();
+  setTimeout(() => { try { q.focus(); } catch(e){} }, 60);
+}
+function _tvOpenEdit(u){
+  const p = u.profile || {}, nm = p.name || p.businessName || u.uid.slice(0,6);
+  _tvModalOpen(
+    '<div class="profile-header" style="padding-bottom:12px"><div class="profile-id-row" style="margin-bottom:0">'
+    + '<div class="profile-avatar complete">'+_tvEsc(nm.charAt(0).toUpperCase())+'</div>'
+    + '<div class="profile-name-block"><div class="profile-name">'+_tvEsc(p.name||'— no name —')+'</div><div class="profile-biz complete">'+_tvEsc(p.businessName||'')+' · '+_tvEsc(p.testerId||'')+'</div></div>'
+    + '<button class="profile-close" id="tvf-x" aria-label="Close">✕</button></div></div>'
+    + '<div class="profile-section"><div class="section-label">Edit plan</div>' + _tvPlanFields(p, p.testerId || '')
+    + '<div style="display:flex;gap:8px;margin-top:14px"><button class="tst-save" id="tvf-save">Save changes</button><button class="tst-off" id="tvf-off">Remove tester</button></div></div>');
+  document.getElementById('tvf-x').addEventListener('click', _tvModalClose);
+  document.getElementById('tvf-save').addEventListener('click', async () => {
+    const plan = _tvReadPlan();
+    if (!plan.testerStart) { alert('Set a start date'); return; }
+    try { await _tvWrite(u.uid, Object.assign({ tester:true }, plan)); _tvModalClose(); }
+    catch(e) { alert('❌ ' + (e && e.message ? e.message : e)); }
+  });
+  document.getElementById('tvf-off').addEventListener('click', async () => {
+    if (!confirm('Remove tester status for ' + nm + '? Their activity history stays.')) return;
+    try { await _tvWrite(u.uid, { tester:false }); _tvModalClose(); }
+    catch(e) { alert('❌ ' + (e && e.message ? e.message : e)); }
   });
 }
+(function _tvWire(){
+  const a = document.getElementById('tv-add'); if (a) a.addEventListener('click', _tvOpenAdd);
+  const r = document.getElementById('tv-refresh'); if (r) r.addEventListener('click', () => loadTesters(true));
+  const m = document.getElementById('tv-modal'); if (m) m.addEventListener('click', e => { if (e.target.id === 'tv-modal') _tvModalClose(); });
+})();
 
 </script>
 

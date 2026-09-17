@@ -1959,14 +1959,53 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .lg-voice.row .lg-voice-idle{display:contents;}
 .lg-voice.row .lgv-tx{flex:1;min-width:0;text-align:left;}
 .lg-voice.row .lg-voice-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.lg-voice.row .lgv-sq{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;
+.lg-voice.row /* ── बिल स्कैन button (replaces the 📷 emoji) ── */
+.lgv-scan{flex-shrink:0;width:60px;border-radius:13px;padding:7px 4px 6px;text-align:center;cursor:pointer;
+  background:linear-gradient(180deg,rgba(240,200,144,.09),rgba(240,200,144,.03));
+  border:1.5px solid #8a6a2e;box-shadow:inset 0 1px 0 rgba(255,224,160,.14);
+  transition:transform .14s cubic-bezier(.34,1.45,.5,1),filter .14s;}
+.lgv-scan:active{transform:scale(.94);filter:brightness(1.12);}
+.lgv-scan .lb{font-size:8px;font-weight:800;letter-spacing:.5px;color:#e8c870;line-height:1.1;margin-bottom:4px;}
+.lgv-scan svg{width:28px;height:28px;color:#f0c890;filter:drop-shadow(0 1px 3px rgba(240,200,144,.3));}
+/* ── camera / gallery chooser ── */
+.sc-ov{position:fixed;inset:0;z-index:9200;display:none;align-items:center;justify-content:center;
+  background:rgba(4,7,16,.74);padding:20px;}
+.sc-ov.show{display:flex;}
+.sc-pick{width:100%;max-width:290px;background:linear-gradient(180deg,#14254c 0%,#0a1224 100%);
+  border:1.5px solid #3d5aa6;border-radius:20px;padding:18px 16px 16px;
+  box-shadow:0 18px 50px rgba(0,0,0,.6),inset 0 1px 0 rgba(150,180,255,.14);
+  animation:scIn .2s cubic-bezier(.22,1,.36,1);}
+@keyframes scIn{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+.sc-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:15px;}
+.sc-t{font-size:15.5px;font-weight:600;color:#f0f4fb;}
+.sc-s{font-size:10.5px;color:#7d90c4;margin-top:3px;}
+.sc-x{width:28px;height:28px;border-radius:50%;background:rgba(122,140,200,.09);border:1px solid #2a4078;
+  color:#9ab0e0;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;cursor:pointer;}
+.sc-two{display:flex;gap:10px;}
+.sc-opt{flex:1;border-radius:15px;padding:16px 8px 13px;text-align:center;cursor:pointer;
+  transition:transform .14s cubic-bezier(.34,1.45,.5,1);}
+.sc-opt:active{transform:scale(.95);}
+.sc-opt .ic{width:44px;height:44px;margin:0 auto 9px;border-radius:13px;display:flex;align-items:center;justify-content:center;}
+.sc-opt .ic svg{width:24px;height:24px;}
+.sc-opt .t{font-size:13px;font-weight:700;line-height:1.2;}
+.sc-opt .s{font-size:9px;margin-top:3px;}
+.sc-cam{background:linear-gradient(180deg,#3a2c10,#221806);border:1.5px solid #d4a850;
+  box-shadow:0 3px 14px rgba(212,168,80,.2),inset 0 1px 0 rgba(255,224,160,.2);}
+.sc-cam .ic{background:rgba(240,200,144,.12);border:1px solid #8a6a2e;color:#ffd98a;}
+.sc-cam .t{color:#ffd98a;} .sc-cam .s{color:#ad8a52;}
+.sc-gal{background:#0d1838;border:1.5px solid #2a4078;}
+.sc-gal .ic{background:rgba(122,140,200,.1);border:1px solid #2a4078;color:#9ab0e0;}
+.sc-gal .t{color:#c8d4ec;} .sc-gal .s{color:#6d80a8;}
+.lgv-sq{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;
   align-items:center;justify-content:center;font-size:15px;background:rgba(255,255,255,.05);
   border:1px solid #2a4078;cursor:pointer;}
 .lg-voice.row .lgv-sq:active{opacity:.6;}
 .lg-voice.row.rec,.lg-voice.row.proc,.lg-voice.row.res,.lg-voice.row.err{flex-direction:column;}
 .lg-voice.row.rec .lgv-tx,.lg-voice.row.proc .lgv-tx,.lg-voice.row.res .lgv-tx,
 .lg-voice.row.err .lgv-tx,.lg-voice.row.rec .lgv-sq,.lg-voice.row.proc .lgv-sq,
-.lg-voice.row.res .lgv-sq,.lg-voice.row.err .lgv-sq{display:none;}
+.lg-voice.row.res .lgv-sq,.lg-voice.row.err .lgv-sq,
+.lg-voice.row.rec .lgv-scan,.lg-voice.row.proc .lgv-scan,
+.lg-voice.row.res .lgv-scan,.lg-voice.row.err .lgv-scan{display:none;}
 /* entry list */
 .lg-el-hd{display:flex;align-items:center;font-size:11.5px;font-weight:700;color:#cfe0ff;margin:0 2px 8px;}
 .lg-el-hd .n{margin-left:auto;font-size:10px;color:#8aa0d8;font-weight:600;}
@@ -3103,7 +3142,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
           <div class="lg-voice-cap">बोलकर एंट्री करें</div>
           <div class="lg-voice-sub">"पंद्रह सौ राहुल से मिले"</div>
         </div>
-        <div class="lgv-sq" onclick="npOpen()">📷</div>
+        <div class="lgv-scan" onclick="scPick()"><div class="lb">बिल स्कैन</div><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><g class="sc-frame" fill="none" stroke-width="1.8"><path d="M3 8V6a3 3 0 0 1 3-3h2"/><path d="M16 3h2a3 3 0 0 1 3 3v2"/><path d="M21 16v2a3 3 0 0 1-3 3h-2"/><path d="M8 21H6a3 3 0 0 1-3-3v-2"/></g><g class="sc-txt" fill="none" stroke-linecap="round"><line x1="8.5" y1="8" x2="15.5" y2="8" stroke-width="2.2"/><line x1="8.5" y1="10.6" x2="15.5" y2="10.6" stroke-width="1.4"/><line x1="8.5" y1="15.8" x2="12.5" y2="15.8" stroke-width="1.8"/></g><line class="sc-beam" x1="4.5" y1="13" x2="19.5" y2="13" stroke-width="2.2"/></svg></div>
       </div>
       <div class="lg-voice-rec">
         <button type="button" class="lg-voice-stop" onclick="lgVoiceStop('entry')" aria-label="रोकें"><span></span></button>
@@ -5209,6 +5248,26 @@ textarea.st-biz-in{resize:none;}
   </div>
 </div>
 
+
+<div class="sc-ov" id="sc-ov">
+  <div class="sc-pick">
+    <div class="sc-hd">
+      <div><div class="sc-t">बिल स्कैन करें</div>
+        <div class="sc-s">विवरण अपने आप भर जाएगा</div></div>
+      <div class="sc-x" onclick="scClose()">✕</div>
+    </div>
+    <div class="sc-two">
+      <div class="sc-opt sc-cam" onclick="scGo('cam')">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <div class="t">Camera</div><div class="s">फ़ोटो लें</div>
+      </div>
+      <div class="sc-opt sc-gal" onclick="scGo('gal')">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>
+        <div class="t">Gallery</div><div class="s">पहले से सेव</div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="ee-ov" id="ee-ov">
   <div class="ee-sheet">
     <div class="ee-grab"></div>
@@ -8046,6 +8105,25 @@ function lgRenderEntries(){
    because a src:"maal" box mirrors a K.MAAL record and editing it here would
    desync the supplier ledger and the payable. ══ */
 var _eeBox=null, _eeDir="in";
+/* ══ Bill scan: pick a source, then straight into the existing scan flow ══ */
+function scPick(){ var o=document.getElementById("sc-ov"); if(o) o.classList.add("show"); }
+function scClose(){ var o=document.getElementById("sc-ov"); if(o) o.classList.remove("show"); }
+function scGo(which){
+  scClose();
+  try{ npOpen(); }catch(e){ return; }
+  // npOpen() resets state and shows s1; fire the input straight away so the
+  // camera (or picker) opens without the extra tap.
+  setTimeout(function(){
+    try{ if(which==="cam") npCapture(); else npGallery(); }catch(e){}
+  }, 60);
+  try{ if(window.logEvent) window.logEvent("bill_scan_src",{src:which}); }catch(e){}
+}
+try{
+  document.addEventListener("click",function(e){
+    var o=document.getElementById("sc-ov");
+    if(o && o.classList.contains("show") && e.target===o) scClose();
+  });
+}catch(e){}
 function eeClose(){ var o=document.getElementById("ee-ov"); if(o) o.classList.remove("show"); _eeBox=null; }
 function eeSetDir(d){
   _eeDir=d;

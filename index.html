@@ -1966,7 +1966,11 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
   transition:transform .14s cubic-bezier(.34,1.45,.5,1),filter .14s;}
 .lgv-scan:active{transform:scale(.94);filter:brightness(1.12);}
 .lgv-scan .lb{font-size:8px;font-weight:800;letter-spacing:.5px;color:#e8c870;line-height:1.1;margin-bottom:4px;}
-.lgv-scan svg{width:28px;height:28px;color:#f0c890;filter:drop-shadow(0 1px 3px rgba(240,200,144,.3));}
+.lgv-scan svg{width:28px;height:28px;filter:drop-shadow(0 1px 3px rgba(240,200,144,.3));}
+/* stroke colours are scoped to .np-ci in the purchase screen — declare them here too */
+.lgv-scan .sc-frame{stroke:#f0c890;}
+.lgv-scan .sc-txt{stroke:#d9c39a;}
+.lgv-scan .sc-beam{stroke:#ffe08a;filter:drop-shadow(0 0 2px rgba(255,224,138,.8));}
 /* ── camera / gallery chooser ── */
 .sc-ov{position:fixed;inset:0;z-index:9200;display:none;align-items:center;justify-content:center;
   background:rgba(4,7,16,.74);padding:20px;}
@@ -8111,13 +8115,37 @@ function scClose(){ var o=document.getElementById("sc-ov"); if(o) o.classList.re
 function scGo(which){
   scClose();
   try{ npOpen(); }catch(e){ return; }
-  // npOpen() resets state and shows s1; fire the input straight away so the
-  // camera (or picker) opens without the extra tap.
+  // npOpen() resets state AND shows the s1 sheet. We want the picker, not the sheet,
+  // so hide it again immediately — _scWrapPhoto() brings it back once a photo lands.
+  var m=document.getElementById("np-modal");
+  if(m) m.classList.remove("show");
+  window._scDirect=true;
   setTimeout(function(){
     try{ if(which==="cam") npCapture(); else npGallery(); }catch(e){}
-  }, 60);
+  }, 50);
   try{ if(window.logEvent) window.logEvent("bill_scan_src",{src:which}); }catch(e){}
 }
+/* Re-show the sheet the moment a photo is actually chosen. If the user backs out
+   of the camera, nothing was shown and nothing needs dismissing. */
+(function _scWrapPhoto(){
+  var tries=0;
+  var iv=setInterval(function(){
+    tries++;
+    if(typeof window.npPhotoChosen==="function"){
+      clearInterval(iv);
+      var orig=window.npPhotoChosen;
+      window.npPhotoChosen=function(){
+        if(window._scDirect){
+          window._scDirect=false;
+          var mm=document.getElementById("np-modal");
+          if(mm) mm.classList.add("show");
+        }
+        return orig.apply(this, arguments);
+      };
+    }
+    if(tries>40) clearInterval(iv);
+  }, 120);
+})();
 try{
   document.addEventListener("click",function(e){
     var o=document.getElementById("sc-ov");

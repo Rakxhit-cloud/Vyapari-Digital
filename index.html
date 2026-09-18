@@ -1769,6 +1769,19 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .dr-hint{font-size:10.5px;color:#7d90c4;margin-top:9px;line-height:1.6;}
 .dr-chk{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:#cdd8f8;margin:13px 0 4px;}
 .dr-chk input{margin-top:2px;width:16px;height:16px;flex-shrink:0;}
+/* Delete-code step. Deliberately NOT the login OTP styling — this screen is
+   red end to end so it can never be mistaken for a routine sign-in. */
+.dro-lbl{font-size:11px;font-weight:700;letter-spacing:1.2px;color:#ff9a9a;text-transform:uppercase;margin:14px 0 9px;text-align:center;}
+.dro-boxes{display:flex;gap:7px;justify-content:center;}
+.dro-boxes input{width:100%;max-width:48px;aspect-ratio:1/1.15;background:#1a0f10;border:1.5px solid #5a2020;border-radius:11px;color:#ffd0d0;font-size:21px;font-weight:700;text-align:center;font-family:inherit;caret-color:#ff7a7a;min-width:0;padding:0;}
+.dro-boxes input:focus{outline:none;border-color:#e05252;background:#241213;box-shadow:0 0 0 3px rgba(224,82,82,.18);}
+.dro-boxes input.filled{border-color:#c0392b;color:#fff;}
+.dro-meta{display:flex;justify-content:space-between;align-items:center;margin-top:11px;font-size:11.5px;}
+.dro-timer{color:#8aa0d8;}
+.dro-resend{color:#5a6a95;font-weight:600;pointer-events:none;}
+.dro-resend.on{color:#ff9a9a;text-decoration:underline;cursor:pointer;pointer-events:auto;}
+.dro-err{font-size:11.5px;color:#ff8a8a;margin-top:10px;background:rgba(192,57,43,.12);border:1px solid #5a2020;border-radius:8px;padding:8px 10px;}
+.dro-note{font-size:10.5px;color:#7d90c4;margin-top:11px;line-height:1.6;}
 .dr-dis{opacity:.42;pointer-events:none;}
 .mk-in{width:100%;background:#0d1838;border:1px solid #2a4078;border-radius:11px;padding:13px 14px;color:#f4f6fa;font-size:15px;box-shadow:inset 0 1px 3px rgba(0,0,0,0.25);outline:none;}
 .mk-in.mk-amt{font-size:20px;font-weight:700;color:#d4a850;}
@@ -5227,24 +5240,34 @@ textarea.st-biz-in{resize:none;}
 <div class="popup-overlay mk-center-overlay" id="dreset-overlay">
   <div class="mk-edit-modal" style="border-color:#c0392b;">
     <div class="mk-edit-head">
-      <div class="mk-pop-title" style="color:#ff7a7a;">☢️ सब कुछ मिटाएं</div>
+      <div class="mk-pop-title" style="color:#ff7a7a;">☢️ Erase all data</div>
       <div class="mk-pop-x" onclick="drClose()">✕</div>
     </div>
     <div id="dr-step1">
       <div class="dr-warn" id="dr-warn"></div>
-      <div class="dr-grp dr-go"><div class="dr-h">🗑️ मिटेगा<span class="n" id="dr-go-n"></span></div><div class="dr-b" id="dr-go-b"></div></div>
-      <div class="dr-grp dr-keep"><div class="dr-h">✓ सुरक्षित रहेगा<span class="n" id="dr-keep-n"></span></div><div class="dr-b" id="dr-keep-b"></div></div>
+      <div class="dr-grp dr-go"><div class="dr-h">🗑️ Will be erased<span class="n" id="dr-go-n"></span></div><div class="dr-b" id="dr-go-b"></div></div>
+      <div class="dr-grp dr-keep"><div class="dr-h">✓ Stays safe<span class="n" id="dr-keep-n"></span></div><div class="dr-b" id="dr-keep-b"></div></div>
       <label class="dr-chk"><input type="checkbox" id="dr-chk" onchange="drGate()"><span id="dr-chk-t"></span></label>
-      <div class="mk-save dr-dis" id="dr-next" style="margin-top:12px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="drStep2()">आगे बढ़ें</div>
-      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="drClose()">रद्द करें · Cancel</div>
+      <div class="mk-save dr-dis" id="dr-next" style="margin-top:12px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="drStep2()">Continue · Send code</div>
+      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="drClose()">Cancel</div>
     </div>
     <div id="dr-step2" style="display:none;">
       <div class="dr-warn" id="dr-warn2"></div>
-      <div class="dr-lbl">पक्का करने के लिए <b>MITAO</b> टाइप करें</div>
-      <input type="text" class="mk-in" id="dr-word" placeholder="MITAO" autocomplete="off" style="text-align:center;letter-spacing:4px;" oninput="drGate2()">
-      <div class="dr-hint">⏳ मिटाने के बाद app अपने आप refresh होगा। दूसरे phone पर भी sync होकर मिटेगा।</div>
-      <div class="mk-save dr-dis" id="dr-final" style="margin-top:13px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="drRun()">🗑️ हमेशा के लिए मिटाएं</div>
-      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="drClose()">रद्द करें · Cancel</div>
+      <div class="dro-lbl">Enter delete code</div>
+      <div class="dro-boxes" id="dro-boxes">
+        <input type="tel" inputmode="numeric" maxlength="1" autocomplete="one-time-code" id="dro-1" aria-label="Delete code digit 1">
+        <input type="tel" inputmode="numeric" maxlength="1" autocomplete="one-time-code" id="dro-2" aria-label="Delete code digit 2">
+        <input type="tel" inputmode="numeric" maxlength="1" autocomplete="one-time-code" id="dro-3" aria-label="Delete code digit 3">
+        <input type="tel" inputmode="numeric" maxlength="1" autocomplete="one-time-code" id="dro-4" aria-label="Delete code digit 4">
+        <input type="tel" inputmode="numeric" maxlength="1" autocomplete="one-time-code" id="dro-5" aria-label="Delete code digit 5">
+        <input type="tel" inputmode="numeric" maxlength="1" autocomplete="one-time-code" id="dro-6" aria-label="Delete code digit 6">
+      </div>
+      <div class="dro-meta"><span class="dro-timer" id="dro-timer">Resend in 0:30</span>
+        <span class="dro-resend" id="dro-resend" onclick="drResend()">Resend</span></div>
+      <div class="dro-err" id="dro-err" style="display:none;"></div>
+      <div class="dro-note">The app refreshes once erasing is done. Your other phones are cleared on the next sync.</div>
+      <div class="mk-save dr-dis" id="dr-final" style="margin-top:13px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="drRun()">Erase permanently</div>
+      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="drClose()">Cancel</div>
     </div>
   </div>
 </div>
@@ -7113,6 +7136,31 @@ window.signOut = async function() {
 // ===== Delete account & all data (required for Play Store; privacy compliance) =====
 let _delConfirmation = null, _delVerifier = null;
 // Step 1: send a fresh OTP to the logged-in user's own number (re-auth + confirmation)
+/* Data wipe re-auth. Same phone re-auth as account delete, but it ONLY proves
+   identity — the wipe itself stays in app code. Separate confirmation object so
+   the two flows can never read each other's verification id. */
+let _wipeConfirmation = null, _wipeVerifier = null;
+window._fsWipeSendOTP = async function() {
+  const user = auth.currentUser;
+  if (!user || !user.phoneNumber) throw new Error('not-logged-in');
+  if (_wipeVerifier) { try { _wipeVerifier.clear(); } catch(e){} _wipeVerifier = null; }
+  _wipeVerifier = new RecaptchaVerifier(auth, 'del-recaptcha-container', { size: 'invisible', callback: () => {} });
+  _wipeConfirmation = await signInWithPhoneNumber(auth, user.phoneNumber, _wipeVerifier);
+  return (user.phoneNumber || '');
+};
+window._fsWipeVerify = async function(otp) {
+  const user = auth.currentUser;
+  if (!user || !_wipeConfirmation) throw new Error('no-confirmation');
+  const cred = PhoneAuthProvider.credential(_wipeConfirmation.verificationId, otp);
+  await reauthenticateWithCredential(user, cred);   // throws on a wrong code
+  _wipeConfirmation = null;
+  if (_wipeVerifier) { try { _wipeVerifier.clear(); } catch(e){} _wipeVerifier = null; }
+  return true;
+};
+window._fsWipeCancel = function() {
+  _wipeConfirmation = null;
+  if (_wipeVerifier) { try { _wipeVerifier.clear(); } catch(e){} _wipeVerifier = null; }
+};
 window._fsDeleteSendOTP = async function() {
   const user = auth.currentUser;
   if (!user || !user.phoneNumber) throw new Error('not-logged-in');
@@ -10500,49 +10548,155 @@ function drOpen(){
   document.getElementById('dr-step1').style.display='block';
   document.getElementById('dr-step2').style.display='none';
   document.getElementById('dr-chk').checked=false;
-  document.getElementById('dr-word').value='';
+  drOtpReset();
   var s=_drScan();
-  document.getElementById('dr-warn').innerHTML='यह <b>सारा डेटा</b> मिटा देगा — आया/गया, पुरानी बिक्री, <b>Purchase के बिल और सप्लायर भी</b>।<br>यह वापस नहीं आ सकता।';
+  document.getElementById('dr-warn').innerHTML='This erases <b>everything</b> — inward and outward entries, past sales, <b>purchase bills and suppliers too</b>.<br>It cannot be undone.';
   var go=[
-    ['आया / गया एंट्री', s.boxes+' बॉक्स'],
-    ['दिन के रिकॉर्ड', s.days+' दिन'],
-    ['Purchase बिल + सप्लायर', s.maal+' बिल'],
-    ['उधार (बंद feature)', s.ud+' रिकॉर्ड'],
-    ['लक्ष्य / Goals', s.goal+' रिकॉर्ड']
+    ['Inward / outward entries', s.boxes+(s.boxes===1?' entry':' entries')],
+    ['Day records', s.days+(s.days===1?' day':' days')],
+    ['Purchase bills + suppliers', s.maal+(s.maal===1?' bill':' bills')],
+    ['Udhaar (retired)', s.ud+(s.ud===1?' record':' records')],
+    ['Goals', s.goal+(s.goal===1?' record':' records')]
   ];
-  document.getElementById('dr-go-n').textContent=go.length+' तरह';
+  document.getElementById('dr-go-n').textContent=go.length+' types';
   document.getElementById('dr-go-b').innerHTML=go.map(function(p){
     return '<div class="dr-r">'+p[0]+'<span class="c">'+p[1]+'</span></div>';}).join('');
   var keep=[
-    ['लॉगिन / फ़ोन नंबर','सुरक्षित'],
-    ['दुकान का नाम + GSTIN','सुरक्षित'],
-    ['App PIN + Mahina PIN','सुरक्षित']
+    ['Login / phone number','Safe'],
+    ['Shop name + GSTIN','Safe'],
+    ['App PIN + Mahina PIN','Safe']
   ];
-  document.getElementById('dr-keep-n').textContent=keep.length+' तरह';
+  document.getElementById('dr-keep-n').textContent=keep.length+' types';
   document.getElementById('dr-keep-b').innerHTML=keep.map(function(p){
     return '<div class="dr-r">'+p[0]+'<span class="c">'+p[1]+'</span></div>';}).join('');
-  document.getElementById('dr-chk-t').textContent='मैं समझता हूँ कि Purchase समेत सारा डेटा हमेशा के लिए मिट जाएगा';
+  document.getElementById('dr-chk-t').textContent='I understand all data, including Purchase, will be permanently erased';
   drGate();
   document.getElementById('dreset-overlay').classList.add('show');
 }
-function drClose(){document.getElementById('dreset-overlay').classList.remove('show');}
+function drClose(){
+  document.getElementById('dreset-overlay').classList.remove('show');
+  drOtpReset();
+  try{ if(window._fsWipeCancel) window._fsWipeCancel(); }catch(e){}
+}
 function drGate(){var ok=document.getElementById('dr-chk').checked;
   document.getElementById('dr-next').className='mk-save'+(ok?'':' dr-dis');}
-function drGate2(){var ok=(document.getElementById('dr-word').value||'').trim().toUpperCase()==='MITAO';
-  document.getElementById('dr-final').className='mk-save'+(ok?'':' dr-dis');}
-function drStep2(){
+
+/* ── Delete code: state, boxes, resend timer ─────────────────────────────
+   Typing MITAO proved nothing — anyone holding the phone could type it. The
+   code goes to the owner's own number and Firebase verifies it, so the wipe
+   needs the SIM, not just the unlocked phone.                            */
+function _drPl(n,one,many){ return n+' '+(n===1?one:many); }
+var DRO_IDS=['dro-1','dro-2','dro-3','dro-4','dro-5','dro-6'];
+var _droTimer=null, _droLeft=0, _droTries=0, _droBusy=false;
+function drOtpDigits(){ return DRO_IDS.map(function(id){var e=document.getElementById(id);return e?(e.value||'').replace(/\D/g,''):'';}).join(''); }
+function drOtpReset(){
+  DRO_IDS.forEach(function(id){var e=document.getElementById(id);if(e){e.value='';e.classList.remove('filled');}});
+  var er=document.getElementById('dro-err'); if(er){er.style.display='none';er.textContent='';}
+  _droTries=0; _droBusy=false;
+  var f=document.getElementById('dr-final'); if(f){f.textContent='Erase permanently';f.className='mk-save dr-dis';}
+  clearInterval(_droTimer); _droTimer=null;
+}
+function drOtpGate(){
+  if(_droBusy) return;
+  var ok=drOtpDigits().length===6;
+  document.getElementById('dr-final').className='mk-save'+(ok?'':' dr-dis');
+}
+function drOtpErr(msg){
+  var er=document.getElementById('dro-err');
+  er.textContent=msg; er.style.display='block';
+}
+function drOtpTick(){
+  clearInterval(_droTimer); _droLeft=30;
+  var t=document.getElementById('dro-timer'), r=document.getElementById('dro-resend');
+  r.className='dro-resend';
+  var paint=function(){
+    if(_droLeft<=0){ clearInterval(_droTimer); _droTimer=null; t.textContent='Didn\u2019t get the code?'; r.className='dro-resend on'; return; }
+    t.textContent='Resend in 0:'+(_droLeft<10?'0':'')+_droLeft; _droLeft--;
+  };
+  paint(); _droTimer=setInterval(paint,1000);
+}
+async function drResend(){
+  var r=document.getElementById('dro-resend');
+  if(r.className.indexOf('on')<0) return;
+  r.className='dro-resend';
+  try{ await window._fsWipeSendOTP(); drOtpErr('New code sent.'); drOtpTick(); }
+  catch(e){ drOtpErr('Could not send the code — try again.'); r.className='dro-resend on'; }
+}
+(function drOtpWire(){
+  var wire=function(){
+    DRO_IDS.forEach(function(id,i){
+      var el=document.getElementById(id); if(!el||el._droWired) return; el._droWired=true;
+      el.addEventListener('input',function(){
+        var v=(el.value||'').replace(/\D/g,'');
+        // a pasted or autofilled 6-digit code lands in one box — spread it out
+        if(v.length>1){
+          v.slice(0,6).split('').forEach(function(ch,k){
+            var b=document.getElementById(DRO_IDS[k]); if(b){b.value=ch;b.classList.add('filled');}
+          });
+          var last=document.getElementById(DRO_IDS[Math.min(v.length,6)-1]); if(last)last.focus();
+        } else {
+          el.value=v; el.classList.toggle('filled',!!v);
+          if(v && i<DRO_IDS.length-1) document.getElementById(DRO_IDS[i+1]).focus();
+        }
+        drOtpGate();
+      });
+      el.addEventListener('keydown',function(ev){
+        if(ev.key==='Backspace' && !el.value && i>0){ var p=document.getElementById(DRO_IDS[i-1]); p.value=''; p.classList.remove('filled'); p.focus(); drOtpGate(); }
+      });
+    });
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wire); else wire();
+})();
+
+async function drStep2(){
+  if(!document.getElementById('dr-chk').checked) return;
+  var btn=document.getElementById('dr-next');
+  var old=btn.textContent; btn.textContent='Sending code…'; btn.className='mk-save dr-dis';
+  var phone='';
+  try{ phone=await window._fsWipeSendOTP(); }
+  catch(e){
+    btn.textContent=old; btn.className='mk-save';
+    try{ toast('Could not send the code — check your network and try again',true); }catch(_){}
+    return;
+  }
+  btn.textContent=old; btn.className='mk-save';
   var s=_drScan();
-  document.getElementById('dr-warn2').innerHTML='<b>'+s.boxes+' बॉक्स · '+s.days+' दिन · '+s.maal+' Purchase बिल</b> मिटने वाले हैं।<br>App बिलकुल खाली हो जाएगा — <b>कुछ भी बाकी नहीं रहेगा</b>।';
+  var masked=phone ? phone.replace(/^(\+91)?(\d{5})(\d{5})$/,'+91 $2 $3') : 'your number';
+  document.getElementById('dr-warn2').innerHTML='Confirm it is you before erasing.<br>A 6-digit code was sent to <b>'+masked+'</b>.'
+    +'<br><span style="color:#c9a7a7;">'+_drPl(s.boxes,'entry','entries')+' · '+_drPl(s.days,'day','days')+' · '+_drPl(s.maal,'purchase bill','purchase bills')+' will be erased.</span>';
   document.getElementById('dr-step1').style.display='none';
   document.getElementById('dr-step2').style.display='block';
-  document.getElementById('dr-word').value='';drGate2();
+  drOtpReset(); drOtpTick();
+  setTimeout(function(){ var f=document.getElementById(DRO_IDS[0]); if(f)f.focus(); },120);
 }
-function drRun(){
-  if((document.getElementById('dr-word').value||'').trim().toUpperCase()!=='MITAO')return;
+
+async function drRun(){
+  if(_droBusy) return;
+  var code=drOtpDigits();
+  if(code.length!==6) return;
+  var btn=document.getElementById('dr-final');
+  _droBusy=true; btn.textContent='Verifying…'; btn.className='mk-save dr-dis';
+  try{
+    await window._fsWipeVerify(code);
+  }catch(e){
+    _droBusy=false; _droTries++;
+    btn.textContent='Erase permanently';
+    if(_droTries>=3){
+      try{ toast('Too many wrong codes — start again',true); }catch(_){}
+      drClose(); return;
+    }
+    drOtpErr('Incorrect code — try again. '+(3-_droTries)+(3-_droTries===1?' attempt left.':' attempts left.'));
+    DRO_IDS.forEach(function(id){var el=document.getElementById(id);if(el){el.value='';el.classList.remove('filled');}});
+    btn.className='mk-save dr-dis';
+    var f=document.getElementById(DRO_IDS[0]); if(f)f.focus();
+    return;
+  }
+  btn.textContent='Erasing…';
   DR_COLS.forEach(function(k){ try{ _drWipe(k); }catch(e){} });
   try{ localStorage.removeItem('hk_lg_recent_saves_'+CURRENT_UID); }catch(e){}
-  try{ toast('✅ सब कुछ मिट गया — refresh हो रहा है'); }catch(e){}
-  drClose();
+  try{ toast('✅ All data erased — refreshing'); }catch(e){}
+  clearInterval(_droTimer); _droTimer=null;
+  document.getElementById('dreset-overlay').classList.remove('show');
   setTimeout(function(){ try{ location.reload(); }catch(e){} },1100);
 }
 function openDeleteAccount(){

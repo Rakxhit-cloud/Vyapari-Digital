@@ -14256,13 +14256,33 @@ function npReopenPreview(){
   'सत्तर':70,'पचहत्तर':75,'अस्सी':80,'पचासी':85,'नब्बे':90,'पंचानबे':95,
   'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,'fifteen':15,'twenty':20,'fifty':50};
   var _HI_MUL={'सौ':100,'हज़ार':1000,'हजार':1000,'लाख':100000,'करोड़':10000000,'hundred':100,'thousand':1000,'lakh':100000,'k':1000};
-  var _DIR_IN=['मिले','मिला','मिली','आया','आये','आए','लिया','लिये','लिए','जमा','वसूल','वापस','received','aaya','mila','mile','liya','jama'];
-  var _DIR_OUT=['दिए','दिया','दिये','गया','गए','गये','भरा','भरे','खर्च','खर्चा','चुकाया','भेजे','भेजा','diya','diye','gaya','kharch','paid','bheja'];
+  /* Direction vocabulary, in two tiers.
+     STRONG = the speaker said what happened to the money ("मिले", "दिया").
+     NOUN   = the speaker only named the thing ("सेल", "बिजली का बिल") — for a
+              shopkeeper a sale is always money in and a bill is always money
+              out, so asking आया/गया for those is a needless extra tap.
+     A strong verb always beats a noun; within a tier the LAST mention wins. */
+  var _DIR_IN=['मिले','मिला','मिली','आया','आये','आए','लिया','लिये','लिए','जमा','वसूल','वसूले','वसूला','वापस','आयी','आई','कमाया','कमाये','received','receive','aaya','aye','mila','mile','liya','jama','vasool','wapas'];
+  var _DIR_OUT=['दिए','दिया','दिये','गया','गए','गये','भरा','भरे','भरी','खर्च','खर्चा','खर्चे','चुकाया','चुकाये','चुकाए','भेजे','भेजा','भेजी','लगा','लगे','कटे','काटा','diya','diye','gaya','gaye','kharch','kharcha','paid','pay','bheja','bheje','chukaya'];
+  /* Nouns that carry their own direction for a retail shop. */
+  var _DIR_IN_N=['सेल','सैल','बिक्री','बेचा','बेची','बेचे','बिका','बिके','ग्राहक','कस्टमर','वसूली','उगाही','sale','sales','sell','sold','cash sale','collection','deposit','जमा'];
+  var _DIR_OUT_N=['बिल','बिजली','पानी','किराया','किराये','किराए','भाड़ा','भाड़े','रेंट','rent','खरीद','खरीदा','खरीदी','खरीदे','माल','purchase','bought','सैलरी','सेलरी','तनख्वाह','salary','मजदूरी','पगार','पेट्रोल','डीजल','डीज़ल','petrol','diesel','चाय','नाश्ता','खाना','टैक्स','tax','gst','किस्त','emi','loan','लोन','ट्रांसपोर्ट','transport','बिल्टी','मरम्मत','repair','recharge','रिचार्ज','इंटरनेट','internet','बिजली का बिल','expense','kharcha'];
+  /* Tokens that are never part of an amount: "9 बजे" is a time, not ₹9. */
+  var _AMT_STOP=['बजे','तारीख','तारीक','baje','date','am','pm','%','परसेंट','percent'];
   function _lgNorm(t){ return String(t||'').replace(/[०-९]/g,function(d){return '०१२३४५६७८९'.indexOf(d);}).replace(/[,\u200b]/g,'').trim(); }
   function _lgParseHi(raw){
     var t=_lgNorm(raw), lower=t.toLowerCase(), amt=0;
-    var m=lower.match(/(\d+(?:\.\d+)?)\s*(सौ|हज़ार|हजार|लाख|करोड़|hundred|thousand|lakh|k)?/);
-    if(m){ amt=parseFloat(m[1]); if(m[2]) amt*= (_HI_MUL[m[2]]||1); }
+    /* Walk every number in the sentence and drop the ones that are clearly not
+       money — "9 बजे" is nine o'clock, not ₹9. */
+    var re=/(\d+(?:\.\d+)?)\s*(सौ|हज़ार|हजार|लाख|करोड़|hundred|thousand|lakh|k)?/g, mm;
+    while((mm=re.exec(lower))!==null){
+      var tail=lower.slice(mm.index+mm[0].length).trim().split(/[\s,।]+/)[0]||'';
+      var isStop=false;
+      for(var si2=0; si2<_AMT_STOP.length; si2++){ if(tail===_AMT_STOP[si2] || tail.indexOf(_AMT_STOP[si2])===0){ isStop=true; break; } }
+      if(isStop) continue;
+      var v=parseFloat(mm[1]); if(mm[2]) v*=(_HI_MUL[mm[2]]||1);
+      if(v>amt) amt=v;          // the rupee figure is the largest real number said
+    }
     if(!amt){
       var w=t.split(/\s+/), tot=0, cur=0, saw=false;
       for(var i=0;i<w.length;i++){ var x=w[i], xl=x.toLowerCase();
@@ -14270,10 +14290,28 @@ function npReopenPreview(){
         else if(_HI_MUL[x]||_HI_MUL[xl]){ var mu=_HI_MUL[x]||_HI_MUL[xl]; cur=(cur||1)*mu; if(mu>=1000){ tot+=cur; cur=0; } saw=true; } }
       if(saw) amt=tot+cur;
     }
-    var dir='unclear', best=-1;
-    _DIR_IN.forEach(function(k){ var p=lower.lastIndexOf(k); if(p>best){best=p;dir='in';} });
-    _DIR_OUT.forEach(function(k){ var p=lower.lastIndexOf(k); if(p>best){best=p;dir='out';} });
-    return { amount: Math.round(amt)||0, direction: dir, note: t.slice(0,40) };
+    /* Direction. Token-aware rather than raw substring, so "लगाया" can't be read
+       as "गया". Strong verbs first; only if none are present do the category
+       nouns decide. Anything else stays 'unclear' and the user is asked. */
+    var toks=lower.split(/[\s,।.!?]+/).filter(Boolean);
+    var hit=function(list){
+      var best=-1;
+      for(var i=0;i<toks.length;i++){
+        for(var j=0;j<list.length;j++){
+          var k=list[j];
+          if(toks[i]===k || (k.length>=4 && toks[i].indexOf(k)>=0) || (k.indexOf(' ')>0 && lower.indexOf(k)>=0)) { best=i; break; }
+        }
+      }
+      return best;
+    };
+    var dir='unclear', via='none';
+    var si=hit(_DIR_IN), so=hit(_DIR_OUT);
+    if(si>=0 || so>=0){ dir = (si>so) ? 'in' : 'out'; via='verb'; }
+    else {
+      var ni=hit(_DIR_IN_N), no=hit(_DIR_OUT_N);
+      if(ni>=0 || no>=0){ dir = (ni>no) ? 'in' : 'out'; via='noun'; }
+    }
+    return { amount: Math.round(amt)||0, direction: dir, note: t.slice(0,40), via: via };
   }
   function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
   function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
@@ -14290,7 +14328,7 @@ function npReopenPreview(){
     var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+p.amount.toLocaleString('en-IN');
     var nel=el('lg-vnote-'+type); if(nel) nel.textContent=p.note||'';
     setState(type,'res');
-    try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now())}); }catch(e){}
+    try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now()),dir:p.direction,via:p.via||'none'}); }catch(e){}
     return true;
   }
   function _srKill(S){

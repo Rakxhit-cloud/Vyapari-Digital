@@ -14266,7 +14266,41 @@ function npReopenPreview(){
   var _DIR_OUT=['दिए','दिया','दिये','गया','गए','गये','भरा','भरे','भरी','खर्च','खर्चा','खर्चे','चुकाया','चुकाये','चुकाए','भेजे','भेजा','भेजी','लगा','लगे','कटे','काटा','diya','diye','gaya','gaye','kharch','kharcha','paid','pay','bheja','bheje','chukaya'];
   /* Nouns that carry their own direction for a retail shop. */
   var _DIR_IN_N=['सेल','सैल','बिक्री','बेचा','बेची','बेचे','बिका','बिके','ग्राहक','कस्टमर','वसूली','उगाही','sale','sales','sell','sold','cash sale','collection','deposit','जमा'];
-  var _DIR_OUT_N=['बिल','बिजली','पानी','किराया','किराये','किराए','भाड़ा','भाड़े','रेंट','rent','खरीद','खरीदा','खरीदी','खरीदे','माल','purchase','bought','सैलरी','सेलरी','तनख्वाह','salary','मजदूरी','पगार','पेट्रोल','डीजल','डीज़ल','petrol','diesel','चाय','नाश्ता','खाना','टैक्स','tax','gst','किस्त','emi','loan','लोन','ट्रांसपोर्ट','transport','बिल्टी','मरम्मत','repair','recharge','रिचार्ज','इंटरनेट','internet','बिजली का बिल','expense','kharcha'];
+  var _DIR_OUT_N=['बिल','बिजली','पानी','किराया','किराये','किराए','भाड़ा','भाड़े','रेंट','rent','खरीद','खरीदा','खरीदी','खरीदे','माल','purchase','purchased','bought','परचेज','परचेज़','परचेस','पेमेंट','payment','सैलरी','सेलरी','तनख्वाह','salary','मजदूरी','पगार','पेट्रोल','डीजल','डीज़ल','petrol','diesel','चाय','नाश्ता','खाना','टैक्स','tax','gst','किस्त','emi','loan','लोन','ट्रांसपोर्ट','transport','बिल्टी','मरम्मत','repair','recharge','रिचार्ज','इंटरनेट','internet','बिजली का बिल','expense','kharcha'];
+  /* Speech recognition returns Hindi audio in Devanagari, so an English word a
+     shopkeeper actually says — "cash sale", "UPI", "purchase", "salary" — comes
+     back as कैश सेल / यूपीआई / परचेज़ / सैलरी. Those are English words spoken in a
+     Hindi sentence, so the note shows them in English. Longest phrases first,
+     because "कैश सेल" must win over "कैश" alone. */
+  var _EN_PHRASE=[
+    ['यू पी आई सेल','UPI sale'],['यूपीआई सेल','UPI sale'],['upi सेल','UPI sale'],
+    ['कैश सेल','Cash sale'],['कॅश सेल','Cash sale'],['कैश सैल','Cash sale'],['cash सेल','Cash sale'],
+    ['ऑनलाइन सेल','Online sale'],['क्रेडिट सेल','Credit sale'],
+    ['बिजली का बिल','Electricity bill'],['बिजली बिल','Electricity bill'],
+    ['यू पी आई','UPI'],['यूपीआई','UPI'],['जी एस टी','GST'],['जीएसटी','GST']
+  ];
+  var _EN_WORD={
+    'कैश':'Cash','कॅश':'Cash','सेल':'sale','सैल':'sale','परचेज':'Purchase','परचेज़':'Purchase',
+    'परचेस':'Purchase','सैलरी':'Salary','सेलरी':'Salary','सलरी':'Salary','बिल':'bill',
+    'रेंट':'Rent','पेट्रोल':'Petrol','डीजल':'Diesel','डीज़ल':'Diesel','ट्रांसपोर्ट':'Transport',
+    'रिचार्ज':'Recharge','इंटरनेट':'Internet','टैक्स':'Tax','किस्त':'EMI','ईएमआई':'EMI',
+    'कस्टमर':'Customer','ग्राहक':'Customer','डिलीवरी':'Delivery','ऑनलाइन':'Online',
+    'कार्ड':'Card','बैंक':'Bank','चेक':'Cheque','एडवांस':'Advance','डिस्काउंट':'Discount',
+    'स्टॉक':'Stock','ऑर्डर':'Order','मार्केट':'Market','पेमेंट':'Payment','डिपॉजिट':'Deposit'
+  };
+  function _lgEnglishise(s){
+    var out=String(s||'');
+    for(var i=0;i<_EN_PHRASE.length;i++){
+      var re=new RegExp(_EN_PHRASE[i][0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+      out=out.replace(re,_EN_PHRASE[i][1]);
+    }
+    out=out.split(/(\s+)/).map(function(w){
+      var k=w.trim(); if(!k) return w;
+      return (_EN_WORD[k]!==undefined) ? w.replace(k,_EN_WORD[k]) : w;
+    }).join('');
+    out=out.replace(/\s{2,}/g,' ').trim();
+    return out ? out.charAt(0).toUpperCase()+out.slice(1) : out;
+  }
   /* Tokens that are never part of an amount: "9 बजे" is a time, not ₹9. */
   var _AMT_STOP=['बजे','तारीख','तारीक','baje','date','am','pm','%','परसेंट','percent'];
   function _lgNorm(t){ return String(t||'').replace(/[०-९]/g,function(d){return '०१२३४५६७८९'.indexOf(d);}).replace(/[,\u200b]/g,'').trim(); }
@@ -14311,7 +14345,7 @@ function npReopenPreview(){
       var ni=hit(_DIR_IN_N), no=hit(_DIR_OUT_N);
       if(ni>=0 || no>=0){ dir = (ni>no) ? 'in' : 'out'; via='noun'; }
     }
-    return { amount: Math.round(amt)||0, direction: dir, note: t.slice(0,40), via: via };
+    return { amount: Math.round(amt)||0, direction: dir, note: _lgEnglishise(t).slice(0,40), via: via };
   }
   function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
   function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
@@ -14508,7 +14542,7 @@ function npReopenPreview(){
       var amt = res && res.data && res.data.amount ? parseInt(res.data.amount,10) : 0;
       if(!amt || amt<=0){ return _fail(type,'समझ नहीं आया — फिर से बोलें'); }
       S.amt=amt;
-      S.note=(res && res.data && res.data.note) ? String(res.data.note).slice(0,40) : '';
+      S.note=(res && res.data && res.data.note) ? _lgEnglishise(String(res.data.note)).slice(0,40) : '';
       S.dir =(res && res.data && res.data.direction) || 'unclear';
       try{ if(window.logEvent) window.logEvent('voice_path',{path:'audio',ms:Date.now()-(S.t0||Date.now())}); }catch(e){}
       var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+amt.toLocaleString('en-IN');

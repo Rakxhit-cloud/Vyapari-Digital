@@ -106,9 +106,6 @@ button, .fab, .auth-btn, .nav-item, .kpi-card, .edit-pay-pill, .ss-view-all,
   to   { opacity: 1; transform: translateY(0); }
 }
 /* Respect users who prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .screen.active { animation: none; }
-}
 /* #4 Safe-area insets: keep fixed bottom-nav and FAB clear of the gesture bar / notch */
 .bottom-nav { padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
 .fab { bottom: calc(86px + env(safe-area-inset-bottom)); }
@@ -516,36 +513,6 @@ body.notif-modal-open { overflow: hidden; }
 .fab:active { transform: scale(.92); }
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0a1530; border-top: 1px solid #2a4078; display: flex; justify-content: space-around; padding: 10px 4px 12px; z-index: 100; align-items: flex-end; gap: 2px; overflow: hidden; }
 .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 6px 6px; flex: 1 1 auto; min-width: 0; }
-@media (max-width: 360px) {
-  .lg-home-body { padding:18px 14px; gap:12px; }
-  .lg-home-icon { width:64px; height:64px; border-radius:16px; font-size:34px; }
-  .lg-home-icon svg { width:48px; height:48px; }
-  .lg-home-title { font-size:21px; }
-  .lg-home-sub { font-size:11.5px; }
-  .lg-home-cta { font-size:12.5px; padding:10px 12px; }
-  .mk-tile-body { padding:16px 13px; gap:11px; }
-  .mk-tile-icon { width:62px; height:62px; border-radius:15px; }
-  .mk-tile-icon svg { width:40px; height:40px; }
-  .mk-tile-title { font-size:20px; }
-  .mk-tile-sub { font-size:11px; }
-  .mk-tile-cta { font-size:12.5px; padding:10px 12px; }
-  .home-pair { gap:8px; }
-  .pair-body { padding:11px 10px; }
-  .pair-icon { width:38px; height:38px; border-radius:11px; font-size:18px !important; }
-  .pair-icon svg { width:22px; height:22px; }
-  .pair-title { font-size:13.5px; }
-  .pair-cta { font-size:11.5px; padding:8px 6px; }
-}
-@media (max-width: 380px) {
-  .bottom-nav { padding: 8px 2px 10px; gap: 1px; }
-  .nav-item { padding: 4px 3px 6px; gap: 3px; }
-  .nav-icon { font-size: 18px !important; }
-  .nav-lbl { font-size: 9px !important; }
-}
-@media (min-width: 381px) and (max-width: 420px) {
-  .nav-item { padding: 4px 5px 7px; }
-  .nav-lbl { font-size: 10px !important; }
-}
 .nav-icon { font-size: 28px; line-height: 1; opacity: 0.65; }
 .nav-lbl { font-size: 11px; color: #8878c0; font-weight: 500; }
 .nav-item.active { border-bottom: 2px solid #f0c040; padding-bottom: 6px; }
@@ -965,59 +932,9 @@ body.notif-modal-open { overflow: hidden; }
 .install-sheet-btn { width: 100%; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border: 2px solid #f0d890; color: #1a1208; font-size: 15px; font-weight: 500; padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 10px; letter-spacing: .3px; box-shadow: 0 2px 0 #8a6818; }
 .install-sheet-btn:active { opacity: .85; }
 .install-sheet-later { width: 100%; background: transparent; border: none; color: #b0a0e8; font-size: 12px; padding: 8px; cursor: pointer; }
-@media (min-width: 768px) and (min-height: 600px) {
-  .header { padding: 14px 28px; }
-  .header-title { font-size: 18px; }
-  .pad { padding: 0 24px; }
-  .fw { padding: 16px 24px; }
-  .kpi-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
-  .month-grid { grid-template-columns: repeat(6,1fr); }
-  .auth-screen { padding: 40px; }
-
-  /* ===== TABLET: one centred app column, every screen ===== */
-  .screen { max-width: 760px; margin-left: auto; margin-right: auto; }
-  .bottom-nav { max-width: 760px; left: 50%; right: auto; transform: translateX(-50%);
-                border-left: 1px solid #2a4078; border-right: 1px solid #2a4078;
-                border-radius: 14px 14px 0 0; }
-
-  /* Tiles scale up so the column fills the screen instead of stranding it */
-  .lg-home-tile { margin: 15px 0; border-radius: 22px; }
-  .lg-home-stripe { height: 6px; }
-  .lg-home-body { padding: 25px 22px; gap: 20px; }
-  .lg-home-icon { width: 90px; height: 90px; font-size: 50px; border-radius: 22px; }
-  .lg-home-title { font-size: 30px; }
-  .lg-home-sub { font-size: 15px; margin-top: 7px; }
-  .lg-home-cta { font-size: 16px; padding: 12px 20px; border-radius: 12px; }
-
-  .mk-tile { border-radius: 22px; }
-  .mk-tile-stripe { height: 6px; }
-  .mk-tile-body { padding: 23px 20px; gap: 19px; }
-  .mk-tile-icon { width: 86px; height: 86px; border-radius: 21px; }
-  .mk-tile-icon svg { width: 54px; height: 54px; }
-  .mk-tile-title { font-size: 29px; }
-  .mk-tile-sub { font-size: 14.5px; margin-top: 7px; }
-  .mk-tile-cta { font-size: 16px; padding: 12px 19px; border-radius: 12px; }
-  .mk-tile-pill { font-size: 14px; padding: 5px 13px; }
-  .mk-tile-dot, .mk-dot { width: 10px; height: 10px; }
-}
 
 /* Portrait tablets have the extra height — go a step larger again */
-@media (min-width: 768px) and (orientation: portrait) and (min-height: 600px) {
-  .lg-home-tile { margin: 18px 0; }
-  .lg-home-body { padding: 30px 26px; gap: 24px; }
-  .lg-home-icon { width: 106px; height: 106px; font-size: 58px; border-radius: 25px; }
-  .lg-home-title { font-size: 35px; }
-  .lg-home-sub { font-size: 17px; margin-top: 8px; }
-  .lg-home-cta { font-size: 18px; padding: 15px 23px; }
-
-  .mk-tile-body { padding: 27px 24px; gap: 22px; }
-  .mk-tile-icon { width: 100px; height: 100px; border-radius: 24px; }
-  .mk-tile-icon svg { width: 62px; height: 62px; }
-  .mk-tile-title { font-size: 33px; }
-  .mk-tile-sub { font-size: 16.5px; margin-top: 8px; }
-  .mk-tile-cta { font-size: 18px; padding: 15px 22px; }
-  .mk-tile-pill { font-size: 15px; padding: 6px 14px; }
-} /* ── Responsive: ignore Android system text scaling ── */
+/* ── Responsive: ignore Android system text scaling ── */
 html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 /* ── Responsive: let flex text shrink instead of pushing buttons off-screen ── */
 .lg-home-text,.mk-tile-text,.ub-settings-item-txt,.udhaar-person-name,.edit-header-text,
@@ -2739,7 +2656,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
   <div class="lg-home-body">
     <div class="lg-home-icon"><svg width="56" height="56" viewBox="0 0 56 56" aria-label="Live हिसाब"><defs><linearGradient id="lh-pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfaf0"/><stop offset="1" stop-color="#dcd3b8"/></linearGradient><linearGradient id="lh-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe6a8"/><stop offset="0.5" stop-color="#e8c860"/><stop offset="1" stop-color="#b8902f"/></linearGradient><linearGradient id="lh-note" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6e6b6"/><stop offset="1" stop-color="#4ea568"/></linearGradient><linearGradient id="lh-band" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dff5e4"/><stop offset="0.5" stop-color="#bfe9cb"/><stop offset="1" stop-color="#dff5e4"/></linearGradient><linearGradient id="lh-phone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#243150"/><stop offset="1" stop-color="#161f38"/></linearGradient></defs><rect x="7" y="4" width="33" height="42" rx="4.5" fill="#0c1428"/><rect x="6" y="3" width="33" height="42" rx="4.5" fill="url(#lh-pg)" stroke="#2a3358" stroke-width="1.4"/><rect x="6" y="3" width="6.5" height="42" rx="3.2" fill="url(#lh-gold)"/><circle cx="9.2" cy="11" r="1.2" fill="#9a7820"/><circle cx="9.2" cy="24" r="1.2" fill="#9a7820"/><circle cx="9.2" cy="37" r="1.2" fill="#9a7820"/><line x1="17" y1="10" x2="35" y2="10" stroke="#b9c0d0" stroke-width="1.7" stroke-linecap="round"/><line x1="17" y1="15" x2="30" y2="15" stroke="#cfd5e2" stroke-width="1.7" stroke-linecap="round"/><line x1="17" y1="20" x2="35" y2="20" stroke="#cfd5e2" stroke-width="1.7" stroke-linecap="round"/><g transform="translate(1,29) rotate(-6)"><rect x="0" y="0" width="29" height="17" rx="2.5" fill="url(#lh-note)" stroke="#357a4a" stroke-width="1.1"/><rect x="1.6" y="1.6" width="25.8" height="13.8" rx="1.6" fill="none" stroke="#d4f3dc" stroke-width="0.7" opacity="0.8"/><rect x="0" y="6.5" width="29" height="4" fill="url(#lh-band)" opacity="0.95"/><line x1="0" y1="6.5" x2="29" y2="6.5" stroke="#3f8a55" stroke-width="0.4"/><line x1="0" y1="10.5" x2="29" y2="10.5" stroke="#3f8a55" stroke-width="0.4"/><circle cx="7" cy="8.5" r="3.2" fill="#9adcab" stroke="#2f6b44" stroke-width="0.8"/><text x="7" y="11" text-anchor="middle" fill="#1f4d31" font-family="sans-serif" font-size="5.5" font-weight="700">₹</text><text x="20" y="10.6" text-anchor="middle" fill="#235235" font-family="sans-serif" font-size="6" font-weight="700">500</text><circle cx="24.5" cy="3.4" r="1.6" fill="none" stroke="#3f8a55" stroke-width="0.6"/><circle cx="4.5" cy="13.4" r="1.6" fill="none" stroke="#3f8a55" stroke-width="0.6"/></g><g transform="translate(35,21) rotate(8)"><rect x="0" y="0" width="18" height="29" rx="3.5" fill="url(#lh-phone)" stroke="#4a5a82" stroke-width="1.2"/><rect x="1.8" y="4" width="14.4" height="21" rx="1.5" fill="#0d1526"/><rect x="6.5" y="1.6" width="5" height="1.3" rx="0.6" fill="#4a5a82"/><circle cx="9" cy="13" r="5.4" fill="none" stroke="#3ec873" stroke-width="1.5"/><path d="M6.2 13.2 l2 2.2 l3.4 -4.2" fill="none" stroke="#3ec873" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><line x1="5.5" y1="21" x2="12.5" y2="21" stroke="#2f9e5a" stroke-width="1.3" stroke-linecap="round"/></g><circle cx="46" cy="8" r="7" fill="#e84545" stroke="#0c1428" stroke-width="1.5"/><line x1="46" y1="4" x2="46" y2="10.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><path d="M42.8 8.5 l3.2 3.6 l3.2 -3.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="lg-home-text">
-      <div style="display:flex;align-items:center;gap:7px;">
+      <div class="tile-title-row">
         <div class="lg-home-title">Live हिसाब</div>
         <div class="lg-pill lg-pill-green"><span class="lg-dot lg-dot-green"></span>LIVE</div>
       </div>
@@ -2780,7 +2697,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
           </svg>
         </div>
         <div class="mk-tile-text">
-          <div class="mk-tile-title">Purchase/खरीद<span class="mk-tile-pill"><span class="mk-tile-dot"></span>सप्लायर</span></div>
+          <div class="mk-tile-title">Purchase/<wbr>खरीद<span class="mk-tile-pill"><span class="mk-tile-dot"></span>सप्लायर</span></div>
           <div class="mk-tile-sub">हर सप्लायर · हर उधार — एक tap में</div>
         </div>
         <div class="mk-tile-cta">खोलें →</div>
@@ -3458,11 +3375,15 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 <style>
 #s-statement{padding-bottom:100px;}
 .st-hdr{background:linear-gradient(180deg,#0d1c40,#0a1530);padding:11px 13px;}
-.st-hrow{display:flex;align-items:center;gap:11px;}
+.st-hrow{display:flex;align-items:center;gap:11px;flex-wrap:wrap;}
+.st-hrow>div{min-width:0;}
+.st-back,.st-hicon,.st-bizbtn{flex-shrink:0;}
+.st-htitle{flex-wrap:wrap;}
 .st-back{width:34px;height:34px;border-radius:9px;border:1px solid #2a4078;display:flex;align-items:center;justify-content:center;color:#8aa0d8;font-size:16px;cursor:pointer;}
 .st-hicon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#3a2c08,#1a1305);border:2px solid #c9a24b;display:flex;align-items:center;justify-content:center;}
 .st-hicon svg{width:28px;height:28px;}
 .st-htitle{font-size:18px;font-weight:800;color:#f0cf7a;display:flex;align-items:center;gap:7px;}
+.lg-pill,.mk-tile-pill,.st-propill{flex-shrink:0;}
 .st-propill{background:linear-gradient(135deg,#f0d890,#d4a850);color:#1a1208;font-size:8px;font-weight:900;padding:2px 7px;border-radius:10px;letter-spacing:.5px;}
 .st-hsub{font-size:10.5px;color:#8aa0d8;margin-top:2px;}
 .st-stripe{height:3px;background:linear-gradient(90deg,#d4a850,#cc7a47 40%,#4a90d4 75%,#e8c870);}
@@ -14407,5 +14328,110 @@ function npReopenPreview(){
     <div class="sgt-acts" id="sgt-acts"></div>
   </div>
 </div>
+
+<!-- ═══════════ LAYOUT LAYER — KEEP THIS LAST ═══════════
+     A media query only wins if it comes AFTER the rule it overrides.
+     These blocks used to sit near the top of the file, before the base
+     tile CSS, so every phone and tablet size inside them was dead and
+     small phones rendered desktop-sized tiles. Nothing but layout and
+     size overrides belongs below this line. -->
+<style>
+/* Tiles are icon + text + CTA on one row. Three rules keep that row intact:
+   1. the title row wraps instead of pushing its pill out past the edge
+   2. the text may shrink to 150px; below that the CTA drops to its own line
+   3. a long word breaks rather than overflowing                        */
+.tile-title-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-width:0;}
+.lg-home-body,.mk-tile-body{flex-wrap:wrap;}
+.lg-home-text,.mk-tile-text{flex:1 1 150px;min-width:0;}
+.lg-home-title,.mk-tile-title,.lg-home-sub,.mk-tile-sub{min-width:0;overflow-wrap:break-word;}
+.lg-home-cta,.mk-tile-cta{margin-left:auto;}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen.active { animation: none; }
+}
+/* Tile step-down. Was ≤360px, but that block predates the bigger tiles and
+   would shrink every 360px phone. Only genuinely narrow screens need it. */
+@media (max-width: 344px) {
+  .lg-home-body { padding:18px 14px; gap:12px; }
+  .lg-home-icon { width:64px; height:64px; border-radius:16px; font-size:34px; }
+  .lg-home-icon svg { width:48px; height:48px; }
+  .lg-home-title { font-size:21px; }
+  .lg-home-sub { font-size:11.5px; }
+  .lg-home-cta { font-size:12.5px; padding:10px 12px; }
+  .mk-tile-body { padding:16px 13px; gap:11px; }
+  .mk-tile-icon { width:62px; height:62px; border-radius:15px; }
+  .mk-tile-icon svg { width:40px; height:40px; }
+  .mk-tile-title { font-size:20px; }
+  .mk-tile-sub { font-size:11px; }
+  .mk-tile-cta { font-size:12.5px; padding:10px 12px; }
+  .home-pair { gap:8px; }
+  .pair-body { padding:11px 10px; }
+  .pair-icon { width:38px; height:38px; border-radius:11px; font-size:18px !important; }
+  .pair-icon svg { width:22px; height:22px; }
+  .pair-title { font-size:13.5px; }
+  .pair-cta { font-size:11.5px; padding:8px 6px; }
+}
+@media (max-width: 380px) {
+  .bottom-nav { padding: 8px 2px 10px; gap: 1px; }
+  .nav-item { padding: 4px 3px 6px; gap: 3px; }
+  .nav-icon { font-size: 18px !important; }
+  .nav-lbl { font-size: 9px !important; }
+}
+@media (min-width: 381px) and (max-width: 420px) {
+  .nav-item { padding: 4px 5px 7px; }
+  .nav-lbl { font-size: 10px !important; }
+}
+@media (min-width: 768px) and (min-height: 600px) {
+  .header { padding: 14px 28px; }
+  .header-title { font-size: 18px; }
+  .pad { padding: 0 24px; }
+  .fw { padding: 16px 24px; }
+  .kpi-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .month-grid { grid-template-columns: repeat(6,1fr); }
+  .auth-screen { padding: 40px; }
+
+  /* ===== TABLET: one centred app column, every screen ===== */
+  .screen { max-width: 760px; margin-left: auto; margin-right: auto; }
+  .bottom-nav { max-width: 760px; left: 50%; right: auto; transform: translateX(-50%);
+                border-left: 1px solid #2a4078; border-right: 1px solid #2a4078;
+                border-radius: 14px 14px 0 0; }
+
+  /* Tiles scale up so the column fills the screen instead of stranding it */
+  .lg-home-tile { margin: 15px 0; border-radius: 22px; }
+  .lg-home-stripe { height: 6px; }
+  .lg-home-body { padding: 25px 22px; gap: 20px; }
+  .lg-home-icon { width: 90px; height: 90px; font-size: 50px; border-radius: 22px; }
+  .lg-home-title { font-size: 30px; }
+  .lg-home-sub { font-size: 15px; margin-top: 7px; }
+  .lg-home-cta { font-size: 16px; padding: 12px 20px; border-radius: 12px; }
+
+  .mk-tile { border-radius: 22px; }
+  .mk-tile-stripe { height: 6px; }
+  .mk-tile-body { padding: 23px 20px; gap: 19px; }
+  .mk-tile-icon { width: 86px; height: 86px; border-radius: 21px; }
+  .mk-tile-icon svg { width: 54px; height: 54px; }
+  .mk-tile-title { font-size: 29px; }
+  .mk-tile-sub { font-size: 14.5px; margin-top: 7px; }
+  .mk-tile-cta { font-size: 16px; padding: 12px 19px; border-radius: 12px; }
+  .mk-tile-pill { font-size: 14px; padding: 5px 13px; }
+  .mk-tile-dot, .mk-dot { width: 10px; height: 10px; }
+}
+@media (min-width: 768px) and (orientation: portrait) and (min-height: 600px) {
+  .lg-home-tile { margin: 18px 0; }
+  .lg-home-body { padding: 30px 26px; gap: 24px; }
+  .lg-home-icon { width: 106px; height: 106px; font-size: 58px; border-radius: 25px; }
+  .lg-home-title { font-size: 35px; }
+  .lg-home-sub { font-size: 17px; margin-top: 8px; }
+  .lg-home-cta { font-size: 18px; padding: 15px 23px; }
+
+  .mk-tile-body { padding: 27px 24px; gap: 22px; }
+  .mk-tile-icon { width: 100px; height: 100px; border-radius: 24px; }
+  .mk-tile-icon svg { width: 62px; height: 62px; }
+  .mk-tile-title { font-size: 33px; }
+  .mk-tile-sub { font-size: 16.5px; margin-top: 8px; }
+  .mk-tile-cta { font-size: 18px; padding: 15px 22px; }
+  .mk-tile-pill { font-size: 15px; padding: 6px 14px; }
+}
+</style>
 </body>
 </html>

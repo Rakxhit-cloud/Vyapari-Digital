@@ -1175,23 +1175,31 @@ function stagePillHTML(stage) {
   return `<span class="stage-pill ${m.cls}"><span class="dot"></span>${m.text}</span>`;
 }
 
-function entriesMiniHTML(u) {
+/* Counts, whichever build the user is on.
+   The new app writes inCount/outCount/scanCount. Older builds only ever wrote
+   the गल्ला-era fields, so map those instead of showing nothing:
+     cash+upi boxes = आया,  kharcha boxes = गया,  maal = bills.
+   Scans were never in the old profile, so they come from analytics_events,
+   which every build logs. Approximate rows are marked with ~. */
+function entryCounts(u) {
   const p = u.profile || {};
-  let chips;
-  if (typeof p.inCount !== 'number') {
-    chips = '<div class="entries-mini"><span class="oldver">counts show after app update</span></div>';
-  } else {
-    const arr = [
-      { c: 'in',   l: 'आया',  n: p.inCount || 0 },
-      { c: 'out',  l: 'गया',  n: p.outCount || 0 },
-      { c: 'bill', l: 'Bills', n: p.maalCount || 0 },
-      { c: 'scan', l: 'Scans', n: p.scanCount || 0 },
-      { c: 'ud',   l: 'उधार', n: p.udhaarCount || 0 }
-    ];
-    chips = '<div class="entries-mini">' + arr.map(x =>
-      `<span class="entry-chip ${x.n === 0 ? 'zero' : x.c}">${x.l} ${x.n}</span>`
-    ).join('') + '</div>';
+  const evScans = (window._admScans && window._admScans[u.uid]) || 0;
+  if (typeof p.inCount === 'number') {
+    return { approx:false, src:'app',
+      n:[p.inCount||0, p.outCount||0, p.maalCount||0, (typeof p.scanCount==='number'?p.scanCount:evScans), p.udhaarCount||0] };
   }
+  if (typeof p.cashCount === 'number' || typeof p.maalCount === 'number') {
+    return { approx:true, src:'legacy',
+      n:[(p.cashCount||0)+(p.upiCount||0), p.kharchaCount||0, p.maalCount||0, evScans, p.udhaarCount||0] };
+  }
+  return { approx:false, src:'none', n:[0,0,0,0,0] };
+}
+function entriesMiniHTML(u) {
+  const ec = entryCounts(u), t = ec.approx ? '~' : '';
+  const lbl = [['in','आया'],['out','गया'],['bill','Bills'],['scan','Scans'],['ud','उधार']];
+  const chips = '<div class="entries-mini"' + (ec.approx ? ' title="Estimated from an older app build"' : '') + '>'
+    + lbl.map((x, i) => `<span class="entry-chip ${ec.n[i] === 0 ? 'zero' : x[0]}">${x[1]} ${t}${ec.n[i]}</span>`).join('')
+    + '</div>';
   return '<div>' + chips + act7HTML(u.uid) + '</div>';
 }
 
@@ -1446,15 +1454,15 @@ function trialSectionHTML(p) {
 }
 
 function engagementSectionHTML(u, p, stage) {
-  const hasNew = typeof p.inCount === 'number';
+  const ec = entryCounts(u), hasNew = ec.src !== 'none';
   const cells = [
-    { cls: 'b', label: 'आया',  n: p.inCount || 0 },
-    { cls: 'u', label: 'गया',  n: p.outCount || 0 },
-    { cls: 'p', label: 'Bills', n: p.maalCount || 0 },
-    { cls: 'm', label: 'Scans', n: p.scanCount || 0 },
-    { cls: 'k', label: 'उधार', n: p.udhaarCount || 0 }
+    { cls: 'b', label: 'आया',  n: ec.n[0] },
+    { cls: 'u', label: 'गया',  n: ec.n[1] },
+    { cls: 'p', label: 'Bills', n: ec.n[2] },
+    { cls: 'm', label: 'Scans', n: ec.n[3] },
+    { cls: 'k', label: 'उधार', n: ec.n[4] }
   ];
-  const zero = !hasNew || cells.every(c => c.n === 0);
+  const zero = cells.every(c => c.n === 0);
   const cellsHTML = cells.map(c => `
     <div class="engagement-card ${c.cls}${c.n === 0 ? ' zero' : ''}">
       <div class="engagement-num">${c.n}</div>
@@ -1508,9 +1516,11 @@ function engagementSectionHTML(u, p, stage) {
   return `
     <div class="profile-section">
       <div class="section-label">Engagement · lifetime</div>
-      ${hasNew
-        ? `<div class="engagement-grid" style="grid-template-columns:repeat(5,1fr)">${cellsHTML}</div>`
-        : `<div class="priority-alert" style="background:rgba(74,144,212,0.08);border-color:rgba(74,144,212,0.3);color:#4a90d4;margin:0 0 12px">⏳ <span>On an older app version — entry counts appear after the next app update</span></div>`}
+      <div class="engagement-grid" style="grid-template-columns:repeat(5,1fr)">${cellsHTML}</div>
+      <div class="last-active-row" style="margin-bottom:10px"><span class="last-active-label">Counts</span><span class="last-active-val">${
+        ec.src === 'app' ? ('live · updated ' + (p.countsUpdatedAt ? timeSince(new Date(p.countsUpdatedAt)) : '—'))
+        : ec.src === 'legacy' ? '~ estimated — app not updated yet'
+        : 'no counts written yet'}</span></div>
       ${window._admActDays ? `<div class="last-active-row" style="margin-bottom:10px"><span class="last-active-label">Active last 7 days</span><span class="last-active-val">${_act7Days(u.uid).filter(Boolean).length} of 7${u.lastActive ? ' · last seen ' + timeSince(new Date(u.lastActive)) : ''}</span></div>` : ''}
       ${footer}
     </div>
@@ -1711,8 +1721,12 @@ function _admLoadEvents(force){
   _admEventsP = fx.getDocs(fx.collection(db, 'analytics_events')).then(snap => {
     const ev = snap.docs.map(x => x.data()).filter(e => e && e.uid && e.day);
     _tvEvents = ev; window._admEvents = ev;
-    const m = {}; ev.forEach(e => { (m[e.uid] = m[e.uid] || new Set()).add(e.day); });
-    window._admActDays = m;
+    const m = {}, sc = {};
+    ev.forEach(e => {
+      (m[e.uid] = m[e.uid] || new Set()).add(e.day);
+      if (e.event === 'bill_scanned') sc[e.uid] = (sc[e.uid] || 0) + 1;
+    });
+    window._admActDays = m; window._admScans = sc;
     return ev;
   });
   _admEventsP.catch(() => { _admEventsP = null; });

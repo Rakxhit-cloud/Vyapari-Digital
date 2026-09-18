@@ -14301,15 +14301,45 @@ function npReopenPreview(){
     out=out.replace(/\s{2,}/g,' ').trim();
     return out ? out.charAt(0).toUpperCase()+out.slice(1) : out;
   }
+  /* Half and quarter figures — how every Indian retailer actually says money.
+     Two forms have to be handled:
+       words   साढ़े तीन हज़ार · ढाई सौ · डेढ़ हज़ार · सवा लाख · पौने चार हज़ार
+       clock   the speech engine hears "साढ़े तीन" as a TIME and returns "3:30",
+               so "3:30 हज़ार" really means 3.5 × 1000 = ₹3,500.
+     Both are rewritten to a plain decimal before the amount is read. */
+  var _FRAC={'साढ़े':0.5,'साढे':0.5,'सवा':0.25,'पौने':-0.25,'saadhe':0.5,'sawa':0.25,'paune':-0.25};
+  var _MUL_RE='सौ|हज़ार|हजार|लाख|करोड़|hundred|thousand|lakh|crore|k';
+  function _lgFrac(s){
+    var out=String(s||'');
+    // डेढ़ / ढाई stand alone
+    out=out.replace(/डेढ़|डेढ|देढ़|dedh|dedhh/g,'1.5').replace(/ढाई|अढ़ाई|ढ़ाई|dhai/g,'2.5');
+    // साढ़े/सवा/पौने + number word  →  decimal
+    out=out.replace(new RegExp('(साढ़े|साढे|सवा|पौने)\\s+([^\\s]+)','g'), function(m,p,w){
+      var base=(_HI_NUM[w]!==undefined)?_HI_NUM[w]:(/^\d+(\.\d+)?$/.test(w)?parseFloat(w):null);
+      if(base===null) return m;
+      return String(base+_FRAC[p]);
+    });
+    // साढ़े/सवा/पौने directly before a multiplier: सवा लाख = 1.25 लाख
+    out=out.replace(new RegExp('(साढ़े|साढे|सवा|पौने)\\s*('+_MUL_RE+')','g'), function(m,p,mu){
+      return (p==='सवा'?'1.25':(p==='पौने'?'0.75':'1.5'))+' '+mu;
+    });
+    // clock form, but only when a money multiplier follows — "3:30 बजे" stays a time
+    out=out.replace(new RegExp('(\\d{1,2}):(\\d{1,2})\\s*('+_MUL_RE+')','g'), function(m,h,mi,mu){
+      var v=parseInt(h,10)+(parseInt(mi,10)/60);
+      return (Math.round(v*100)/100)+' '+mu;
+    });
+    return out;
+  }
   /* Tokens that are never part of an amount: "9 बजे" is a time, not ₹9. */
   var _AMT_STOP=['बजे','तारीख','तारीक','baje','date','am','pm','%','परसेंट','percent'];
   function _lgNorm(t){ return String(t||'').replace(/[०-९]/g,function(d){return '०१२३४५६७८९'.indexOf(d);}).replace(/[,\u200b]/g,'').trim(); }
   function _lgParseHi(raw){
-    var t=_lgNorm(raw), lower=t.toLowerCase(), amt=0;
+    var t=_lgFrac(_lgNorm(raw)), lower=t.toLowerCase(), amt=0;
     /* Walk every number in the sentence and drop the ones that are clearly not
        money — "9 बजे" is nine o'clock, not ₹9. */
     var re=/(\d+(?:\.\d+)?)\s*(सौ|हज़ार|हजार|लाख|करोड़|hundred|thousand|lakh|k)?/g, mm;
     while((mm=re.exec(lower))!==null){
+      if(lower.charAt(mm.index+mm[0].length)===':') continue;   // "3:30 बजे" — a time
       var tail=lower.slice(mm.index+mm[0].length).trim().split(/[\s,।]+/)[0]||'';
       var isStop=false;
       for(var si2=0; si2<_AMT_STOP.length; si2++){ if(tail===_AMT_STOP[si2] || tail.indexOf(_AMT_STOP[si2])===0){ isStop=true; break; } }
@@ -14345,7 +14375,13 @@ function npReopenPreview(){
       var ni=hit(_DIR_IN_N), no=hit(_DIR_OUT_N);
       if(ni>=0 || no>=0){ dir = (ni>no) ? 'in' : 'out'; via='noun'; }
     }
-    return { amount: Math.round(amt)||0, direction: dir, note: _lgEnglishise(t).slice(0,40), via: via };
+    /* The figure is shown in ₹ above the note, so repeating it there wastes the
+       line: "3500 Purchase" reads better as just "Purchase". Only a leading
+       money phrase is removed — a number later in the sentence (a bill number,
+       a quantity) is left alone. */
+    var note=_lgEnglishise(t).replace(new RegExp('^\\s*(?:₹|rs\\.?|रु\\.?)?\\s*[\\d.,]+\\s*(?:'+_MUL_RE+')?\\s*(?:रुपये|रुपए|रूपये|रुपय|rupees|rupaye|rs\\.?)?\\s*(?:का|के|की|ka|ke|ki)?\\s*','i'),'').trim();
+    if(!note) note=_lgEnglishise(t);
+    return { amount: Math.round(amt)||0, direction: dir, note: note.slice(0,40), via: via };
   }
   function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
   function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }

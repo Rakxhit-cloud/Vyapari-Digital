@@ -3737,6 +3737,10 @@ textarea.st-biz-in{resize:none;}
     if(RX_COLL.test(n)) return "Collection";
     return "Other receipt";
   }
+  /* Display names in standard accounting terms. The internal keys (Sale /
+     Collection / Other receipt) stay as they are so no logic changes. */
+  var CAT_LBL={"Sale":"Sales","Collection":"Collection from Debtors","Other receipt":"Other Receipts"};
+  function payAcct(m){ return m==="Cash"?"To Cash A/c":((m&&m!=="Not recorded")?"To Bank A/c":"To Cash/Bank A/c"); }
   function payInfo(p){
     var mode=p.payMode||"", ref=p.payRef?("Ref "+p.payRef):(p.chequeNo?("Cheque "+p.chequeNo):"");
     if(mode==="Bank") mode=p.payRail||"Bank";
@@ -3886,17 +3890,17 @@ textarea.st-biz-in{resize:none;}
       + '</div>';
     var meta='<div class="meta"><div><b>Period:</b> '+esc(D.period.label)+(D.period.from?(" ("+dispDate(D.period.from)+" \u2013 "+dispDate(D.period.to)+")"):"")+'</div><div><b>As on:</b> '+dispDate(D.asOf||todayStr())+'</div></div>';
     var gstNote = (biz.gstin||D.supGstin) ? '' : '<div class="note1">GSTIN not set \u2014 add it via \u201c\u270f\ufe0f \u0935\u094d\u092f\u093e\u092a\u093e\u0930 \u091c\u093e\u0928\u0915\u093e\u0930\u0940\u201d + supplier GSTIN for a fully CA-ready statement.</div>';
-    var body='<tr class="op"><td>'+dispDate(D.period.from||(D.rows[0]&&D.rows[0].date)||todayStr())+'</td><td>Opening Balance</td><td></td><td class="r"></td><td class="r"></td><td class="r bal">'+f(D.opening)+'</td></tr>';
+    var body='<tr class="op"><td>'+dispDate(D.period.from||(D.rows[0]&&D.rows[0].date)||todayStr())+'</td><td>Opening Balance b/d</td><td></td><td class="r"></td><td class="r"></td><td class="r bal">'+f(D.opening)+'</td></tr>';
     D.rows.forEach(function(r){
-      var part = r.kind==="buy"?("Purchase \u2014 credit"+(r.dup?'<div style="color:#c62828;font-size:9.5px;font-weight:700;">\u26a0 Same bill no. also under: '+esc(r.dup)+'</div>':'')):(r.kind==="pay"?("Payment \u2014 "+esc(r.mode||"")+(r.ref?' <span style="color:#8a90a2;">\u00b7 '+esc(r.ref)+'</span>':'')):"Earlier payments (recorded)");
+      var part = r.kind==="buy"?("By Purchase A/c"+(r.dup?'<div style="color:#c62828;font-size:9.5px;font-weight:700;">\u26a0 Duplicate invoice no. also under: '+esc(r.dup)+'</div>':'')):(r.kind==="pay"?(payAcct(r.mode)+" \u2014 "+esc(r.mode||"")+(r.ref?' <span style="color:#8a90a2;">\u00b7 '+esc(r.ref)+'</span>':'')):"To Cash/Bank A/c (earlier payments)");
       body+='<tr><td>'+esc(r.disp)+'</td><td>'+part+'</td><td>'+esc(r.bill)+'</td>'
         +'<td class="r">'+(r.debit?f(r.debit):"")+'</td><td class="r">'+(r.credit?f(r.credit):"")+'</td><td class="r bal">'+f(r.balance)+'</td></tr>';
     });
     body+='<tr class="tot"><td colspan="3" style="text-align:right;">TOTAL</td><td class="r">'+f(D.totalDebit)+'</td><td class="r">'+f(D.totalCredit)+'</td><td></td></tr>';
-    var table='<table><thead><tr><th>Date</th><th>Particulars</th><th>Bill No</th><th class="r">Debit (Payment)</th><th class="r">Credit (Purchase)</th><th class="r">Balance (Payable)</th></tr></thead><tbody>'+body+'</tbody></table>';
-    var clo='<div class="clo"><div class="l">CLOSING BALANCE (Payable \u2014 Cr)</div><div class="v">'+f(D.closing)+'</div></div>';
+    var table='<table><thead><tr><th>Date</th><th>Particulars</th><th>Invoice No.</th><th class="r">Debit (Dr)</th><th class="r">Credit (Cr)</th><th class="r">Balance (Cr)</th></tr></thead><tbody>'+body+'</tbody></table>';
+    var clo='<div class="clo"><div class="l">Closing Balance c/d (Cr)</div><div class="v">'+f(D.closing)+'</div></div>';
     var ag=D.ageing;
-    var age='<div class="agh">Outstanding Ageing (unpaid bills, as on '+dispDate(D.asOf||todayStr())+')</div><div class="ag">'
+    var age='<div class="agh">Ageing of Outstanding (by invoice date, as on '+dispDate(D.asOf||todayStr())+')</div><div class="ag">'
       +'<div class="c"><div class="k">0\u201330 days</div><div class="v">'+f(ag.b0)+'</div></div>'
       +'<div class="c a1"><div class="k">31\u201360 days</div><div class="v">'+f(ag.b1)+'</div></div>'
       +'<div class="c a2"><div class="k">61\u201390 days</div><div class="v">'+f(ag.b2)+'</div></div>'
@@ -3988,24 +3992,24 @@ textarea.st-biz-in{resize:none;}
     s1.push(["As on:",xDate(D.asOf||"")]);
     s1.push([]);
     var hdr=s1.length;
-    s1.push(["Date","Particulars","Bill No","Payment mode","Reference","Debit (Payment)","Credit (Purchase)","Balance (Payable)","Check"]);
-    s1.push([xDate(D.period.from||(D.rows[0]&&D.rows[0].date)||""),"Opening Balance","","","","","",D.opening,""]);
+    s1.push(["Date","Particulars","Invoice No.","Mode of Payment","Reference No.","Debit (Dr)","Credit (Cr)","Balance (Cr)","Remarks"]);
+    s1.push([xDate(D.period.from||(D.rows[0]&&D.rows[0].date)||""),"Opening Balance b/d","","","","","",D.opening,""]);
     D.rows.forEach(function(r){
-      var part=r.kind==="buy"?"Purchase \u2014 credit":(r.kind==="pay"?"Payment made":"Earlier payments");
-      s1.push([xDate(r.date),part,(r.kind==="buy"?r.bill:""),(r.kind==="pay"?(r.mode||""):""),(r.kind==="pay"?(r.ref||""):""),(r.debit||""),(r.credit||""),r.balance,(r.dup?("Same bill no. also under: "+r.dup):"")]);
+      var part=r.kind==="buy"?"By Purchase A/c":(r.kind==="pay"?payAcct(r.mode):"To Cash/Bank A/c (earlier payments)");
+      s1.push([xDate(r.date),part,(r.kind==="buy"?r.bill:""),(r.kind==="pay"?(r.mode||""):""),(r.kind==="pay"?(r.ref||""):""),(r.debit||""),(r.credit||""),r.balance,(r.dup?("Duplicate invoice no. also under: "+r.dup):"")]);
     });
     var last=s1.length-1;
     s1.push(["","TOTAL","","","",D.totalDebit,D.totalCredit,"",""]);
-    s1.push(["","CLOSING BALANCE (Payable \u2014 Cr)","","","","","",D.closing,""]);
+    s1.push(["","Closing Balance c/d (Cr)","","","","","",D.closing,""]);
     s1.push([]);
-    s1.push(["Outstanding ageing by invoice date (as on "+dispDate(D.asOf||"")+")"]);
+    s1.push(["Ageing of Outstanding by Invoice Date (as on "+dispDate(D.asOf||"")+")"]);
     s1.push(["0-30 days","31-60 days","61-90 days","90+ days"]);
     s1.push([D.ageing.b0,D.ageing.b1,D.ageing.b2,D.ageing.b3]);
     s1.push([]);
-    if(D.nCash) s1.push(["Cash purchases (paid on delivery, not in payable):",D.nCash+" bills",D.cashTotal]);
-    if(D.dups&&D.dups.length) s1.push(["\u26a0 Review: "+D.dups.length+" bill number(s) here also appear under another supplier \u2014 check before posting."]);
+    if(D.nCash) s1.push(["Cash Purchases (settled on delivery, not in creditor balance):",D.nCash+" bills",D.cashTotal]);
+    if(D.dups&&D.dups.length) s1.push(["\u26a0 Review: "+D.dups.length+" invoice number(s) here also appear under another supplier \u2014 check before posting."]);
     s1.push([]);
-    s1.push(["Rows are in invoice-date order. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&OE."]);
+    s1.push(["Entries are in invoice-date order. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&OE."]);
     s1.push(["Generated by Live Khaata \u00b7 livekhaata.app"]);
     var ws1=aoa(X,s1);
     moneyCols(X,ws1,hdr+1,s1.length-1,[5,6,7]);
@@ -4015,15 +4019,15 @@ textarea.st-biz-in{resize:none;}
     X.utils.book_append_sheet(wb,ws1,"Statement");
     var s2=[[VNOTE],[],["Date","Voucher Type","Voucher No","Party Ledger","Debit","Credit","Narration"]];
     D.rows.forEach(function(r){
-      if(r.kind==="buy") s2.push([xDate(r.date),"Purchase",r.bill,D.supplier,"",r.credit,"Goods purchase"]);
-      else s2.push([xDate(r.date),"Payment","",D.supplier,r.debit,"",("Payment made"+(r.mode?(" \u2014 "+r.mode):"")+(r.ref?(" ("+r.ref+")"):""))]);
+      if(r.kind==="buy") s2.push([xDate(r.date),"Purchase",r.bill,D.supplier,"",r.credit,"Being goods purchased on credit"]);
+      else s2.push([xDate(r.date),"Payment","",D.supplier,r.debit,"",("Being payment made"+(r.mode?(" by "+r.mode):"")+(r.ref?(" ("+r.ref+")"):""))]);
     });
     var ws2=aoa(X,s2); ws2["!cols"]=[{wch:12},{wch:14},{wch:24},{wch:30},{wch:14},{wch:14},{wch:34}];
     tFilter(X,ws2,2,7,s2.length-1);
     X.utils.book_append_sheet(wb,ws2,"Voucher List");
     var s3=[["Supplier Statement \u2014 Summary"],[D.supplier||"",D.period.label||""],[],
-      ["Opening Balance (Payable)",D.opening],["Total Purchases (Credit)",D.totalCredit],
-      ["Total Payments (Debit)",D.totalDebit],["Closing Payable (Cr)",D.closing],["Cash Purchases",D.cashTotal],[],
+      ["Opening Balance (Cr)",D.opening],["Total Credit Purchases",D.totalCredit],
+      ["Total Payments (Dr)",D.totalDebit],["Closing Balance (Cr)",D.closing],["Cash Purchases",D.cashTotal],[],
       ["Ageing 0-30",D.ageing.b0],["Ageing 31-60",D.ageing.b1],["Ageing 61-90",D.ageing.b2],["Ageing 90+",D.ageing.b3],[],
       ["Your GSTIN",biz.gstin||"-"],["Supplier GSTIN",D.supGstin||"-"],
       ["Generated by Live Khaata \u00b7 livekhaata.app"]];
@@ -4119,41 +4123,41 @@ textarea.st-biz-in{resize:none;}
       +'.ca .ft{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 26px 20px;border-top:2px solid #0a1530;padding-top:10px;}'
       +'.ca .ft .fl{font-size:9.5px;color:#6b7180;}.ca .bm{font-size:15px;font-weight:800;}.ca .bm .li{color:#e84545;}.ca .bm .kh{color:#c0902f;}'
       +'</style>';
-    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Receipts Register \u00b7 Sales, collections and other money received</div>';
+    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Receipts Register \u00b7 Cash & Bank Receipts</div>';
     var meta='<div class="meta"><div><b>Period:</b> '+D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" \u2013 "+dispDate(D.period.to)+")"):"")+'</div><div><b>As on:</b> '+dispDate(D.asOf)+'</div><div><b>Entries:</b> '+D.n+'</div></div>';
     if(biz.gstin) meta+='<div class="sub">GSTIN: '+biz.gstin+(biz.address?(" \u00b7 "+biz.address):"")+'</div>';
-    var cards='<div class="cards"><div class="cd tot"><div class="k">SALES</div><div class="v">'+f(D.sales)+'</div></div>'
-      +'<div class="cd cash"><div class="k">COLLECTIONS</div><div class="v">'+f(D.coll)+'</div></div>'
+    var cards='<div class="cards"><div class="cd tot"><div class="k">SALES (TURNOVER)</div><div class="v">'+f(D.sales)+'</div></div>'
+      +'<div class="cd cash"><div class="k">COLLECTION FROM DEBTORS</div><div class="v">'+f(D.coll)+'</div></div>'
       +'<div class="cd upi"><div class="k">OTHER RECEIPTS</div><div class="v">'+f(D.other)+'</div></div>'
-      +'<div class="cd"><div class="k">TOTAL RECEIVED</div><div class="v">'+f(D.total)+'</div></div></div>'
-      +'<div class="sub">Sales by mode: Cash '+f(D.saleCash)+' \u00b7 UPI '+f(D.saleUPI)+(D.saleUnk?(' \u00b7 Mode not recorded '+f(D.saleUnk)):'')+'</div>';
+      +'<div class="cd"><div class="k">TOTAL RECEIPTS</div><div class="v">'+f(D.total)+'</div></div></div>'
+      +'<div class="sub">Sales by mode of receipt: Cash '+f(D.saleCash)+' \u00b7 UPI '+f(D.saleUPI)+(D.saleUnk?(' \u00b7 Mode not recorded '+f(D.saleUnk)):'')+'</div>';
     var body='';
-    D.rows.forEach(function(r,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+r.disp+'</td><td>'+r.cat+'</td><td class="c">'+r.mode+(r.modeSrc==="note"?'<span style="color:#8a90a2;">*</span>':'')+'</td><td>'+String(r.note||"").replace(/</g,"&lt;")+'</td><td class="r">'+f(r.amount)+'</td></tr>'; });
+    D.rows.forEach(function(r,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+r.disp+'</td><td>'+(CAT_LBL[r.cat]||r.cat)+'</td><td class="c">'+r.mode+(r.modeSrc==="note"?'<span style="color:#8a90a2;">*</span>':'')+'</td><td>'+String(r.note||"").replace(/</g,"&lt;")+'</td><td class="r">'+f(r.amount)+'</td></tr>'; });
     if(!D.rows.length) body='<tr><td colspan="6" style="text-align:center;color:#8a90a2;padding:20px;">\u0907\u0938 period \u092e\u0947\u0902 \u0915\u094b\u0908 \u092c\u093f\u0915\u094d\u0930\u0940 \u0928\u0939\u0940\u0902</td></tr>';
-    body+='<tr class="tot"><td colspan="5" style="text-align:right;">TOTAL RECEIVED</td><td class="r">'+f(D.total)+'</td></tr>';
-    var table='<table><thead><tr><th class="c">#</th><th>Date</th><th>Type</th><th class="c">Mode</th><th>Particulars</th><th class="r">Amount</th></tr></thead><tbody>'+body+'</tbody></table>';
-    var disc='<div class="disc">Only <b>Sales</b> count as turnover. Collections are customers settling earlier credit and are not income for this period. '+(D.noMode?(D.noMode+' entr(ies) have no payment mode recorded. '):'')+'* Mode read from the spoken note, not recorded separately. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
+    body+='<tr class="tot"><td colspan="5" style="text-align:right;">TOTAL RECEIPTS</td><td class="r">'+f(D.total)+'</td></tr>';
+    var table='<table><thead><tr><th class="c">#</th><th>Date</th><th>Nature of Receipt</th><th class="c">Mode of Receipt</th><th>Particulars</th><th class="r">Amount</th></tr></thead><tbody>'+body+'</tbody></table>';
+    var disc='<div class="disc">Only <b>Sales</b> form part of turnover. Collection from debtors is realisation of earlier credit sales and is not income of this period. '+(D.noMode?(D.noMode+' entr(ies) have no payment mode recorded. '):'')+'* Mode read from the spoken note, not recorded separately. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
     var ft='<div class="ft"><div class="fl">Computer-generated \u00b7 Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
     return '<div class="ca">'+css+head+meta+cards+table+disc+ft+'</div>';
   }
   function salesWorkbook(D){
     var X=window.XLSX, biz=D.biz||{}, wb=X.utils.book_new();
     var perd=D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" to "+dispDate(D.period.to)+")"):"");
-    var s1=[[biz.name||""],["Receipts Register \u00b7 Sales, collections and other money received"],[]];
+    var s1=[[biz.name||""],["Receipts Register \u00b7 Cash & Bank Receipts"],[]];
     s1.push(["Period:",perd]); s1.push(["As on:",xDate(D.asOf)]); if(biz.gstin) s1.push(["GSTIN:",biz.gstin]);
     s1.push([]);
-    s1.push(["Sales (turnover)",D.sales]); s1.push(["  of which Cash",D.saleCash]); s1.push(["  of which UPI",D.saleUPI]);
-    if(D.saleUnk) s1.push(["  of which mode not recorded",D.saleUnk]);
-    s1.push(["Collections (customers settling credit)",D.coll]); s1.push(["Other receipts",D.other]); s1.push(["TOTAL RECEIVED",D.total]);
+    s1.push(["Sales (Turnover)",D.sales]); s1.push(["  Cash Sales",D.saleCash]); s1.push(["  UPI / Bank Sales",D.saleUPI]);
+    if(D.saleUnk) s1.push(["  Sales \u2014 mode not recorded",D.saleUnk]);
+    s1.push(["Collection from Debtors",D.coll]); s1.push(["Other Receipts",D.other]); s1.push(["TOTAL RECEIPTS",D.total]);
     var sumEnd=s1.length-1;
     s1.push([]);
     var hdr=s1.length;
-    s1.push(["#","Date","Type","Mode","Mode source","Particulars","Amount"]);
-    D.rows.forEach(function(r,ix){ s1.push([ix+1,xDate(r.date),r.cat,r.mode,(r.modeSrc==="recorded"?"Recorded":(r.modeSrc==="note"?"From note":"Not recorded")),r.note||"",r.amount]); });
+    s1.push(["S. No.","Date","Nature of Receipt","Mode of Receipt","Basis of Mode","Particulars","Amount"]);
+    D.rows.forEach(function(r,ix){ s1.push([ix+1,xDate(r.date),(CAT_LBL[r.cat]||r.cat),r.mode,(r.modeSrc==="recorded"?"Recorded":(r.modeSrc==="note"?"From note":"Not recorded")),r.note||"",r.amount]); });
     var last=s1.length-1;
-    s1.push(["","","","","","TOTAL RECEIVED",D.total]);
+    s1.push(["","","","","","TOTAL RECEIPTS",D.total]);
     s1.push([]);
-    s1.push(["Only Sales count as turnover. Collections are customers settling earlier credit and are not income for this period."]);
+    s1.push(["Only Sales form part of turnover. Collection from debtors is realisation of earlier credit sales and is not income of this period."]);
     s1.push(["Generated by Live Khaata \u00b7 livekhaata.app. NOT audited/certified. E&OE."]);
     var ws1=aoa(X,s1);
     for(var r=0;r<=sumEnd;r++){ var a=X.utils.encode_cell({r:r,c:1}); if(ws1[a]&&typeof ws1[a].v==="number"&&!/y/.test(ws1[a].z||"")) ws1[a].z="\u0022\u20b9\u0022#,##,##0"; }
@@ -4163,9 +4167,9 @@ textarea.st-biz-in{resize:none;}
     X.utils.book_append_sheet(wb,ws1,"Receipts");
     var s2=[[VNOTE],[],["Date","Voucher Type","Voucher No","Ledger","Debit","Credit","Narration"]];
     D.rows.forEach(function(r,ix){
-      var led=(r.mode==="UPI"?"Bank/UPI":(r.mode==="Cash"?"Cash":"Cash / Bank (confirm)"));
-      if(r.cat==="Sale"){ s2.push([xDate(r.date),"Sales","S"+(ix+1),led,r.amount,"","Sale ("+r.mode+")"+(r.note?(" \u2014 "+r.note):"")]); s2.push(["","","","Sales A/c","",r.amount,""]); }
-      else { s2.push([xDate(r.date),"Receipt","R"+(ix+1),led,r.amount,"",r.cat+(r.note?(" \u2014 "+r.note):"")]); s2.push(["","","",(r.cat==="Collection"?"Customer (Sundry Debtor) \u2014 confirm name":"Suspense \u2014 confirm"),"",r.amount,""]); }
+      var led=(r.mode==="UPI"?"Bank A/c":(r.mode==="Cash"?"Cash A/c":"Cash/Bank A/c (to be confirmed)"));
+      if(r.cat==="Sale"){ s2.push([xDate(r.date),"Sales","S"+(ix+1),led,r.amount,"","Being goods sold ("+r.mode+")"+(r.note?(" \u2014 "+r.note):"")]); s2.push(["","","","Sales A/c","",r.amount,""]); }
+      else { s2.push([xDate(r.date),"Receipt","R"+(ix+1),led,r.amount,"","Being "+(CAT_LBL[r.cat]||r.cat).toLowerCase()+(r.note?(" \u2014 "+r.note):"")]); s2.push(["","","",(r.cat==="Collection"?"Sundry Debtor (name to be confirmed)":"Suspense A/c (to be confirmed)"),"",r.amount,""]); }
     });
     var ws2=aoa(X,s2); ws2["!cols"]=[{wch:12},{wch:12},{wch:10},{wch:34},{wch:14},{wch:14},{wch:40}];
     X.utils.book_append_sheet(wb,ws2,"Voucher List");
@@ -4258,12 +4262,12 @@ textarea.st-biz-in{resize:none;}
       +'<div class="cd cred"><div class="k">CREDIT</div><div class="v">'+f(D.totalCredit)+'</div></div>'
       +'<div class="cd tot"><div class="k">TOTAL PURCHASES</div><div class="v">'+f(D.total)+'</div></div></div>';
     var body='';
-    D.rows.forEach(function(r,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+r.disp+'</td><td>'+String(r.supplier).replace(/</g,"&lt;")+(r.dup?'<div style="color:#c62828;font-size:9px;font-weight:700;">\u26a0 Same bill no.: '+String(r.dup).replace(/</g,"&lt;")+'</div>':'')+'</td><td>'+String(r.bill).replace(/</g,"&lt;")+'</td><td class="c">'+r.mode+'</td><td class="r">'+f(r.amount)+'</td><td class="r">'+(r.open?f(r.open):'\u2014')+'</td></tr>'; });
+    D.rows.forEach(function(r,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+r.disp+'</td><td>'+String(r.supplier).replace(/</g,"&lt;")+(r.dup?'<div style="color:#c62828;font-size:9px;font-weight:700;">\u26a0 Duplicate invoice no.: '+String(r.dup).replace(/</g,"&lt;")+'</div>':'')+'</td><td>'+String(r.bill).replace(/</g,"&lt;")+'</td><td class="c">'+r.mode+'</td><td class="r">'+f(r.amount)+'</td><td class="r">'+(r.open?f(r.open):'\u2014')+'</td></tr>'; });
     if(!D.rows.length) body='<tr><td colspan="7" style="text-align:center;color:#8a90a2;padding:20px;">\u0907\u0938 period \u092e\u0947\u0902 \u0915\u094b\u0908 \u0916\u0930\u0940\u0926 \u0928\u0939\u0940\u0902</td></tr>';
     var openTot=D.rows.reduce(function(t,r){return t+r.open;},0);
     body+='<tr class="tot"><td colspan="5" style="text-align:right;">TOTAL</td><td class="r">'+f(D.total)+'</td><td class="r">'+f(openTot)+'</td></tr>';
-    var table='<table><thead><tr><th class="c">#</th><th>Invoice date</th><th>Supplier</th><th>Bill No</th><th class="c">Mode</th><th class="r">Amount</th><th class="r">Still open</th></tr></thead><tbody>'+body+'</tbody></table>';
-    var disc='<div class="disc">'+(D.nDup?('<b style="color:#c62828;">\u26a0 '+D.nDup+' bill(s) share a bill number with another purchase \u2014 check for a double entry or a wrong supplier before posting.</b><br>'):'')+(D.noPhoto?(D.noPhoto+' bill(s) have no photo attached. '):'All bills have a photo attached. ')+'Rows are in invoice-date order. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
+    var table='<table><thead><tr><th class="c">#</th><th>Invoice Date</th><th>Supplier</th><th>Invoice No.</th><th class="c">Purchase Type</th><th class="r">Invoice Value</th><th class="r">Balance Outstanding</th></tr></thead><tbody>'+body+'</tbody></table>';
+    var disc='<div class="disc">'+(D.nDup?('<b style="color:#c62828;">\u26a0 '+D.nDup+' invoice(s) share an invoice number with another purchase \u2014 check for a duplicate entry or wrong party before posting.</b><br>'):'')+(D.noPhoto?(D.noPhoto+' invoice(s) have no copy attached. '):'Invoice copy attached for all bills. ')+'Rows are in invoice-date order. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
     var ft='<div class="ft"><div class="fl">Computer-generated \u00b7 Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
     return '<div class="ca">'+css+head+meta+cards+table+disc+ft+'</div>';
   }
@@ -4277,14 +4281,14 @@ textarea.st-biz-in{resize:none;}
     var sumEnd=s1.length-1;
     s1.push([]);
     var hdr=s1.length;
-    s1.push(["#","Invoice date","Supplier","Supplier GSTIN","Bill No","Mode","Invoice value","Paid","Still open","Photo","Check"]);
-    D.rows.forEach(function(r,ix){ s1.push([ix+1,xDate(r.date),r.supplier,r.gstin||"",r.bill,r.mode,r.amount,r.paid,r.open,(r.photo?"Yes":"No"),(r.dup?("Same bill no.: "+r.dup):"")]); });
+    s1.push(["S. No.","Invoice Date","Supplier","Supplier GSTIN","Invoice No.","Purchase Type","Invoice Value","Amount Paid","Balance Outstanding","Invoice Copy","Remarks"]);
+    D.rows.forEach(function(r,ix){ s1.push([ix+1,xDate(r.date),r.supplier,r.gstin||"",r.bill,r.mode,r.amount,r.paid,r.open,(r.photo?"Yes":"No"),(r.dup?("Duplicate invoice no.: "+r.dup):"")]); });
     var last=s1.length-1;
     var openTot=D.rows.reduce(function(t,r){return t+r.open;},0), paidTot=D.rows.reduce(function(t,r){return t+r.paid;},0);
     s1.push(["","","","","","TOTAL",D.total,paidTot,openTot,"",""]);
     s1.push([]);
-    if(D.nDup) s1.push(["\u26a0 Review: "+D.nDup+" bill(s) share a bill number with another purchase \u2014 check for a double entry or a wrong supplier."]);
-    s1.push(["Rows are in invoice-date order. Tax split per rate is not yet included. Generated by Live Khaata \u00b7 livekhaata.app. NOT audited/certified. E&OE."]);
+    if(D.nDup) s1.push(["\u26a0 Review: "+D.nDup+" invoice(s) share an invoice number with another purchase \u2014 check for a duplicate entry or wrong party."]);
+    s1.push(["Entries are in invoice-date order. Rate-wise tax split is not yet included. Generated by Live Khaata \u00b7 livekhaata.app. NOT audited/certified. E&OE."]);
     var ws1=aoa(X,s1);
     for(var r=0;r<=sumEnd;r++){ var a=X.utils.encode_cell({r:r,c:1}); if(ws1[a]&&typeof ws1[a].v==="number"&&!/y/.test(ws1[a].z||"")) ws1[a].z="\u0022\u20b9\u0022#,##,##0"; }
     moneyCols(X,ws1,hdr+1,s1.length-1,[6,7,8]);
@@ -4293,9 +4297,9 @@ textarea.st-biz-in{resize:none;}
     X.utils.book_append_sheet(wb,ws1,"Purchase");
     var s2=[[VNOTE],[],["Date","Voucher Type","Voucher No","Ledger","Debit","Credit","Narration"]];
     D.rows.forEach(function(r,ix){
-      var cr=(r.mode==="Cash"?"Cash":r.supplier);
-      var nr="Purchase from "+r.supplier+((r.bill&&r.bill!=="\u2014")?(" ("+r.bill+")"):"");
-      s2.push([xDate(r.date),"Purchase",(r.bill&&r.bill!=="\u2014")?r.bill:("P"+(ix+1)),"Purchases",r.amount,"",nr]);
+      var cr=(r.mode==="Cash"?"Cash A/c":r.supplier);
+      var nr="Being goods purchased from "+r.supplier+((r.bill&&r.bill!=="\u2014")?(" ("+r.bill+")"):"");
+      s2.push([xDate(r.date),"Purchase",(r.bill&&r.bill!=="\u2014")?r.bill:("P"+(ix+1)),"Purchase A/c",r.amount,"",nr]);
       s2.push(["","","",cr,"",r.amount,""]);
     });
     var ws2=aoa(X,s2); ws2["!cols"]=[{wch:12},{wch:12},{wch:24},{wch:26},{wch:14},{wch:14},{wch:36}];
@@ -4365,9 +4369,9 @@ textarea.st-biz-in{resize:none;}
       +'.ca .ft{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 26px 20px;border-top:2px solid #0a1530;padding-top:10px;}'
       +'.ca .ft .fl{font-size:9.5px;color:#6b7180;}.ca .bm{font-size:15px;font-weight:800;}.ca .bm .li{color:#e84545;}.ca .bm .kh{color:#c0902f;}'
       +'</style>';
-    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Outstanding (Payable) \u00b7 Supplier Ageing</div>';
-    var meta='<div class="meta"><div><b>As on:</b> '+dispDate(D.asOf)+'</div><div><b>Suppliers with dues:</b> '+D.n+'</div></div>';
-    var cards='<div class="cards"><div class="cd tot"><div class="k">TOTAL PAYABLE</div><div class="v">'+f(D.total)+'</div></div>'
+    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Sundry Creditors \u00b7 Outstanding &amp; Ageing</div>';
+    var meta='<div class="meta"><div><b>As on:</b> '+dispDate(D.asOf)+'</div><div><b>Creditors with balance:</b> '+D.n+'</div></div>';
+    var cards='<div class="cards"><div class="cd tot"><div class="k">TOTAL AMOUNT PAYABLE</div><div class="v">'+f(D.total)+'</div></div>'
       +'<div class="cd ovd"><div class="k">OVERDUE (&gt;30 days)</div><div class="v">'+f(D.overdue)+'</div></div></div>';
     var body='';
     D.rows.forEach(function(r,ix){
@@ -4377,17 +4381,17 @@ textarea.st-biz-in{resize:none;}
     });
     if(!D.rows.length) body='<tr><td colspan="7" style="text-align:center;color:#8a90a2;padding:20px;">\u0915\u094b\u0908 \u092c\u0915\u093e\u092f\u093e \u0928\u0939\u0940\u0902 \u2014 \u0938\u092d\u0940 \u0938\u092a\u094d\u0932\u093e\u092f\u0930 clear \u2713</td></tr>';
     body+='<tr class="tot"><td></td><td style="text-align:right;">TOTAL</td><td class="r">'+f(D.total)+'</td><td class="r">'+f(D.ageing.b0)+'</td><td class="r">'+f(D.ageing.b1)+'</td><td class="r">'+f(D.ageing.b2)+'</td><td class="r">'+f(D.ageing.b3)+'</td></tr>';
-    var table='<table><thead><tr><th class="c">#</th><th>Supplier</th><th class="r">Payable</th><th class="r">0-30d</th><th class="r">31-60d</th><th class="r">61-90d</th><th class="r">90+d</th></tr></thead><tbody>'+body+'</tbody></table>';
-    var disc='<div class="disc">Payable = amount you owe each supplier (Cr), as on '+dispDate(D.asOf)+'. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
+    var table='<table><thead><tr><th class="c">#</th><th>Sundry Creditor</th><th class="r">Amount Payable (Cr)</th><th class="r">0\u201330 days</th><th class="r">31\u201360 days</th><th class="r">61\u201390 days</th><th class="r">Over 90 days</th></tr></thead><tbody>'+body+'</tbody></table>';
+    var disc='<div class="disc">Amount payable = credit balance of each sundry creditor, as on '+dispDate(D.asOf)+'. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
     var ft='<div class="ft"><div class="fl">Computer-generated \u00b7 Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
     return '<div class="ca">'+css+head+meta+cards+table+disc+ft+'</div>';
   }
   function outstandingWorkbook(D){
     var X=window.XLSX, biz=D.biz||{}, wb=X.utils.book_new();
-    var s1=[[biz.name||""],["Outstanding (Payable) \u00b7 Supplier Ageing"],[],
-      ["As on:",xDate(D.asOf)],["Suppliers with dues:",D.n],[],
-      ["Total Payable",D.total],["Overdue (>30d)",D.overdue],[],
-      ["#","Supplier","GSTIN","Payable","0-30d","31-60d","61-90d","90+d"]];
+    var s1=[[biz.name||""],["Sundry Creditors \u00b7 Outstanding & Ageing"],[],
+      ["As on:",xDate(D.asOf)],["Creditors with balance:",D.n],[],
+      ["Total Amount Payable",D.total],["Overdue (over 30 days)",D.overdue],[],
+      ["S. No.","Sundry Creditor","GSTIN","Amount Payable (Cr)","0-30 days","31-60 days","61-90 days","Over 90 days"]];
     var _oh=s1.length-1;
     D.rows.forEach(function(r,ix){ s1.push([ix+1,r.supplier,r.gstin||"",r.payable,r.b0,r.b1,r.b2,r.b3]); });
     var _ol=s1.length-1;
@@ -4402,8 +4406,8 @@ textarea.st-biz-in{resize:none;}
     ws1["!cols"]=[{wch:6},{wch:26},{wch:18},{wch:14},{wch:12},{wch:12},{wch:12},{wch:12}];
     X.utils.book_append_sheet(wb,ws1,"Outstanding");
     var s3=[["Outstanding \u2014 Summary"],["As on "+dispDate(D.asOf)],[],
-      ["Total Payable",D.total],["0-30 days",D.ageing.b0],["31-60 days",D.ageing.b1],["61-90 days",D.ageing.b2],["90+ days",D.ageing.b3],
-      ["Overdue (>30d)",D.overdue],["Suppliers with dues",D.n],[],["Generated by Live Khaata \u00b7 livekhaata.app"]];
+      ["Total Amount Payable",D.total],["0-30 days",D.ageing.b0],["31-60 days",D.ageing.b1],["61-90 days",D.ageing.b2],["90+ days",D.ageing.b3],
+      ["Overdue (over 30 days)",D.overdue],["Creditors with balance",D.n],[],["Generated by Live Khaata \u00b7 livekhaata.app"]];
     var ws3=X.utils.aoa_to_sheet(s3); ws3["!cols"]=[{wch:26},{wch:20}];
     X.utils.book_append_sheet(wb,ws3,"Summary");
     return new Blob([X.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
@@ -4487,35 +4491,35 @@ textarea.st-biz-in{resize:none;}
       +'.ca .ft{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 26px 20px;border-top:2px solid #0a1530;padding-top:10px;}'
       +'.ca .ft .fl{font-size:9.5px;color:#6b7180;}.ca .bm{font-size:15px;font-weight:800;}.ca .bm .li{color:#e84545;}.ca .bm .kh{color:#c0902f;}'
       +'</style>';
-    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Day Book (\u0930\u094b\u091c\u093c\u0928\u093e\u092e\u091a\u093e) \u00b7 Money in and out, day by day</div>';
+    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Day Book (\u0930\u094b\u091c\u093c\u0928\u093e\u092e\u091a\u093e) \u00b7 Daily Receipts &amp; Payments</div>';
     var meta='<div class="meta"><div><b>Period:</b> '+D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" \u2013 "+dispDate(D.period.to)+")"):"")+'</div><div><b>As on:</b> '+dispDate(D.asOf)+'</div><div><b>Days:</b> '+D.n+'</div></div>';
-    var cards='<div class="cards"><div class="cd s"><div class="k">MONEY IN</div><div class="v">'+f(D.totalIn)+'</div></div>'
-      +'<div class="cd e"><div class="k">MONEY OUT</div><div class="v">'+f(D.totalOut)+'</div></div>'
-      +'<div class="cd n"><div class="k">NET (IN \u2212 OUT)</div><div class="v">'+f(D.net)+'</div></div>'
-      +'<div class="cd p"><div class="k">BOUGHT ON CREDIT</div><div class="v">'+f(D.totalCredit)+'</div></div></div>';
+    var cards='<div class="cards"><div class="cd s"><div class="k">TOTAL RECEIPTS</div><div class="v">'+f(D.totalIn)+'</div></div>'
+      +'<div class="cd e"><div class="k">TOTAL PAYMENTS</div><div class="v">'+f(D.totalOut)+'</div></div>'
+      +'<div class="cd n"><div class="k">NET CASH FLOW</div><div class="v">'+f(D.net)+'</div></div>'
+      +'<div class="cd p"><div class="k">CREDIT PURCHASES</div><div class="v">'+f(D.totalCredit)+'</div></div></div>';
     var body='';
     D.rows.forEach(function(x,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+dispDate(x.date)+'</td><td class="r">'+(x.inn?f(x.inn):'\u2014')+'</td><td class="r">'+(x.out?f(x.out):'\u2014')+'</td><td class="r" style="font-weight:700;color:'+(x.net<0?'#c62828':'#1e7a46')+';">'+f(x.net)+'</td><td class="r" style="color:#8a90a2;">'+(x.credit?f(x.credit):'')+'</td></tr>'; });
     if(!D.rows.length) body='<tr><td colspan="6" style="text-align:center;color:#8a90a2;padding:20px;">\u0907\u0938 period \u092e\u0947\u0902 \u0915\u094b\u0908 \u090f\u0902\u091f\u094d\u0930\u0940 \u0928\u0939\u0940\u0902</td></tr>';
     body+='<tr class="tot"><td></td><td style="text-align:right;">TOTAL</td><td class="r">'+f(D.totalIn)+'</td><td class="r">'+f(D.totalOut)+'</td><td class="r">'+f(D.net)+'</td><td class="r">'+f(D.totalCredit)+'</td></tr>';
-    var table='<table><thead><tr><th class="c">#</th><th>Date</th><th class="r">Money in</th><th class="r">Money out</th><th class="r">Net</th><th class="r">Bought on credit</th></tr></thead><tbody>'+body+'</tbody></table>';
-    var disc='<div class="disc">Money in and money out count only cash and UPI that actually moved \u2014 including supplier payments and cash purchases. Bills bought on credit are shown separately and are not money out until paid. Days with no activity are left out. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
+    var table='<table><thead><tr><th class="c">#</th><th>Date</th><th class="r">Receipts</th><th class="r">Payments</th><th class="r">Net Cash Flow</th><th class="r">Credit Purchases</th></tr></thead><tbody>'+body+'</tbody></table>';
+    var disc='<div class="disc">Receipts and Payments include only actual cash and bank (UPI) movements, including payments to creditors and cash purchases. Credit purchases are shown separately and form part of Payments only when settled. Days without transactions are omitted. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
     var ft='<div class="ft"><div class="fl">Computer-generated \u00b7 Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
     return '<div class="ca">'+css+head+meta+cards+table+disc+ft+'</div>';
   }
   function daybookWorkbook(D){
     var X=window.XLSX, biz=D.biz||{}, wb=X.utils.book_new();
     var perd=D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" to "+dispDate(D.period.to)+")"):"");
-    var s1=[[biz.name||""],["Day Book (Rojnamcha) \u00b7 Money in and out, day by day"],[]];
-    s1.push(["Period:",perd]); s1.push(["As on:",xDate(D.asOf)]); s1.push(["Active days:",D.n]); s1.push([]);
-    s1.push(["Money in",D.totalIn]); s1.push(["Money out",D.totalOut]); s1.push(["Net (in \u2212 out)",D.net]); s1.push(["Bought on credit (not yet money out)",D.totalCredit]);
+    var s1=[[biz.name||""],["Day Book (Rojnamcha) \u00b7 Daily Receipts & Payments"],[]];
+    s1.push(["Period:",perd]); s1.push(["As on:",xDate(D.asOf)]); s1.push(["Transaction days:",D.n]); s1.push([]);
+    s1.push(["Total Receipts",D.totalIn]); s1.push(["Total Payments",D.totalOut]); s1.push(["Net Cash Flow (Receipts \u2212 Payments)",D.net]); s1.push(["Credit Purchases (unpaid, not in Payments)",D.totalCredit]);
     var sumEnd=s1.length-1; s1.push([]);
     var hdr=s1.length;
-    s1.push(["#","Date","Money in","Money out","Net","Bought on credit","Entries in","Entries out"]);
+    s1.push(["S. No.","Date","Receipts","Payments","Net Cash Flow","Credit Purchases","No. of Receipts","No. of Payments"]);
     D.rows.forEach(function(x,ix){ s1.push([ix+1,xDate(x.date),x.inn,x.out,x.net,x.credit,x.nIn,x.nOut]); });
     var last=s1.length-1;
     s1.push(["","TOTAL",D.totalIn,D.totalOut,D.net,D.totalCredit,"",""]);
     s1.push([]);
-    s1.push(["Only cash and UPI that actually moved. Supplier payments and cash purchases are money out; credit purchases are not, until paid."]);
+    s1.push(["Receipts and Payments include only actual cash and bank movements. Payments to creditors and cash purchases are Payments; credit purchases are not, until settled."]);
     s1.push(["Generated by Live Khaata \u00b7 livekhaata.app. NOT audited/certified. E&OE."]);
     var ws1=aoa(X,s1);
     for(var r=0;r<=sumEnd;r++){ var a=X.utils.encode_cell({r:r,c:1}); if(ws1[a]&&typeof ws1[a].v==="number"&&r>=7) ws1[a].z="\u0022\u20b9\u0022#,##,##0"; }
@@ -4589,9 +4593,9 @@ textarea.st-biz-in{resize:none;}
       +'.ca .ft{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 26px 20px;border-top:2px solid #0a1530;padding-top:10px;}'
       +'.ca .ft .fl{font-size:9.5px;color:#6b7180;}.ca .bm{font-size:15px;font-weight:800;}.ca .bm .li{color:#e84545;}.ca .bm .kh{color:#c0902f;}'
       +'</style>';
-    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Expense Register (\u0916\u0930\u094d\u091a\u093e) \u00b7 Operating</div>';
+    var head='<div class="mh">'+(biz.name||"\u2014")+'</div><div class="sh">Expense Register (\u0916\u0930\u094d\u091a\u093e) \u00b7 Indirect Expenses</div>';
     var meta='<div class="meta"><div><b>Period:</b> '+D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" \u2013 "+dispDate(D.period.to)+")"):"")+'</div><div><b>As on:</b> '+dispDate(D.asOf)+'</div><div><b>Entries:</b> '+D.n+'</div></div>';
-    var cards='<div class="cards"><div class="cd tot"><div class="k">TOTAL EXPENSE</div><div class="v">'+f(D.total)+'</div></div></div>';
+    var cards='<div class="cards"><div class="cd tot"><div class="k">TOTAL EXPENSES</div><div class="v">'+f(D.total)+'</div></div></div>';
     var body='';
     D.rows.forEach(function(r,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+r.disp+'</td><td>'+String(r.note||"\u2014").replace(/</g,"&lt;")+'</td><td class="r">'+f(r.amount)+'</td></tr>'; });
     if(!D.rows.length) body='<tr><td colspan="4" style="text-align:center;color:#8a90a2;padding:20px;">\u0907\u0938 period \u092e\u0947\u0902 \u0915\u094b\u0908 \u0916\u0930\u094d\u091a\u093e \u0928\u0939\u0940\u0902</td></tr>';
@@ -4604,7 +4608,7 @@ textarea.st-biz-in{resize:none;}
   function expenseWorkbook(D){
     var X=window.XLSX, biz=D.biz||{}, wb=X.utils.book_new();
     var perd=D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" to "+dispDate(D.period.to)+")"):"");
-    var s1=[[biz.name||""],["Expense Register (Kharcha) \u00b7 Operating"],[],
+    var s1=[[biz.name||""],["Expense Register (Kharcha) \u00b7 Indirect Expenses"],[],
       ["Period:",perd,"","As on:",dispDate(D.asOf)],["Entries:",D.n],[],
       ["Total Expense",D.total],[],
       ["#","Date","Particulars","Amount"]];
@@ -4627,8 +4631,8 @@ textarea.st-biz-in{resize:none;}
     var s2=[[VNOTE],[],["Date","Voucher Type","Voucher No","Ledger","Debit","Credit","Narration"]];
     D.rows.forEach(function(r,ix){
       var vn="E"+(ix+1);
-      s2.push([xDate(r.date),"Payment",vn,"Expenses",r.amount,"",("Expense"+(r.note?(" \u2014 "+r.note):""))]);
-      s2.push(["","","",  "Cash",  "",r.amount,""]);
+      s2.push([xDate(r.date),"Payment",vn,"Indirect Expenses (select ledger)",r.amount,"",("Being expenses paid"+(r.note?(" \u2014 "+r.note):""))]);
+      s2.push(["","","",  "Cash A/c",  "",r.amount,""]);
     });
     var ws2=aoa(X,s2); ws2["!cols"]=[{wch:12},{wch:12},{wch:10},{wch:16},{wch:14},{wch:14},{wch:34}];
     X.utils.book_append_sheet(wb,ws2,"Voucher List");

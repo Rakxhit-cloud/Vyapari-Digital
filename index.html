@@ -2021,6 +2021,28 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 /* direction ask */
 .lg-ask{background:linear-gradient(160deg,#241a08,#141008);border:1px solid #8a6a28;
   border-radius:13px;padding:12px;margin-bottom:11px;box-shadow:0 0 14px rgba(216,171,82,.10);}
+/* ── Mode + Nature on the voice card, entry tags, edit sheet ── */
+.lgc{width:100%;margin:2px 0 10px;display:flex;flex-direction:column;gap:9px;}
+.lgc-r{display:flex;align-items:center;gap:8px;}
+.lgc-l{width:58px;flex-shrink:0;font-size:10px;font-weight:700;letter-spacing:.5px;color:#6d80a8;text-transform:uppercase;text-align:left;}
+.lgc-seg{flex:1;min-width:0;display:flex;background:#0a1020;border:1px solid #223558;border-radius:11px;padding:3px;gap:3px;}
+.lgc-seg > div{flex:1;min-width:0;text-align:center;border-radius:8px;padding:7px 4px;font-size:12px;font-weight:600;color:#6d80a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.lgc-seg > div small{display:block;font-size:9px;font-weight:500;opacity:.75;margin-top:1px;}
+.lgc-seg .on.in{background:linear-gradient(180deg,rgba(62,200,115,.22),rgba(62,200,115,.08));color:#8aefb0;}
+.lgc-seg .on.out{background:linear-gradient(180deg,rgba(232,137,106,.22),rgba(232,137,106,.08));color:#ffb094;}
+.lgc-seg .on.cash{background:linear-gradient(180deg,rgba(62,200,115,.18),rgba(62,200,115,.06));color:#8aefb0;}
+.lgc-seg .on.upi{background:linear-gradient(180deg,rgba(74,159,212,.24),rgba(74,159,212,.08));color:#9ccfff;}
+.lgc-seg .on.nat{background:linear-gradient(180deg,rgba(212,168,80,.22),rgba(212,168,80,.08));color:#f0cf7a;}
+.lgc-seg.need{border-color:#8a6818;box-shadow:0 0 0 3px rgba(212,168,80,.12);}
+.lgc-hint{font-size:10px;color:#8aa0d8;margin:-3px 0 0 66px;text-align:left;}
+.lgc-hint b{color:#e8c870;font-weight:600;}
+.lg-voice-add.dis{opacity:.4;pointer-events:none;}
+.lg-en .tg{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:5px;font-size:9.5px;font-weight:700;vertical-align:2px;letter-spacing:.2px;}
+.lg-en .tg.upi{background:rgba(74,159,212,.14);color:#9ccfff;border:1px solid rgba(74,159,212,.35);}
+.lg-en .tg.cash{background:rgba(62,200,115,.10);color:#8aefb0;border:1px solid rgba(62,200,115,.3);}
+.lg-en .tg.col{background:rgba(212,168,80,.12);color:#f0cf7a;border:1px solid rgba(212,168,80,.35);}
+.lg-en .tg.oth{background:rgba(147,164,204,.1);color:#b8c6e6;border:1px solid rgba(147,164,204,.3);}
+.ee-sub{font-size:10.5px;font-weight:700;letter-spacing:.6px;color:#6d80a8;text-transform:uppercase;margin:0 0 7px;}
 .lg-ask .h{font-size:11.5px;font-weight:700;color:#e8c870;margin-bottom:9px;}
 .lg-ask .hd{background:#0a1020;border:1px solid #2a4078;border-radius:10px;padding:9px 11px;margin-bottom:10px;}
 .lg-ask .hd .a{font-size:20px;font-weight:800;letter-spacing:-.5px;color:#fff;}
@@ -3088,8 +3110,14 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       <div class="lg-voice-res">
         <div class="lg-voice-amt" id="lg-vamt-entry">₹0</div>
         <div class="lg-voice-sub" id="lg-vnote-entry" style="margin-bottom:6px;"></div>
+        <div class="lgc" id="lgc-entry">
+          <div class="lgc-r"><div class="lgc-l">Type</div><div class="lgc-seg" id="lgc-dir"><div data-v="in" onclick="lgcSet('dir','in')">↓ आया<small>Received</small></div><div data-v="out" onclick="lgcSet('dir','out')">↑ गया<small>Paid</small></div></div></div>
+          <div class="lgc-r" id="lgc-mode-r"><div class="lgc-l">Mode</div><div class="lgc-seg" id="lgc-mode"><div data-v="Cash" onclick="lgcSet('mode','Cash')">Cash</div><div data-v="UPI" onclick="lgcSet('mode','UPI')">UPI</div></div></div>
+          <div class="lgc-r" id="lgc-nat-r"><div class="lgc-l">Nature</div><div class="lgc-seg" id="lgc-nat"><div data-v="Sale" onclick="lgcSet('nat','Sale')">Sale<small>बिक्री</small></div><div data-v="Collection" onclick="lgcSet('nat','Collection')">Collection<small>उधार वापस</small></div><div data-v="Other" onclick="lgcSet('nat','Other')">Other<small>अन्य</small></div></div></div>
+          <div class="lgc-hint" id="lgc-hint" style="display:none;"></div>
+        </div>
         <div class="lg-voice-btns">
-          <button type="button" class="lg-voice-add" onclick="lgVoiceConfirm('entry')">Add / जोड़ें</button>
+          <button type="button" class="lg-voice-add" id="lg-vadd-entry" onclick="lgVoiceConfirm('entry')">Add / जोड़ें</button>
           <button type="button" class="lg-voice-again" onclick="lgVoiceReset('entry')">🔄 फिर से</button>
         </div>
       </div>
@@ -3731,10 +3759,12 @@ textarea.st-biz-in{resize:none;}
   }
   function recvCat(b){
     if(b&&b.src==="udhaar") return "Collection";
+    if(b&&b.nature) return (b.nature==="Other"?"Other receipt":b.nature);
     var n=String((b&&b.note)||"");
     if(n==="(पुराना)") return "Sale";
     if(RX_SALE.test(n)) return "Sale";
     if(RX_COLL.test(n)) return "Collection";
+    if(/से\s+(?:\S+\s+){0,5}(?:मिले|मिला|मिली|आए|आये|आया|आई)/.test(n)) return "Collection";
     return "Other receipt";
   }
   /* Display names in standard accounting terms. The internal keys (Sale /
@@ -5344,6 +5374,10 @@ textarea.st-biz-in{resize:none;}
       <div class="in" id="ee-in" onclick="eeSetDir('in')"><div class="k">↓ आया</div><div class="s">पैसा मिला</div></div>
       <div class="out" id="ee-out" onclick="eeSetDir('out')"><div class="k">↑ गया</div><div class="s">पैसा दिया</div></div>
     </div>
+    <div class="ee-sub">Mode</div>
+    <div class="lgc-seg" id="ee-mode" style="margin-bottom:14px;"><div data-v="Cash" onclick="eeSetMode('Cash')">Cash</div><div data-v="UPI" onclick="eeSetMode('UPI')">UPI</div></div>
+    <div id="ee-nat-r"><div class="ee-sub">Nature</div>
+    <div class="lgc-seg" id="ee-nat" style="margin-bottom:16px;"><div data-v="Sale" onclick="eeSetNat('Sale')">Sale<small>बिक्री</small></div><div data-v="Collection" onclick="eeSetNat('Collection')">Collection<small>उधार वापस</small></div><div data-v="Other" onclick="eeSetNat('Other')">Other<small>अन्य</small></div></div></div>
     <div class="ee-fl">रकम</div>
     <div class="ee-amtf" id="ee-amtf"><span class="cur">₹</span>
       <input id="ee-amt" type="number" inputmode="numeric" enterkeyhint="done" autocomplete="off">
@@ -8256,6 +8290,8 @@ function _lgTime(ts){
 }
 function _lgLabel(b){
   if(b.note && String(b.note).trim()) return escHTML(String(b.note).trim());
+  // Mode is shown as a tag now, so the fallback label must not claim नकद/UPI itself.
+  if(b.method) return (lgDirOf(b)==='in')?'आया':'गया';
   if(b.type==='cash') return 'नकद';
   if(b.type==='upi')  return 'UPI';
   if(b.type==='expense') return 'खर्चा';
@@ -8288,7 +8324,7 @@ function lgRenderEntries(){
     var _isP=(b.src==='maal'||b.type==='purchase');
     return '<div class="lg-en '+(d==='in'?'i':'o')+'" onclick="lgEditEntry('+i+')">'
       +'<span class="ar">'+(d==='in'?_LG_AR_IN:_LG_AR_OUT)+'</span>'
-      +'<span class="m"><span class="a">₹'+amt.toLocaleString('en-IN')+'</span>'+tag
+      +'<span class="m"><span class="a">₹'+amt.toLocaleString('en-IN')+'</span>'+tag+_lgcTags(b,d)
       +'<div class="nt">'+_lgLabel(b)+clip+billTxt+'</div></span>'
       +'<span class="rt"><div class="tm">'+_lgTime(b.ts)+'</div>'
       +'<div class="ed">'+(_isP?'→':'✏️')+'</div></span></div>';
@@ -8343,12 +8379,84 @@ try{
   });
 }catch(e){}
 function eeClose(){ var o=document.getElementById("ee-ov"); if(o) o.classList.remove("show"); _eeBox=null; }
+/* ══ Mode + Nature at entry ═══════════════════════════════════════════
+   Reports used to GUESS cash vs UPI and sale vs collection from the spoken
+   note. Now the answer is taken from the sentence up front, shown on the
+   card, and saved on the entry as `method` / `nature`. The rows exist to
+   correct a wrong guess — a clear sentence is still one tap on Add.
+   Defaults (locked): mode = last entry today, else Cash · nature = Sale. */
+var LGC={dir:'',mode:'Cash',nat:'Sale',modeDefaulted:false,modeFrom:''};
+var _LGC_UPI=/upi|यूपीआई|यू पी आई|phonepe|फोनपे|gpay|google pay|paytm|पेटीएम|online|ऑनलाइन|neft|imps|\bqr\b/i;
+var _LGC_CASH=/cash|कैश|कॅश|नकद|नगद/i;
+var _LGC_SALE=/sale|सेल|सैल|बिक्री|बेचा|बेची|बिका/i;
+var _LGC_COLL=/उधार|वापस|payment|पेमेंट|भुगतान|वसूल|collection|received from|से आए|से आये|से मिले|से आया|से मिला/i;
+function _lgcGuessMode(t){ t=String(t||''); if(_LGC_UPI.test(t)) return 'UPI'; if(_LGC_CASH.test(t)) return 'Cash'; return ''; }
+var _LGC_FROM=/से\s+(?:\S+\s+){0,5}(?:मिले|मिला|मिली|आए|आये|आया|आई)/;
+function _lgcGuessNat(t){ t=String(t||''); if(_LGC_SALE.test(t)) return 'Sale'; if(_LGC_COLL.test(t)||_LGC_FROM.test(t)) return 'Collection'; return 'Sale'; }
+function _lgcLastMode(){
+  try{
+    var r=window.lgState&&window.lgState.rec;
+    var bx=((r&&r.lgBoxes)||[]).filter(function(b){ return b&&b.method; })
+      .sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+    return bx.length?bx[0].method:'';
+  }catch(e){ return ''; }
+}
+function _lgcPaint(id,val,clsOf){
+  var s=document.getElementById(id); if(!s) return;
+  Array.prototype.forEach.call(s.children,function(c){
+    var v=c.getAttribute('data-v'); c.className=(v===val)?('on '+clsOf(v)):'';
+  });
+}
+window.lgcInit=function(S){
+  var txt=String((S&&S.note)||'')+' '+String((S&&S.raw)||'');
+  LGC.dir=(S&&(S.dir==='in'||S.dir==='out'))?S.dir:'';
+  var gm=_lgcGuessMode(txt), last=_lgcLastMode();
+  LGC.mode=gm||last||'Cash';
+  LGC.modeDefaulted=!gm; LGC.modeFrom=gm?'':(last?'last':'default');
+  LGC.nat=_lgcGuessNat(txt);
+  lgcRender();
+};
+function lgcSet(k,v){ LGC[k]=v; if(k==='mode') LGC.modeDefaulted=false; lgcRender(); }
+function lgcRender(){
+  _lgcPaint('lgc-dir',LGC.dir,function(v){ return v; });
+  _lgcPaint('lgc-mode',LGC.mode,function(v){ return v==='UPI'?'upi':'cash'; });
+  _lgcPaint('lgc-nat',LGC.nat,function(){ return 'nat'; });
+  var hasDir=(LGC.dir==='in'||LGC.dir==='out');
+  var ds=document.getElementById('lgc-dir'); if(ds) ds.className='lgc-seg'+(hasDir?'':' need');
+  var mr=document.getElementById('lgc-mode-r'); if(mr) mr.style.display=hasDir?'':'none';
+  var nr=document.getElementById('lgc-nat-r'); if(nr) nr.style.display=(LGC.dir==='in')?'':'none';
+  var ad=document.getElementById('lg-vadd-entry'); if(ad) ad.classList.toggle('dis',!hasDir);
+  var h=document.getElementById('lgc-hint');
+  if(h){
+    var msg='';
+    if(!hasDir) msg='Pick <b>आया</b> or <b>गया</b> to continue';
+    else if(LGC.modeDefaulted) msg='Mode not spoken — set to <b>'+LGC.mode+'</b>'+(LGC.modeFrom==='last'?', same as your last entry':'');
+    h.innerHTML=msg; h.style.display=msg?'':'none';
+  }
+}
+/* tags on today's list — only what was actually recorded */
+function _lgcTags(b,d){
+  if(!b||b.src==='maal'||b.type==='purchase') return '';
+  var s='';
+  if(b.method) s+='<span class="tg '+(b.method==='UPI'?'upi':'cash')+'">'+b.method+'</span>';
+  if(d==='in'&&b.nature&&b.nature!=='Sale') s+='<span class="tg '+(b.nature==='Collection'?'col':'oth')+'">'+b.nature+'</span>';
+  return s;
+}
+var _eeMode='Cash', _eeNat='Sale';
+function _eePaint(){
+  _lgcPaint('ee-mode',_eeMode,function(v){ return v==='UPI'?'upi':'cash'; });
+  _lgcPaint('ee-nat',_eeNat,function(){ return 'nat'; });
+  var nr=document.getElementById('ee-nat-r'); if(nr) nr.style.display=(_eeDir==='in')?'':'none';
+}
+function eeSetMode(m){ _eeMode=m; _eePaint(); }
+function eeSetNat(n){ _eeNat=n; _eePaint(); }
 function eeSetDir(d){
   _eeDir=d;
   var i=document.getElementById("ee-in"), o=document.getElementById("ee-out"), f=document.getElementById("ee-amtf");
   if(i) i.className = "in"+(d==="in"?" on":"");
   if(o) o.className = "out"+(d==="out"?" on":"");
   if(f) f.className = "ee-amtf "+(d==="in"?"in":"out");
+  try{ _eePaint(); }catch(e){}
 }
 function eeAskDelete(){ var c=document.getElementById("ee-cov"); if(c) c.classList.add("show"); }
 function eeCancelDelete(){ var c=document.getElementById("ee-cov"); if(c) c.classList.remove("show"); }
@@ -8374,6 +8482,8 @@ function eeSave(){
   _eeBox.note=note;
   _eeBox.dir=_eeDir;
   _eeBox.type=(_eeDir==="in")?"cash":"expense";   // keep the legacy field consistent
+  _eeBox.method=_eeMode;
+  if(_eeDir==="in") _eeBox.nature=_eeNat; else delete _eeBox.nature;
   _eeBox.edited=Date.now();
   eeClose();
   try{ lgPersistRec(r); }catch(e){}
@@ -8395,6 +8505,8 @@ function lgEditEntry(i){
     return;
   }
   _eeBox=box;
+  _eeMode=box.method||_lgcGuessMode(box.note)||'Cash';
+  _eeNat=box.nature||_lgcGuessNat(box.note);
   eeSetDir(lgDirOf(box)==="in"?"in":"out");
   var a=document.getElementById("ee-amt"); if(a) a.value=Math.round(lgCashOf(box))||"";
   var n=document.getElementById("ee-note"); if(n) n.value=box.note||"";
@@ -14373,7 +14485,8 @@ function npReopenPreview(){
   window.lgVoiceState = LGV;
   function el(id){ return document.getElementById(id); }
   function zone(type){ return el('lg-voice-'+type); }
-  function setState(type, st){ var z=zone(type); if(!z) return; z.classList.remove('rec','proc','res','err'); if(st) z.classList.add(st); }
+  function setState(type, st){ var z=zone(type); if(!z) return; z.classList.remove('rec','proc','res','err'); if(st) z.classList.add(st);
+    if(st==='res' && type==='entry'){ try{ if(window.lgcInit) window.lgcInit(LGV[type]); }catch(e){} } }
   function buildWave(type){ var w=el('lg-wave-'+type); if(!w) return []; w.innerHTML=''; var bars=[]; for(var i=0;i<11;i++){ var b=document.createElement('i'); w.appendChild(b); bars.push(b); } return bars; }
 
   /* ══ Fast path: stream the words while the user speaks, parse locally. ══
@@ -14509,7 +14622,10 @@ function npReopenPreview(){
        money phrase is removed — a number later in the sentence (a bill number,
        a quantity) is left alone. */
     var note=_lgEnglishise(t).replace(new RegExp('^\\s*(?:₹|rs\\.?|रु\\.?)?\\s*[\\d.,]+\\s*(?:'+_MUL_RE+')?\\s*(?:रुपये|रुपए|रूपये|रुपय|rupees|rupaye|rs\\.?)?\\s*(?:का|के|की|ka|ke|ki)?\\s*','i'),'').trim();
-    if(!note) note=_lgEnglishise(t);
+    /* A bare amount ("1500") has nothing left to say — leave the note empty
+       rather than repeat the figure that is already shown above it. */
+    if(!note && !/^[\s\d.,₹]*$/.test(t)) note=_lgEnglishise(t);
+    note=note.charAt(0).toUpperCase()+note.slice(1);
     return { amount: Math.round(amt)||0, direction: dir, note: note.slice(0,40), via: via };
   }
   function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
@@ -14731,13 +14847,10 @@ function npReopenPreview(){
   window.lgVoiceConfirm = function(type, dirResolved){
     var S = LGV[type]; var amt = parseInt(S.amt,10)||0;
     if(amt<=0){ return _fail(type,'फिर से बोलें'); }
-    if(type==='entry' && !dirResolved && S.dir!=='in' && S.dir!=='out'){
-      var ae=document.getElementById('lg-ask');
-      var aa=document.getElementById('lg-ask-amt'), an=document.getElementById('lg-ask-note');
-      if(aa) aa.textContent='₹'+amt.toLocaleString('en-IN');
-      if(an) an.textContent=S.note||'—';
-      if(ae) ae.style.display='';
-      setState(type,null);
+    /* The Type row on the card replaces the separate "दिशा साफ़ नहीं" question. */
+    if(type==='entry' && window.LGC && (LGC.dir==='in'||LGC.dir==='out')) S.dir=LGC.dir;
+    if(type==='entry' && S.dir!=='in' && S.dir!=='out'){
+      try{ lgcRender(); if(typeof toast==='function') toast('आया या गया चुनिए'); }catch(e){}
       return;
     }
     var r = window.lgState && window.lgState.rec;
@@ -14762,10 +14875,13 @@ function npReopenPreview(){
     var typeBoxes = r.lgBoxes.filter(function(b){ return b.type===_bt; });
     r.lgBoxes.push({ n: typeBoxes.length+1, type: _bt, amount: amt,
       note: (type==='entry' ? (S.note||'') : ''), ts: Date.now(), src: 'voice',
-      dir: (type==='entry' ? S.dir : undefined) });
+      dir: (type==='entry' ? S.dir : undefined),
+      method: (type==='entry' && window.LGC ? (LGC.mode||undefined) : undefined),
+      nature: (type==='entry' && S.dir==='in' && window.LGC ? (LGC.nat||'Sale') : undefined) });
     try{ if(window.logEvent) window.logEvent('box_added',{
       dir: (type==='entry' ? (S.dir||'') : (_bt==='expense'?'out':'in')),
-      method: _bt, src:'voice', amount: amt, voice: !!S.viaVoice });
+      method: _bt, src:'voice', amount: amt, voice: !!S.viaVoice,
+      mode: (window.LGC&&LGC.mode)||'', nature: (S.dir==='in'&&window.LGC&&LGC.nat)||'' });
     }catch(e){}
     if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
     else if(window.lgState.isToday){ r.lgSaved=false; r.lgSavedAt=null; }

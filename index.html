@@ -3784,8 +3784,23 @@ textarea.st-biz-in{resize:none;}
   function pdfFromHost(host){
     var target=host.firstElementChild||host;
     var tr=target.getBoundingClientRect(), cuts=[];
-    target.querySelectorAll("tr,.ids,.meta,.cards,.clo,.agh,.ag,.cash,.note1,.disc,.ft,.sub,.rv,.sec").forEach(function(el){
+    /* Rows and blocks may break before or after. A heading or a table header
+       may only break BEFORE — never leave it stranded at the foot of a page. */
+    target.querySelectorAll("tbody tr,.ids,.meta,.cards,.clo,.ag,.cash,.note1,.disc,.ft,.sub,.rv,.sec").forEach(function(el){
       var r=el.getBoundingClientRect(); cuts.push(r.top-tr.top); cuts.push(r.bottom-tr.top);
+    });
+    target.querySelectorAll("thead,.agh").forEach(function(el){
+      var r=el.getBoundingClientRect(); cuts.push(r.top-tr.top);
+      var nx=el.nextElementSibling; if(nx && nx.tagName==="TABLE"){ var t=nx.querySelector("thead"); if(t){ var q=t.getBoundingClientRect(); var bad=q.bottom-tr.top; cuts=cuts.filter(function(c){ return Math.abs(c-bad)>1; }); } }
+    });
+    /* A heading and the table it introduces move together: no break is allowed
+       anywhere from just below the heading's top to the end of the first data row. */
+    target.querySelectorAll(".agh").forEach(function(el){
+      var top=el.getBoundingClientRect().top-tr.top, end=el.getBoundingClientRect().bottom-tr.top;
+      var nx=el.nextElementSibling;
+      if(nx && nx.tagName==="TABLE"){ var fr=nx.querySelector("tbody tr"); end=(fr?fr:nx).getBoundingClientRect().bottom-tr.top; }
+      else if(nx){ end=nx.getBoundingClientRect().bottom-tr.top; }
+      cuts=cuts.filter(function(c){ return c<=top+1 || c>=end-1; });
     });
     cuts.sort(function(a,b){return a-b;});
     var cssW=target.offsetWidth||794;
@@ -3817,6 +3832,127 @@ textarea.st-biz-in{resize:none;}
       return doc.output("blob");
     });
   }
+  /* ─────────── Tax split in reports ───────────
+     Each bill carries taxLines (one per GST rate). Heads come from comparing the
+     supplier's GSTIN state code with yours: same state → CGST+SGST, different →
+     IGST. Nothing is guessed silently: a bill without a split is shown as such
+     and its value is stated, so the ITC total is never quietly understated. */
+  var GST_STATE={"01":"Jammu & Kashmir","02":"Himachal Pradesh","03":"Punjab","04":"Chandigarh","05":"Uttarakhand","06":"Haryana","07":"Delhi","08":"Rajasthan","09":"Uttar Pradesh","10":"Bihar","11":"Sikkim","12":"Arunachal Pradesh","13":"Nagaland","14":"Manipur","15":"Mizoram","16":"Tripura","17":"Meghalaya","18":"Assam","19":"West Bengal","20":"Jharkhand","21":"Odisha","22":"Chhattisgarh","23":"Madhya Pradesh","24":"Gujarat","26":"Dadra & Nagar Haveli and Daman & Diu","27":"Maharashtra","29":"Karnataka","30":"Goa","31":"Lakshadweep","32":"Kerala","33":"Tamil Nadu","34":"Puducherry","35":"Andaman & Nicobar Islands","36":"Telangana","37":"Andhra Pradesh","38":"Ladakh","97":"Other Territory"};
+  function supGstinOf(m){ return String((m&&m.supGstin)||((window.getSupGstin&&m)?getSupGstin(m.supplier||""):"")||"").toUpperCase().replace(/[^0-9A-Z]/g,""); }
+  function nf(x){ return f(x).replace("\u20b9",""); }
+  function taxRows(m){
+    if(typeof tlOf!=="function"||typeof tlHeads!=="function") return [];
+    var g=supGstinOf(m);
+    return tlOf(m).map(function(l){ var h=tlHeads(l,g);
+      return {rate:+l.rate||0,taxable:+l.taxable||0,tax:+l.tax||0,cgst:h.cgst,sgst:h.sgst,igst:h.igst,basis:h.basis,derived:!!l.derived}; });
+  }
+  function taxFlags(m,key){
+    var out=[], L=taxRows(m);
+    if(!L.length){ out.push("Tax split not captured"); return out; }
+    var s=L.reduce(function(t,l){ return t+l.taxable+l.tax; },0), amt=Math.round(+m.amount||0);
+    if(amt>0 && Math.abs(s-amt)>2) out.push("Taxable + tax ("+Math.round(s)+") does not equal invoice value ("+amt+")");
+    L.forEach(function(l){
+      if(l.derived) out.push("Single blended rate \u2014 not read slab-wise");
+      if(!l.derived && key && key>="2025-09-22" && (l.rate===12||l.rate===28)) out.push(l.rate+"% slab abolished from 22 Sep 2025 \u2014 check with supplier");
+    });
+    if(!supGstinOf(m)) out.push("Supplier GSTIN missing \u2014 CGST/SGST vs IGST not verified");
+    return out;
+  }
+  function chip(cls,txt){
+    var st={intra:"background:#f6f0e2;border:1px solid #e2d4b0;color:#6b5a2e;",inter:"background:#e8f0fb;border:1px solid #b9cdee;color:#2b4d8a;",
+            ex:"background:#f1f2f5;border:1px solid #d9dce3;color:#6b7280;",miss:"background:#fdecec;border:1px solid #f3b9b9;color:#b42318;",
+            blend:"background:#fff5e0;border:1px solid #f0d08a;color:#8a5a00;"}[cls];
+    return '<span style="display:inline-block;margin:3px 4px 0 0;padding:1px 6px;border-radius:4px;font-size:8.5px;font-family:Consolas,Menlo,monospace;white-space:nowrap;'+st+'">'+txt+'</span>';
+  }
+  function taxChipsHTML(m,key){
+    var L=taxRows(m), extra='';
+    if(!L.length) return '<div>'+chip("miss","Tax split not captured \u00b7 invoice "+nf(m.amount||0))+'</div>';
+    var fl=taxFlags(m,key).filter(function(x){ return x.indexOf("abolished")>=0||x.indexOf("does not equal")>=0; });
+    if(fl.length) extra='<div style="color:#b42318;font-size:8.5px;font-weight:700;margin-top:2px;">\u26a0 '+fl.join(" \u00b7 ")+'</div>';
+    return '<div>'+L.map(function(l){
+      if(l.derived) return chip("blend","\u2248"+(Math.round(l.rate*100)/100)+"% blended \u00b7 TV "+nf(l.taxable)+" \u00b7 Tax "+nf(l.tax)+" \u00b7 not slab-wise");
+      if(!(l.tax>0)) return chip("ex",l.rate+"% exempt \u00b7 TV "+nf(l.taxable)+" \u00b7 no ITC");
+      if(l.basis==="inter") return chip("inter",l.rate+"% \u00b7 TV "+nf(l.taxable)+" \u00b7 IGST "+nf(l.igst));
+      return chip("intra",l.rate+"% \u00b7 TV "+nf(l.taxable)+" \u00b7 CGST "+nf(l.cgst)+" \u00b7 SGST "+nf(l.sgst)+(l.basis==="unknown"?" \u00b7 assumed":""));
+    }).join("")+'</div>'+extra;
+  }
+  function itcSummary(bills){
+    var by={}, excl=[], nAssumed=0;
+    (bills||[]).forEach(function(m,ix){
+      var L=taxRows(m);
+      if(!L.length){ excl.push(m); return; }
+      L.forEach(function(l){
+        var k=l.derived?"blend":(String(l.rate)+(l.basis==="inter"?"|i":"|s"));
+        if(!by[k]) by[k]={rate:l.rate,inter:l.basis==="inter",blend:!!l.derived,taxable:0,cgst:0,sgst:0,igst:0,tax:0,ids:{}};
+        var o=by[k]; o.taxable+=l.taxable; o.cgst+=l.cgst; o.sgst+=l.sgst; o.igst+=l.igst; o.tax+=l.tax;
+        o.ids[m.id||m.billNo||("i"+ix)]=1;
+        if(l.basis==="unknown"&&l.tax>0) nAssumed++;
+      });
+    });
+    var T={taxable:0,cgst:0,sgst:0,igst:0,tax:0};
+    var rows=Object.keys(by).map(function(k){ var o=by[k]; o.bills=Object.keys(o.ids).length; delete o.ids;
+        ["taxable","cgst","sgst","igst","tax"].forEach(function(q){ o[q]=Math.round(o[q]*100)/100; T[q]+=o[q]; }); return o; })
+      .sort(function(a,b){ if(a.blend!==b.blend) return a.blend?1:-1; return (a.rate-b.rate)||((a.inter?1:0)-(b.inter?1:0)); });
+    ["taxable","cgst","sgst","igst","tax"].forEach(function(q){ T[q]=Math.round(T[q]*100)/100; });
+    return {rows:rows,T:T,excl:excl,exclAmt:excl.reduce(function(t,m){ return t+(+m.amount||0); },0),
+            nBills:(bills||[]).length-excl.length,nAssumed:nAssumed};
+  }
+  function itcLabel(o){ return o.blend?"Blended (not slab-wise)":(o.rate+"%"+(o.inter?" \u00b7 IGST":"")+(o.tax>0?"":" \u00b7 exempt")); }
+  function itcHTML(S,title){
+    if(!S||(!S.rows.length&&!S.excl.length)) return "";
+    var h='<div class="agh">'+title+'</div><table><thead><tr><th>Rate</th><th class="r">Taxable Value</th><th class="r">CGST</th><th class="r">SGST</th><th class="r">IGST</th><th class="r">Total Tax</th><th class="r">Bills</th></tr></thead><tbody>';
+    S.rows.forEach(function(o){ h+='<tr><td>'+itcLabel(o)+'</td><td class="r">'+f(o.taxable)+'</td><td class="r">'+(o.cgst?f(o.cgst):"\u2014")+'</td><td class="r">'+(o.sgst?f(o.sgst):"\u2014")+'</td><td class="r">'+(o.igst?f(o.igst):"\u2014")+'</td><td class="r">'+(o.tax?f(o.tax):"\u2014")+'</td><td class="r">'+o.bills+'</td></tr>'; });
+    h+='<tr class="tot"><td>Total (captured)</td><td class="r">'+f(S.T.taxable)+'</td><td class="r">'+f(S.T.cgst)+'</td><td class="r">'+f(S.T.sgst)+'</td><td class="r">'+f(S.T.igst)+'</td><td class="r">'+f(S.T.tax)+'</td><td class="r">'+S.nBills+'</td></tr></tbody></table>';
+    if(S.excl.length) h+='<div class="note1" style="margin-top:8px;">\u26a0 '+S.excl.length+' bill(s) ('+f(S.exclAmt)+') excluded \u2014 tax split not captured. Input tax credit above is understated by the tax on these bills.</div>';
+    if(S.nAssumed) h+='<div class="note1" style="margin-top:6px;">CGST/SGST is assumed on '+S.nAssumed+' line(s) because your GSTIN or the supplier\u2019s is not set \u2014 an inter-state (IGST) bill cannot be identified until both are entered.</div>';
+    h+='<div style="margin:6px 26px 0;font-size:9px;color:#8a90a2;">Tax figures are read from bill photographs. Input tax credit must be reconciled against GSTR-2B before it is claimed.</div>';
+    return h;
+  }
+  /* GSTR-2B layout: one row per invoice per tax rate, in the portal's own column order. */
+  function b2Table(bills){
+    var own=((typeof ownGstin==="function")?ownGstin():"")||String((((window.getBizProfile&&getBizProfile())||{}).gstin)||"").toUpperCase();
+    var sc=own.slice(0,2), pos=GST_STATE[sc]?(sc+"-"+GST_STATE[sc]):"";
+    var hdr=["GSTIN of Supplier","Trade/Legal Name","Invoice Number","Invoice Type","Invoice Date","Invoice Value","Place of Supply","Reverse Charge","Rate (%)","Taxable Value","Integrated Tax","Central Tax","State/UT Tax","Cess","Purchase Type","Amount Paid","Balance Outstanding","Invoice Copy","Remarks"];
+    var out=[];
+    (bills||[]).map(function(m){ return {m:m,key:isoDate(m.invoiceDate,m.date)}; })
+      .sort(function(a,b){ return String(a.key).localeCompare(String(b.key)); })
+      .forEach(function(x){
+        var m=x.m, L=taxRows(m), fl=taxFlags(m,x.key).join("; ");
+        var isCash=(m.pay==="\u0928\u0915\u0926"), amt=+m.amount||0, paid=isCash?amt:Math.min(amt,+m.paid||0), open=Math.max(0,amt-paid);
+        var photo=(m.billThumb||m.billUrl||m.billPath)?"Yes":"No";
+        if(!L.length) L=[null];
+        L.forEach(function(l,i){
+          out.push([supGstinOf(m),m.supplier||"",m.billNo||"","Regular",xDate(x.key),amt,pos,"N",
+            l?(l.derived?Math.round(l.rate*100)/100:l.rate):"", l?l.taxable:"", l?l.igst:"", l?l.cgst:"", l?l.sgst:"", l?0:"",
+            isCash?"Cash":"Credit", (i===0?paid:""), (i===0?open:""), photo, (i===0?fl:"")]);
+        });
+      });
+    return {hdr:hdr,rows:out};
+  }
+  function itcSheetRows(S){
+    var r=[["Input Tax Credit Summary"],["Rate","Taxable Value","CGST","SGST","IGST","Total Tax","Bills"]];
+    S.rows.forEach(function(o){ r.push([itcLabel(o),o.taxable,o.cgst,o.sgst,o.igst,o.tax,o.bills]); });
+    r.push(["Total (captured)",S.T.taxable,S.T.cgst,S.T.sgst,S.T.igst,S.T.tax,S.nBills]);
+    if(S.excl.length) r.push(["\u26a0 "+S.excl.length+" bill(s) ("+f(S.exclAmt)+") excluded \u2014 tax split not captured; input tax credit above is understated by their tax."]);
+    if(S.nAssumed) r.push(["CGST/SGST assumed on "+S.nAssumed+" line(s) \u2014 your GSTIN or the supplier's is not set."]);
+    r.push(["Input tax credit must be reconciled against GSTR-2B before it is claimed."]);
+    return r;
+  }
+  /* One sheet: the GSTR-2B-order register, then the ITC summary under it. */
+  function taxSheet(X,title,bills,S,topRows){
+    var rows=(topRows||[]).slice(); rows.push([title]); rows.push([]);
+    var hdr=rows.length, T=b2Table(bills);
+    rows.push(T.hdr); T.rows.forEach(function(r){ rows.push(r); });
+    var last=rows.length-1;
+    rows.push([]); rows.push([]);
+    var itc0=rows.length; itcSheetRows(S).forEach(function(r){ rows.push(r); });
+    var ws=aoa(X,rows);
+    moneyCols(X,ws,hdr+1,last,[5,9,10,11,12,13,15,16]);
+    moneyCols(X,ws,itc0+2,rows.length-1,[1,2,3,4,5]);
+    tFilter(X,ws,hdr,T.hdr.length,last);
+    ws["!cols"]=[{wch:17},{wch:24},{wch:22},{wch:9},{wch:12},{wch:13},{wch:18},{wch:8},{wch:8},{wch:13},{wch:12},{wch:12},{wch:12},{wch:7},{wch:10},{wch:12},{wch:13},{wch:8},{wch:44}];
+    return ws;
+  }
   var VNOTE="For your accountant: enter these vouchers in Tally as shown. This sheet is a reference list, not a direct Tally import file.";
   function computeRange(key){
     var d=new Date(); var y=d.getFullYear(), m=d.getMonth();
@@ -3840,7 +3976,7 @@ textarea.st-biz-in{resize:none;}
     (A.creditBills||[]).forEach(function(r){
       var key=isoDate(r.invoiceDate,r.date), bk=billKey(r.billNo);
       var others=(dups[bk]||[]).filter(function(x){return x.id!==r.id;});
-      rows.push({date:key, disp:dispDate(key), bill:r.billNo||"\u2014", kind:"buy", debit:0, credit:(r.amount||0),
+      rows.push({date:key, disp:dispDate(key), bill:r.billNo||"\u2014", kind:"buy", debit:0, credit:(r.amount||0), m:r,
         dup:others.length?others.map(function(x){return x.supplier||"?";}).join(", "):""});
     });
     (A.payments||[]).forEach(function(p){
@@ -3860,6 +3996,10 @@ textarea.st-biz-in{resize:none;}
     var bal=opening;
     inR.forEach(function(r){ bal += (r.credit - r.debit); r.balance=bal; });
     var asOf=R.to||todayStr();
+    /* ITC covers every bill of this supplier in the period — cash bills included,
+       since tax paid on a cash purchase is still claimable. */
+    var itcBills=(A.creditBills||[]).concat(A.cashBills||[]).filter(function(m){ var k=isoDate(m.invoiceDate,m.date); return k && !(R.from&&k<R.from) && !(R.to&&k>R.to); });
+    var firstG=""; itcBills.some(function(m){ if(m.supGstin){ firstG=m.supGstin; return true; } return false; });
     /* Ageing counts from the invoice date — the date the GST 180-day clock uses. */
     var ag={b0:0,b1:0,b2:0,b3:0};
     var outB=(A.creditBills||[]).map(function(b){return {amount:b.amount||0,key:isoDate(b.invoiceDate,b.date)};})
@@ -3867,7 +4007,8 @@ textarea.st-biz-in{resize:none;}
     var remaining=Math.max(0,bal); var asD=pdate(asOf)||new Date();
     outB.forEach(function(b){ if(remaining<=0)return; var u=Math.min(b.amount,remaining); remaining-=u; var bd=pdate(b.key); var dys=bd?Math.floor((asD-bd)/86400000):0; if(dys<=30)ag.b0+=u; else if(dys<=60)ag.b1+=u; else if(dys<=90)ag.b2+=u; else ag.b3+=u; });
     return {biz:(window.getBizProfile?getBizProfile():{name:"",gstin:"",address:"",dlno:""}),
-      supplier:supName, supGstin:(window.getSupGstin?getSupGstin(supName):""), phone:cleanPhone(phone),
+      supplier:supName, supGstin:((window.getSupGstin?getSupGstin(supName):"")||firstG), phone:cleanPhone(phone),
+      itcBills:itcBills, itc:itcSummary(itcBills),
       period:R, opening:opening, rows:inR, closing:bal, asOf:asOf,
       totalCredit:inR.reduce(function(t,r){return t+r.credit;},0),
       totalDebit:inR.reduce(function(t,r){return t+r.debit;},0),
@@ -3922,7 +4063,7 @@ textarea.st-biz-in{resize:none;}
     var gstNote = (biz.gstin||D.supGstin) ? '' : '<div class="note1">GSTIN not set \u2014 add it via \u201c\u270f\ufe0f \u0935\u094d\u092f\u093e\u092a\u093e\u0930 \u091c\u093e\u0928\u0915\u093e\u0930\u0940\u201d + supplier GSTIN for a fully CA-ready statement.</div>';
     var body='<tr class="op"><td>'+dispDate(D.period.from||(D.rows[0]&&D.rows[0].date)||todayStr())+'</td><td>Opening Balance b/d</td><td></td><td class="r"></td><td class="r"></td><td class="r bal">'+f(D.opening)+'</td></tr>';
     D.rows.forEach(function(r){
-      var part = r.kind==="buy"?("By Purchase A/c"+(r.dup?'<div style="color:#c62828;font-size:9.5px;font-weight:700;">\u26a0 Duplicate invoice no. also under: '+esc(r.dup)+'</div>':'')):(r.kind==="pay"?(payAcct(r.mode)+" \u2014 "+esc(r.mode||"")+(r.ref?' <span style="color:#8a90a2;">\u00b7 '+esc(r.ref)+'</span>':'')):"To Cash/Bank A/c (earlier payments)");
+      var part = r.kind==="buy"?("By Purchase A/c"+taxChipsHTML(r.m,r.date)+(r.dup?'<div style="color:#c62828;font-size:9.5px;font-weight:700;">\u26a0 Duplicate invoice no. also under: '+esc(r.dup)+'</div>':'')):(r.kind==="pay"?(payAcct(r.mode)+" \u2014 "+esc(r.mode||"")+(r.ref?' <span style="color:#8a90a2;">\u00b7 '+esc(r.ref)+'</span>':'')):"To Cash/Bank A/c (earlier payments)");
       body+='<tr><td>'+esc(r.disp)+'</td><td>'+part+'</td><td>'+esc(r.bill)+'</td>'
         +'<td class="r">'+(r.debit?f(r.debit):"")+'</td><td class="r">'+(r.credit?f(r.credit):"")+'</td><td class="r bal">'+f(r.balance)+'</td></tr>';
     });
@@ -3939,7 +4080,7 @@ textarea.st-biz-in{resize:none;}
     var disc='<div class="disc">This statement is generated from records entered by the user in Live Khaata. It is <b>not audited, verified, or certified</b>. Cr = amount payable to the supplier. Each Bill No has its original bill photo saved in the app. E&amp;OE \u2014 please confirm the closing balance; report any discrepancy within 7 days.</div>';
     var now=new Date();
     var ft='<div class="ft"><div class="fl">Computer-generated statement \u00b7 no signature required.<br>Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
-    return '<div class="ca">'+css+head+ids+meta+gstNote+table+clo+age+cash+disc+ft+'</div>';
+    return '<div class="ca">'+css+head+ids+meta+gstNote+table+clo+age+itcHTML(D.itc,"Input Tax Credit Summary \u00b7 this supplier, this period")+cash+disc+ft+'</div>';
   }
   function genBlob(D){
     var host=document.createElement("div");
@@ -4047,6 +4188,7 @@ textarea.st-biz-in{resize:none;}
     tFilter(X,ws1,hdr,9,last);
     ws1["!cols"]=[{wch:12},{wch:30},{wch:24},{wch:13},{wch:18},{wch:15},{wch:16},{wch:17},{wch:36}];
     X.utils.book_append_sheet(wb,ws1,"Statement");
+    X.utils.book_append_sheet(wb,taxSheet(X,"Tax split \u00b7 GSTR-2B layout \u00b7 "+(D.supplier||""),D.itcBills,D.itc,[[biz.name||""],["Period:",perd]]),"Tax Split");
     var s2=[[VNOTE],[],["Date","Voucher Type","Voucher No","Party Ledger","Debit","Credit","Narration"]];
     D.rows.forEach(function(r){
       if(r.kind==="buy") s2.push([xDate(r.date),"Purchase",r.bill,D.supplier,"",r.credit,"Being goods purchased on credit"]);
@@ -4251,7 +4393,7 @@ textarea.st-biz-in{resize:none;}
       var isCash=(r.pay==="\u0928\u0915\u0926"), amt=r.amount||0, paid=isCash?amt:Math.min(amt,r.paid||0);
       var others=(dups[billKey(r.billNo)]||[]).filter(function(x){return x.id!==r.id;});
       if(others.length) nDup++;
-      rows.push({date:key, disp:dispDate(key), supplier:r.supplier||"\u2014", gstin:(window.getSupGstin?getSupGstin(r.supplier||""):""),
+      rows.push({date:key, disp:dispDate(key), m:r, supplier:r.supplier||"\u2014", gstin:supGstinOf(r),
         bill:r.billNo||"\u2014", mode:(isCash?"Cash":"Credit"), amount:amt, paid:paid, open:Math.max(0,amt-paid),
         dup:others.length?others.map(function(x){return (x.supplier||"?")+" "+dispDate(isoDate(x.invoiceDate,x.date));}).join("; "):"",
         photo:!!(r.billThumb||r.billUrl||r.billPath)});
@@ -4260,6 +4402,7 @@ textarea.st-biz-in{resize:none;}
     rows.sort(function(a,b){ return String(a.date).localeCompare(String(b.date)); });
     return {biz:(window.getBizProfile?getBizProfile():{name:"",gstin:"",address:"",dlno:""}),
       period:R, asOf:(R.to||todayStr()), rows:rows, totalCash:totalCash, totalCredit:totalCredit, total:totalCash+totalCredit, n:rows.length, nDup:nDup,
+      bills:rows.map(function(x){ return x.m; }), itc:itcSummary(rows.map(function(x){ return x.m; })),
       noPhoto:rows.filter(function(r){return !r.photo;}).length};
   }
   function purchaseHTML(D){
@@ -4282,6 +4425,9 @@ textarea.st-biz-in{resize:none;}
       +'.ca tbody tr:nth-child(even) td{background:#fafbfd;}'
       +'.ca .tot td{background:#e8c870 !important;color:#0a1530;font-weight:800;}'
       +'.ca .disc{margin:14px 26px 0;font-size:9px;color:#8a90a2;line-height:1.6;border-top:1px solid #eef0f4;padding-top:10px;}'
+      +'.ca .agh{font-size:11px;font-weight:800;color:#16224a;margin:16px 26px 7px;}'
+      +'.ca .note1{margin:0 26px 12px;background:#fdf6e6;border:1px solid #ecd9a6;border-radius:8px;padding:8px 12px;font-size:10px;color:#8a6510;}'
+      +'.ca td{vertical-align:top;}'
       +'.ca .ft{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 26px 20px;border-top:2px solid #0a1530;padding-top:10px;}'
       +'.ca .ft .fl{font-size:9.5px;color:#6b7180;}.ca .bm{font-size:15px;font-weight:800;}.ca .bm .li{color:#e84545;}.ca .bm .kh{color:#c0902f;}'
       +'</style>';
@@ -4292,47 +4438,48 @@ textarea.st-biz-in{resize:none;}
       +'<div class="cd cred"><div class="k">CREDIT</div><div class="v">'+f(D.totalCredit)+'</div></div>'
       +'<div class="cd tot"><div class="k">TOTAL PURCHASES</div><div class="v">'+f(D.total)+'</div></div></div>';
     var body='';
-    D.rows.forEach(function(r,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+r.disp+'</td><td>'+String(r.supplier).replace(/</g,"&lt;")+(r.dup?'<div style="color:#c62828;font-size:9px;font-weight:700;">\u26a0 Duplicate invoice no.: '+String(r.dup).replace(/</g,"&lt;")+'</div>':'')+'</td><td>'+String(r.bill).replace(/</g,"&lt;")+'</td><td class="c">'+r.mode+'</td><td class="r">'+f(r.amount)+'</td><td class="r">'+(r.open?f(r.open):'\u2014')+'</td></tr>'; });
+    D.rows.forEach(function(r,ix){ body+='<tr><td class="c">'+(ix+1)+'</td><td>'+r.disp+'</td><td>'+String(r.supplier).replace(/</g,"&lt;")+taxChipsHTML(r.m,r.date)+(r.dup?'<div style="color:#c62828;font-size:9px;font-weight:700;">\u26a0 Duplicate invoice no.: '+String(r.dup).replace(/</g,"&lt;")+'</div>':'')+'</td><td>'+String(r.bill).replace(/</g,"&lt;")+'</td><td class="c">'+r.mode+'</td><td class="r">'+f(r.amount)+'</td><td class="r">'+(r.open?f(r.open):'\u2014')+'</td></tr>'; });
     if(!D.rows.length) body='<tr><td colspan="7" style="text-align:center;color:#8a90a2;padding:20px;">\u0907\u0938 period \u092e\u0947\u0902 \u0915\u094b\u0908 \u0916\u0930\u0940\u0926 \u0928\u0939\u0940\u0902</td></tr>';
     var openTot=D.rows.reduce(function(t,r){return t+r.open;},0);
     body+='<tr class="tot"><td colspan="5" style="text-align:right;">TOTAL</td><td class="r">'+f(D.total)+'</td><td class="r">'+f(openTot)+'</td></tr>';
     var table='<table><thead><tr><th class="c">#</th><th>Invoice Date</th><th>Supplier</th><th>Invoice No.</th><th class="c">Purchase Type</th><th class="r">Invoice Value</th><th class="r">Balance Outstanding</th></tr></thead><tbody>'+body+'</tbody></table>';
     var disc='<div class="disc">'+(D.nDup?('<b style="color:#c62828;">\u26a0 '+D.nDup+' invoice(s) share an invoice number with another purchase \u2014 check for a duplicate entry or wrong party before posting.</b><br>'):'')+(D.noPhoto?(D.noPhoto+' invoice(s) have no copy attached. '):'Invoice copy attached for all bills. ')+'Rows are in invoice-date order. Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
     var ft='<div class="ft"><div class="fl">Computer-generated \u00b7 Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
-    return '<div class="ca">'+css+head+meta+cards+table+disc+ft+'</div>';
+    return '<div class="ca">'+css+head+meta+cards+table+itcHTML(D.itc,"Input Tax Credit Summary \u00b7 all suppliers, this period")+disc+ft+'</div>';
   }
   function purchaseWorkbook(D){
     var X=window.XLSX, biz=D.biz||{}, wb=X.utils.book_new();
     var perd=D.period.label+(D.period.from?(" ("+dispDate(D.period.from)+" to "+dispDate(D.period.to)+")"):"");
-    var s1=[[biz.name||""],["Purchase Register \u00b7 Cash + Credit"],[]];
-    s1.push(["Period:",perd]); s1.push(["As on:",xDate(D.asOf)]); if(biz.gstin) s1.push(["Your GSTIN:",biz.gstin]);
-    s1.push([]);
-    s1.push(["Cash purchases",D.totalCash]); s1.push(["Credit purchases",D.totalCredit]); s1.push(["TOTAL PURCHASES",D.total]);
-    var sumEnd=s1.length-1;
-    s1.push([]);
-    var hdr=s1.length;
-    s1.push(["S. No.","Invoice Date","Supplier","Supplier GSTIN","Invoice No.","Purchase Type","Invoice Value","Amount Paid","Balance Outstanding","Invoice Copy","Remarks"]);
-    D.rows.forEach(function(r,ix){ s1.push([ix+1,xDate(r.date),r.supplier,r.gstin||"",r.bill,r.mode,r.amount,r.paid,r.open,(r.photo?"Yes":"No"),(r.dup?("Duplicate invoice no.: "+r.dup):"")]); });
-    var last=s1.length-1;
-    var openTot=D.rows.reduce(function(t,r){return t+r.open;},0), paidTot=D.rows.reduce(function(t,r){return t+r.paid;},0);
-    s1.push(["","","","","","TOTAL",D.total,paidTot,openTot,"",""]);
-    s1.push([]);
-    if(D.nDup) s1.push(["\u26a0 Review: "+D.nDup+" invoice(s) share an invoice number with another purchase \u2014 check for a duplicate entry or wrong party."]);
-    s1.push(["Entries are in invoice-date order. Rate-wise tax split is not yet included. Generated by Live Khaata \u00b7 livekhaata.app. NOT audited/certified. E&OE."]);
-    var ws1=aoa(X,s1);
-    for(var r=0;r<=sumEnd;r++){ var a=X.utils.encode_cell({r:r,c:1}); if(ws1[a]&&typeof ws1[a].v==="number"&&!/y/.test(ws1[a].z||"")) ws1[a].z="\u0022\u20b9\u0022#,##,##0"; }
-    moneyCols(X,ws1,hdr+1,s1.length-1,[6,7,8]);
-    tFilter(X,ws1,hdr,11,last);
-    ws1["!cols"]=[{wch:5},{wch:12},{wch:26},{wch:17},{wch:24},{wch:8},{wch:14},{wch:13},{wch:13},{wch:7},{wch:40}];
-    X.utils.book_append_sheet(wb,ws1,"Purchase");
+    var top=[[biz.name||""],["Purchase Register \u00b7 GSTR-2B layout (one row per invoice per tax rate)"],[],["Period:",perd],["As on:",xDate(D.asOf)]];
+    if(biz.gstin) top.push(["Your GSTIN:",biz.gstin]);
+    top.push(["Cash purchases",D.totalCash]); top.push(["Credit purchases",D.totalCredit]); top.push(["TOTAL PURCHASES",D.total]);
+    top.push([]);
+    var ws1=taxSheet(X,"Invoices",D.bills,D.itc,top);
+    for(var r=0;r<top.length;r++){ var a=X.utils.encode_cell({r:r,c:1}); if(ws1[a]&&typeof ws1[a].v==="number"&&!/y/.test(ws1[a].z||"")) ws1[a].z="\u0022\u20b9\u0022#,##,##0"; }
+    X.utils.book_append_sheet(wb,ws1,"Purchase Register");
+    /* Voucher list: one purchase voucher per invoice, debit side split by rate and
+       tax head, credit side the party (or Cash A/c), round-off kept explicit so
+       every voucher balances. */
     var s2=[[VNOTE],[],["Date","Voucher Type","Voucher No","Ledger","Debit","Credit","Narration"]];
-    D.rows.forEach(function(r,ix){
-      var cr=(r.mode==="Cash"?"Cash A/c":r.supplier);
-      var nr="Being goods purchased from "+r.supplier+((r.bill&&r.bill!=="\u2014")?(" ("+r.bill+")"):"");
-      s2.push([xDate(r.date),"Purchase",(r.bill&&r.bill!=="\u2014")?r.bill:("P"+(ix+1)),"Purchase A/c",r.amount,"",nr]);
-      s2.push(["","","",cr,"",r.amount,""]);
+    D.rows.forEach(function(x,ix){
+      var m=x.m, L=taxRows(m), vno=(x.bill&&x.bill!=="\u2014")?x.bill:("P"+(ix+1));
+      var nr="Being goods purchased from "+x.supplier+((x.bill&&x.bill!=="\u2014")?(" (Inv "+x.bill+")"):"");
+      var dr=[];
+      if(!L.length){ dr.push(["Purchase A/c",x.amount]); nr+=" \u2014 tax split not captured"; }
+      else L.forEach(function(l){
+        dr.push([(l.derived?"Purchase A/c (rate to be confirmed)":("Purchase A/c @ "+l.rate+"%"+(l.basis==="inter"?" (Inter-state)":""))),l.taxable]);
+        if(l.cgst) dr.push(["Input CGST @ "+(l.rate/2)+"%",l.cgst]);
+        if(l.sgst) dr.push(["Input SGST @ "+(l.rate/2)+"%",l.sgst]);
+        if(l.igst) dr.push(["Input IGST @ "+l.rate+"%",l.igst]);
+      });
+      var sumDr=Math.round(dr.reduce(function(t,d){ return t+d[1]; },0)*100)/100, ro=Math.round((x.amount-sumDr)*100)/100;
+      dr.forEach(function(d,k){ s2.push([k===0?xDate(x.date):"",k===0?"Purchase":"",k===0?vno:"",d[0],d[1],"",k===0?nr:""]); });
+      if(ro>0) s2.push(["","","","Round Off A/c",ro,"",""]);
+      s2.push(["","","",(x.mode==="Cash"?"Cash A/c":x.supplier),"",x.amount,""]);
+      if(ro<0) s2.push(["","","","Round Off A/c","",-ro,""]);
     });
-    var ws2=aoa(X,s2); ws2["!cols"]=[{wch:12},{wch:12},{wch:24},{wch:26},{wch:14},{wch:14},{wch:36}];
+    var ws2=aoa(X,s2); ws2["!cols"]=[{wch:12},{wch:12},{wch:24},{wch:34},{wch:14},{wch:14},{wch:44}];
+    moneyCols(X,ws2,3,s2.length-1,[4,5]);
     X.utils.book_append_sheet(wb,ws2,"Voucher List");
     return new Blob([X.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
   }

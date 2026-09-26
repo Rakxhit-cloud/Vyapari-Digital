@@ -2310,9 +2310,9 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       <div class="terms-sec-icon">🎁</div>
       <div class="terms-sec-title">2. फ्री ट्रायल और सदस्यता</div>
       <div class="terms-sec-title-en">Free Trial &amp; Subscription</div>
-      <div class="terms-trial-head">90 दिन मुफ़्त, फिर ₹49/महीना।</div>
-      <div class="terms-trial-head-en">Free for 90 days, then ₹49/month.</div>
-      <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span><b>मैनुअल या ऑटो-पे</b> — आप चुनें। हर महीने खुद pay करें, या UPI AutoPay से अपने-आप। <span class="terms-trial-en">Pay manually each month, or turn on UPI AutoPay.</span></span></div>
+      <div class="terms-trial-head">30 दिन मुफ़्त, फिर ₹149 / 3 महीने।</div>
+      <div class="terms-trial-head-en">Free for 30 days, then ₹149 every 3 months.</div>
+      <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span><b>मैनुअल या ऑटो-पे</b> — आप चुनें। हर 3 महीने खुद pay करें, या UPI AutoPay से अपने-आप। <span class="terms-trial-en">Pay manually every 3 months, or turn on UPI AutoPay.</span></span></div>
       <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span><b>ऑटो-पे आपकी मंज़ूरी से ही चालू होगा</b> — बिना अनुमति कुछ नहीं कटेगा। <span class="terms-trial-en">AutoPay starts only with your approval.</span></span></div>
       <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span>हर कटौती से <b>24 घंटे पहले सूचना</b>, और mandate आप <b>कभी भी बंद</b> कर सकते हैं। <span class="terms-trial-en">24-hour notice before every debit; cancel anytime.</span></span></div>
     </div>
@@ -2610,10 +2610,10 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     <div class="eot-stripe"></div>
     <div class="eot-body">
       <div class="eot-medal">🎁</div>
-      <div class="eot-title">आपकी 90 दिन की फ्री ट्रायल अवधि समाप्त हो गई है</div>
+      <div class="eot-title">आपकी 30 दिन की फ्री ट्रायल अवधि समाप्त हो गई है</div>
       <div class="eot-text">Live Khaata को चुनने के लिए <b>धन्यवाद</b>। सेवा जारी रखने के लिए सदस्यता लें — आपका पूरा हिसाब सुरक्षित रहेगा।</div>
-      <div class="eot-chip"><span class="amt">₹49</span><span class="per">/माह</span></div>
-      <div class="eot-sub">प्रतिदिन ₹3 से भी कम में पूरी सेवा</div>
+      <div class="eot-chip"><span class="amt">₹149</span><span class="per">/3 महीने</span></div>
+      <div class="eot-sub">प्रतिदिन ₹2 से भी कम में पूरी सेवा</div>
       <button class="eot-cta" onclick="eotSubscribe()">सदस्यता लें</button>
       <button class="eot-ghost" onclick="eotDismiss()">बाद में</button>
       <div class="eot-safe">🔒 आपका डेटा पूरी तरह सुरक्षित है</div>
@@ -7373,7 +7373,7 @@ window.updateTrialBanner = async function updateTrialBanner(uid) {
   // Trial countdown runs silently in the background. The visible home banner was
   // removed (see marketing decision); the day-count is kept intact for the
   // end-of-trial reminder + Play Billing, which arrive at production.
-  window._trialDaysLeft = Math.max(0, 90 - Math.floor((Date.now() - trialStart) / (1000*60*60*24)));
+  window._trialDaysLeft = Math.max(0, 30 - Math.floor((Date.now() - trialStart) / (1000*60*60*24)));
   // Phase 1: when the trial has ended, surface the end-of-trial screen once per
   // app-open. It does NOT block the app (billing isn't wired yet) — the user can
   // dismiss and continue. Phase 2 will turn dismissal into the view-only lock.

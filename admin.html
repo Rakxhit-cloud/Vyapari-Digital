@@ -623,7 +623,7 @@ window._extendTrial = async function(uid, additionalDays) {
   if (!snap.exists()) throw new Error('Profile not found');
   const currentTrialStart = snap.data().trialStart || Date.now();
   // Shift trialStart BACKWARDS to extend the days remaining.
-  // (daysLeft = 90 - daysSinceTrialStart, so moving start earlier increases it.)
+  // (daysLeft = TRIAL_DAYS - daysSinceTrialStart, so moving start earlier increases it.)
   const newTrialStart = currentTrialStart - (additionalDays * 24*60*60*1000);
   await setDoc(profileRef, { trialStart: newTrialStart }, { merge: true });
 };
@@ -1012,15 +1012,16 @@ function classifyStage(p, u) {
   return 'otp';
 }
 
+const TRIAL_DAYS = 30;   // must match the app (index.html _trialDaysLeft)
 function daysLeft(trialStart) {
   if (!trialStart) return 0;
   const used = Math.floor((Date.now() - trialStart) / (1000*60*60*24));
-  return Math.max(0, 90 - used);
+  return Math.max(0, TRIAL_DAYS - used);
 }
 
 function trialClass(days) {
-  if (days <= 10) return 'danger';
-  if (days <= 25) return 'warning';
+  if (days <= 5) return 'danger';
+  if (days <= 12) return 'warning';
   return 'healthy';
 }
 
@@ -1279,7 +1280,7 @@ function openProfile(uid) {
 📄 Statement बनाइए और WhatsApp पर भेजिए
 🔒 PIN security और cloud backup — phone बदलें, तो भी data सुरक्षित
 
-*पहले 90 दिन निःशुल्क।* अपनी पहली entry से आज ही शुरुआत कीजिए।
+*पहले 30 दिन निःशुल्क।* अपनी पहली entry से आज ही शुरुआत कीजिए।
 
 — *Live Khaata* · _अब हिसाब चलेगा LIVE_ 🔴`;
     const phone = String(u.profile.phone || '').replace(/^\+/, '').replace(/\D/g, '');
@@ -1428,7 +1429,7 @@ function trialSectionHTML(p) {
   }
   const dl = daysLeft(p.trialStart);
   const cls = trialClass(dl);
-  const pct = Math.min(100, Math.round((dl / 90) * 100));
+  const pct = Math.min(100, Math.round((dl / TRIAL_DAYS) * 100));
   const startDate = new Date(p.trialStart);
   const startStr = startDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
 
@@ -1436,7 +1437,7 @@ function trialSectionHTML(p) {
     <div class="profile-section">
       <div class="trial-row">
         <span class="trial-row-label">Trial status</span>
-        <span class="trial-row-aside">After trial · ₹49/mo</span>
+        <span class="trial-row-aside">After trial · ₹149 / 3 months</span>
       </div>
       <div class="trial-big">
         <span class="trial-big-num ${cls}">${dl}</span>
@@ -1586,8 +1587,8 @@ function pickTemplate(u) {
     return {
       tag: 'TRIAL OVER',
       tone: 'expiring',
-      preview: 'Trial खत्म हो गया है — ₹49/महीने में जारी रखें।',
-      full: `नमस्कार 🙏\n\n*Live खाता — Trial पूरा हुआ*\n\nआपका 90-दिन Free Trial खत्म हो गया है। आपका सारा data safe है।\n\nContinue करने के लिए:\n• ₹49 / महीना\n• सभी features unlimited\n\n👉 https://livekhaata.app\n\n_Live खाता_`
+      preview: 'Trial खत्म हो गया है — ₹149 / 3 महीने में जारी रखें।',
+      full: `नमस्कार 🙏\n\n*Live खाता — Trial पूरा हुआ*\n\nआपका 30-दिन Free Trial खत्म हो गया है। आपका सारा data safe है।\n\nContinue करने के लिए:\n• ₹149 / 3 महीने\n• सभी features unlimited\n\n👉 https://livekhaata.app\n\n_Live खाता_`
     };
   }
 
@@ -1597,7 +1598,7 @@ function pickTemplate(u) {
       tag: 'TRIAL ENDING',
       tone: 'expiring',
       preview: `Trial में सिर्फ ${dl} दिन बाकी हैं।`,
-      full: `नमस्कार 🙏\n\n*Live खाता — Trial ${dl} दिन में पूरा*\n\nआपका 90-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹49 / महीना\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_Live खाता_`
+      full: `नमस्कार 🙏\n\n*Live खाता — Trial ${dl} दिन में पूरा*\n\nआपका 30-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹149 / 3 महीने\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_Live खाता_`
     };
   }
 
@@ -1607,7 +1608,7 @@ function pickTemplate(u) {
       tag: 'TRIAL REMINDER',
       tone: 'stuck',
       preview: `Trial में ${dl} दिन बाकी हैं।`,
-      full: `नमस्कार 🙏\n\n*Live खाता — Trial ${dl} दिन में पूरा*\n\nआपका 90-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹49 / महीना\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_Live खाता_`
+      full: `नमस्कार 🙏\n\n*Live खाता — Trial ${dl} दिन में पूरा*\n\nआपका 30-दिन Free Trial ${dl} दिन में खत्म हो रहा है।\n\nContinue करने के लिए:\n• ₹149 / 3 महीने\n• सभी features unlimited\n\nFeedback या सवाल हो तो reply करें।\n\n_Live खाता_`
     };
   }
 
@@ -1617,7 +1618,7 @@ function pickTemplate(u) {
       tag: 'OTP STUCK',
       tone: 'stuck',
       preview: 'Registration अधूरी है — 2 step बाकी।',
-      full: `नमस्कार 🙏\n\n*Live खाता — Registration अधूरी है*\n\nOTP verify हो चुका है। पूरा करने के लिए 2 step बाकी:\n\n• Terms accept करें\n• नाम + दुकान का नाम भरें\n\nFree Trial: 90 दिन\n\n👉 https://livekhaata.app\n\n_Live खाता_`
+      full: `नमस्कार 🙏\n\n*Live खाता — Registration अधूरी है*\n\nOTP verify हो चुका है। पूरा करने के लिए 2 step बाकी:\n\n• Terms accept करें\n• नाम + दुकान का नाम भरें\n\nFree Trial: 30 दिन\n\n👉 https://livekhaata.app\n\n_Live खाता_`
     };
   }
 

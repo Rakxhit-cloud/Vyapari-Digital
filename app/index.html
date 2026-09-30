@@ -2111,6 +2111,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .lg-live{min-height:16px;margin-top:6px;font-size:13px;color:#8aef7a;font-weight:600;text-align:center;
   line-height:1.35;padding:0 8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
 .lg-live .dim{color:#6a8ab0;font-weight:500;}
+.lg-live .lg-live-amt{color:#f2c464;font-weight:800;font-size:15px;margin-right:4px;}
 .lg-voice-recmsg{font-size:11.5px;color:#e8d8b8;font-weight:600;}
 .lg-voice-recmsg b{color:#e07a7a;font-weight:700;}
 .lg-voice-rd{display:inline-block;width:7px;height:7px;border-radius:50%;background:#e84545;margin-right:5px;box-shadow:0 0 6px #e84545;animation:lgvBlink 1s infinite;vertical-align:middle;}
@@ -5887,7 +5888,7 @@ const storage = getStorage(app);
 const functions = getFunctions(app, 'us-central1');
 const _scanBillCallable = httpsCallable(functions, 'scanBill', { timeout: 55000 });
 window._fsScanBill = function(b64){ return _scanBillCallable({ image: b64 }); };
-const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 40000 });
+const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 20000 });
 window._fsVoiceParse = function(b64, mimeType){ return _voiceParseCallable({ audio: b64, mimeType: mimeType || 'audio/wav' }); };
 
 // Registration source (web vs Play TWA) — first-touch, persisted, written once at signup
@@ -14907,27 +14908,98 @@ function npReopenPreview(){
   /* Tokens that are never part of an amount: "9 बजे" is a time, not ₹9. */
   var _AMT_STOP=['बजे','तारीख','तारीक','baje','date','am','pm','%','परसेंट','percent'];
   function _lgNorm(t){ return String(t||'').replace(/[०-९]/g,function(d){return '०१२३४५६७८९'.indexOf(d);}).replace(/[,\u200b]/g,'').trim(); }
+  /* ══ Amount reading v4 ══
+     Speech engines return the same word in different Unicode forms: हज़ार with a
+     precomposed ज़ or with ज + nukta, पाँच with a candrabindu or पांच with an
+     anusvara. A lookup that misses one form reads the amount wrong, so every
+     match runs on a normalised key. */
+  function _nk(s){ s=String(s||''); try{ s=s.normalize('NFD'); }catch(e){} return s.replace(/\u093C/g,'').replace(/\u0901/g,'\u0902').toLowerCase(); }
+  var _NUMX={'इक्कीस':21,'बाईस':22,'बाइस':22,'तेईस':23,'तेइस':23,'चौबीस':24,'छब्बीस':26,'सत्ताईस':27,'सताईस':27,'अट्ठाईस':28,'अठाईस':28,'उनतीस':29,'उन्तीस':29,
+   'इकतीस':31,'इकत्तीस':31,'बत्तीस':32,'तैंतीस':33,'तेंतीस':33,'चौंतीस':34,'छत्तीस':36,'सैंतीस':37,'अड़तीस':38,'उनतालीस':39,'उन्तालीस':39,
+   'इकतालीस':41,'बयालीस':42,'बियालीस':42,'तैंतालीस':43,'चवालीस':44,'चौवालीस':44,'छियालीस':46,'सैंतालीस':47,'अड़तालीस':48,'उनचास':49,
+   'इक्यावन':51,'बावन':52,'तिरपन':53,'चौवन':54,'चव्वन':54,'छप्पन':56,'सत्तावन':57,'अट्ठावन':58,'उनसठ':59,
+   'इकसठ':61,'बासठ':62,'तिरसठ':63,'चौंसठ':64,'छियासठ':66,'सड़सठ':67,'अड़सठ':68,'उनहत्तर':69,
+   'इकहत्तर':71,'बहत्तर':72,'तिहत्तर':73,'चौहत्तर':74,'छिहत्तर':76,'सतहत्तर':77,'अठहत्तर':78,'उन्यासी':79,'उनासी':79,
+   'इक्यासी':81,'बयासी':82,'तिरासी':83,'चौरासी':84,'छियासी':86,'सत्तासी':87,'अट्ठासी':88,'नवासी':89,
+   'इक्यानवे':91,'बानवे':92,'तिरानवे':93,'चौरानवे':94,'पंचानवे':95,'छियानवे':96,'सत्तानवे':97,'अट्ठानवे':98,'निन्यानवे':99,'निन्यानबे':99,
+   'छः':6,'छ':6,'छै':6};
+  var _ROMAN={'ek':1,'do':2,'teen':3,'tin':3,'char':4,'chaar':4,'paanch':5,'panch':5,'chhe':6,'che':6,'chah':6,'saat':7,'sat':7,'aath':8,'ath':8,'nau':9,
+   'das':10,'gyarah':11,'barah':12,'terah':13,'chaudah':14,'pandrah':15,'solah':16,'satrah':17,'atharah':18,'unnis':19,'bees':20,'bis':20,
+   'pachchis':25,'pachis':25,'tees':30,'chalis':40,'chaalis':40,'pachas':50,'pachaas':50,'saath':60,'sattar':70,'assi':80,'nabbe':90,
+   'eleven':11,'twelve':12,'thirteen':13,'fourteen':14,'sixteen':16,'seventeen':17,'eighteen':18,'nineteen':19,
+   'thirty':30,'forty':40,'sixty':60,'seventy':70,'eighty':80,'ninety':90};
+  var _NUM={}, _MUL={};
+  (function(){ var k;
+    for(k in _HI_NUM) _NUM[_nk(k)]=_HI_NUM[k];
+    for(k in _NUMX) _NUM[_nk(k)]=_NUMX[k];
+    for(k in _ROMAN) _NUM[k]=_ROMAN[k];
+    for(k in _HI_MUL) _MUL[_nk(k)]=_HI_MUL[k];
+    var x={'sau':100,'सैकड़ा':100,'hazaar':1000,'hazar':1000,'hajar':1000,'hajaar':1000,'lac':100000,'lakhs':100000,'crore':10000000,'karod':10000000};
+    for(k in x) _MUL[_nk(k)]=x[k];
+  })();
+  var _FRACN={'साढे':0.5,'सवा':0.25,'पौने':-0.25,'saadhe':0.5,'sadhe':0.5,'sade':0.5,'sawa':0.25,'sava':0.25,'paune':-0.25,'pone':-0.25};
+  function _fracN(t){
+    t=t.replace(/(^|\s)(डेढ|देढ|dedh|dedhh)(?=\s|$)/g,'$11.5').replace(/(^|\s)(ढाई|अढाई|dhai|dhaai|adhai)(?=\s|$)/g,'$12.5');
+    t=t.replace(/(^|\s)(साढे|सवा|पौने|saadhe|sadhe|sade|sawa|sava|paune|pone)\s+([^\s]+)/g,function(m,sp,p,w){
+      var f=_FRACN[p];
+      if(_NUM[w]!==undefined) return sp+String(_NUM[w]+f);
+      if(/^\d+(\.\d+)?$/.test(w)) return sp+String(parseFloat(w)+f);
+      if(_MUL[w]) return sp+(f<0?'0.75':String(1+f))+' '+w;      // सवा लाख = 1.25 लाख
+      return m;
+    });
+    // "साढ़े तीन हज़ार" is often heard as a clock time: "3:30 हज़ार" = 3.5 × 1000
+    t=t.replace(/(\d{1,2}):(\d{2})\s*([^\s]+)/g,function(m,h,mi,w){
+      if(!_MUL[w]) return m;
+      return (Math.round((parseInt(h,10)+parseInt(mi,10)/60)*100)/100)+' '+w;
+    });
+    return t;
+  }
+  var _UNIT=['बजे','बजकर','तारीख','तारीक','किलो','kg','kilo','ग्राम','gm','gram','लीटर','litre','liter','पीस','piece','pcs','पैकेट','packet',
+    'डिब्बे','डिब्बा','बोरी','बोरे','दिन','din','महीने','महीना','साल','%','परसेंट','percent','प्रतिशत','am','pm','मिनट','घंटे','नग','दर्जन','बजा'].map(_nk);
+  var _PRE_STOP=['नंबर','नंबर:','no','number','नं','#','मोबाइल','फोन','फ़ोन'].map(_nk);
+  var _MONEY=['रुपये','रुपए','रूपये','रुपय','रुपया','रूपए','रुपे','रु','rs','rupees','rupaye','rupay','rupiya','rupee','₹','inr'].map(_nk);
+  var _JOIN=['और','aur','and'].map(_nk);
+  /* The amount is read as a NUMBER PHRASE, not a single token: "2 हज़ार 500",
+     "दो हज़ार पाँच सौ" and "एक लाख बीस हज़ार" are one figure each. A number
+     followed by a unit (किलो, बजे, तारीख) or preceded by "नंबर" is not money.
+     If a phrase is marked as money (रुपये / ₹) it wins; otherwise the largest. */
+  function _amountOf(tN){
+    var s=tN.replace(/₹/g,' ₹ ').replace(/(\d)([^\d.\s:])/g,'$1 $2').replace(/([^\d.\s:])(\d)/g,'$1 $2');
+    var w=s.split(/[\s,।!?]+/).filter(Boolean), groups=[], g=null;
+    function close(i){ if(g){ g.end=i; groups.push(g); g=null; } }
+    for(var i=0;i<w.length;i++){
+      var x=w[i].replace(/\.$/,''), n=null, m=null;
+      if(/^\d+(\.\d+)?$/.test(x)) n=parseFloat(x);
+      else if(_NUM[x]!==undefined) n=_NUM[x];
+      else if(_MUL[x]) m=_MUL[x];
+      if(n!==null){
+        if(g && g.last==='n') close(i);              // "5 500" is two numbers, not 505
+        if(!g) g={start:i,tot:0,cur:0,last:''};
+        g.cur+=n; g.last='n';
+      } else if(m!==null){
+        if(!g) g={start:i,tot:0,cur:0,last:''};
+        if(m>=1000){ g.tot+=(g.cur||1)*m; g.cur=0; } else { g.cur=(g.cur||1)*m; }
+        g.last='m';
+      } else if(g && g.last==='m' && _JOIN.indexOf(x)>=0){ /* "दो हज़ार और पाँच सौ" */ }
+      else close(i);
+    }
+    close(w.length);
+    var best=0, bestMoney=0;
+    for(var j=0;j<groups.length;j++){
+      var G=groups[j], v=G.tot+G.cur; if(!(v>0)) continue;
+      var nxt=w[G.end]||'', prv=w[G.start-1]||'', isUnit=false;
+      for(var u=0;u<_UNIT.length;u++){ if(nxt===_UNIT[u] || (_UNIT[u].length>2 && nxt.indexOf(_UNIT[u])===0)){ isUnit=true; break; } }
+      if(isUnit || _PRE_STOP.indexOf(prv)>=0) continue;
+      if(_MONEY.indexOf(nxt)>=0 || _MONEY.indexOf(prv)>=0){ if(v>bestMoney) bestMoney=v; }
+      else if(v>best) best=v;
+    }
+    return Math.round((bestMoney||best)*100)/100;
+  }
+  var _DI=_DIR_IN.map(_nk), _DO=_DIR_OUT.map(_nk), _DIN=_DIR_IN_N.map(_nk), _DON=_DIR_OUT_N.map(_nk);
   function _lgParseHi(raw){
-    var t=_lgFrac(_lgNorm(raw)), lower=t.toLowerCase(), amt=0;
-    /* Walk every number in the sentence and drop the ones that are clearly not
-       money — "9 बजे" is nine o'clock, not ₹9. */
-    var re=/(\d+(?:\.\d+)?)\s*(सौ|हज़ार|हजार|लाख|करोड़|hundred|thousand|lakh|k)?/g, mm;
-    while((mm=re.exec(lower))!==null){
-      if(lower.charAt(mm.index+mm[0].length)===':') continue;   // "3:30 बजे" — a time
-      var tail=lower.slice(mm.index+mm[0].length).trim().split(/[\s,।]+/)[0]||'';
-      var isStop=false;
-      for(var si2=0; si2<_AMT_STOP.length; si2++){ if(tail===_AMT_STOP[si2] || tail.indexOf(_AMT_STOP[si2])===0){ isStop=true; break; } }
-      if(isStop) continue;
-      var v=parseFloat(mm[1]); if(mm[2]) v*=(_HI_MUL[mm[2]]||1);
-      if(v>amt) amt=v;          // the rupee figure is the largest real number said
-    }
-    if(!amt){
-      var w=t.split(/\s+/), tot=0, cur=0, saw=false;
-      for(var i=0;i<w.length;i++){ var x=w[i], xl=x.toLowerCase();
-        if(_HI_NUM[x]!==undefined||_HI_NUM[xl]!==undefined){ cur+=(_HI_NUM[x]!==undefined?_HI_NUM[x]:_HI_NUM[xl]); saw=true; }
-        else if(_HI_MUL[x]||_HI_MUL[xl]){ var mu=_HI_MUL[x]||_HI_MUL[xl]; cur=(cur||1)*mu; if(mu>=1000){ tot+=cur; cur=0; } saw=true; } }
-      if(saw) amt=tot+cur;
-    }
+    var t=_lgFrac(_lgNorm(raw));                   // display form, used for the note
+    var tN=_fracN(_nk(_lgNorm(raw)));              // matching form, used for amount + direction
+    var amt=_amountOf(tN), lower=tN;
     /* Direction. Token-aware rather than raw substring, so "लगाया" can't be read
        as "गया". Strong verbs first; only if none are present do the category
        nouns decide. Anything else stays 'unclear' and the user is asked. */
@@ -14943,10 +15015,10 @@ function npReopenPreview(){
       return best;
     };
     var dir='unclear', via='none';
-    var si=hit(_DIR_IN), so=hit(_DIR_OUT);
+    var si=hit(_DI), so=hit(_DO);
     if(si>=0 || so>=0){ dir = (si>so) ? 'in' : 'out'; via='verb'; }
     else {
-      var ni=hit(_DIR_IN_N), no=hit(_DIR_OUT_N);
+      var ni=hit(_DIN), no=hit(_DON);
       if(ni>=0 || no>=0){ dir = (ni>no) ? 'in' : 'out'; via='noun'; }
     }
     /* The figure is shown in ₹ above the note, so repeating it there wastes the
@@ -14958,15 +15030,31 @@ function npReopenPreview(){
        rather than repeat the figure that is already shown above it. */
     if(!note && !/^[\s\d.,₹]*$/.test(t)) note=_lgEnglishise(t);
     note=note.charAt(0).toUpperCase()+note.slice(1);
-    return { amount: Math.round(amt)||0, direction: dir, note: note.slice(0,40), via: via };
+    return { amount: amt||0, direction: dir, note: note.slice(0,40), via: via };
   }
+  window._lgParseHi=_lgParseHi;
   function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
   function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  /* Everything heard so far: final words plus whatever is still being spoken. */
+  function _srAll(S){
+    var f=(S.srText||'').trim(), it=(S.srInterim||'').trim();
+    if(it && _nk(f).indexOf(_nk(it))<0) f=(f?f+' ':'')+it;
+    return f;
+  }
+  /* Android's continuous mode can re-send the whole phrase as a new final
+     result. Merge instead of appending, or "500" becomes "500 500". */
+  function _srMerge(S, fin){
+    fin=String(fin||'').trim(); if(!fin) return;
+    var cur=(S.srText||'').trim(), a=_nk(cur), b=_nk(fin);
+    if(!cur || b.indexOf(a)===0){ S.srText=fin; return; }
+    if(a.indexOf(b)>=0) return;
+    S.srText=cur+' '+fin;
+  }
   /* Returns true when the transcript alone answered it — audio never leaves the phone. */
   function _srFinish(type){
     var S=LGV[type];
     if(S.srUsed) return true;
-    var txt=(S.srText||'').trim();
+    var txt=_srAll(S);
     if(!txt) return false;   // an error after a good transcript is irrelevant — the words are the result
     var p=_lgParseHi(txt);
     if(!p.amount || p.amount<=0) return false;
@@ -14980,14 +15068,16 @@ function npReopenPreview(){
   }
   function _srKill(S){
     var r=S.sr; S.sr=null;
+    if(S.endT){ clearTimeout(S.endT); S.endT=null; }
     if(!r) return;
     try{ r.onresult=null; r.onerror=null; r.onend=null; r.onspeechend=null; }catch(e){}
     try{ r.abort && r.abort(); }catch(e){}
   }
   /* Bump this whenever the voice path changes. A block written by an older build
      is stale by definition — that device gets a fresh chance instead of being
-     stuck on the slow path forever with no way to clear it from an update. */
-  var SR_GUARD_VER = 3;
+     stuck on the slow path forever with no way to clear it from an update.
+     v4: the old 800 ms mic watchdog blocked slow phones permanently — cleared. */
+  var SR_GUARD_VER = 4;
   function _srBlocked(){
     try{
       var raw=localStorage.getItem('hk_sr_block');
@@ -14999,7 +15089,15 @@ function npReopenPreview(){
     }catch(e){ return false; }
   }
   function _srBlock(){ try{ localStorage.setItem('hk_sr_block', JSON.stringify({v:SR_GUARD_VER,t:Date.now()})); }catch(e){} }
-  window.lgSrReset=function(){ try{ localStorage.removeItem('hk_sr_block'); }catch(e){} alert('SR reset — ab dobara try karo'); };
+  /* A slow phone can take 1–2 s to hand the mic to the speech service. One slow
+     start is not a broken device: only three misses in a row block SR. */
+  function _srNoMic(){ try{ var n=(parseInt(localStorage.getItem('hk_sr_nomic')||'0',10)||0)+1; localStorage.setItem('hk_sr_nomic',String(n)); return n; }catch(e){ return 1; } }
+  function _srMicOk(){ try{ localStorage.removeItem('hk_sr_nomic'); }catch(e){} }
+  window.lgSrReset=function(){ try{ localStorage.removeItem('hk_sr_block'); localStorage.removeItem('hk_sr_nomic'); }catch(e){} alert('SR reset — ab dobara try karo'); };
+  /* Timing. The engine's own end-of-speech detection cut shopkeepers off
+     mid-amount ("पाँच… सौ" became ₹5). We listen continuously and decide the
+     end ourselves: a short pause once an amount is heard, a longer one before. */
+  var SR_END_WITH_AMT=900, SR_END_NO_AMT=1700, SR_CAP=8000, SR_MIC_WAIT=3000;
   /* The recogniser opens its own microphone. Calling getUserMedia alongside it
      kills it with audio-capture, so on the fast path we never touch getUserMedia. */
   function _srOnlyStart(type){
@@ -15010,7 +15108,7 @@ function npReopenPreview(){
     if(S.timer){ clearInterval(S.timer); S.timer=null; }
     if(S.cap){ clearTimeout(S.cap); S.cap=null; }
     setState(type,'rec');
-    S.srMode=true; S.srActive=true; S.srUsed=false; S.srErr=null; S.srText=''; S.t0=Date.now();
+    S.srMode=true; S.srActive=true; S.srUsed=false; S.srErr=null; S.srText=''; S.srInterim=''; S.t0=Date.now();
     if(S.srRetried===undefined) S.srRetried=false;
     var live=el('lg-live-'+type); if(live) live.innerHTML='';
     var bars=buildWave(type);
@@ -15019,11 +15117,25 @@ function npReopenPreview(){
     S.timer=setInterval(function(){ if(tel) tel.textContent=((Date.now()-S.t0)/1000).toFixed(1)+'s'; },100);
     var R=window.SpeechRecognition||window.webkitSpeechRecognition, r;
     try{ r=new R(); }catch(e){ _srBlock(); return _audioStart(type); }
-    S.sr=r; r.lang='hi-IN'; r.interimResults=true; r.continuous=false; r.maxAlternatives=1;
+    S.sr=r; r.lang='hi-IN'; r.interimResults=true; r.continuous=true; r.maxAlternatives=1;
     S.trace=[]; var _tr=function(n){ S.trace.push(n+'@'+(Date.now()-S.t0)+'ms'); };
+    /* Show the amount the moment it is heard, then stop after a short pause. */
+    function endpoint(){
+      if(S.endT){ clearTimeout(S.endT); S.endT=null; }
+      var all=_srAll(S), p=all?_lgParseHi(all):{amount:0};
+      if(live){
+        var head=(p.amount>0)?('<b class="lg-live-amt">₹'+p.amount.toLocaleString('en-IN')+'</b> '):'';
+        live.innerHTML=head+_esc(S.srText||'')+(S.srInterim?('<span class="dim"> '+_esc(S.srInterim)+'</span>'):'');
+      }
+      /* "पाँच…" on its own is usually the start of "पाँच सौ": a small bare number
+         at the end of the sentence waits as long as no amount at all. */
+      var tail=_nk(all).trim().split(/\s+/).pop()||'';
+      var open=p.amount>0 && p.amount<100 && (_NUM[tail]!==undefined || /^\d+$/.test(tail));
+      S.endT=setTimeout(function(){ S.endT=null; try{ r.stop(); }catch(e){} }, (p.amount>0 && !open)?SR_END_WITH_AMT:SR_END_NO_AMT);
+    }
     r.onstart      = function(){ _tr('start'); };
     r.onaudiostart = function(){
-      S.gotMic=true;
+      S.gotMic=true; _srMicOk();
       if(S.micWatch){ clearTimeout(S.micWatch); S.micWatch=null; }
       _tr('mic');
     };
@@ -15031,59 +15143,59 @@ function npReopenPreview(){
     r.onspeechstart= function(){ _tr('speech'); };
     r.onaudioend   = function(){ _tr('micEnd'); };
     r.onresult=function(ev){
-      var fin='', itm='';
+      var itm='';
       for(var i=ev.resultIndex;i<ev.results.length;i++){
         var tr=ev.results[i][0].transcript;
-        if(ev.results[i].isFinal) fin+=tr; else itm+=tr;
+        if(ev.results[i].isFinal) _srMerge(S,tr); else itm+=tr;
       }
-      if(fin) S.srText+=fin;
-      if(live) live.innerHTML=_esc(S.srText)+(itm?('<span class="dim"> '+_esc(itm)+'</span>'):'');
+      S.srInterim=itm.trim();
+      endpoint();
     };
-    r.onspeechend=function(){ try{ r.stop(); }catch(e){} };
     r.onerror=function(ev){ S.srErr=(ev&&ev.error)||'err'; };
     r.onend=function(){
       S.srActive=false;
+      if(S.endT){ clearTimeout(S.endT); S.endT=null; }
       if(S.micWatch){ clearTimeout(S.micWatch); S.micWatch=null; }
       if(S.wave){ clearInterval(S.wave); S.wave=null; }
       if(S.timer){ clearInterval(S.timer); S.timer=null; }
       if(S.cap){ clearTimeout(S.cap); S.cap=null; }
       if(_srFinish(type)) return;
+      var er=S.srErr||'', heard=_srAll(S);
       // an abort with nothing captured is transient — give it one clean retry
-      if(S.gotMic && !(S.srText||'').trim() && !S.srRetried){
+      if(S.gotMic && !heard && !S.srRetried && er!=='no-speech'){
         S.srRetried=true; S.sr=null;
         return setTimeout(function(){ _srOnlyStart(type); }, 120);
       }
-      // second failure with nothing heard — hand this tap to the audio pipeline
-      // rather than showing an error. Not a permanent block; next tap retries SR.
-      if(!(S.srText||'').trim()){
+      if(er==='audio-capture'||er==='not-allowed'||er==='service-not-allowed'){
+        _srBlock(); return _audioStart(type);
+      }
+      if(!heard && er!=='no-speech'){
+        // network trouble or an engine that heard nothing at all — hand this tap
+        // to the audio pipeline rather than showing an error. Not a block.
         try{ if(window.logEvent) window.logEvent('voice_sr_rescue',{err:er||'empty',trace:(S.trace||[]).join('>')}); }catch(e){}
         S.srMode=false; S.sr=null;
         return _audioStart(type);
       }
-      var er=S.srErr||'';
-      try{ if(window.logEvent) window.logEvent('voice_sr',{err:er||'no-amount',txt:(S.srText||'').slice(0,40),trace:(S.trace||[]).join('>'),ua:(navigator.userAgent||'').slice(-42)}); }catch(e){}
-      if(er==='audio-capture'||er==='not-allowed'||er==='service-not-allowed'||er==='network'){
-        _srBlock(); return _audioStart(type);
-      }
-      if((S.srText||'').trim()) return _fail(type,'समझ नहीं आया — फिर से बोलें');
-      return _fail(type,'कुछ नहीं सुना — फिर से बोलिए');
+      try{ if(window.logEvent) window.logEvent('voice_sr',{err:er||'no-amount',txt:heard.slice(0,40),trace:(S.trace||[]).join('>'),ua:(navigator.userAgent||'').slice(-42)}); }catch(e){}
+      if(heard) return _fail(type,'रकम समझ नहीं आई — फिर से बोलें, जैसे "पाँच सौ मिले"');
+      return _fail(type,'कुछ नहीं सुना — mic के पास साफ़ बोलिए');
     };
     S.gotMic=false;
     S.micWatch=setTimeout(function(){
       if(S.gotMic) return;
-      // recogniser started but the speech service never took the mic on this device.
-      // Remember it (versioned) and switch to the audio pipeline immediately.
-      try{ if(window.logEvent) window.logEvent('voice_sr',{err:'no-mic',trace:(S.trace||[]).join('>'),ua:(navigator.userAgent||'').slice(-42)}); }catch(e){}
-      _srBlock();
-      try{ toast('⚠️ Google app को mic की अनुमति दें — तब voice तेज़ चलेगा'); }catch(e){}
+      // The speech service never took the mic within 3 s. Use the audio pipeline
+      // for this tap; block SR on this device only after three such misses.
+      var n=_srNoMic();
+      try{ if(window.logEvent) window.logEvent('voice_sr',{err:'no-mic',n:n,trace:(S.trace||[]).join('>'),ua:(navigator.userAgent||'').slice(-42)}); }catch(e){}
+      if(n>=3){ _srBlock(); try{ toast('⚠️ Google app को mic की अनुमति दें — तब voice तेज़ चलेगा'); }catch(e){} }
       S.srActive=false; S.srMode=false;
       if(S.wave){ clearInterval(S.wave); S.wave=null; }
       if(S.timer){ clearInterval(S.timer); S.timer=null; }
       if(S.cap){ clearTimeout(S.cap); S.cap=null; }
       _srKill(S);
       _audioStart(type);
-    }, 800);
-    S.cap=setTimeout(function(){ try{ r.stop(); }catch(e){} },6000);
+    }, SR_MIC_WAIT);
+    S.cap=setTimeout(function(){ try{ r.stop(); }catch(e){} }, SR_CAP);
     try{ r.start(); }catch(e){ _srBlock(); return _audioStart(type); }
   }
   window.lgVoiceStart = function(type){
@@ -15110,9 +15222,11 @@ function npReopenPreview(){
           S.raf = requestAnimationFrame(draw);
           S.analyser.getByteFrequencyData(S.data); S.sawAudio=true;
           var sum=0; for(var i=0;i<11;i++){ var v=S.data[i+1]||0; bars[i].style.height=Math.max(5,(v/255)*22)+'px'; sum+=v; }
-          var level=sum/11;
-          if(level>18){ S.spoke=true; S.silence=0; }
-          else if(S.spoke){ S.silence++; if(S.silence>40){ window.lgVoiceStop(type); } }
+          var level=sum/11, now=Date.now();
+          /* time-based, not frame-based: a slow phone draws fewer frames per
+             second, which used to stretch the wait to 2–3 s after speaking */
+          if(level>18){ S.spoke=true; S.lastLoud=now; }
+          else if(S.spoke && now-(S.lastLoud||now)>900){ window.lgVoiceStop(type); }
         })();
       }catch(e){}
       S.chunks=[];
@@ -15231,6 +15345,7 @@ function npReopenPreview(){
   function _fail(type,msg){ _cleanup(type); var e=el('lg-verr-'+type); if(e) e.textContent=msg||'फिर से कोशिश करें'; setState(type,'err'); }
   function _cleanup(type){
     var S=LGV[type];
+    if(S.endT){ clearTimeout(S.endT); S.endT=null; }
     if(S.wave){ clearInterval(S.wave); S.wave=null; }
     if(S.timer){ clearInterval(S.timer); S.timer=null; }
     if(S.cap){ clearTimeout(S.cap); S.cap=null; }
@@ -15245,8 +15360,15 @@ function npReopenPreview(){
       return new Promise(function(resolve,reject){ ctx.decodeAudioData(ab, function(buf){ resolve(buf); try{ctx.close();}catch(e){} }, function(e){ reject(e||new Error('decode')); }); });
     }).then(function(buf){
       var targetRate=16000; var ch0=buf.getChannelData(0); var ratio=buf.sampleRate/targetRate;
-      var outLen=Math.floor(ch0.length/ratio); var pcm=new Int16Array(outLen);
-      for(var i=0;i<outLen;i++){ var sm=ch0[Math.floor(i*ratio)]||0; sm=Math.max(-1,Math.min(1,sm)); pcm[i]= sm<0 ? sm*0x8000 : sm*0x7FFF; }
+      /* Trim the silence before and after the words (keep 150 ms either side):
+         a smaller upload is the biggest speed-up on a slow connection. */
+      var thr=0.02, a=0, b=ch0.length-1, pad=Math.floor(buf.sampleRate*0.15);
+      while(a<b && Math.abs(ch0[a])<thr) a++;
+      while(b>a && Math.abs(ch0[b])<thr) b--;
+      a=Math.max(0,a-pad); b=Math.min(ch0.length-1,b+pad);
+      if(b-a < buf.sampleRate*0.3){ a=0; b=ch0.length-1; }
+      var len=b-a+1, outLen=Math.floor(len/ratio), pcm=new Int16Array(outLen), step=Math.max(1,Math.floor(ratio));
+      for(var i=0;i<outLen;i++){ var st=a+Math.floor(i*ratio), acc=0; for(var q=0;q<step;q++) acc+=ch0[st+q]||0; var sm=acc/step; sm=Math.max(-1,Math.min(1,sm)); pcm[i]= sm<0 ? sm*0x8000 : sm*0x7FFF; }
       return _wavBlob(pcm, targetRate);
     });
   }

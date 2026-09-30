@@ -1704,9 +1704,9 @@ setInterval(() => {
 }, 60000);
 
 /* ══════════════════ TESTERS TAB ══════════════════
-   Targets come straight off the pamphlet. Scans are weekly, so a
-   zero-scan day is NOT a failed day — only a week closing under 5 is.  */
-const T_TARGET = { opens: 3, inw: 3, outw: 2, scansWeek: 5 };
+   Daily minimum for a qualified day: 2 app opens, 1 आया entry, 1 गया entry.
+   Scans are weekly and shown for information; they do not decide a day.  */
+const T_TARGET = { opens: 2, inw: 1, outw: 1, scansWeek: 5 };
 let _tvEvents = null;
 
 function _tvDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }

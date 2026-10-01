@@ -1012,6 +1012,17 @@ function classifyStage(p, u) {
   return 'otp';
 }
 
+// WhatsApp Desktop (reached through wa.me on a PC) turns emoji into broken "?" symbols.
+// On a computer we open WhatsApp Web instead, which keeps them; on a phone wa.me
+// is fine. The text is also copied, so it can be pasted if anything goes wrong.
+function _waOpen(phone, text){
+  try { if (navigator.clipboard) navigator.clipboard.writeText(text); } catch(e) {}
+  const mobile = /Android|iPhone|iPad/i.test(navigator.userAgent || '');
+  const url = mobile
+    ? 'https://wa.me/' + phone + '?text=' + encodeURIComponent(text)
+    : 'https://web.whatsapp.com/send?phone=' + phone + '&text=' + encodeURIComponent(text);
+  window.open(url, '_blank');
+}
 const TRIAL_DAYS = 30;   // must match the app (index.html _trialDaysLeft)
 function daysLeft(trialStart) {
   if (!trialStart) return 0;
@@ -1264,27 +1275,46 @@ function openProfile(uid) {
     const msg = buildWhatsAppMessage(u);
     const phone = String(u.profile.phone || '').replace(/^\+/, '').replace(/\D/g, '');
     if (phone) {
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      _waOpen(phone, msg);
     }
   });
   // Bind Welcome (post-install greeting) button
   const _wb = card.querySelector('.action-welcome');
   if (_wb) _wb.addEventListener('click', () => {
-    const WELCOME_MSG = `नमस्ते 🙏 Welcome to *Live Khaata*
+    const WELCOME_MSG = `नमस्ते 🙏
 
-आपकी दुकान का रोज़ का पूरा हिसाब — एक ही app में, fast और organised.
+*Live Khaata* परिवार में आपका हार्दिक स्वागत है! 🎉
 
-🎤 बोलकर आया-गया लिखिए — "पंद्रह सौ राहुल से मिले"
-📸 बिल स्कैन कीजिए — amount, date और bill number अपने आप
-🛒 हर supplier का बाकी और payment एक जगह
-📄 Statement बनाइए और WhatsApp पर भेजिए
-🔒 PIN security और cloud backup — phone बदलें, तो भी data सुरक्षित
+अब आपकी दुकान का पूरा हिसाब एक ही ऐप में: सरल, तेज़ और सुरक्षित। 📒
 
-*पहले 30 दिन निःशुल्क।* अपनी पहली entry से आज ही शुरुआत कीजिए।
+✨ *आपके लिए मुख्य सुविधाएँ*
 
-— *Live Khaata* · _अब हिसाब चलेगा LIVE_ 🔴`;
+🎙️ *बोलकर एंट्री*
+"पंद्रह सौ राहुल से मिले" बोलिए, एंट्री अपने आप दर्ज हो जाएगी।
+
+📸 *बिल स्कैन*
+बिल की फोटो से राशि, तारीख और बिल नंबर स्वतः भर जाते हैं।
+
+🧾 *सप्लायर खाता*
+हर सप्लायर का बकाया और भुगतान, एक ही स्थान पर।
+
+📊 *स्टेटमेंट*
+PDF और Excel में बनाकर सीधे WhatsApp पर भेजें।
+
+🔐 *पूर्ण सुरक्षा*
+PIN लॉक और क्लाउड बैकअप; फोन बदलने पर भी आपका डेटा सुरक्षित।
+
+🎁 *पहले 30 दिन बिल्कुल निःशुल्क!*
+
+👉 आज ही अपनी पहली एंट्री करें और हिसाब को बनाइए आसान।
+
+सहायता के लिए: support@livekhaata.app
+
+सादर,
+*टीम Live Khaata* 🔴
+_अब हिसाब चलेगा LIVE_`;
     const phone = String(u.profile.phone || '').replace(/^\+/, '').replace(/\D/g, '');
-    if (phone) window.open(`https://wa.me/${phone}?text=${encodeURIComponent(WELCOME_MSG)}`, '_blank');
+    if (phone) _waOpen(phone, WELCOME_MSG);
     else alert('इस user का फ़ोन नंबर नहीं मिला');
   });
 }

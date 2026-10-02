@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <meta name="theme-color" content="#0a1530">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com https://cdnjs.cloudflare.com; connect-src 'self' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://*.googleapis.com https://*.cloudfunctions.net https://*.firebaseio.com https://*.firebaseapp.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com https://cdnjs.cloudflare.com; connect-src 'self' https://accounts.google.com https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://*.googleapis.com https://*.cloudfunctions.net https://*.firebaseio.com https://*.firebaseapp.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self' data:; frame-src 'self' https://accounts.google.com https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
@@ -142,6 +142,34 @@ body { background: #100e0e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
 .auth-error.show { display: block; }
 .auth-success { background: #0a2820; border: 1px solid #1a4a3a; border-radius: 8px; padding: 10px 14px; font-size: 11px; color: #6ab070; margin-bottom: 14px; display: none; text-align: center; }
 .auth-success.show { display: block; }
+/* ===== Google account linking ===== */
+.gl-ico{width:70px;height:70px;background:linear-gradient(135deg,#6a4818 0%,#8a5a20 50%,#4a3010 100%);border:2px solid #d4a850;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;box-shadow:0 4px 12px rgba(212,168,80,.25);}
+.gl-or{display:flex;align-items:center;gap:10px;margin:16px 0 10px;color:#6a7ab0;font-size:11px;}
+.gl-or:before,.gl-or:after{content:"";flex:1;border-top:1px solid #2a4078;}
+.gl-q{font-size:12px;color:#b0a0e8;text-align:center;margin-bottom:10px;}
+.gl-btn-wrap{display:flex;justify-content:center;min-height:44px;margin-bottom:4px;}
+.gl-busy{display:none;font-size:12px;color:#e8c870;text-align:center;margin-top:8px;}
+.gl-busy.show{display:block;}
+.gl-steps{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
+.gl-steps span{width:22px;height:4px;border-radius:3px;background:#2a4078;}
+.gl-steps .on{background:#d4a850;}
+.gl-why{margin-bottom:16px;}
+.gl-wrow{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:#d8dcf0;line-height:1.55;margin-bottom:10px;}
+.gl-wrow span{font-size:16px;flex:none;}
+.gl-wrow b{color:#e8c870;}
+.gl-linked{border:1px solid #2a4078;border-radius:10px;overflow:hidden;}
+.gl-lrow{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;font-size:12.5px;}
+.gl-lrow+.gl-lrow{border-top:1px solid #2a4078;}
+.gl-lk{color:#b0a0e8;}
+.gl-lv{color:#e8d8b8;font-weight:500;}
+.gl-found{font-size:12px;color:#d8dcf0;background:#14254a;border:1px solid #2a4078;border-radius:8px;padding:9px 12px;margin-bottom:14px;}
+.gl-otp{text-align:center;letter-spacing:6px;font-size:20px;}
+.gl-modal-bg{position:fixed;inset:0;z-index:99990;background:rgba(3,6,14,.72);display:flex;align-items:center;justify-content:center;padding:18px;}
+.gl-modal{width:100%;max-width:360px;background:#0a1530;border:1px solid #d4a850;border-radius:18px;padding:22px 18px 10px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.7);}
+.gl-m-ico{font-size:34px;margin-bottom:8px;}
+.gl-m-title{font-size:19px;color:#e8d8b8;font-weight:500;margin-bottom:8px;}
+.gl-m-text{font-size:12.5px;color:#c8d0ea;line-height:1.6;margin-bottom:16px;}
+
 .otp-inputs { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
 .otp-digit { width: 44px; height: 52px; background: #14254a; border: 1.5px solid #2a4078; border-radius: 10px; font-size: 22px; font-weight: 500; color: #e8d8b8; text-align: center; outline: none; }
 .otp-digit:focus { border-color: #d4a850; background: #1a3060; box-shadow: 0 0 0 2px rgba(212, 168, 80, 0.2); }
@@ -2259,6 +2287,13 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     </div>
     <button class="auth-btn" id="send-otp-btn" onclick="sendOTP()">📨 OTP भेजें</button>
     <div class="auth-hint">आपके नंबर पर एक OTP भेजा जाएगा<br>यह नंबर आपकी दुकान की पहचान बनेगा</div>
+    <div id="gl-recover-wrap" style="display:none;">
+      <div class="gl-or"><span>या</span></div>
+      <div class="gl-q">नंबर बदल गया या फ़ोन खो गया?</div>
+      <div class="gl-btn-wrap" id="gl-btn-recover"></div>
+      <div class="auth-error" id="gl-recover-error"></div>
+      <div class="gl-busy" id="gl-recover-busy">⏳ खाता खोज रहे हैं…</div>
+    </div>
   </div>
 </div>
 
@@ -2285,6 +2320,79 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       OTP नहीं मिला? <span class="resend-link" id="resend-link" onclick="resendOTP()" style="display:none;">दोबारा भेजें</span>
       <span id="resend-countdown">30 सेकंड में दोबारा भेज सकते हैं</span>
     </div>
+  </div>
+</div>
+
+<!-- ===== Google account linking ===== -->
+<div class="auth-screen hidden" id="screen-google">
+  <div class="gl-ico">🛡️</div>
+  <div class="auth-title">अपना खाता सुरक्षित करें</div>
+  <div class="auth-sub">Secure your account with Google</div>
+  <div class="auth-card">
+    <div class="gl-steps"><span class="on"></span><span class="on"></span><span></span><span></span></div>
+    <div class="gl-why">
+      <div class="gl-wrow"><span>📱</span><div>नंबर बदलने या फ़ोन खोने पर भी आपका <b>पूरा हिसाब</b> इसी Google खाते से वापस मिलेगा।</div></div>
+      <div class="gl-wrow"><span>🧾</span><div>लाइसेंस और GST इनवॉइस इसी ईमेल पर सुरक्षित रहेंगे।</div></div>
+      <div class="gl-wrow"><span>⚡</span><div>बस एक टैप, कोई पासवर्ड नहीं।</div></div>
+    </div>
+    <div class="auth-error" id="gl-link-error"></div>
+    <div class="gl-btn-wrap" id="gl-btn-link"></div>
+    <div class="gl-busy" id="gl-link-busy">⏳ Google खाता जोड़ रहे हैं…</div>
+    <button class="auth-btn-secondary" id="gl-link-skip" style="display:none;" onclick="glContinue()">Google अभी नहीं खुल रहा। आगे बढ़ें, बाद में जोड़ें</button>
+    <div class="auth-hint">हम आपके ईमेल नहीं पढ़ते। केवल आपका नाम और ईमेल पता लिया जाता है।</div>
+  </div>
+</div>
+
+<div class="auth-screen hidden" id="screen-google-done">
+  <div class="gl-ico">✅</div>
+  <div class="auth-title">खाता सुरक्षित हो गया</div>
+  <div class="auth-sub">Your account is now protected</div>
+  <div class="auth-card">
+    <div class="gl-linked">
+      <div class="gl-lrow"><span class="gl-lk">📱 मोबाइल</span><span class="gl-lv" id="gl-done-phone"></span></div>
+      <div class="gl-lrow"><span class="gl-lk">✉️ Google</span><span class="gl-lv" id="gl-done-email"></span></div>
+    </div>
+    <div class="auth-success show" style="margin-top:14px;">अब आप इनमें से किसी से भी लॉगिन कर सकते हैं।</div>
+    <button class="auth-btn" onclick="glContinue()">आगे बढ़ें · Continue</button>
+  </div>
+</div>
+
+<div class="auth-screen hidden" id="screen-google-phone">
+  <div class="gl-ico">🔄</div>
+  <div class="auth-title">आपका खाता मिल गया</div>
+  <div class="auth-sub" id="gl-found-sub"></div>
+  <div class="auth-card">
+    <div class="gl-found" id="gl-found-old"></div>
+    <div id="gl-np-step1">
+      <div class="auth-label">📱 अपना नया मोबाइल नंबर डालें</div>
+      <div class="auth-input-row">
+        <div class="auth-prefix">🇮🇳 +91</div>
+        <input class="auth-input" type="tel" id="gl-np-input" placeholder="10 अंक का नंबर" maxlength="10" inputmode="numeric" pattern="[0-9]*">
+      </div>
+      <div class="auth-error" id="gl-np-error"></div>
+      <button class="auth-btn" id="gl-np-send" onclick="glSendNewOtp()">📨 OTP भेजें</button>
+    </div>
+    <div id="gl-np-step2" style="display:none;">
+      <div class="auth-label" id="gl-np-sent"></div>
+      <input class="auth-input gl-otp" type="tel" id="gl-np-otp" placeholder="6 अंक का OTP" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+      <div class="auth-error" id="gl-np-error2"></div>
+      <button class="auth-btn" id="gl-np-verify" onclick="glVerifyNewOtp()" style="margin-top:14px;">✅ नंबर सत्यापित करें</button>
+      <button class="auth-btn-secondary" onclick="glNewNumberBack()">← नंबर बदलें</button>
+    </div>
+    <div class="auth-hint">नया नंबर सत्यापित होते ही आपका पूरा हिसाब और लाइसेंस इसी नंबर पर आ जाएगा।</div>
+    <button class="auth-btn-secondary" onclick="glKeepOldNumber()">मेरा नंबर वही है, आगे बढ़ें</button>
+  </div>
+</div>
+
+<div id="gl-modal" class="gl-modal-bg" style="display:none;">
+  <div class="gl-modal">
+    <div class="gl-m-ico">🛡️</div>
+    <div class="gl-m-title">अपना खाता सुरक्षित करें</div>
+    <div class="gl-m-text">Google खाता जोड़ें, ताकि नंबर बदलने या फ़ोन खोने पर भी आपका पूरा हिसाब सुरक्षित रहे।</div>
+    <div class="auth-error" id="gl-modal-error"></div>
+    <div class="gl-btn-wrap" id="gl-btn-modal"></div>
+    <div class="gl-busy" id="gl-modal-busy">⏳ Google खाता जोड़ रहे हैं…</div>
+    <button class="auth-btn-secondary" onclick="glSnooze()">बाद में</button>
   </div>
 </div>
 
@@ -5863,7 +5971,7 @@ textarea.st-biz-in{resize:none;}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, deleteUser, PhoneAuthProvider, reauthenticateWithCredential } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, deleteUser, PhoneAuthProvider, reauthenticateWithCredential, GoogleAuthProvider, linkWithCredential, signInWithCredential, getAdditionalUserInfo, updatePhoneNumber } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot, serverTimestamp, enableIndexedDbPersistence, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { getStorage, ref as stRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js';
@@ -6726,6 +6834,273 @@ function setupRecaptcha() {
   recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible', callback: () => {} });
 }
 
+/* ===================================================================
+   GOOGLE ACCOUNT LINKING
+   Phone OTP stays the main login. A Google account is linked to the SAME
+   Firebase user, so either one opens the same data:
+     • new users link right after OTP (required, one tap)
+     • existing users get a prompt after unlock until they link ("बाद में" = next open)
+     • "नंबर बदल गया?" on the login screen signs in with Google, then verifies
+       the new number with OTP and moves it onto the account (updatePhoneNumber)
+   Uses Google Identity Services (FedCM on Android Chrome): no popup and no
+   redirect, which break inside the Play app because the auth domain
+   (firebaseapp.com) differs from livekhaata.app.
+   The whole feature stays OFF while GOOGLE_CLIENT_ID is empty.
+   =================================================================== */
+const GOOGLE_CLIENT_ID = '143662976042-acjatn2qjcqunv4i5lja3elrdaln5cvv.apps.googleusercontent.com';
+const _gl = { ready:null, init:false, mode:'link', ctx:'screen', next:null };
+function glEnabled(){ return !!GOOGLE_CLIENT_ID; }
+function glHasGoogle(u){ try{ return !!(u && (u.providerData||[]).some(p=>p.providerId==='google.com')); }catch(e){ return false; } }
+function glEmailOf(u){ try{ const p=(u.providerData||[]).find(x=>x.providerId==='google.com'); return (p&&p.email)||u.email||''; }catch(e){ return ''; } }
+function glMaskEmail(e){ e=String(e||''); const at=e.indexOf('@'); if(at<1) return e; return e.slice(0,Math.min(2,at))+'••••'+e.slice(at); }
+function glMaskPhone(p){ p=String(p||'').replace(/\D/g,''); if(p.length<10) return p; const n=p.slice(-10); return '+91 '+n.slice(0,5)+' •••'+n.slice(-2); }
+function glEl(id){ return document.getElementById(id); }
+function glShowOnly(id){
+  ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','screen-google','screen-google-done','screen-google-phone'].forEach(x=>{ const e=glEl(x); if(e) e.classList.add('hidden'); });
+  const t=glEl(id); if(t) t.classList.remove('hidden');
+  try{ if(window._hideSplashWhenReady) window._hideSplashWhenReady(); }catch(e){}
+}
+function glErr(id,msg){ const e=glEl(id); if(!e) return; if(msg){ e.textContent=msg; e.classList.add('show'); } else e.classList.remove('show'); }
+function glBusy(id,on){ const e=glEl(id); if(e) e.classList.toggle('show',!!on); }
+function glLog(n,o){ try{ if(window.logEvent) window.logEvent(n,o||{}); }catch(e){} }
+
+function glLoad(){
+  if(_gl.ready) return _gl.ready;
+  _gl.ready=new Promise((res,rej)=>{
+    if(window.google && google.accounts && google.accounts.id) return res();
+    const sc=document.createElement('script');
+    sc.src='https://accounts.google.com/gsi/client?hl=hi'; sc.async=true; sc.defer=true;
+    sc.onload=()=>res(); sc.onerror=()=>{ _gl.ready=null; rej(new Error('gsi-load')); };
+    document.head.appendChild(sc);
+  });
+  return _gl.ready;
+}
+async function glInit(){
+  await glLoad();
+  if(_gl.init) return;
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID, callback: glOnCredential,
+    auto_select:false, cancel_on_tap_outside:false, context:'use', itp_support:true,
+    use_fedcm_for_prompt:true, use_fedcm_for_button:true
+  });
+  _gl.init=true;
+}
+async function glRender(elId, text, errId){
+  try{
+    await glInit();
+    const el=glEl(elId); if(!el) return;
+    el.innerHTML='';
+    const w=Math.max(220, Math.min(320, (el.parentElement&&el.parentElement.clientWidth)||300));
+    google.accounts.id.renderButton(el,{ type:'standard', theme:'outline', size:'large', shape:'rectangular', text:text||'continue_with', logo_alignment:'center', width:w, locale:'hi' });
+  }catch(e){
+    glErr(errId,'Google लोड नहीं हो सका। इंटरनेट जाँचकर दोबारा कोशिश करें।');
+    if(errId==='gl-link-error'){ const k=glEl('gl-link-skip'); if(k) k.style.display='block'; }
+    glLog('google_err',{stage:'load'});
+  }
+}
+
+/* One callback for every button; _gl.mode says what the tap was for. */
+async function glOnCredential(resp){
+  const idToken=resp && resp.credential; if(!idToken) return;
+  const cred=GoogleAuthProvider.credential(idToken);
+  if(_gl.mode==='recover') return glRecoverWith(cred);
+  return glLinkWith(cred);
+}
+
+/* ---------- link (new users + existing-user prompt) ---------- */
+async function glLinkWith(cred){
+  const u=auth.currentUser; if(!u) return;
+  const inModal=(_gl.ctx==='modal');
+  const errId=inModal?'gl-modal-error':'gl-link-error', busyId=inModal?'gl-modal-busy':'gl-link-busy';
+  glErr(errId,''); glBusy(busyId,true);
+  try{
+    const r=await linkWithCredential(u,cred);
+    await glSaveLinked(r.user);
+    glAfterLink(r.user);
+  }catch(e){
+    const c=(e&&e.code)||'';
+    if(c==='auth/provider-already-linked'){ await glSaveLinked(u); glAfterLink(u); }
+    else if(c==='auth/credential-already-in-use'||c==='auth/email-already-in-use'||c==='auth/account-exists-with-different-credential'){
+      glErr(errId,'यह Google खाता किसी दूसरे Live Khaata खाते से पहले से जुड़ा है। कृपया कोई दूसरा Google खाता चुनें।');
+      try{ google.accounts.id.disableAutoSelect(); }catch(_){}
+      glLog('google_err',{stage:'link',code:'in-use'});
+    } else if(c==='auth/network-request-failed'){
+      glErr(errId,'इंटरनेट कनेक्शन नहीं है। दोबारा कोशिश करें।');
+    } else {
+      glErr(errId,'Google खाता नहीं जुड़ सका। दोबारा कोशिश करें।');
+      _gl.fails=(_gl.fails||0)+1;
+      if(!inModal && _gl.fails>=2){ const k=glEl('gl-link-skip'); if(k) k.style.display='block'; }
+      glLog('google_err',{stage:'link',code:c||'unknown'});
+      console.warn('google link error:',c,e);
+    }
+  }finally{ glBusy(busyId,false); }
+}
+async function glSaveLinked(u){
+  const email=glEmailOf(u);
+  try{ localStorage.setItem('hk_gl_linked_'+u.uid,'1'); }catch(e){}
+  try{
+    await setDoc(doc(window._db,'users',u.uid,'profile','info'),{ googleLinked:true, googleEmail:email, googleLinkedAt:serverTimestamp() },{ merge:true });
+  }catch(e){ console.warn('google profile save:',e); }
+  glLog('google_linked',{ctx:_gl.ctx});
+}
+function glAfterLink(u){
+  if(_gl.ctx==='modal'){
+    const m=glEl('gl-modal'); if(m) m.style.display='none';
+    try{ if(window.toast) toast('✅ Google खाता जुड़ गया'); }catch(e){}
+    return;
+  }
+  const ph=glEl('gl-done-phone'); if(ph) ph.textContent=glMaskPhone(u.phoneNumber||'');
+  const em=glEl('gl-done-email'); if(em) em.textContent=glMaskEmail(glEmailOf(u));
+  glShowOnly('screen-google-done');
+}
+window.glContinue=function(){
+  const n=_gl.next; _gl.next=null;
+  ['screen-google','screen-google-done'].forEach(x=>{ const e=glEl(x); if(e) e.classList.add('hidden'); });
+  if(typeof n==='function') n();
+};
+
+/* Registration gate: returns true when it took over the screen. */
+window.glGate=function(user,next){
+  if(!glEnabled() || !user || glHasGoogle(user)) return false;
+  _gl.mode='link'; _gl.ctx='screen'; _gl.next=next;
+  glErr('gl-link-error','');
+  const sk=glEl('gl-link-skip'); if(sk) sk.style.display='none';
+  _gl.fails=0;
+  glShowOnly('screen-google');
+  glRender('gl-btn-link','continue_with','gl-link-error').then(()=>{ try{ google.accounts.id.prompt(); }catch(e){} });
+  // Safety valve, never the normal path: if Google's button has not appeared in
+  // 10 s (blocked, offline, unsupported), let the user finish registering. The
+  // existing-user prompt then asks again after their first unlock.
+  setTimeout(()=>{ const b=glEl('gl-btn-link'); if(b && !b.querySelector('iframe') && !glEl('screen-google').classList.contains('hidden')){ const k=glEl('gl-link-skip'); if(k) k.style.display='block'; glLog('google_err',{stage:'no-button'}); } },10000);
+  glLog('google_step_shown',{});
+  return true;
+};
+
+/* Existing users: prompt once the home screen is really on screen (after PIN). */
+window.glMaybePrompt=function(user){
+  if(!glEnabled() || !user || glHasGoogle(user)) return;
+  try{ if(sessionStorage.getItem('hk_gl_snooze')==='1') return; }catch(e){}
+  let tries=0;
+  const t=setInterval(()=>{
+    tries++;
+    if(tries>240){ clearInterval(t); return; }                       // give up after ~3 min
+    const app=glEl('main-app'), lock=glEl('app-lock-screen');
+    const appOn=app && app.style.display!=='none';
+    const lockOn=lock && lock.classList.contains('active');
+    if(!appOn || lockOn || document.hidden) return;
+    clearInterval(t);
+    if(glHasGoogle(auth.currentUser)) return;
+    _gl.mode='link'; _gl.ctx='modal';
+    glErr('gl-modal-error','');
+    const m=glEl('gl-modal'); if(m) m.style.display='flex';
+    glRender('gl-btn-modal','continue_with','gl-modal-error');
+    glLog('google_prompt_shown',{});
+  },750);
+};
+window.glSnooze=function(){
+  try{ sessionStorage.setItem('hk_gl_snooze','1'); }catch(e){}
+  const m=glEl('gl-modal'); if(m) m.style.display='none';
+  glLog('google_prompt_later',{});
+};
+
+/* ---------- recovery: number changed ---------- */
+window.glPrepLogin=function(){
+  if(!glEnabled()) return;
+  const w=glEl('gl-recover-wrap'); if(w) w.style.display='block';
+  _gl.mode='recover'; _gl.ctx='login';
+  glErr('gl-recover-error','');
+  glRender('gl-btn-recover','signin_with','gl-recover-error');
+};
+async function glRecoverWith(cred){
+  glErr('gl-recover-error',''); glBusy('gl-recover-busy',true);
+  window._glRecovering=true;
+  try{
+    const r=await signInWithCredential(auth,cred);
+    const info=getAdditionalUserInfo(r);
+    if(info && info.isNewUser){
+      // Not linked to any Live Khaata account: undo the empty account it created.
+      window._glRecovering=false;
+      try{ await r.user.delete(); }catch(e){ try{ await fbSignOut(auth); }catch(_){} }
+      glErr('gl-recover-error','इस Google खाते से कोई Live Khaata खाता जुड़ा नहीं है। अपने मोबाइल नंबर से लॉगिन करें।');
+      glLog('google_recover',{result:'no-account'});
+      return;
+    }
+    try{ localStorage.setItem('hk_gl_need_phone_'+r.user.uid,'1'); }catch(e){}
+    glLog('google_recover',{result:'found'});
+    await glShowNewNumber(r.user);
+  }catch(e){
+    window._glRecovering=false;
+    const c=(e&&e.code)||'';
+    glErr('gl-recover-error', c==='auth/network-request-failed' ? 'इंटरनेट कनेक्शन नहीं है। दोबारा कोशिश करें।' : 'Google से लॉगिन नहीं हो सका। दोबारा कोशिश करें।');
+    glLog('google_err',{stage:'recover',code:c||'unknown'});
+    console.warn('google recover error:',c,e);
+  }finally{ glBusy('gl-recover-busy',false); }
+}
+async function glShowNewNumber(u){
+  window._glRecovering=true;
+  let name='', shop='';
+  try{
+    const snap=await getDoc(doc(window._db,'users',u.uid,'profile','info'));
+    if(snap.exists()){ const d=snap.data(); name=d.name||''; shop=d.businessName||''; }
+  }catch(e){}
+  const sub=glEl('gl-found-sub'); if(sub) sub.textContent=[name,shop].filter(Boolean).join(' · ') || glMaskEmail(glEmailOf(u));
+  const old=glEl('gl-found-old'); if(old) old.innerHTML='पुराना नंबर: <b>'+(glMaskPhone(u.phoneNumber||'')||'—')+'</b>';
+  glEl('gl-np-step1').style.display='block'; glEl('gl-np-step2').style.display='none';
+  glErr('gl-np-error',''); glErr('gl-np-error2','');
+  glShowOnly('screen-google-phone');
+  setTimeout(()=>{ const i=glEl('gl-np-input'); if(i) i.focus(); },300);
+}
+window.glShowNewNumber=glShowNewNumber;
+window.glSendNewOtp=async function(){
+  const n=(glEl('gl-np-input').value||'').trim();
+  glErr('gl-np-error','');
+  if(!/^[6-9]\d{9}$/.test(n)) return glErr('gl-np-error','❌ सही 10 अंक का मोबाइल नंबर डालें');
+  const u=auth.currentUser;
+  if(u && u.phoneNumber==='+91'+n) return glErr('gl-np-error','यह वही पुराना नंबर है। नीचे "मेरा नंबर वही है" चुनें।');
+  const btn=glEl('gl-np-send'); btn.disabled=true; btn.textContent='⏳ भेज रहे हैं...';
+  try{
+    setupRecaptcha();
+    _gl.vid=await new PhoneAuthProvider(auth).verifyPhoneNumber('+91'+n, recaptchaVerifier);
+    _gl.newPhone=n;
+    glEl('gl-np-sent').textContent='+91 '+n+' पर भेजा गया 6 अंक का OTP';
+    glEl('gl-np-step1').style.display='none'; glEl('gl-np-step2').style.display='block';
+    setTimeout(()=>{ const i=glEl('gl-np-otp'); if(i) i.focus(); },200);
+  }catch(e){
+    glErr('gl-np-error','❌ OTP नहीं भेज सका। दोबारा कोशिश करें।');
+    console.warn('new number otp:',e);
+  }finally{ btn.disabled=false; btn.textContent='📨 OTP भेजें'; }
+};
+window.glNewNumberBack=function(){ glEl('gl-np-step2').style.display='none'; glEl('gl-np-step1').style.display='block'; glErr('gl-np-error2',''); };
+window.glVerifyNewOtp=async function(){
+  const code=(glEl('gl-np-otp').value||'').trim();
+  glErr('gl-np-error2','');
+  if(!/^\d{6}$/.test(code)) return glErr('gl-np-error2','❌ 6 अंक का OTP डालें');
+  const btn=glEl('gl-np-verify'); btn.disabled=true; btn.textContent='⏳ जाँच रहे हैं...';
+  const u=auth.currentUser, oldPhone=(u&&u.phoneNumber)||'';
+  try{
+    await updatePhoneNumber(u, PhoneAuthProvider.credential(_gl.vid, code));
+    if (recaptchaVerifier) { try { recaptchaVerifier.clear(); } catch(e){} recaptchaVerifier = null; }
+    try{
+      await setDoc(doc(window._db,'users',u.uid,'profile','info'),{ phone:'+91'+_gl.newPhone, previousPhone:oldPhone, phoneChangedAt:serverTimestamp() },{ merge:true });
+    }catch(e){ console.warn('phone profile save:',e); }
+    glLog('google_recover',{result:'number-changed'});
+    glFinishRecovery(u.uid);
+  }catch(e){
+    const c=(e&&e.code)||'';
+    if(c==='auth/invalid-verification-code'||c==='auth/code-expired') glErr('gl-np-error2','❌ गलत OTP। दोबारा कोशिश करें।');
+    else if(c==='auth/credential-already-in-use'||c==='auth/account-exists-with-different-credential') glErr('gl-np-error2','यह नंबर किसी दूसरे Live Khaata खाते से जुड़ा है। कोई दूसरा नंबर डालें।');
+    else glErr('gl-np-error2','नंबर नहीं बदल सका। दोबारा कोशिश करें।');
+    console.warn('update phone:',c,e);
+  }finally{ btn.disabled=false; btn.textContent='✅ नंबर सत्यापित करें'; }
+};
+window.glKeepOldNumber=function(){ const u=auth.currentUser; if(u) glFinishRecovery(u.uid); };
+function glFinishRecovery(uid){
+  try{ localStorage.removeItem('hk_gl_need_phone_'+uid); }catch(e){}
+  try{ sessionStorage.setItem('hk_fresh_session','1'); }catch(e){}
+  window._glRecovering=false;
+  location.reload();   // clean start: the normal routing opens the restored account
+}
+
 window.sendOTP = async function() {
   const phone = document.getElementById('phone-input').value.trim();
   const errEl = document.getElementById('phone-error');
@@ -7140,8 +7515,17 @@ onAuthStateChanged(auth, async user => {
   }
   // NOTE: Splash hide moved out of here — it now hides only when PIN/auth/home
   // is actually visible. See window._hideSplashWhenReady() below.
+  // Google recovery in progress: its own screens drive the flow.
+  if (window._glRecovering) return;
   if (user) {
     const uid = user.uid;
+    // Signed in through Google after a number change but the new number is not
+    // verified yet (app was closed mid-way): finish that first.
+    try {
+      if (localStorage.getItem('hk_gl_need_phone_' + uid) === '1' && window.glShowNewNumber) {
+        window.glShowNewNumber(user); return;
+      }
+    } catch(e){}
     let termsAgreed = localStorage.getItem('hk_terms_agreed_' + uid);
     let termsAccepted = localStorage.getItem('hk_terms_accepted_' + uid);
 
@@ -7187,9 +7571,11 @@ onAuthStateChanged(auth, async user => {
       window._fsLoadAll(uid).then(() => {
         if (window._startRealtimeSync) window._startRealtimeSync(uid);
       }).catch(e => console.warn('background cloud load error:', e));
+      try { if (window.glMaybePrompt) window.glMaybePrompt(user); } catch(e){}
     } else if (termsAccepted) {
       // Partial registration: terms accepted, name not yet submitted.
-      // Resume directly on name screen.
+      // Resume directly on name screen — after the Google step if not linked yet.
+      const _goName = () => {
       document.getElementById('screen-phone').classList.add('hidden');
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-terms').classList.add('hidden');
@@ -7200,13 +7586,18 @@ onAuthStateChanged(auth, async user => {
         const ni = document.getElementById('name-input');
         if (ni) ni.focus();
       }, 300);
+      };
+      if (!(window.glGate && window.glGate(user, _goName))) _goName();
     } else {
-      // Brand new — show terms screen
+      // Brand new — Google step first (required), then the terms screen
+      const _goTerms = () => {
       document.getElementById('screen-phone').classList.add('hidden');
       document.getElementById('screen-otp').classList.add('hidden');
       document.getElementById('screen-privacy').classList.add('hidden');
       document.getElementById('screen-terms').classList.remove('hidden');
       window._hideSplashWhenReady();
+      };
+      if (!(window.glGate && window.glGate(user, _goTerms))) _goTerms();
     }
   } else {
     document.getElementById('screen-phone').classList.remove('hidden');
@@ -7214,6 +7605,7 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('screen-terms').classList.add('hidden');
     document.getElementById('main-app').style.display = 'none';
     window._hideSplashWhenReady();
+    try { if (window.glPrepLogin) window.glPrepLogin(); } catch(e){}
     // Recovery / re-login of a known number: prefill it and auto-request the OTP
     // so the user goes straight to OTP entry instead of re-typing their number.
     try {
@@ -14001,7 +14393,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     if (!screen) return;
 
     // Hide everything else (splash handled by coordinated hide below)
-    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','main-app','app-lock-screen'];
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','screen-google','screen-google-done','screen-google-phone','main-app','app-lock-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {
@@ -14070,7 +14462,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     if (!screen) return;
 
     // Hide all other screens (splash handled by coordinated hide below)
-    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','screen-browser-block','main-app','app-lock-screen'];
+    var toHide = ['screen-phone','screen-otp','screen-terms','screen-privacy','screen-name','screen-google','screen-google-done','screen-google-phone','screen-browser-block','main-app','app-lock-screen'];
     toHide.forEach(function(id){
       var el = document.getElementById(id);
       if (el) {

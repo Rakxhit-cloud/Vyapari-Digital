@@ -562,7 +562,7 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut, browserLocalPersistence, setPersistence }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
@@ -591,7 +591,7 @@ const ADMIN_UID = 'D4jcD5Y02NXmx7mXMQjg4VoHEyy1';
 
 // Expose to window so the non-module script below can call these
 window._fb = { auth, db, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut };
-window._fbx = { collection, getDocs, doc, getDoc, setDoc };
+window._fbx = { collection, getDocs, doc, getDoc, setDoc, query, where, onSnapshot };
 window._ADMIN_UID = ADMIN_UID;
 
 window._loadUsersFromFirestore = async function() {
@@ -649,8 +649,10 @@ const _SCREEN_LABELS = {
 };
 async function loadAnalytics(){
   try {
-    const snap = await getDocs(collection(db, 'analytics_events'));
-    const ev = snap.docs.map(x=>x.data()).filter(e=>e && e.uid && e.day);
+    // Shared, live-updated event list (one full read per session, then only new events)
+    const ev = (typeof window._admLoadEvents === 'function')
+      ? await window._admLoadEvents()
+      : (await getDocs(collection(db, 'analytics_events'))).docs.map(x=>x.data()).filter(e=>e && e.uid && e.day);
     const today = _dayStr(new Date());
     const last7 = new Set(); for(let i=0;i<7;i++) last7.add(_daysAgoStr(i));
 
@@ -1750,7 +1752,7 @@ async function adminRefreshAll(){
   btns.forEach(b => { b.disabled = true; b.dataset.label = b.dataset.label || b.textContent; b.textContent = '⏳ Refreshing…'; });
   _refreshP = (async () => {
     try {
-      _admEventsP = null;
+      if (!_admEvUnsub) _admEventsP = null;   // live listener keeps events current; only re-read without it
       await Promise.all([ window.loadUsers(), _admLoadEvents(true).catch(() => {}) ]);
       renderUserList();
       const tv = document.getElementById('testers-view');
@@ -1791,25 +1793,75 @@ function _tvDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2
 function _tvAddDays(ds, n){ const d=new Date(ds+'T00:00:00'); d.setDate(d.getDate()+n); return _tvDay(d); }
 function _tvDiff(a,b){ return Math.round((new Date(a+'T00:00:00') - new Date(b+'T00:00:00'))/86400000); }
 function _tvWeek(ds){ const d=new Date(ds+'T00:00:00'); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return _tvDay(d); }
-let _admEventsP = null;
+/* EVENTS: read the whole collection ONCE, then a live listener streams only the
+   new ones. A tester's open now shows up here within seconds of reaching the
+   server, instead of waiting for the next 60 s refresh, and each refresh no
+   longer re-reads every event ever written (that cost grew every day). */
+let _admEventsP = null, _admEvMap = null, _admEvUnsub = null, _admEvMaxMs = 0, _admLiveAt = null, _admLiveT = null;
+function _admTsMs(e){ const t = e && e.ts; return t ? (t.toMillis ? t.toMillis() : (t.seconds ? t.seconds*1000 : 0)) : 0; }
+function _admPublish(){
+  const ev = Array.from(_admEvMap.values());
+  _tvEvents = ev; window._admEvents = ev;
+  const m = {}, sc = {};
+  ev.forEach(e => {
+    (m[e.uid] = m[e.uid] || new Set()).add(e.day);
+    if (e.event === 'bill_scanned') sc[e.uid] = (sc[e.uid] || 0) + 1;
+  });
+  window._admActDays = m; window._admScans = sc;
+  return ev;
+}
+function _admLiveRedraw(){
+  clearTimeout(_admLiveT);
+  _admLiveT = setTimeout(() => {
+    const busy = (document.getElementById('profile-modal') && document.getElementById('profile-modal').classList.contains('show'))
+              || (document.getElementById('tv-modal') && document.getElementById('tv-modal').classList.contains('show'));
+    if (busy) { _admLiveRedraw(); return; }            // try again once the form closes
+    try { renderUserList(); } catch(e){}
+    const tv = document.getElementById('testers-view');
+    if (tv && tv.style.display !== 'none' && window.loadTesters) window.loadTesters(false);
+  }, 800);
+}
+function _admStartLive(){
+  const fx = window._fbx, db = window._fb && window._fb.db;
+  if (_admEvUnsub || !fx || !fx.onSnapshot || !db) return;
+  const since = new Date((_admEvMaxMs || Date.now()) - 5*60*1000);   // small overlap; duplicates are ignored by id
+  _admEvUnsub = fx.onSnapshot(fx.query(fx.collection(db, 'analytics_events'), fx.where('ts', '>', since)), snap => {
+    let changed = false;
+    snap.docChanges().forEach(ch => {
+      if (ch.type === 'removed' || _admEvMap.has(ch.doc.id)) return;
+      const e = ch.doc.data();
+      if (e && e.uid && e.day) { _admEvMap.set(ch.doc.id, e); changed = true; }
+    });
+    _admLiveAt = new Date();
+    if (changed) { _admPublish(); _admLiveRedraw(); }
+  }, err => {
+    console.warn('Live events stopped, falling back to refresh:', err);
+    try { _admEvUnsub && _admEvUnsub(); } catch(e){}
+    _admEvUnsub = null; _admEventsP = null;            // next refresh does a full read and restarts the listener
+  });
+}
 function _admLoadEvents(force){
-  if (_admEventsP && !force) return _admEventsP;
+  // While the live listener runs, the list is already current: no re-read needed.
+  if (_admEventsP && (!force || _admEvUnsub)) return _admEventsP;
   const fx = window._fbx, db = window._fb && window._fb.db;
   if (!fx || !db) return Promise.reject(new Error('Firestore bridge missing'));
   _admEventsP = fx.getDocs(fx.collection(db, 'analytics_events')).then(snap => {
-    const ev = snap.docs.map(x => x.data()).filter(e => e && e.uid && e.day);
-    _tvEvents = ev; window._admEvents = ev;
-    const m = {}, sc = {};
-    ev.forEach(e => {
-      (m[e.uid] = m[e.uid] || new Set()).add(e.day);
-      if (e.event === 'bill_scanned') sc[e.uid] = (sc[e.uid] || 0) + 1;
+    _admEvMap = new Map(); _admEvMaxMs = 0;
+    snap.docs.forEach(d => {
+      const e = d.data();
+      if (!(e && e.uid && e.day)) return;
+      _admEvMap.set(d.id, e);
+      const ms = _admTsMs(e); if (ms > _admEvMaxMs) _admEvMaxMs = ms;
     });
-    window._admActDays = m; window._admScans = sc;
-    return ev;
+    _admStartLive();
+    return _admPublish();
   });
   _admEventsP.catch(() => { _admEventsP = null; });
   return _admEventsP;
 }
+window._admLoadEvents = _admLoadEvents;
+// Stop the listener on logout / tab close (it is restarted by the next load)
+window.addEventListener('pagehide', () => { try { _admEvUnsub && _admEvUnsub(); } catch(e){} _admEvUnsub = null; });
 
 /* Cohort lives on the admin's own profile doc so every device sees the same numbers.
    localStorage is only a cache / offline fallback. */
@@ -2014,7 +2066,7 @@ async function loadTesters(force){
       else if (act === 'wa') { if (phone) window.open('https://wa.me/' + phone, '_blank'); }
     }));
     const _now = new Date();
-    if (note) note.textContent = 'Updated ' + _now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' · auto-refresh every minute · '+(_tvEvents||[]).length+' events · a lost day = any day since start that missed a target, including days with no activity.';
+    if (note) note.textContent = 'Updated ' + _now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + (_admEvUnsub ? ' · ● LIVE: opens and entries appear within seconds' : ' · auto-refresh every minute') + ' · '+(_tvEvents||[]).length+' events · a lost day = any day since start that missed a target, including days with no activity.';
   } catch(e) {
     if (box) box.innerHTML = '<div class="av-empty">⚠️ Could not load testers: '+_tvEsc(e && e.message ? e.message : e)+'</div>';
   }

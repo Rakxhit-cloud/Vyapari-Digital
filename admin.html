@@ -598,16 +598,17 @@ window._loadUsersFromFirestore = async function() {
   const users = [];
   const usersSnap = await getDocs(collection(db, 'users'));
   const uids = usersSnap.docs.map(d => d.id);
-  for (const uid of uids) {
-    let profile = {};
-    try {
-      const infoDoc = await getDoc(doc(db, 'users', uid, 'profile', 'info'));
-      if (infoDoc.exists()) profile = infoDoc.data();
-    } catch(e) {
-      // If admin lacks read access (rules block), skip silently.
-      // This shouldn't happen since rules allow admin to read profiles,
-      // but better to fail gracefully than show a broken list.
-    }
+  // All profiles are fetched IN PARALLEL. The old loop waited for each one in
+  // turn, so 30 users meant 30 round-trips back to back (several seconds) and
+  // the Testers tab rendered from a half-finished list in the meantime.
+  const profiles = await Promise.all(uids.map(uid =>
+    getDoc(doc(db, 'users', uid, 'profile', 'info'))
+      .then(d => (d.exists() ? d.data() : {}))
+      .catch(() => ({}))   // a blocked read skips that user, never the whole list
+  ));
+  for (let i = 0; i < uids.length; i++) {
+    const uid = uids[i];
+    const profile = profiles[i] || {};
     // Entry counts come from the user's OWN profile doc — the app counts its
     // own entries and writes cashCount/upiCount/kharchaCount/udhaarCount here.
     // The admin never reads entry sub-collections (owner-only privacy rule).
@@ -1048,8 +1049,13 @@ let currentSearch = '';
 let extendUID = null, extendDays = 0;
 
 // =================== LOAD ===================
+let _usersP = null;
 window.loadUsers = async function loadUsers() {
-  document.getElementById('user-list').innerHTML = '<div class="empty-state">📡 Loading users...</div>';
+  // One load at a time: a second call while one is running shares it, so an
+  // older response can never land on top of a newer one.
+  if (_usersP) return _usersP;
+  if (!allUsers.length) document.getElementById('user-list').innerHTML = '<div class="empty-state">📡 Loading users...</div>';
+  _usersP = (async () => {
   try {
     allUsers = await window._loadUsersFromFirestore();
     renderStats();
@@ -1061,7 +1067,9 @@ window.loadUsers = async function loadUsers() {
       ? '🔒 Not authorized. Logout and sign in as admin.'
       : '❌ Failed to load. Check connection.';
     document.getElementById('user-list').innerHTML = '<div class="empty-state">' + msg + '</div>';
-  }
+  } finally { _usersP = null; }
+  })();
+  return _usersP;
 }
 
 function renderStats() {
@@ -1730,14 +1738,47 @@ document.getElementById('search-box').addEventListener('input', e => {
   renderUserList();
 });
 
-document.getElementById('refresh-btn').addEventListener('click', () => { _admEventsP = null; loadUsers(); });
+/* ONE refresh path for the whole dashboard. Users (profiles, tester plans) and
+   analytics events are BOTH re-read, then whichever tab is open is redrawn.
+   Before, the Users refresh never redrew the Testers tab, the Testers refresh
+   never re-read users, and the 60 s timer reused cached events forever, so the
+   Testers tab only moved when the page was reloaded. */
+let _refreshP = null;
+async function adminRefreshAll(){
+  if (_refreshP) return _refreshP;
+  const btns = ['refresh-btn','tv-refresh'].map(id => document.getElementById(id)).filter(Boolean);
+  btns.forEach(b => { b.disabled = true; b.dataset.label = b.dataset.label || b.textContent; b.textContent = '⏳ Refreshing…'; });
+  _refreshP = (async () => {
+    try {
+      _admEventsP = null;
+      await Promise.all([ window.loadUsers(), _admLoadEvents(true).catch(() => {}) ]);
+      renderUserList();
+      const tv = document.getElementById('testers-view');
+      if (tv && tv.style.display !== 'none' && window.loadTesters) await window.loadTesters(false);
+      window._lastRefreshAt = new Date();
+    } finally {
+      btns.forEach(b => { b.disabled = false; b.textContent = b.dataset.label || '🔄 Refresh'; });
+      _refreshP = null;
+    }
+  })();
+  return _refreshP;
+}
+window.adminRefreshAll = adminRefreshAll;
+document.getElementById('refresh-btn').addEventListener('click', () => adminRefreshAll());
 
-// Auto-refresh every 60 seconds (lighter than the previous 10s poll)
+// Auto-refresh every 60 s while the dashboard is on screen and no form is open.
 setInterval(() => {
-  if (sessionStorage.getItem('_adm_pin_ok') === 'true' && window._currentAdminUser && !document.getElementById('profile-modal').classList.contains('show')) {
-    loadUsers();
+  const busy = document.getElementById('profile-modal').classList.contains('show')
+            || (document.getElementById('tv-modal') && document.getElementById('tv-modal').classList.contains('show'));
+  if (sessionStorage.getItem('_adm_pin_ok') === 'true' && window._currentAdminUser && !busy && document.visibilityState === 'visible') {
+    adminRefreshAll();
   }
 }, 60000);
+// Coming back to the tab after a while refreshes straight away.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || !window._currentAdminUser) return;
+  if (!window._lastRefreshAt || Date.now() - window._lastRefreshAt.getTime() > 30000) adminRefreshAll();
+});
 
 /* ══════════════════ TESTERS TAB ══════════════════
    Daily minimum for a qualified day: 2 app opens + 2 entries in total,
@@ -1842,6 +1883,11 @@ async function loadTesters(force){
   const box = document.getElementById('tv-list');
   const note = document.getElementById('tv-note');
   try {
+    // The tester list is built from the users list. If that has not arrived yet
+    // (tab opened straight after login) wait for it instead of showing
+    // "No testers yet".
+    if (!allUsers.length || force) await window.loadUsers();
+    if (_usersP) await _usersP;
     await _admLoadEvents(!!force);
     const testers = (allUsers || []).filter(u => u.profile && u.profile.tester);
     const today = _tvDay(new Date());
@@ -1967,7 +2013,8 @@ async function loadTesters(force){
       else if (act === 'call') { if (phone) window.location.href = 'tel:+' + phone; }
       else if (act === 'wa') { if (phone) window.open('https://wa.me/' + phone, '_blank'); }
     }));
-    if (note) note.textContent = 'Reads only from analytics_events · '+(_tvEvents||[]).length+' events loaded · a lost day = any day since start that missed a target, including days with no activity.';
+    const _now = new Date();
+    if (note) note.textContent = 'Updated ' + _now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' · auto-refresh every minute · '+(_tvEvents||[]).length+' events · a lost day = any day since start that missed a target, including days with no activity.';
   } catch(e) {
     if (box) box.innerHTML = '<div class="av-empty">⚠️ Could not load testers: '+_tvEsc(e && e.message ? e.message : e)+'</div>';
   }
@@ -2087,7 +2134,7 @@ function _tvOpenEdit(u){
 }
 (function _tvWire(){
   const a = document.getElementById('tv-add'); if (a) a.addEventListener('click', _tvOpenAdd);
-  const r = document.getElementById('tv-refresh'); if (r) r.addEventListener('click', () => loadTesters(true));
+  const r = document.getElementById('tv-refresh'); if (r) r.addEventListener('click', () => adminRefreshAll());
   const m = document.getElementById('tv-modal'); if (m) m.addEventListener('click', e => { if (e.target.id === 'tv-modal') _tvModalClose(); });
 })();
 

@@ -13,8 +13,112 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Live Khaata</title>
 <script>
-// Lock screen pre-show is now handled by alck.js (loaded later)
-// This empty block reserved for future startup hooks
+/* ===== APP OPEN tracking v3 — capture + delivery core =====
+   Runs in <head>, before Firebase or the 1.6 MB page body has loaded, so an
+   open is captured the moment the app comes on screen.
+
+   Why v3: v2 captured opens early but DELIVERED them through the Firestore SDK,
+   which first needs the SDK, login restore, an App Check (reCAPTCHA) token and
+   a streaming connection: 5-10 s on a cheap phone. A launch-and-close in a few
+   seconds therefore sat in the phone until the NEXT launch, often hours later,
+   so the admin panel missed it.
+   Now each open is ONE small HTTPS request to the Firestore REST API, sent with
+   keepalive so it finishes even if the app is closed, using a login token
+   cached from the last session. The SDK path stays as the fallback.
+
+   Rules: re-opening within 20 min is the same visit (a tester cannot tap the
+   icon twice), except across midnight, where a new day always counts.
+   Each open has a fixed id ao_<uid>_<time> + an exists:false precondition, so
+   a re-send can never count twice. */
+(function(){
+  var GAP=20*60*1000, KQ='hk_ao_q', KT='hk_ao_try', KL='hk_ao_last', KC='hk_ao_cred';
+  var FS='https://firestore.googleapis.com/v1/projects/hisaab-kitaab-9ff45/databases/(default)/documents';
+  var L=window.LKAO={};
+  function g(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function s(k,v){ try{ if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v); }catch(e){} }
+  function arr(k){ try{ var a=JSON.parse(g(k)||'[]'); return Array.isArray(a)?a.filter(function(n){return typeof n==='number';}):[]; }catch(e){ return []; } }
+  function day(t){ var d=new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function q(){ return arr(KQ); }
+  function done(t){ s(KQ,JSON.stringify(q().filter(function(x){return x!==t;}))); s(KT,JSON.stringify(arr(KT).filter(function(x){return x!==t;}))); }
+  L.day=day; L.queue=q; L.done=done;
+
+  L.touch=function(){
+    try{
+      if(document.hidden) return;
+      var now=Date.now(), last=parseInt(g(KL)||'0',10)||0;
+      if(!(now-last<GAP && day(now)===day(last))){
+        s(KL,String(now));
+        var a=q(); a.push(now); s(KQ,JSON.stringify(a.slice(-30)));
+      }
+      L.flush();   // also sends anything left from an earlier launch
+    }catch(e){}
+  };
+
+  function cached(){
+    try{ var c=JSON.parse(g(KC)||'null'); if(c&&c.uid&&c.tok&&c.exp-Date.now()>60000) return c; }catch(e){}
+    return null;
+  }
+  async function cred(force){
+    if(!force){ var c=cached(); if(c) return c; }
+    if(L.getCred){ try{ return await L.getCred(!!force); }catch(e){} }
+    return null;
+  }
+  L.clearCred=function(){ s(KC,null); };
+
+  // 'ok' delivered (or already there) · 'auth' token/App Check problem ·
+  // 'sdk' use the SDK path · 'net' no network
+  async function send(c,t){
+    var tried=arr(KT), was=tried.indexOf(t)>=0;
+    if(!was){ tried.push(t); s(KT,JSON.stringify(tried.slice(-60))); }
+    var src='web'; try{ if(g('hk_reg_source')==='play') src='play'; }catch(e){}
+    var body=JSON.stringify({writes:[{
+      update:{ name:'projects/hisaab-kitaab-9ff45/databases/(default)/documents/analytics_events/ao_'+c.uid+'_'+t,
+        fields:{ uid:{stringValue:c.uid}, event:{stringValue:'app_open'}, day:{stringValue:day(t)}, src:{stringValue:src},
+          meta:{mapValue:{fields:{ at:{integerValue:String(t)}, via:{stringValue:'rest'} }}} } },
+      updateTransforms:[{fieldPath:'ts', setToServerValue:'REQUEST_TIME'}],
+      currentDocument:{exists:false}
+    }]});
+    var h={'Content-Type':'application/json','Authorization':'Bearer '+c.tok};
+    if(c.ac && c.acExp-Date.now()>60000) h['X-Firebase-AppCheck']=c.ac;
+    var res=null, url=FS+':commit';
+    try{ res=await fetch(url,{method:'POST',headers:h,body:body,keepalive:true}); }
+    catch(e){ try{ res=await fetch(url,{method:'POST',headers:h,body:body}); }catch(e2){ return 'net'; } }
+    if(res.ok) return 'ok';
+    var j=null; try{ j=await res.json(); }catch(e){}
+    var st=(j&&j.error&&j.error.status)||'', msg=(j&&j.error&&j.error.message)||'';
+    if(st==='ALREADY_EXISTS'||st==='FAILED_PRECONDITION') return 'ok';
+    if(res.status===401||/app ?check/i.test(msg)) return 'auth';
+    if(st==='PERMISSION_DENIED' && was) return 'ok';   // sent before: it exists, so the update is refused
+    return 'sdk';
+  }
+
+  var busy=false;
+  L.flush=async function(){
+    if(busy) return; var items=q(); if(!items.length) return;
+    busy=true;
+    try{
+      var c=await cred(false); if(!c) return;
+      for(var i=0;i<items.length;i++){
+        var t=items[i], r=await send(c,t);
+        if(r==='auth'){ s(KC,null); c=await cred(true); if(!c) break; r=await send(c,t); }
+        if(r==='ok'){ done(t); continue; }
+        if(L.sdkSend && (r==='sdk' || (r==='net' && navigator.onLine))){
+          if(await L.sdkSend(t)){ done(t); continue; }
+        }
+        break;   // keep this and the rest for the next flush
+      }
+    }catch(e){}
+    finally{ busy=false; }
+  };
+
+  try{
+    document.addEventListener('visibilitychange',function(){ if(!document.hidden) L.touch(); else L.flush(); });
+    window.addEventListener('pageshow',function(){ L.touch(); });
+    window.addEventListener('pagehide',function(){ L.flush(); });
+    window.addEventListener('online',function(){ L.flush(); });
+    L.touch();   // cold start: captured now, sent at once if last session's token is still valid
+  }catch(e){}
+})();
 </script>
 <script>
 // Security helpers - HTML escaping and input sanitization
@@ -5970,7 +6074,7 @@ textarea.st-biz-in{resize:none;}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
+import { initializeAppCheck, ReCaptchaV3Provider, getToken as acGetToken } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, deleteUser, PhoneAuthProvider, reauthenticateWithCredential, GoogleAuthProvider, linkWithCredential, signInWithCredential, getAdditionalUserInfo, updatePhoneNumber } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot, serverTimestamp, enableIndexedDbPersistence, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { getStorage, ref as stRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
@@ -7605,7 +7709,7 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('screen-terms').classList.add('hidden');
     document.getElementById('main-app').style.display = 'none';
     window._hideSplashWhenReady();
-    try { localStorage.removeItem('hk_ao_q'); } catch(e){}   // logged out: opens before login are not anyone's
+    try { localStorage.removeItem('hk_ao_q'); localStorage.removeItem('hk_ao_try'); localStorage.removeItem('hk_ao_cred'); } catch(e){}   // logged out: opens before login are not anyone's
     try { if (window.glPrepLogin) window.glPrepLogin(); } catch(e){}
     // Recovery / re-login of a known number: prefill it and auto-request the OTP
     // so the user goes straight to OTP entry instead of re-typing their number.
@@ -7619,80 +7723,46 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-/* ===== APP OPEN tracking =====
-   A real 'open' = the app came on screen after being away >= 20 min. The gap is
-   deliberate: open-close-open within seconds is ONE visit, so a tester cannot
-   tap the icon twice to meet the daily target.
-
-   Reliability (v2). The old version lost opens in exactly the case of a quick
-   launch-and-close:
-     • it waited for login to be restored before recording anything, so closing
-       the app within the first seconds (slow phones) recorded nothing;
-     • it marked the open as counted BEFORE the write was safe, so a lost write
-       also blocked the next 20 minutes.
-   Now the open is captured the instant the app becomes visible, kept in a small
-   local queue with its exact time, and sent once the user is known — this
-   launch or the next one. Each open has a fixed id, so re-sending it can never
-   count it twice (the rules allow create only). */
-const AO_GAP_MS = 20 * 60 * 1000;
-function _aoDay(t){ const d=new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function _aoQ(){ try{ const q=JSON.parse(localStorage.getItem('hk_ao_q')||'[]'); return Array.isArray(q)?q:[]; }catch(e){ return []; } }
-function _aoSaveQ(q){ try{ localStorage.setItem('hk_ao_q', JSON.stringify(q.slice(-30))); }catch(e){} }
-function _aoLast(){
-  let last=0;
-  try{
-    last=parseInt(localStorage.getItem('hk_ao_last')||'0',10)||0;
-    // carry over the per-user stamp written by the previous build, so the first
-    // launch after this update is not counted twice
-    const au=window._currentAuthUser;
-    if(au && au.uid){ const old=parseInt(localStorage.getItem('hk_ao_last_'+au.uid)||'0',10)||0; if(old>last) last=old; }
-  }catch(e){}
-  return last;
-}
-function aoTouch(){
-  try{
-    if(document.hidden) return;
-    const now=Date.now();
-    if(now-_aoLast() < AO_GAP_MS) return;
-    localStorage.setItem('hk_ao_last', String(now));
-    const q=_aoQ(); q.push(now); _aoSaveQ(q);
-    aoFlush();
-  }catch(e){}
-}
-let _aoBusy=false;
-async function aoFlush(){
-  if(_aoBusy) return;
-  const u=auth.currentUser; if(!u) return;
-  _aoBusy=true;
-  try{
+/* ===== APP OPEN tracking v3 — Firebase glue =====
+   Capture, queue and delivery live in <head> (window.LKAO). This part supplies
+   the login + App Check tokens and keeps the old SDK write as a fallback. */
+function _aoJwtExp(t){ try{ const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'); return (JSON.parse(atob(p)).exp||0)*1000; }catch(e){ return 0; } }
+const _aoTimeout=(ms,v)=>new Promise(r=>setTimeout(()=>r(v),ms));
+if (window.LKAO) {
+  window.LKAO.getCred = async function(force){
+    const u=auth.currentUser; if(!u) return null;
+    const tok=await Promise.race([u.getIdToken(!!force), _aoTimeout(8000,null)]);
+    if(!tok) return null;
+    let ac='', acExp=0;
+    try{
+      const r=await Promise.race([acGetToken(appCheck,false), _aoTimeout(force?6000:1500,null)]);
+      if(r && r.token){ ac=r.token; acExp=_aoJwtExp(ac); }
+    }catch(e){}
+    const c={ uid:u.uid, tok:tok, exp:_aoJwtExp(tok), ac:ac, acExp:acExp };
+    try{ localStorage.setItem('hk_ao_cred', JSON.stringify(c)); }catch(e){}
+    return c;
+  };
+  // Fallback: the v2 SDK write (same fixed id, so it can never double-count)
+  window.LKAO.sdkSend = async function(t){
+    const u=auth.currentUser; if(!u) return false;
     let src='web'; try{ src=(localStorage.getItem('hk_reg_source')==='play')?'play':'web'; }catch(e){}
-    for(const t of _aoQ()){
-      const id='ao_'+u.uid+'_'+t;
-      let delivered=false;
-      try{
-        await Promise.race([
-          setDoc(doc(db,'analytics_events',id),{ uid:u.uid, event:'app_open', day:_aoDay(t), ts:serverTimestamp(), src:src, meta:{ at:t } }),
-          new Promise((_,rej)=>setTimeout(()=>rej({code:'timeout'}),8000))
-        ]);
-        delivered=true;
-      }catch(e){
-        // permission-denied on a fixed id = it already reached the server
-        // (create-only rule), so it is safe to drop. Anything else (offline,
-        // timeout): keep it — the offline cache or the next launch sends it.
-        if(e && e.code==='permission-denied') delivered=true;
-      }
-      if(!delivered) break;
-      _aoSaveQ(_aoQ().filter(x=>x!==t));
+    try{
+      await Promise.race([
+        setDoc(doc(db,'analytics_events','ao_'+u.uid+'_'+t),{ uid:u.uid, event:'app_open', day:window.LKAO.day(t), ts:serverTimestamp(), src:src, meta:{ at:t, via:'sdk' } }),
+        new Promise((_,rej)=>setTimeout(()=>rej({code:'timeout'}),8000))
+      ]);
+      return true;
+    }catch(e){
+      // permission-denied on a fixed id = it already reached the server (create-only rule)
+      return !!(e && e.code==='permission-denied');
     }
-  }finally{ _aoBusy=false; }
+  };
+  // Send the moment login is restored, independent of which screen opens next.
+  onAuthStateChanged(auth, u => { if (u) window.LKAO.flush(); else window.LKAO.clearCred(); });
 }
+function aoTouch(){ try{ window.LKAO && window.LKAO.touch(); }catch(e){} }
+function aoFlush(){ try{ return window.LKAO && window.LKAO.flush(); }catch(e){} }
 window.aoFlush=aoFlush;
-try{
-  document.addEventListener('visibilitychange',function(){ if(!document.hidden) aoTouch(); else aoFlush(); });
-  window.addEventListener('pageshow',function(){ aoTouch(); });
-  window.addEventListener('online',function(){ aoFlush(); });
-  aoTouch();   // cold start: capture it now, before login is even restored
-}catch(e){}
 function launchApp(uid) {
   try { aoTouch(); aoFlush(); } catch(e){}
   // GUARD: launchApp must only run in PWA mode.

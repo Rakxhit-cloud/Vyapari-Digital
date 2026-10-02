@@ -1815,7 +1815,9 @@ function _tvLong(ds){ const d=new Date(ds+'T00:00:00'); return d.toLocaleDateStr
    not qualify — including days with no activity at all, which leave no events. */
 function _tvStats(u){
   const p = u.profile || {}, ag = _tvAggregate(u.uid), today = _tvDay(new Date());
-  const plan = Number(p.testerPlan || 20), rate = Number(p.testerRate || 200);
+  const plan = Number(p.testerPlan || 20);
+  // testerRate 0 = NA (unpaid family tester). Only a missing value falls back to 200.
+  const rate = (p.testerRate === 0 || p.testerRate === '0') ? 0 : Number(p.testerRate || 200);
   const start = p.testerStart || '';
   const t = ag.days[today] || { opens:0, inw:0, outw:0, scans:0, fps:{} };
   const wk = ag.weeks[_tvWeek(today)] || { total:0, fps:{} };
@@ -1928,10 +1930,10 @@ async function loadTesters(force){
       return '<div class="trow'+(s.dupes>0?' flag':(s.started&&s.left>0&&s.banked<s.plan?' risk':''))+'">'
         + '<div class="thead"><div class="tav">'+_tvEsc(nm.charAt(0).toUpperCase())+'</div>'
         + '<div class="tid"><div class="tname">'+_tvEsc(nm)+'</div><div class="tmeta">'
-        + _tvEsc(p.name||'') + ' · ' + _tvEsc(p.phone||'') + ' · <code>'+_tvEsc(p.testerId||'—')+'</code> · ₹'+s.rate+'/day · '+s.plan+'-day plan'
+        + _tvEsc(p.name||'') + ' · ' + _tvEsc(p.phone||'') + ' · <code>'+_tvEsc(p.testerId||'—')+'</code> · '+(s.rate ? ('₹'+s.rate+'/day') : 'Unpaid (NA)')+' · '+s.plan+'-day plan'
         + (s.start?(' · started '+_tvEsc(_tvShort(s.start))):'') + '</div></div>'
         + pill
-        + '<div class="tpay"><div class="v">₹'+(s.banked*s.rate).toLocaleString('en-IN')+'</div>'
+        + '<div class="tpay"><div class="v">'+(s.rate ? ('₹'+(s.banked*s.rate).toLocaleString('en-IN')) : 'NA')+'</div>'
         + '<div class="k">'+s.banked+' qualified day'+(s.banked===1?'':'s')+'</div></div></div>'
         + '<div class="params p3">'+par('App opens',t.opens,T_TARGET.opens)+par('आया + गया <span class="psub">'+t.inw+' आया · '+t.outw+' गया</span>',_tvEntries(t),T_TARGET.entries)+par('Scans · week',s.uniqScans,T_TARGET.scansWeek)+'</div>'
         + '<div class="striprow"><div class="striplab">'+s.plan+' qualified<br>days needed</div>'
@@ -1981,7 +1983,7 @@ function testerStripHTML(u){
   if (window._admEvents) {
     const s = _tvStats(u);
     t += ' · ' + (!s.started ? 'STARTS ' + _tvShort(s.from) : (s.banked>=s.plan ? 'PLAN DONE' : (s.left===0 ? 'ON TRACK' : s.left + ' LEFT TODAY')));
-    sub = s.banked + ' banked · ' + s.lost + ' lost · ₹' + (s.banked*s.rate).toLocaleString('en-IN') + ' earned' + (s.start ? ' · started ' + _tvShort(s.start) : '');
+    sub = s.banked + ' banked · ' + s.lost + ' lost · ' + (s.rate ? ('₹' + (s.banked*s.rate).toLocaleString('en-IN') + ' earned') : 'unpaid (NA)') + (s.start ? ' · started ' + _tvShort(s.start) : '');
   }
   return '<div class="tst-link"><div><div class="t">'+t+'</div><div class="s">'+sub+'</div></div><button class="go tst-go">Open in Testers →</button></div>';
 }
@@ -1990,11 +1992,12 @@ function testerStripHTML(u){
 function _tvModalOpen(html){ document.getElementById('tv-card').innerHTML = html; document.getElementById('tv-modal').classList.add('show'); }
 function _tvModalClose(){ document.getElementById('tv-modal').classList.remove('show'); }
 function _tvPlanFields(p, idVal){
-  const plan = String(p.testerPlan || 20), rate = String(p.testerRate || 200);
+  const plan = String(p.testerPlan || 20);
+  const rate = (p.testerRate === 0 || p.testerRate === '0') ? '0' : String(p.testerRate || 200);
   return '<div class="tst-row">'
     + '<div class="tst-f"><label for="tvf-id">Tester ID</label><input id="tvf-id" value="'+_tvEsc(idVal)+'"></div>'
     + '<div class="tst-f"><label for="tvf-plan">Plan (days)</label><select id="tvf-plan"><option value="20"'+(plan!=='15'?' selected':'')+'>20</option><option value="15"'+(plan==='15'?' selected':'')+'>15</option></select></div>'
-    + '<div class="tst-f"><label for="tvf-rate">Rate ₹/day</label><select id="tvf-rate"><option value="200"'+(rate!=='100'?' selected':'')+'>200</option><option value="100"'+(rate==='100'?' selected':'')+'>100</option></select></div>'
+    + '<div class="tst-f"><label for="tvf-rate">Rate ₹/day</label><select id="tvf-rate"><option value="200"'+(rate==='200'?' selected':'')+'>200</option><option value="100"'+(rate==='100'?' selected':'')+'>100</option><option value="0"'+(rate==='0'?' selected':'')+'>NA (unpaid)</option></select></div>'
     + '<div class="tst-f"><label for="tvf-start">Start date</label><input id="tvf-start" type="date" value="'+_tvEsc(p.testerStart || _tvDay(new Date()))+'"></div>'
     + '</div>';
 }

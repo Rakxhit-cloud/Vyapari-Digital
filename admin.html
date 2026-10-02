@@ -265,6 +265,10 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .tpay{text-align:right;flex-shrink:0;} .tpay .v{font-size:17px;font-weight:700;color:#e8c870;line-height:1.1;}
 .tpay .k{font-size:9.5px;color:#7f90b8;margin-top:2px;}
 .params{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px;}
+.params.p3{grid-template-columns:repeat(3,1fr);}
+@media(max-width:820px){.params.p3{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.params.p3{grid-template-columns:1fr}}
+.par .psub{font-weight:500;color:#7f8fb5;margin-left:6px;font-size:11px;}
 .par{background:#0b142c;border:1px solid #243458;border-radius:10px;padding:8px 10px;}
 .par .k{font-size:9.5px;color:#7f90b8;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .par .v{font-size:15px;font-weight:700;margin-top:4px;letter-spacing:-.3px;color:#9fb0d8;}
@@ -1736,9 +1740,10 @@ setInterval(() => {
 }, 60000);
 
 /* ══════════════════ TESTERS TAB ══════════════════
-   Daily minimum for a qualified day: 2 app opens, 1 आया entry, 1 गया entry.
+   Daily minimum for a qualified day: 2 app opens + 2 entries in total,
+   आया and गया counted together (2 आया, 2 गया, or 1 of each).
    Scans are weekly and shown for information; they do not decide a day.  */
-const T_TARGET = { opens: 2, inw: 1, outw: 1, scansWeek: 5 };
+const T_TARGET = { opens: 2, entries: 2, scansWeek: 5 };
 let _tvEvents = null;
 
 function _tvDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -1800,7 +1805,8 @@ function _tvAggregate(uid){
   });
   return { days, weeks };
 }
-function _tvQualified(c){ return !!c && c.opens>=T_TARGET.opens && c.inw>=T_TARGET.inw && c.outw>=T_TARGET.outw; }
+function _tvEntries(c){ return c ? (c.inw||0)+(c.outw||0) : 0; }
+function _tvQualified(c){ return !!c && c.opens>=T_TARGET.opens && _tvEntries(c)>=T_TARGET.entries; }
 function _tvEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function _tvShort(ds){ if(!ds) return ''; const d=new Date(ds+'T00:00:00'); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
 function _tvLong(ds){ const d=new Date(ds+'T00:00:00'); return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}); }
@@ -1823,7 +1829,7 @@ function _tvStats(u){
   const started = today >= from;
   const qToday = started && _tvQualified(t);
   const banked = Math.min(plan, bankedPast + (qToday ? 1 : 0));
-  const left = (T_TARGET.opens-t.opens>0?1:0)+(T_TARGET.inw-t.inw>0?1:0)+(T_TARGET.outw-t.outw>0?1:0);
+  const left = (T_TARGET.opens-t.opens>0?1:0)+(T_TARGET.entries-_tvEntries(t)>0?1:0);
   let lastOpen = null; Object.keys(ag.days).forEach(d => { if (ag.days[d].opens>0 && (!lastOpen||d>lastOpen)) lastOpen = d; });
   return { p, ag, plan, rate, start, from, today, t, wk, uniqScans, dupes, banked, lost, qToday, left, started, lastOpen };
 }
@@ -1911,13 +1917,13 @@ async function loadTesters(force){
                     : (isToday ? '<span class="tdim">in progress · till midnight</span>'
                     : '<span class="tbad">✗ missed'+(s.ag.days[d]?'':' · no activity')+'</span>');
           lines.push('<tr><td>'+_tvLong(d)+'</td><td class="num '+cls(c.opens,T_TARGET.opens)+'">'+c.opens+'/'+T_TARGET.opens+'</td>'
-            + '<td class="num '+cls(c.inw,T_TARGET.inw)+'">'+c.inw+'/'+T_TARGET.inw+'</td>'
-            + '<td class="num '+cls(c.outw,T_TARGET.outw)+'">'+c.outw+'/'+T_TARGET.outw+'</td>'
+            + '<td class="num '+cls(_tvEntries(c),T_TARGET.entries)+'">'+_tvEntries(c)+'/'+T_TARGET.entries
+            + ' <span class="tdim">('+c.inw+' आया · '+c.outw+' गया)</span></td>'
             + '<td class="num">'+c.scans+'</td><td>'+res+'</td></tr>');
           d = _tvAddDays(d, -1); guard++;
         }
-        log = '<table class="tdd"><tr><th>Day</th><th class="num">Opens</th><th class="num">आया</th><th class="num">गया</th><th class="num">Scans</th><th>Result</th></tr>'
-            + (lines.length ? lines.join('') : '<tr><td colspan="6" class="tdim">Starts '+_tvEsc(_tvShort(s.from))+'</td></tr>') + '</table>';
+        log = '<table class="tdd"><tr><th>Day</th><th class="num">Opens</th><th class="num">आया + गया</th><th class="num">Scans</th><th>Result</th></tr>'
+            + (lines.length ? lines.join('') : '<tr><td colspan="5" class="tdim">Starts '+_tvEsc(_tvShort(s.from))+'</td></tr>') + '</table>';
       }
       return '<div class="trow'+(s.dupes>0?' flag':(s.started&&s.left>0&&s.banked<s.plan?' risk':''))+'">'
         + '<div class="thead"><div class="tav">'+_tvEsc(nm.charAt(0).toUpperCase())+'</div>'
@@ -1927,7 +1933,7 @@ async function loadTesters(force){
         + pill
         + '<div class="tpay"><div class="v">₹'+(s.banked*s.rate).toLocaleString('en-IN')+'</div>'
         + '<div class="k">'+s.banked+' qualified day'+(s.banked===1?'':'s')+'</div></div></div>'
-        + '<div class="params">'+par('App opens',t.opens,T_TARGET.opens)+par('आया',t.inw,T_TARGET.inw)+par('गया',t.outw,T_TARGET.outw)+par('Scans · week',s.uniqScans,T_TARGET.scansWeek)+'</div>'
+        + '<div class="params p3">'+par('App opens',t.opens,T_TARGET.opens)+par('आया + गया <span class="psub">'+t.inw+' आया · '+t.outw+' गया</span>',_tvEntries(t),T_TARGET.entries)+par('Scans · week',s.uniqScans,T_TARGET.scansWeek)+'</div>'
         + '<div class="striprow"><div class="striplab">'+s.plan+' qualified<br>days needed</div>'
         + '<div class="strip">'+strip.join('')+'</div>'
         + '<div class="stripend">'+s.banked+' banked<br><span style="color:'+(s.lost?'#ff8a7a':'#66779c')+';font-weight:500">'+s.lost+' lost</span></div></div>'

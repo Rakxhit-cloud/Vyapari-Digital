@@ -6117,7 +6117,7 @@ function getRegSource() {
     const saved = localStorage.getItem('hk_reg_source');
     if (saved) return saved;
     const params = new URLSearchParams(location.search);
-    const isPlay = params.get('src') === 'play' || (document.referrer && document.referrer.indexOf('android-app://') === 0);
+    const isPlay = params.get('src') === 'play' || (document.referrer && document.referrer.indexOf('android-app://app.livekhaata.twa') === 0);
     const src = isPlay ? 'play' : 'web';
     localStorage.setItem('hk_reg_source', src);
     return src;
@@ -7434,7 +7434,7 @@ window.saveName = async function() {
     try {
       _inApp = (localStorage.getItem('hk_reg_source') === 'play') ||
                (new URLSearchParams(location.search).get('src') === 'play') ||
-               (document.referrer && document.referrer.indexOf('android-app://') === 0) ||
+               (document.referrer && document.referrer.indexOf('android-app://app.livekhaata.twa') === 0) ||
                (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
                (window.navigator.standalone === true);
     } catch(e) {}
@@ -7805,7 +7805,7 @@ function launchApp(uid) {
     isPwaMode = isPwaMode ||
                 (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
                 window.navigator.standalone === true ||
-                document.referrer.indexOf('android-app://') === 0;
+                document.referrer.indexOf('android-app://app.livekhaata.twa') === 0;
   } catch(e) {}
   if (isPwaMode) {
     try { sessionStorage.setItem('hk_pwa_confirmed_at', Date.now().toString()); } catch(e){}
@@ -14481,7 +14481,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     // some Android browsers, including Samsung Internet and Chrome WebView).
     var live = window.matchMedia('(display-mode: standalone)').matches
         || window.navigator.standalone === true
-        || document.referrer.startsWith('android-app://');
+        || document.referrer.startsWith('android-app://app.livekhaata.twa');   // only OUR Play app, not links from the Google app/Gmail/WhatsApp
     // If live detection succeeds — record the timestamp so other code paths
     // (running within seconds) can trust it during the boot-time race window.
     if (live) {

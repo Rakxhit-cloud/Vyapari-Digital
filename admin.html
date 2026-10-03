@@ -269,6 +269,31 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 @media(max-width:820px){.params.p3{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:520px){.params.p3{grid-template-columns:1fr}}
 .par .psub{font-weight:500;color:#7f8fb5;margin-left:6px;font-size:11px;}
+.par .pextra{font-size:11px;font-weight:500;color:#8aa0d8;margin-left:7px;letter-spacing:0;}
+.tl-box{margin:4px 0 12px;background:#081022;border:1px solid #243458;border-radius:12px;padding:12px 14px;cursor:default;}
+.tl-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px;margin-bottom:8px;}
+.tl-ht{font-size:13px;font-weight:700;color:#e8c870;}
+.tl-dev{margin-left:auto;font-size:11px;color:#8aa0d8;background:#0e1a38;border:1px solid #243458;border-radius:7px;padding:3px 9px;}
+.tl-row{display:grid;grid-template-columns:82px 1fr 210px;gap:10px;padding:7px 4px;border-bottom:1px solid #141e38;font-size:12.5px;align-items:start;}
+.tl-row:last-child{border-bottom:none;}
+.tl-head{font-size:10px;color:#7f90b8;font-weight:600;letter-spacing:.4px;border-bottom:1px solid #1e2a4a;}
+.tl-t{font-family:ui-monospace,Consolas,monospace;color:#c8d4f0;white-space:nowrap;}
+.tl-l{color:#7f90b8;font-size:11.5px;}
+.tl-tag{display:inline-block;white-space:nowrap;font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px;margin:0 2px;}
+.tl-tag.ok{background:rgba(93,216,138,.12);border:1px solid #2d7a4a;color:#6ee69a;}
+.tl-tag.no{background:rgba(138,150,180,.1);border:1px solid #3a4668;color:#a8b4d0;}
+.tl-tag.bad{background:rgba(224,82,82,.12);border:1px solid #8a3434;color:#ff9a8a;}
+.tl-dim{color:#7f90b8;} .tl-bad{color:#ff9a8a;} .tl-warn{color:#f0b060;} .tl-amt{color:#f0c060;font-weight:600;}
+.tl-empty{font-size:12px;color:#7f90b8;padding:8px 4px;}
+.tl-h .tl-dim{font-size:11.5px;}
+.tl-head .tl-t,.tl-head .tl-l{font-size:10px;font-family:inherit;color:#7f90b8;}
+.tdd-wrap{overflow-x:auto;}
+@media(max-width:640px){
+  .tl-row{grid-template-columns:64px 1fr;gap:3px 8px;}
+  .tl-row .tl-l{grid-column:2;}
+  .tl-head .tl-l{display:none;}
+  .tl-dev{margin-left:0;}
+}
 .par{background:#0b142c;border:1px solid #243458;border-radius:10px;padding:8px 10px;}
 .par .k{font-size:9.5px;color:#7f90b8;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .par .v{font-size:15px;font-weight:700;margin-top:4px;letter-spacing:-.3px;color:#9fb0d8;}
@@ -661,7 +686,7 @@ async function loadAnalytics(){
 
     const activeToday = new Set(ev.filter(e=>e.day===today).map(e=>e.uid)).size;
     const activeWeek  = new Set(ev.filter(e=>last7.has(e.day)).map(e=>e.uid)).size;
-    const opens7 = ev.filter(e=>e.event==='app_open' && last7.has(e.day)).length;
+    const opens7 = ev.filter(e=>(e.event==='app_open'||e.event==='app_launch') && last7.has(e.day)).length;
     const users7 = new Set(ev.filter(e=>last7.has(e.day)).map(e=>e.uid)).size;
     const visits = users7 ? (opens7/users7).toFixed(1) : '0';
     const entriesToday = ev.filter(e=>e.event==='entry_added' && e.day===today).length;
@@ -1882,13 +1907,25 @@ async function _tvCohortSave(o){
 }
 
 /* roll raw events into per-day counters for one uid */
+/* LAUNCHES vs OPENS. App v4 records every launch (app_launch); older builds sent
+   app_open, already 20 min apart. Both are launches. An OPEN that counts toward
+   the daily target = a launch at least 20 min after the last counted one, the
+   same day (phone time). Old days give the same result as before. */
+const T_GAP_MS = 20*60*1000;
+function _tvAt(e){ const a = Number((e.meta||{}).at); return a > 0 ? a : _admTsMs(e); }
+function _tvIsLaunch(e){ return e.event === 'app_open' || e.event === 'app_launch'; }
+function _tvCountOpens(times){
+  const ts = times.slice().sort((x,y)=>x-y), counted = new Set(); let last = -Infinity;
+  ts.forEach(t => { if (!(t > 0) || t - last >= T_GAP_MS) { counted.add(t); if (t > 0) last = t; } });
+  return counted;
+}
 function _tvAggregate(uid){
-  const days = {}, weeks = {};
+  const days = {}, weeks = {}, at = {};
   (_tvEvents||[]).forEach(e => {
     if (e.uid !== uid || !e.day) return;
-    const d = days[e.day] || (days[e.day] = { opens:0, inw:0, outw:0, scans:0, fps:{} });
+    const d = days[e.day] || (days[e.day] = { opens:0, launches:0, inw:0, outw:0, scans:0, fps:{} });
     const m = e.meta || {};
-    if (e.event === 'app_open') d.opens++;
+    if (_tvIsLaunch(e)) { d.launches++; (at[e.day] = at[e.day] || []).push(_tvAt(e)); }
     else if (e.event === 'box_added') { if (m.dir === 'in') d.inw++; else if (m.dir === 'out') d.outw++; }
     else if (e.event === 'bill_scanned') {
       d.scans++;
@@ -1896,7 +1933,69 @@ function _tvAggregate(uid){
       w.total++; const fp = m.fp || ('?'+e.day); w.fps[fp] = (w.fps[fp]||0)+1; d.fps[fp]=1;
     }
   });
+  Object.keys(at).forEach(day => { days[day].opens = _tvCountOpens(at[day]).size; });
   return { days, weeks };
+}
+
+/* TODAY'S TIMELINE: every launch, entry, scan and voice attempt for one tester,
+   with why a launch did or didn't count and how fast it reached the server. */
+function _tvClock(ms){ return new Date(ms).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}).replace(/\s?(am|pm)$/i,' $1').toLowerCase(); }
+function _tvLag(e){
+  const a = Number((e.meta||{}).at), t = _admTsMs(e);
+  if (!(a > 0) || !t) return '<span class="tl-dim">—</span>';
+  const d = Math.round((t - a)/1000);
+  if (d < -120) return '<span class="tl-warn">⚠ phone clock '+Math.round(-d/60)+' min fast</span>';
+  if (d < 60) return 'after '+Math.max(0,d)+' s';
+  const mins = Math.round(d/60), txt = mins < 60 ? mins+' min' : (Math.floor(mins/60)+' h '+(mins%60)+' min');
+  return '<span class="'+(d > 120 ? 'tl-warn' : '')+'">after '+txt+(d > 120 ? ' ⚠ weak network or app was closed' : '')+'</span>';
+}
+const _TV_SRC = { voice:'voice', maal:'purchase', udhaar:'उधार' };
+const _TV_VOICE_SR = { 'no-mic':"speech service didn't start, switched to recording", 'no-speech':'nothing heard', 'no-amount':'no amount understood', 'not-allowed':'Google app has no mic permission', 'network':'speech service network error', 'audio-capture':'mic could not start' };
+const _TV_VOICE_FAIL = { perm:'Chrome has no mic permission', busy:'mic busy', nomic:'no microphone found', other:'mic did not start' };
+function _tvTimeline(uid, day){
+  const ev = (_tvEvents||[]).filter(e => e.uid === uid && e.day === day);
+  const launches = ev.filter(_tvIsLaunch).map(_tvAt);
+  const counted = _tvCountOpens(launches);
+  const rows = [];
+  let lastCounted = null, openNo = 0;
+  ev.slice().sort((x,y)=>_tvAt(x)-_tvAt(y)).forEach(e => {
+    const m = e.meta || {}, t = _tvAt(e);
+    let what = '';
+    if (_tvIsLaunch(e)) {
+      if (counted.has(t)) { openNo++; lastCounted = t; what = 'Launch <span class="tl-tag ok">COUNTED · open '+openNo+'</span>'; }
+      else {
+        const gap = lastCounted ? Math.floor((t - lastCounted)/60000) : 0;
+        what = '<span class="tl-dim">Launch</span> <span class="tl-tag no">not counted</span> <span class="tl-dim">'+gap+' min after '+_tvClock(lastCounted)+' (needs 20)</span>';
+      }
+    } else if (e.event === 'box_added') {
+      const dir = m.dir === 'in' ? 'आया' : (m.dir === 'out' ? 'गया' : 'Entry');
+      const amt = Number(m.amount) > 0 ? ' <span class="tl-amt">₹'+Number(m.amount).toLocaleString('en-IN')+'</span>' : '';
+      what = dir + amt + (_TV_SRC[m.src] ? ' <span class="tl-dim">· '+_TV_SRC[m.src]+'</span>' : '');
+    } else if (e.event === 'bill_scanned') {
+      what = 'Bill scan' + (m.billNo ? ' <span class="tl-dim">· bill '+_tvEsc(m.billNo)+'</span>' : '');
+    } else if (e.event === 'voice_path') {
+      const sec = Number(m.ms) > 0 ? ' in '+(Number(m.ms)/1000).toFixed(1)+' s' : '';
+      what = 'Voice <span class="tl-tag ok">✓ understood</span><span class="tl-dim">'+sec+' · '+(m.path === 'sr' ? 'fast path' : 'upload path')+'</span>';
+    } else if (e.event === 'voice_sr') {
+      what = 'Voice <span class="tl-tag bad">✗</span> <span class="tl-bad">'+_tvEsc(_TV_VOICE_SR[m.err] || m.err || 'failed')+'</span>'
+           + (m.err === 'no-amount' && m.txt ? ' <span class="tl-dim">heard "'+_tvEsc(m.txt)+'"</span>' : '');
+    } else if (e.event === 'voice_fail') {
+      what = 'Voice <span class="tl-tag bad">✗ '+_tvEsc(_TV_VOICE_FAIL[m.err] || m.err || 'failed')+'</span>'
+           + (m.err === 'busy' && !m.retried ? ' <span class="tl-dim">retrying in 0.8 s</span>' : '');
+    } else if (e.event === 'trial_ended_screen') {
+      what = '<span class="tl-warn">Trial-ended screen shown</span>';
+    } else return;   // screen views and duplicate entry logs are left out
+    rows.push('<div class="tl-row"><div class="tl-t">'+_tvClock(t)+'</div><div class="tl-w">'+what+'</div><div class="tl-l">'+_tvLag(e)+'</div></div>');
+  });
+  // latest device line for this tester (any day)
+  let dev = null;
+  (_tvEvents||[]).forEach(e => { const m = e.meta || {}; if (e.uid === uid && m.dev && (!dev || _tvAt(e) > dev.t)) dev = { t:_tvAt(e), dev:m.dev, ver:m.ver||'' }; });
+  const devTxt = dev ? _tvEsc(dev.dev) + (dev.ver ? ' · app '+_tvEsc(dev.ver) : '') : 'device shows after the next launch on the new app';
+  return '<div class="tl-box"><div class="tl-h"><span class="tl-ht">Today\'s timeline</span><span class="tl-dim">'+_tvLong(day)+' · phone time</span>'
+       + '<span class="tl-dev">'+devTxt+'</span></div>'
+       + '<div class="tl-row tl-head"><div class="tl-t">TIME</div><div class="tl-w">WHAT HAPPENED</div><div class="tl-l">REACHED SERVER</div></div>'
+       + (rows.length ? rows.join('') : '<div class="tl-empty">No activity yet today.</div>')
+       + '</div>';
 }
 function _tvEntries(c){ return c ? (c.inw||0)+(c.outw||0) : 0; }
 function _tvQualified(c){ return !!c && c.opens>=T_TARGET.opens && _tvEntries(c)>=T_TARGET.entries; }
@@ -1912,7 +2011,7 @@ function _tvStats(u){
   // testerRate 0 = NA (unpaid family tester). Only a missing value falls back to 200.
   const rate = (p.testerRate === 0 || p.testerRate === '0') ? 0 : Number(p.testerRate || 200);
   const start = p.testerStart || '';
-  const t = ag.days[today] || { opens:0, inw:0, outw:0, scans:0, fps:{} };
+  const t = ag.days[today] || { opens:0, launches:0, inw:0, outw:0, scans:0, fps:{} };
   const wk = ag.weeks[_tvWeek(today)] || { total:0, fps:{} };
   const uniqScans = Object.keys(wk.fps).length, dupes = wk.total - uniqScans;
   let from = start;
@@ -1993,9 +2092,9 @@ async function loadTesters(force){
       committed += s.banked * s.rate;
       if (s.qToday) qualToday++;
       if (s.dupes > 0) flagged++;
-      const par = (k, got, need) => {
+      const par = (k, got, need, extra) => {
         const hit = got >= need, pct = Math.max(3, Math.min(100, Math.round(got/need*100)));
-        return '<div class="par '+(hit?'hit':'part')+'"><div class="k">'+k+'</div><div class="v">'+got+'/'+need+'</div>'
+        return '<div class="par '+(hit?'hit':'part')+'"><div class="k">'+k+'</div><div class="v">'+got+'/'+need+(extra?'<span class="pextra">'+extra+'</span>':'')+'</div>'
              + '<div class="tbar"><i style="width:'+pct+'%;background:'+(hit?'#3ec873':'#f0b060')+'"></i></div></div>';
       };
       const strip = [];
@@ -2010,20 +2109,21 @@ async function loadTesters(force){
         const lines = [];
         let d = today, guard = 0;
         while (d >= s.from && guard < 60) {
-          const c = s.ag.days[d] || { opens:0, inw:0, outw:0, scans:0 };
+          const c = s.ag.days[d] || { opens:0, launches:0, inw:0, outw:0, scans:0 };
           const q = _tvQualified(c), isToday = d === today;
           const cls = (got, need) => got >= need ? 'tok' : (isToday ? 'tdim' : 'tbad');
           const res = q ? '<span class="tok">✓ qualified</span>'
                     : (isToday ? '<span class="tdim">in progress · till midnight</span>'
                     : '<span class="tbad">✗ missed'+(s.ag.days[d]?'':' · no activity')+'</span>');
-          lines.push('<tr><td>'+_tvLong(d)+'</td><td class="num '+cls(c.opens,T_TARGET.opens)+'">'+c.opens+'/'+T_TARGET.opens+'</td>'
+          lines.push('<tr><td>'+_tvLong(d)+'</td><td class="num '+cls(c.opens,T_TARGET.opens)+'">'+c.opens+'/'+T_TARGET.opens+'</td><td class="num tdim">'+(c.launches||0)+'</td>'
             + '<td class="num '+cls(_tvEntries(c),T_TARGET.entries)+'">'+_tvEntries(c)+'/'+T_TARGET.entries
             + ' <span class="tdim">('+c.inw+' आया · '+c.outw+' गया)</span></td>'
             + '<td class="num">'+c.scans+'</td><td>'+res+'</td></tr>');
           d = _tvAddDays(d, -1); guard++;
         }
-        log = '<table class="tdd"><tr><th>Day</th><th class="num">Opens</th><th class="num">आया + गया</th><th class="num">Scans</th><th>Result</th></tr>'
-            + (lines.length ? lines.join('') : '<tr><td colspan="5" class="tdim">Starts '+_tvEsc(_tvShort(s.from))+'</td></tr>') + '</table>';
+        log = _tvTimeline(u.uid, today)
+            + '<div class="tdd-wrap"><table class="tdd"><tr><th>Day</th><th class="num">Opens</th><th class="num">Launches</th><th class="num">आया + गया</th><th class="num">Scans</th><th>Result</th></tr>'
+            + (lines.length ? lines.join('') : '<tr><td colspan="6" class="tdim">Starts '+_tvEsc(_tvShort(s.from))+'</td></tr>') + '</table></div>';
       }
       return '<div class="trow'+(s.dupes>0?' flag':(s.started&&s.left>0&&s.banked<s.plan?' risk':''))+'">'
         + '<div class="thead"><div class="tav">'+_tvEsc(nm.charAt(0).toUpperCase())+'</div>'
@@ -2033,7 +2133,7 @@ async function loadTesters(force){
         + pill
         + '<div class="tpay"><div class="v">'+(s.rate ? ('₹'+(s.banked*s.rate).toLocaleString('en-IN')) : 'NA')+'</div>'
         + '<div class="k">'+s.banked+' qualified day'+(s.banked===1?'':'s')+'</div></div></div>'
-        + '<div class="params p3">'+par('App opens',t.opens,T_TARGET.opens)+par('आया + गया <span class="psub">'+t.inw+' आया · '+t.outw+' गया</span>',_tvEntries(t),T_TARGET.entries)+par('Scans · week',s.uniqScans,T_TARGET.scansWeek)+'</div>'
+        + '<div class="params p3">'+par('App opens',t.opens,T_TARGET.opens,'· '+(t.launches||0)+' launch'+((t.launches||0)===1?'':'es')+' today')+par('आया + गया <span class="psub">'+t.inw+' आया · '+t.outw+' गया</span>',_tvEntries(t),T_TARGET.entries)+par('Scans · week',s.uniqScans,T_TARGET.scansWeek)+'</div>'
         + '<div class="striprow"><div class="striplab">'+s.plan+' qualified<br>days needed</div>'
         + '<div class="strip">'+strip.join('')+'</div>'
         + '<div class="stripend">'+s.banked+' banked<br><span style="color:'+(s.lost?'#ff8a7a':'#66779c')+';font-weight:500">'+s.lost+' lost</span></div></div>'

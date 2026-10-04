@@ -1936,13 +1936,31 @@ function _tvCountOpens(times){
   ts.forEach(t => { if (!(t > 0) || t - last >= T_GAP_MS) { counted.add(t); if (t > 0) last = t; } });
   return counted;
 }
+/* IMPLIED LAUNCH: any event from the app (entry, voice, scan, trial screen...)
+   proves the app was open. If it arrives with no launch or other activity in the
+   previous 10 min, that session's launch never reached us (stuck on an old build,
+   lost on a slow phone), so the session counts as a launch at its first event.
+   Computed here, retroactively: no tester has to reopen anything. When the real
+   launch arrives later, it replaces the implied one automatically. */
+const T_IDLE_MS = 10*60*1000;
+function _tvLaunchList(evs){
+  const out = []; let lastSeen = -Infinity;
+  evs.slice().sort((x,y)=>_tvAt(x)-_tvAt(y)).forEach(e => {
+    const t = _tvAt(e);
+    if (_tvIsLaunch(e)) out.push({ t, implied:false, e });
+    else if (t - lastSeen > T_IDLE_MS) out.push({ t, implied:true, e });
+    lastSeen = Math.max(lastSeen, t);
+  });
+  return out;
+}
 function _tvAggregate(uid){
   const days = {}, weeks = {}, at = {};
   (_tvEvents||[]).forEach(e => {
     if (e.uid !== uid || !e.day) return;
     const d = days[e.day] || (days[e.day] = { opens:0, launches:0, inw:0, outw:0, scans:0, fps:{} });
     const m = e.meta || {};
-    if (_tvIsLaunch(e)) { d.launches++; (at[e.day] = at[e.day] || []).push(_tvAt(e)); }
+    (at[e.day] = at[e.day] || []).push(e);
+    if (_tvIsLaunch(e)) { d.launches++; }
     else if (e.event === 'box_added') { if (m.dir === 'in') d.inw++; else if (m.dir === 'out') d.outw++; }
     else if (e.event === 'bill_scanned') {
       d.scans++;
@@ -1950,7 +1968,7 @@ function _tvAggregate(uid){
       w.total++; const fp = m.fp || ('?'+e.day); w.fps[fp] = (w.fps[fp]||0)+1; d.fps[fp]=1;
     }
   });
-  Object.keys(at).forEach(day => { days[day].opens = _tvCountOpens(at[day]).size; });
+  Object.keys(at).forEach(day => { days[day].opens = _tvCountOpens(_tvLaunchList(at[day]).map(x => x.t)).size; });
   return { days, weeks };
 }
 
@@ -1971,13 +1989,21 @@ const _TV_VOICE_SR = { 'no-mic':"speech service didn't start, switched to record
 const _TV_VOICE_FAIL = { perm:'Chrome has no mic permission', busy:'mic busy', nomic:'no microphone found', other:'mic did not start' };
 function _tvTimeline(uid, day){
   const ev = (_tvEvents||[]).filter(e => e.uid === uid && e.day === day);
-  const launches = ev.filter(_tvIsLaunch).map(_tvAt);
-  const counted = _tvCountOpens(launches);
+  const list = _tvLaunchList(ev);
+  const counted = _tvCountOpens(list.map(x => x.t));
+  const impliedBy = new Set(list.filter(x => x.implied).map(x => x.e));
   const rows = [];
   let lastCounted = null, openNo = 0;
   ev.slice().sort((x,y)=>_tvAt(x)-_tvAt(y)).forEach(e => {
     const m = e.meta || {}, t = _tvAt(e);
     let what = '';
+    if (impliedBy.has(e)) {
+      const ok = counted.has(t);
+      if (ok) { openNo++; lastCounted = t; }
+      rows.push('<div class="tl-row"><div class="tl-t">'+_tvClock(t)+'</div><div class="tl-w">Launch '
+        + (ok ? '<span class="tl-tag ok">COUNTED · open '+openNo+'</span>' : '<span class="tl-tag no">not counted</span>')
+        + ' <span class="tl-dim">from activity: the app was clearly open, its launch signal didn\'t arrive</span></div><div class="tl-l"><span class="tl-dim">—</span></div></div>');
+    }
     if (_tvIsLaunch(e)) {
       if (counted.has(t)) { openNo++; lastCounted = t; what = 'Launch <span class="tl-tag ok">COUNTED · open '+openNo+'</span>'; }
       else {

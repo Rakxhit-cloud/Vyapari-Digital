@@ -28,7 +28,7 @@
    the fallback. Fixed id ao_<uid>_<time> + exists:false precondition: a re-send
    can never count twice. */
 (function(){
-  var AWAY=5000, KQ='hk_ao_q', KT='hk_ao_try', KH='hk_ao_hid', KC='hk_ao_cred', VER='v4';
+  var AWAY=5000, KQ='hk_ao_q', KT='hk_ao_try', KH='hk_ao_hid', KC='hk_ao_cred', KE='hk_ao_err', VER='v4.1';
   var FS='https://firestore.googleapis.com/v1/projects/hisaab-kitaab-9ff45/databases/(default)/documents';
   var L=window.LKAO={};
   function g(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
@@ -45,6 +45,7 @@
     }catch(e){ return ''; }
   }
   L.day=day; L.queue=q; L.done=done; L.dev=dev(); L.ver=VER;
+  L.err=function(){ return g(KE)||''; };   // last delivery problem, shown in the admin timeline
 
   var on=false;   // this on-screen period is already handled
   L.touch=function(){
@@ -88,12 +89,13 @@
     var res=null, url=FS+':commit';
     try{ res=await timed(fetch(url,{method:'POST',headers:h,body:body,keepalive:true})); }
     catch(e){
-      if(e && e.message==='timeout') return 'net';
-      try{ res=await timed(fetch(url,{method:'POST',headers:h,body:body})); }catch(e2){ return 'net'; }
+      if(e && e.message==='timeout'){ s(KE,'timeout'); return 'net'; }
+      try{ res=await timed(fetch(url,{method:'POST',headers:h,body:body})); }catch(e2){ s(KE,'network: '+((e2&&e2.message)||'failed').slice(0,60)); return 'net'; }
     }
     if(res.ok) return 'ok';
     var j=null; try{ j=await timed(res.json()); }catch(e){}
     var st=(j&&j.error&&j.error.status)||'', msg=(j&&j.error&&j.error.message)||'';
+    s(KE, (res.status+' '+st+' '+msg).slice(0,90));
     if(st==='ALREADY_EXISTS'||st==='FAILED_PRECONDITION') return 'ok';
     if(res.status===401||/app ?check/i.test(msg)) return 'auth';
     if(st==='PERMISSION_DENIED' && was) return 'ok';   // sent before: it exists, so the update is refused
@@ -105,13 +107,18 @@
     if(busy) return; var items=q(); if(!items.length) return;
     busy=true;
     try{
-      var c=await cred(false); if(!c) return;
+      var c=await cred(false);
+      if(!c){ s(KE,'no login token yet'); return; }
       for(var i=0;i<items.length;i++){
         var t=items[i], r=await send(c,t);
-        if(r==='auth'){ s(KC,null); c=await cred(true); if(!c) break; r=await send(c,t); }
-        if(r==='ok'){ done(t); continue; }
-        if(L.sdkSend && (r==='sdk' || (r==='net' && navigator.onLine))){
-          if(await L.sdkSend(t)){ done(t); continue; }
+        if(r==='auth'){ s(KC,null); var c2=await cred(true); if(c2){ c=c2; r=await send(c,t); } }
+        if(r==='ok'){ done(t); s(KE,null); continue; }
+        // v4.1: before, an App Check/token failure ('auth' twice) never tried the SDK, so on a
+        // slow phone the launch stayed stuck while entries (SDK) went through. Now every
+        // failure falls back to the SDK, which waits for App Check properly.
+        if(L.sdkSend && navigator.onLine!==false){
+          if(await L.sdkSend(t)){ done(t); s(KE,null); continue; }
+          s(KE,'sdk fallback failed · '+(g(KE)||''));
         }
         break;   // keep this and the rest for the next flush
       }
@@ -6140,7 +6147,7 @@ async function logEvent(name, meta) {
     try { src = (localStorage.getItem('hk_reg_source') === 'play') ? 'play' : 'web'; } catch(e) {}
     await setDoc(doc(collection(db, 'analytics_events')), {
       uid: u.uid, event: name, day: day, ts: serverTimestamp(), src: src,
-      meta: Object.assign({ at: d.getTime() }, (meta && typeof meta === 'object') ? meta : {})
+      meta: Object.assign({ at: d.getTime() }, (function(){ try { const L = window.LKAO; const n = L ? L.queue().length : 0; return n ? { aoq: n, aoe: L.err() } : {}; } catch(e){ return {}; } })(), (meta && typeof meta === 'object') ? meta : {})
     });
   } catch (e) { /* analytics must never break the app */ }
 }
@@ -7767,7 +7774,12 @@ if (window.LKAO) {
     }
   };
   // Send the moment login is restored, independent of which screen opens next.
-  onAuthStateChanged(auth, u => { if (u) window.LKAO.flush(); else window.LKAO.clearCred(); });
+  onAuthStateChanged(auth, u => {
+    if (!u) { window.LKAO.clearCred(); return; }
+    window.LKAO.flush();
+    // safety net: if anything is still waiting, try again shortly (slow App Check / weak network)
+    [8000, 30000, 90000].forEach(ms => setTimeout(() => { try { if (window.LKAO.queue().length) window.LKAO.flush(); } catch(e){} }, ms));
+  });
 }
 function aoTouch(){ try{ window.LKAO && window.LKAO.touch(); }catch(e){} }
 function aoFlush(){ try{ return window.LKAO && window.LKAO.flush(); }catch(e){} }

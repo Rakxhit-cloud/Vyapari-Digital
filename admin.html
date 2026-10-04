@@ -1086,6 +1086,7 @@ window.loadUsers = async function loadUsers() {
   _usersP = (async () => {
   try {
     allUsers = await window._loadUsersFromFirestore();
+    _admApplyLastSeen();
     renderStats();
     renderUserList();
     _admLoadEvents().then(() => renderUserList()).catch(() => {});
@@ -1825,6 +1826,16 @@ function _tvWeek(ds){ const d=new Date(ds+'T00:00:00'); const day=(d.getDay()+6)
    longer re-reads every event ever written (that cost grew every day). */
 let _admEventsP = null, _admEvMap = null, _admEvUnsub = null, _admEvMaxMs = 0, _admLiveAt = null, _admLiveT = null;
 function _admTsMs(e){ const t = e && e.ts; return t ? (t.toMillis ? t.toMillis() : (t.seconds ? t.seconds*1000 : 0)) : 0; }
+/* LAST SEEN = the later of the profile's lastActiveAt and the newest event this
+   user sent (server time). Any launch, entry, scan or voice attempt now proves the
+   user was active, even if the profile heartbeat didn't get written. */
+function _admApplyLastSeen(){
+  const last = window._admLastEv || {};
+  (allUsers||[]).forEach(u => {
+    const p = Number(u.profile && u.profile.lastActiveAt) || 0, e = last[u.uid] || 0;
+    u.lastActive = Math.max(p, e) || null;
+  });
+}
 function _admPublish(){
   const ev = Array.from(_admEvMap.values());
   _tvEvents = ev; window._admEvents = ev;
@@ -1834,6 +1845,10 @@ function _admPublish(){
     if (e.event === 'bill_scanned') sc[e.uid] = (sc[e.uid] || 0) + 1;
   });
   window._admActDays = m; window._admScans = sc;
+  const le = {};
+  ev.forEach(e => { const t = _admTsMs(e); if (t > (le[e.uid] || 0)) le[e.uid] = t; });
+  window._admLastEv = le;
+  try { _admApplyLastSeen(); } catch(e){}
   return ev;
 }
 function _admLiveRedraw(){
@@ -1910,9 +1925,10 @@ async function _tvCohortSave(o){
 /* roll raw events into per-day counters for one uid */
 /* LAUNCHES vs OPENS. App v4 records every launch (app_launch); older builds sent
    app_open, already 20 min apart. Both are launches. An OPEN that counts toward
-   the daily target = a launch at least 20 min after the last counted one, the
+   the daily target = a launch at least 1 min after the last counted one (was 20:
+   too strict for a busy shop counter, where the app is reopened every few minutes), the
    same day (phone time). Old days give the same result as before. */
-const T_GAP_MS = 20*60*1000;
+const T_GAP_MS = 60*1000;   // 1 minute: only blocks tap-close-tap within seconds
 function _tvAt(e){ const a = Number((e.meta||{}).at); return a > 0 ? a : _admTsMs(e); }
 function _tvIsLaunch(e){ return e.event === 'app_open' || e.event === 'app_launch'; }
 function _tvCountOpens(times){
@@ -1965,8 +1981,8 @@ function _tvTimeline(uid, day){
     if (_tvIsLaunch(e)) {
       if (counted.has(t)) { openNo++; lastCounted = t; what = 'Launch <span class="tl-tag ok">COUNTED · open '+openNo+'</span>'; }
       else {
-        const gap = lastCounted ? Math.floor((t - lastCounted)/60000) : 0;
-        what = '<span class="tl-dim">Launch</span> <span class="tl-tag no">not counted</span> <span class="tl-dim">'+gap+' min after '+_tvClock(lastCounted)+' (needs 20)</span>';
+        const gs = lastCounted ? Math.max(0, Math.round((t - lastCounted)/1000)) : 0;
+        what = '<span class="tl-dim">Launch</span> <span class="tl-tag no">not counted</span> <span class="tl-dim">'+gs+' s after '+_tvClock(lastCounted)+' (needs '+Math.round(T_GAP_MS/60000)+' min)</span>';
       }
     } else if (e.event === 'box_added') {
       const dir = m.dir === 'in' ? 'आया' : (m.dir === 'out' ? 'गया' : 'Entry');

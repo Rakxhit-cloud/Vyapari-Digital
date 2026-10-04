@@ -285,6 +285,7 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .tl-tag.bad{background:rgba(224,82,82,.12);border:1px solid #8a3434;color:#ff9a8a;}
 .tl-dim{color:#7f90b8;} .tl-bad{color:#ff9a8a;} .tl-warn{color:#f0b060;} .tl-amt{color:#f0c060;font-weight:600;}
 .tl-empty{font-size:12px;color:#7f90b8;padding:8px 4px;}
+.tl-wait{background:rgba(224,160,90,.1);border:1px solid #8a5a28;border-radius:9px;padding:9px 12px;margin:0 0 8px;font-size:12.5px;color:#f0b060;line-height:1.55;}
 .tl-h .tl-dim{font-size:11.5px;}
 .tl-head .tl-t,.tl-head .tl-l{font-size:10px;font-family:inherit;color:#7f90b8;}
 .tdd-wrap{overflow-x:auto;}
@@ -1991,8 +1992,17 @@ function _tvTimeline(uid, day){
   let dev = null;
   (_tvEvents||[]).forEach(e => { const m = e.meta || {}; if (e.uid === uid && m.dev && (!dev || _tvAt(e) > dev.t)) dev = { t:_tvAt(e), dev:m.dev, ver:m.ver||'' }; });
   const devTxt = dev ? _tvEsc(dev.dev) + (dev.ver ? ' · app '+_tvEsc(dev.ver) : '') : 'device shows after the next launch on the new app';
+  // Launches recorded on the phone but not yet delivered (reported by the newest event, app v4.1+)
+  let newest = null;
+  (_tvEvents||[]).forEach(e => { if (e.uid === uid && (!newest || _tvAt(e) > _tvAt(newest))) newest = e; });
+  const nm = (newest && newest.meta) || {};
+  const waiting = Number(nm.aoq) > 0
+    ? '<div class="tl-wait">⚠ '+nm.aoq+' launch'+(nm.aoq>1?'es':'')+' recorded on the phone, not yet delivered (as of '+_tvClock(_tvAt(newest))+')'
+      + (nm.aoe ? '<br><span class="tl-dim">Reason: '+_tvEsc(nm.aoe)+'</span>' : '')
+      + '<br><span class="tl-dim">They are kept on the phone and sent automatically; each will appear here at its real time.</span></div>'
+    : '';
   return '<div class="tl-box"><div class="tl-h"><span class="tl-ht">Today\'s timeline</span><span class="tl-dim">'+_tvLong(day)+' · phone time</span>'
-       + '<span class="tl-dev">'+devTxt+'</span></div>'
+       + '<span class="tl-dev">'+devTxt+'</span></div>' + waiting
        + '<div class="tl-row tl-head"><div class="tl-t">TIME</div><div class="tl-w">WHAT HAPPENED</div><div class="tl-l">REACHED SERVER</div></div>'
        + (rows.length ? rows.join('') : '<div class="tl-empty">No activity yet today.</div>')
        + '</div>';

@@ -28,7 +28,7 @@
    the fallback. Fixed id ao_<uid>_<time> + exists:false precondition: a re-send
    can never count twice. */
 (function(){
-  var AWAY=5000, KQ='hk_ao_q', KT='hk_ao_try', KH='hk_ao_hid', KC='hk_ao_cred', KE='hk_ao_err', VER='v4.1';
+  var AWAY=5000, KQ='hk_ao_q', KT='hk_ao_try', KH='hk_ao_hid', KC='hk_ao_cred', KE='hk_ao_err', VER='v4.2';
   var FS='https://firestore.googleapis.com/v1/projects/hisaab-kitaab-9ff45/databases/(default)/documents';
   var L=window.LKAO={};
   function g(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
@@ -48,9 +48,9 @@
   L.err=function(){ return g(KE)||''; };   // last delivery problem, shown in the admin timeline
 
   var on=false;   // this on-screen period is already handled
-  L.touch=function(){
+  L.touch=function(force){
     try{
-      if(document.hidden || on) return;
+      if((document.hidden && !force) || on) return;
       on=true;
       var now=Date.now(), hid=parseInt(g(KH)||'0',10)||0;
       if(now-hid>=AWAY){ var a=q(); a.push(now); s(KQ,JSON.stringify(a.slice(-40))); }
@@ -131,6 +131,10 @@
     window.addEventListener('pageshow',function(){ L.touch(); });
     window.addEventListener('pagehide',function(){ L.hide(); });
     window.addEventListener('online',function(){ L.flush(); });
+    // Safety net: a tap proves the app is on screen. On some phones the page can
+    // come back without a "visible" event, which silently lost both the launch and
+    // the last-active time. The first tap after being away records the launch.
+    document.addEventListener('pointerdown',function(){ if(!on) L.touch(true); if(L.onTap) L.onTap(); },{capture:true,passive:true});
     L.touch();   // cold start: captured now, sent at once if last session's token is still valid
   }catch(e){}
 })();
@@ -2224,6 +2228,18 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .lgc-seg .on.upi{background:linear-gradient(180deg,rgba(74,159,212,.24),rgba(74,159,212,.08));color:#9ccfff;}
 .lgc-seg .on.nat{background:linear-gradient(180deg,rgba(212,168,80,.22),rgba(212,168,80,.08));color:#f0cf7a;}
 .lgc-seg.need{border-color:#8a6818;box-shadow:0 0 0 3px rgba(212,168,80,.12);}
+/* आया / गया strip: bigger, coloured words + divider line (layout unchanged) */
+#lgc-dir{gap:0;}
+#lgc-dir > div{font-size:16px;font-weight:800;letter-spacing:.2px;padding:8px 4px 7px;position:relative;}
+#lgc-dir > div small{font-size:10px;font-weight:600;color:#9aa6c4;opacity:1;margin-top:2px;letter-spacing:.3px;}
+#lgc-dir > div[data-v="in"]{color:#7ee8a4;}
+#lgc-dir > div[data-v="out"]{color:#ffa98a;}
+#lgc-dir > div[data-v="out"]::before{content:'';position:absolute;left:0;top:18%;bottom:18%;width:1px;background:#33466e;}
+#lgc-dir > div.on::before,#lgc-dir > div.on + div::before{opacity:0;}
+#lgc-dir > div.on small{color:inherit;opacity:.85;}
+#lgc-dir > div.on.in{color:#a6f5c4;}
+#lgc-dir > div.on.out{color:#ffc2ab;}
+#lgc-dir > div.dim{opacity:.55;}
 .lgc-hint{font-size:10px;color:#8aa0d8;margin:-3px 0 0 66px;text-align:left;}
 .lgc-hint b{color:#e8c870;font-weight:600;}
 .lg-voice-add.dis{opacity:.4;pointer-events:none;}
@@ -7774,8 +7790,24 @@ if (window.LKAO) {
     }
   };
   // Send the moment login is restored, independent of which screen opens next.
+  // LAST ACTIVE: one small write on every launch (login restored) and at most every
+  // 5 min while the user taps. Before, a launch only updated it through a 3-step
+  // registration check, so a short session could leave "Active 19h ago".
+  let _lkActAt = 0;
+  const _lkBumpActive = (force) => {
+    try {
+      const u = auth.currentUser; if (!u) return;
+      if (!localStorage.getItem('hk_terms_agreed_' + u.uid)) return;   // only fully registered users
+      const now = Date.now(); if (!force && now - _lkActAt < 5*60*1000) return;
+      _lkActAt = now;
+      setDoc(doc(db,'users',u.uid,'profile','info'), { lastActiveAt: now }, { merge: true }).catch(()=>{});
+    } catch(e){}
+  };
+  window.LKAO.onTap = () => _lkBumpActive(false);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) _lkBumpActive(true); });
   onAuthStateChanged(auth, u => {
     if (!u) { window.LKAO.clearCred(); return; }
+    _lkBumpActive(true);
     window.LKAO.flush();
     // safety net: if anything is still waiting, try again shortly (slow App Check / weak network)
     [8000, 30000, 90000].forEach(ms => setTimeout(() => { try { if (window.LKAO.queue().length) window.LKAO.flush(); } catch(e){} }, ms));
@@ -9287,7 +9319,8 @@ function lgcRender(){
   _lgcPaint('lgc-mode',LGC.mode,function(v){ return v==='UPI'?'upi':'cash'; });
   _lgcPaint('lgc-nat',LGC.nat,function(){ return 'nat'; });
   var hasDir=(LGC.dir==='in'||LGC.dir==='out');
-  var ds=document.getElementById('lgc-dir'); if(ds) ds.className='lgc-seg'+(hasDir?'':' need');
+  var ds=document.getElementById('lgc-dir'); if(ds){ ds.className='lgc-seg'+(hasDir?'':' need');
+    Array.prototype.forEach.call(ds.children,function(c){ if(hasDir && c.getAttribute('data-v')!==LGC.dir) c.classList.add('dim'); }); }
   var mr=document.getElementById('lgc-mode-r'); if(mr) mr.style.display=hasDir?'':'none';
   var nr=document.getElementById('lgc-nat-r'); if(nr) nr.style.display=(LGC.dir==='in')?'':'none';
   var ad=document.getElementById('lg-vadd-entry'); if(ad) ad.classList.toggle('dis',!hasDir);

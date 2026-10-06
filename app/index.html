@@ -15611,19 +15611,63 @@ function npReopenPreview(){
   function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
   function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   /* Everything heard so far: final words plus whatever is still being spoken. */
+  /* v4.3 — clean the live transcript before it is parsed or shown.
+     Android's recognizer re-sends overlapping pieces ("₹600 उधार दिए" then
+     "₹600 उधार दिए मोनू को"), and the Hindi model often writes उधार as उधर
+     ("there"). Join pieces by their overlap, drop back-to-back repeats, fix the
+     shop words, and drop a stray fragment heard before the amount. */
+  var _SR_FIX={'उधर':'उधार','उदार':'उधार','udhar':'उधार','udhaar':'उधार'};
+  var _SR_KEY={'उधार':1,'दिए':1,'दिया':1,'दी':1,'दिये':1,'मिले':1,'मिला':1,'आए':1,'आये':1,'गए':1,'गये':1,'लिए':1,'लिया':1,'वापस':1};
+  function _srTok(w){ var k=_nk(w).replace(/[₹,।.]/g,''); return _SR_FIX[k]?_nk(_SR_FIX[k]):k; }
+  function _srIsAmt(w){ return /^₹?\d[\d,]*(\.\d+)?$/.test(String(w)); }
+  function _srJoin(cur, fin){
+    cur=String(cur||'').trim(); fin=String(fin||'').trim();
+    if(!cur) return fin; if(!fin) return cur;
+    var a=_nk(cur), b=_nk(fin);
+    if(b.indexOf(a)>=0) return fin;          // the new piece already contains everything
+    if(a.indexOf(b)>=0) return cur;          // nothing new
+    var A=cur.split(/\s+/), B=fin.split(/\s+/), At=A.map(_srTok), Bt=B.map(_srTok);
+    for(var k=Math.min(A.length,B.length);k>=1;k--){
+      var same=true;
+      for(var i=0;i<k;i++){ if(At[A.length-k+i]!==Bt[i]){ same=false; break; } }
+      if(same) return A.concat(B.slice(k)).join(' ');
+    }
+    return cur+' '+fin;
+  }
+  function _srClean(txt){
+    var W=String(txt||'').trim().split(/\s+/).filter(Boolean);
+    if(!W.length) return '';
+    W=W.map(function(w){ var k=_nk(w).replace(/[,।.]/g,''); return _SR_FIX[k]||w; });
+    var changed=true;
+    while(changed){
+      changed=false;
+      var T=W.map(_srTok);
+      for(var L=Math.floor(W.length/2);L>=1 && !changed;L--){
+        for(var i=0;i+2*L<=W.length;i++){
+          var rep=true;
+          for(var j=0;j<L;j++){ if(T[i+j]!==T[i+L+j]){ rep=false; break; } }
+          if(rep && L===1 && (_srIsAmt(W[i]) || T[i].length<3)) rep=false;   // "500 500" / short words: leave single repeats to the parser
+          if(rep){ W.splice(i+L,L); changed=true; break; }
+        }
+      }
+    }
+    var T2=W.map(_srTok), first=-1;
+    for(var x=0;x<W.length;x++){ if(_srIsAmt(W[x])){ first=x; break; } }
+    if(first>0 && first<=3){
+      var pre=T2.slice(0,first), post=T2.slice(first+1), drop=false;
+      pre.forEach(function(t){ if(_SR_KEY[t] && post.indexOf(t)>=0) drop=true; });
+      if(drop) W=W.slice(first);
+    }
+    return W.join(' ');
+  }
   function _srAll(S){
-    var f=(S.srText||'').trim(), it=(S.srInterim||'').trim();
-    if(it && _nk(f).indexOf(_nk(it))<0) f=(f?f+' ':'')+it;
-    return f;
+    return _srClean(_srJoin((S.srText||'').trim(), (S.srInterim||'').trim()));
   }
   /* Android's continuous mode can re-send the whole phrase as a new final
      result. Merge instead of appending, or "500" becomes "500 500". */
   function _srMerge(S, fin){
     fin=String(fin||'').trim(); if(!fin) return;
-    var cur=(S.srText||'').trim(), a=_nk(cur), b=_nk(fin);
-    if(!cur || b.indexOf(a)===0){ S.srText=fin; return; }
-    if(a.indexOf(b)>=0) return;
-    S.srText=cur+' '+fin;
+    S.srText=_srJoin((S.srText||'').trim(), fin);
   }
   /* Returns true when the transcript alone answered it — audio never leaves the phone. */
   function _srFinish(type){

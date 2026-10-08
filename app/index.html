@@ -6132,7 +6132,10 @@ const functions = getFunctions(app, 'us-central1');
 const _scanBillCallable = httpsCallable(functions, 'scanBill', { timeout: 55000 });
 window._fsScanBill = function(b64){ return _scanBillCallable({ image: b64 }); };
 const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 20000 });
-window._fsVoiceParse = function(b64, mimeType){ return _voiceParseCallable({ audio: b64, mimeType: mimeType || 'audio/wav' }); };
+window._fsVoiceParse = function(b64OrReq, mimeType){
+  var req = (b64OrReq && typeof b64OrReq === 'object') ? b64OrReq : { audio: b64OrReq, mimeType: mimeType || 'audio/wav' };
+  return _voiceParseCallable(req);
+};
 
 // Registration source (web vs Play TWA) — first-touch, persisted, written once at signup
 function getRegSource() {
@@ -15678,12 +15681,56 @@ function npReopenPreview(){
     var p=_lgParseHi(txt);
     if(!p.amount || p.amount<=0) return false;
     S.srUsed=true;
-    S.amt=p.amount; S.note=p.note; S.dir=p.direction;
+    S.amt=p.amount; S.note=p.note; S.dir=p.direction; S.raw=txt;
     var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+p.amount.toLocaleString('en-IN');
     var nel=el('lg-vnote-'+type); if(nel) nel.textContent=p.note||'';
     setState(type,'res');
     try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now()),dir:p.direction,via:p.via||'none'}); }catch(e){}
     return true;
+  }
+  /* v4.4 — UNCLEAR CLIPS ONLY go to the server.
+     Hints: this shop's own customer and supplier names, newest first, so the
+     cloud engine and the AI pass spell "मोनू" the way the ledger does. */
+  function _voiceHints(){
+    var seen={}, out=[];
+    function add(n){ n=String(n||'').replace(/\s+/g,' ').trim(); if(n.length<2||n.length>40) return; var k=n.toLowerCase(); if(seen[k]) return; seen[k]=1; out.push(n); }
+    try{ (DB.get(K.UDHAAR)||[]).slice().reverse().forEach(function(r){ if(r) add(r.custName); }); }catch(e){}
+    try{ (DB.get(K.MAAL)||[]).slice().reverse().forEach(function(r){ if(r && !r.placeholder) add(r.supplier); }); }catch(e){}
+    return out.slice(0,100);
+  }
+  /* One handler for every server reply (audio clip or text pass). If the AI pass
+     was down, the server still returns the cloud engine's words: read them here. */
+  function _applyServer(type, res, path){
+    var S=LGV[type], d=(res && res.data) || {};
+    var amt=d.amount ? parseInt(d.amount,10) : 0, note=d.note ? String(d.note) : '', dir=d.direction || 'unclear', via='server';
+    if((!amt || amt<=0) && d.transcript){
+      try{ var p=_lgParseHi(_srClean(String(d.transcript))); if(p.amount>0){ amt=p.amount; note=p.note||''; dir=p.direction||'unclear'; via='phone-parse'; } }catch(e){}
+    }
+    if(!amt || amt<=0) return false;
+    S.amt=amt;
+    S.note=note ? _lgEnglishise(note).slice(0,40) : '';
+    S.dir=(dir==='in' || dir==='out') ? dir : 'unclear';
+    S.raw=String(d.transcript||'')+(d.mode ? (' '+d.mode) : '');
+    try{ if(window.logEvent) window.logEvent('voice_path',{path:path,engine:String(d.engine||''),ms:Date.now()-(S.t0||Date.now()),dir:S.dir,via:via}); }catch(e){}
+    var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+amt.toLocaleString('en-IN');
+    var nel=el('lg-vnote-'+type); if(nel) nel.textContent=S.note||'';
+    setState(type,'res');
+    return true;
+  }
+  /* Case A: the phone's speech engine heard words but the phone could not find
+     the amount. There is no audio (the engine and the recorder cannot share the
+     mic), so the words themselves go to the AI pass. */
+  function _textPass(type, heard){
+    var S=LGV[type], FAIL='रकम समझ नहीं आई — फिर से बोलें, जैसे "पाँच सौ मिले"';
+    setState(type,'proc');
+    Promise.resolve().then(function(){
+      return window._fsVoiceParse({ text: heard, hints: _voiceHints() });
+    }).then(function(res){
+      if(!_applyServer(type, res, 'text')) _fail(type, FAIL);
+    }).catch(function(err){
+      var code=(err && (err.code||err.message))||'';
+      _fail(type, /resource-exhausted/i.test(code) ? 'आज की voice limit पूरी — नीचे + से टाइप करें' : FAIL);
+    });
   }
   function _srKill(S){
     var r=S.sr; S.sr=null;
@@ -15795,7 +15842,9 @@ function npReopenPreview(){
         S.srMode=false; S.sr=null;
         return _audioStart(type);
       }
-      try{ if(window.logEvent) window.logEvent('voice_sr',{err:er||'no-amount',txt:heard.slice(0,40),trace:(S.trace||[]).join('>'),ua:(navigator.userAgent||'').slice(-42)}); }catch(e){}
+      var _tp = !!(heard && window._fsVoiceParse && navigator.onLine!==false);
+      try{ if(window.logEvent) window.logEvent('voice_sr',{err:er||'no-amount',txt:heard.slice(0,40),trace:(S.trace||[]).join('>'),ua:(navigator.userAgent||'').slice(-42),next:(_tp?'text':'')}); }catch(e){}
+      if(_tp) return _textPass(type, heard);
       if(heard) return _fail(type,'रकम समझ नहीं आई — फिर से बोलें, जैसे "पाँच सौ मिले"');
       return _fail(type,'कुछ नहीं सुना — mic के पास साफ़ बोलिए');
     };
@@ -15900,18 +15949,11 @@ function npReopenPreview(){
     setState(type,'proc');
     _toWav(blob).then(function(wav){ return _blobToB64(wav); }).then(function(b64){
       if(!window._fsVoiceParse){ return _fail(type,'सेवा उपलब्ध नहीं — नीचे + से टाइप करें'); }
-      return window._fsVoiceParse(b64, 'audio/wav');
+      var _pt=''; try{ _pt=_srAll(S)||''; }catch(e){}
+      return window._fsVoiceParse({ audio: b64, mimeType: 'audio/wav', hints: _voiceHints(), phoneText: _pt });
     }).then(function(res){
       if(res===undefined) return;
-      var amt = res && res.data && res.data.amount ? parseInt(res.data.amount,10) : 0;
-      if(!amt || amt<=0){ return _fail(type,'समझ नहीं आया — फिर से बोलें'); }
-      S.amt=amt;
-      S.note=(res && res.data && res.data.note) ? _lgEnglishise(String(res.data.note)).slice(0,40) : '';
-      S.dir =(res && res.data && res.data.direction) || 'unclear';
-      try{ if(window.logEvent) window.logEvent('voice_path',{path:'audio',ms:Date.now()-(S.t0||Date.now())}); }catch(e){}
-      var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+amt.toLocaleString('en-IN');
-      var nel=el('lg-vnote-'+type); if(nel) nel.textContent=S.note||'';
-      setState(type,'res');
+      if(!_applyServer(type, res, 'audio')){ return _fail(type,'समझ नहीं आया — फिर से बोलें'); }
     }).catch(function(err){
       var code=(err && (err.code||err.message))||''; 
       var msg = /resource-exhausted/i.test(code) ? 'आज की voice limit पूरी — नीचे + से टाइप करें' : 'समझ नहीं आया — फिर से बोलें';

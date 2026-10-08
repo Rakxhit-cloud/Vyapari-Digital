@@ -1984,7 +1984,9 @@ function _tvLag(e){
   const mins = Math.round(d/60), txt = mins < 60 ? mins+' min' : (Math.floor(mins/60)+' h '+(mins%60)+' min');
   return '<span class="'+(d > 120 ? 'tl-warn' : '')+'">after '+txt+(d > 120 ? ' ⚠ weak network or app was closed' : '')+'</span>';
 }
-const _TV_SRC = { voice:'voice', maal:'purchase', udhaar:'उधार' };
+const _TV_SRC = { voice:'voice', manual:'typed', maal:'purchase', udhaar:'उधार' };
+// Entries added for a past date (calendar) are labelled with that date, so bulk back-filling is visible.
+function _tvShortEn(ds){ const p=String(ds||'').split('-'); const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return p.length===3 ? (parseInt(p[2],10)+' '+M[parseInt(p[1],10)-1]) : ds; }
 const _TV_VOICE_SR = { 'no-mic':"speech service didn't start, switched to recording", 'no-speech':'nothing heard', 'no-amount':'no amount understood', 'not-allowed':'Google app has no mic permission', 'network':'speech service network error', 'audio-capture':'mic could not start' };
 const _TV_VOICE_FAIL = { perm:'Chrome has no mic permission', busy:'mic busy', nomic:'no microphone found', other:'mic did not start' };
 function _tvTimeline(uid, day){
@@ -2013,7 +2015,8 @@ function _tvTimeline(uid, day){
     } else if (e.event === 'box_added') {
       const dir = m.dir === 'in' ? 'आया' : (m.dir === 'out' ? 'गया' : 'Entry');
       const amt = Number(m.amount) > 0 ? ' <span class="tl-amt">₹'+Number(m.amount).toLocaleString('en-IN')+'</span>' : '';
-      what = dir + amt + (_TV_SRC[m.src] ? ' <span class="tl-dim">· '+_TV_SRC[m.src]+'</span>' : '');
+      what = dir + amt + (_TV_SRC[m.src] ? ' <span class="tl-dim">· '+_TV_SRC[m.src]+'</span>' : '')
+           + (m.forDate ? ' <span class="tl-tag no">for '+_tvEsc(_tvShortEn(m.forDate))+'</span>' : '');
     } else if (e.event === 'bill_scanned') {
       what = 'Bill scan' + (m.billNo ? ' <span class="tl-dim">· bill '+_tvEsc(m.billNo)+'</span>' : '');
     } else if (e.event === 'voice_path') {

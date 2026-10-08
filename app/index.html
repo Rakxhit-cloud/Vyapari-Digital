@@ -15654,6 +15654,21 @@ function npReopenPreview(){
         }
       }
     }
+    /* False start: the speaker begins, stops and says it again — "उधार मा उधार
+       मोनू को…". A word in the first three that comes back within three words
+       marks the restart; keep the sentence from there. Numbers and units are
+       never treated as a restart ("दो सौ दो" is an amount, not a false start). */
+    var T3=W.map(_srTok);
+    for(var i0=0;i0<Math.min(3,W.length);i0++){
+      var t0=T3[i0];
+      if(!t0 || t0.length<2 || _srIsAmt(W[i0]) || _NUM[t0]!==undefined || _MUL[t0]!==undefined) continue;
+      var j0=T3.indexOf(t0,i0+1);
+      if(j0>i0 && j0-i0<=3 && j0<W.length-1){
+        var keepsNum=false;   // never drop a span that holds the amount
+        for(var q0=0;q0<j0;q0++){ if(_srIsAmt(W[q0]) || _NUM[T3[q0]]!==undefined || _MUL[T3[q0]]!==undefined) keepsNum=true; }
+        if(!keepsNum){ W=W.slice(j0); break; }
+      }
+    }
     var T2=W.map(_srTok), first=-1;
     for(var x=0;x<W.length;x++){ if(_srIsAmt(W[x])){ first=x; break; } }
     if(first>0 && first<=3){

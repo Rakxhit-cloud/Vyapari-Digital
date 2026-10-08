@@ -2286,6 +2286,31 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .lg-voice-btns{display:flex;gap:8px;width:100%;}
 .lg-voice-add{flex:1.5;background:linear-gradient(135deg,#d4a850,#e8c870);border:2px solid #f0d890;color:#1a1208;font-size:13px;font-weight:800;padding:11px;border-radius:10px;cursor:pointer;}
 .lg-voice-again{flex:1;background:#0e1e3a;border:1.5px solid #2a4078;color:#a8c0f0;font-size:12px;font-weight:700;padding:11px 6px;border-radius:10px;cursor:pointer;}
+.lg-back-ban{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;background:linear-gradient(90deg,rgba(212,168,80,.18),rgba(212,168,80,.05));border:1px solid #8a6818;border-radius:10px;padding:7px 10px;margin:0 0 4px;font-size:12px;color:#f0d890;font-weight:700;}
+.lg-back-ban .s{margin-left:auto;font-weight:500;color:#c8b07a;font-size:10.5px;}
+.lg-back-ban .x{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);color:#e8c870;font-size:11px;cursor:pointer;flex-shrink:0;}
+.lg-voice.row.lg-back{flex-wrap:wrap;}
+.lg-voice.lg-back .lgv-scan{display:none;}
+.lg-miss{background:linear-gradient(135deg,#241d10,#18130b);border:1px solid #5c4a20;border-left:4px solid #d4a850;border-radius:12px;padding:11px 12px;margin:0 0 12px;}
+.lg-miss .t{font-size:13px;font-weight:700;color:#f0d890;}
+.lg-miss .s{font-size:11px;color:#c8b07a;margin-top:2px;}
+.lg-miss .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;}
+.lg-miss .dchip{background:#0e1a38;border:1px solid #6a5420;color:#f0d890;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;line-height:1.25;}
+.lg-miss .dchip small{display:block;font-size:9.5px;color:#a8b4d0;font-weight:500;}
+.lg-miss .dchip:active{transform:scale(.96);}
+.lg-miss .later{display:flex;justify-content:flex-end;margin-top:7px;font-size:11px;color:#8a96b4;cursor:pointer;}
+.dpx-addbar{margin-top:12px;border:1.5px dashed #6a5420;border-radius:12px;padding:10px;background:rgba(212,168,80,.05);}
+.dpx-addbar .t{font-size:12px;font-weight:700;color:#f0d890;margin-bottom:8px;}
+.dpx-addbar .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dpx-addbar .b{display:flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;padding:10px 6px;font-size:12.5px;font-weight:700;cursor:pointer;}
+.dpx-addbar .b svg{width:15px;height:15px;}
+.dpx-addbar .bv{background:linear-gradient(180deg,#123a24,#0c2617);border:1px solid #3a9a60;color:#9af0bb;}
+.dpx-addbar .bt{background:#0e1a38;border:1px solid #2a4078;color:#c8d4f0;}
+.dpx-addbar .b:active{transform:scale(.97);}
+.dpx-ro{margin-top:12px;font-size:11.5px;color:#8a96b4;text-align:center;}
+.lgent-row.ed{cursor:pointer;}
+.lgent-row .lgent-ed{font-size:11px;opacity:.75;margin-left:4px;flex-shrink:0;}
+.lgent-edhint{font-size:10.5px;color:#9ab8a4;}
 .lg-voice-err{display:none;font-size:11px;color:#e8a878;text-align:center;margin-top:6px;line-height:1.5;}
 .lg-voice.err .lg-voice-err{display:block;}
 .lg-box-voiceicon{position:absolute;top:2px;right:2px;font-size:10px;line-height:1;z-index:2;filter:drop-shadow(0 0 3px rgba(0,0,0,0.9));}
@@ -3379,10 +3404,11 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       </div>
     </div>
     <div class="lg-voice row" id="lg-voice-entry" data-type="entry">
+      <div class="lg-back-ban" id="lg-back-ban" style="display:none;"><span class="t" id="lg-back-t"></span><span class="s">Not today</span><span class="x" onclick="lgBackEnd(true)" role="button" aria-label="Cancel">✕</span></div>
       <div class="lg-voice-idle">
         <button type="button" class="lg-voice-mic" onclick="lgVoiceStart('entry')" aria-label="बोलकर एंट्री करें"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
         <div class="lgv-tx">
-          <div class="lg-voice-cap">बोलकर एंट्री करें</div>
+          <div class="lg-voice-cap">Tap to Speak</div>
           <div class="lg-voice-sub">"पंद्रह सौ राहुल से मिले"</div>
         </div>
         <div class="lgv-scan" onclick="scPick()"><div class="lb">बिल स्कैन</div><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><g class="sc-frame" fill="none" stroke-width="1.8"><path d="M3 8V6a3 3 0 0 1 3-3h2"/><path d="M16 3h2a3 3 0 0 1 3 3v2"/><path d="M21 16v2a3 3 0 0 1-3 3h-2"/><path d="M8 21H6a3 3 0 0 1-3-3v-2"/></g><g class="sc-txt" fill="none" stroke-linecap="round"><line x1="8.5" y1="8" x2="15.5" y2="8" stroke-width="2.2"/><line x1="8.5" y1="10.6" x2="15.5" y2="10.6" stroke-width="1.4"/><line x1="8.5" y1="15.8" x2="12.5" y2="15.8" stroke-width="1.8"/></g><line class="sc-beam" x1="4.5" y1="13" x2="19.5" y2="13" stroke-width="2.2"/></svg></div>
@@ -3410,6 +3436,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       </div>
       <div class="lg-voice-err" id="lg-verr-entry"></div>
     </div>
+    <div class="lg-miss" id="lg-miss" style="display:none;"></div>
     <div class="lg-el-hd">आज की एंट्री<span class="n" id="lg-el-count">0</span></div>
     <div class="lg-el" id="lg-entry-list"></div>
 
@@ -5819,7 +5846,7 @@ textarea.st-biz-in{resize:none;}
   <div class="ee-sheet">
     <div class="ee-grab"></div>
     <div class="ee-hd">
-      <div><div class="ee-t">एंट्री सुधारें</div><div class="ee-s" id="ee-when"></div></div>
+      <div><div class="ee-t" id="ee-title">एंट्री सुधारें</div><div class="ee-s" id="ee-when"></div></div>
       <div class="ee-x" onclick="eeClose()">✕</div>
     </div>
     <div class="ee-seg" id="ee-seg">
@@ -5837,8 +5864,8 @@ textarea.st-biz-in{resize:none;}
     <div class="ee-fl" style="margin-top:15px;">नोट</div>
     <input class="ee-txt" id="ee-note" type="text" enterkeyhint="done" autocomplete="off" placeholder="जैसे: राहुल से मिले">
     <div class="ee-row">
-      <div class="ee-save" onclick="eeSave()">✓ सुधारें</div>
-      <div class="ee-del" onclick="eeAskDelete()">🗑</div>
+      <div class="ee-save" id="ee-savebtn" onclick="eeSave()">✓ सुधारें</div>
+      <div class="ee-del" id="ee-delbtn" onclick="eeAskDelete()">🗑</div>
     </div>
   </div>
 </div>
@@ -8990,6 +9017,7 @@ function lgFindOldestUnsavedPastDay() {
 function lgOpen() {
   // Silently finalize any past day that was never closed, then notify once.
   const autoSaved = lgAutoSavePastDays();
+  try{ if(window.lgBack) lgBackEnd(true); }catch(e){}
   lgRenderDay(TSTR, /*blocked=*/false);
   go('s-livegalla');
   if (autoSaved.length) {
@@ -9022,6 +9050,7 @@ function lgRenderDay(date, blocked) {
     subEl.textContent = window.lgState.isToday ? 'आज · ' + lgFormatDate(date) : lgFormatDate(date);
   }
   document.getElementById('lg-date-label').textContent = lgFormatDate(date);
+  try{ lgRenderMissed(); }catch(e){}
 
   lgRenderTotals();
   lgRenderGrid('cash');
@@ -9115,6 +9144,133 @@ function lgRenderEntries(){
       +'<span class="rt"><div class="tm">'+_lgTime(b.ts)+'</div>'
       +'<div class="ed">'+(_isP?'→':'✏️')+'</div></span></div>';
   }).join('');
+}
+/* ══ Past-date entries (calendar) ══════════════════════════════════════
+   Add (voice or typed) and edit single entries on any day of the current or
+   previous month. Older months stay read-only so a closed month's statements
+   and GST figures cannot change by accident. Later days' opening balance is
+   recomputed from earlier days, so nothing else needs rewriting. */
+var _eeRec=null, _eeNew=null;
+var _LG_MIC_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+var _EN_MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var _EN_MON3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var _EN_DAY3=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function _lgYmd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function _lgParseYmd(ds){ var p=String(ds||'').split('-'); return new Date(+p[0],(+p[1])-1,+p[2]); }
+function lgFmtEn(ds){ var d=_lgParseYmd(ds); return d.getDate()+' '+_EN_MON[d.getMonth()]; }
+function lgFmtEnShort(ds){ var d=_lgParseYmd(ds); return _EN_DAY3[d.getDay()]+', '+d.getDate()+' '+_EN_MON3[d.getMonth()]; }
+function lgBackAllowed(ds){
+  if(!ds || !(ds < TSTR)) return false;
+  var t=_lgParseYmd(TSTR), first=new Date(t.getFullYear(), t.getMonth()-1, 1);
+  return ds >= _lgYmd(first);
+}
+// A back-dated entry keeps today's time of day on its own date, so it sorts sensibly.
+function lgBackTs(ds){
+  var n=new Date(), d=_lgParseYmd(ds);
+  d.setHours(n.getHours(), n.getMinutes(), n.getSeconds(), 0);
+  return d.getTime();
+}
+function _lgRecFor(ds){
+  if(ds===TSTR && window.lgState && window.lgState.rec && window.lgState.rec.date===TSTR) return window.lgState.rec;
+  var r=lgGetOrCreateRec(ds); if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[]; return r;
+}
+function lgPastRefresh(ds){
+  try{ var cal=document.getElementById('s-calendar'); if(cal && cal.classList.contains('active') && typeof renderCalendar==='function') renderCalendar(); }catch(e){}
+  try{ if(window._dpReopen===ds){ window._dpReopen=null; setTimeout(function(){ window._dpBusy=false; openDatePopup(ds); },260); } }catch(e){}
+  try{ lgRenderMissed(); }catch(e){}
+}
+// Calendar row → edit that one entry (same sheet as today's ✏️).
+function lgPastEdit(ds, ts){
+  if(!(lgBackAllowed(ds) || ds===TSTR)) return;
+  var r=_lgRecFor(ds);
+  var box=(r.lgBoxes||[]).filter(function(b){ return b && Number(b.ts)===Number(ts); })[0];
+  if(!box) return;
+  if(box.src==="maal" || box.type==="purchase") return;
+  window._dpReopen=ds;
+  try{ closeDatePopupDirect(); }catch(e){}
+  _eeRec=r; _eeNew=null; _eeBox=box;
+  _eeMode=box.method||_lgcGuessMode(box.note)||'Cash';
+  _eeNat=box.nature||_lgcGuessNat(box.note);
+  eeSetDir(lgDirOf(box)==="in"?"in":"out");
+  var a=document.getElementById("ee-amt"); if(a) a.value=Math.round(lgCashOf(box))||"";
+  var n=document.getElementById("ee-note"); if(n) n.value=box.note||"";
+  var w=document.getElementById("ee-when"); if(w) w.textContent=(ds===TSTR?"आज":lgFmtEn(ds))+" · "+(typeof _lgTime==="function"?_lgTime(box.ts):"");
+  var o=document.getElementById("ee-ov"); if(o) o.classList.add("show");
+}
+// Calendar / missed-day card → add an entry for that date.
+function lgBackStart(ds, how){
+  if(!(lgBackAllowed(ds) || ds===TSTR)) return;
+  try{ closeDatePopupDirect(); }catch(e){}
+  if(how==='type'){
+    window._dpReopen=ds;
+    _eeRec=_lgRecFor(ds); _eeNew=ds; _eeBox=null;
+    _eeMode=(typeof _lgcLastMode==='function'&&_lgcLastMode())||'Cash'; _eeNat='Sale';
+    eeSetDir('');
+    var a=document.getElementById("ee-amt"); if(a) a.value="";
+    var n=document.getElementById("ee-note"); if(n) n.value="";
+    var t=document.getElementById("ee-title"); if(t) t.textContent="New entry";
+    var w=document.getElementById("ee-when"); if(w) w.textContent=(ds===TSTR?"Today":lgFmtEn(ds));
+    var sv=document.getElementById("ee-savebtn"); if(sv) sv.textContent=(ds===TSTR?"Add":("Add to "+lgFmtEn(ds)));
+    var dl=document.getElementById("ee-delbtn"); if(dl) dl.style.display="none";
+    var o=document.getElementById("ee-ov"); if(o) o.classList.add("show");
+    setTimeout(function(){ try{ a && a.focus(); }catch(e){} },160);
+    return;
+  }
+  // voice: the Live screen's own mic and card, with the date shown on it
+  var onLive=false; try{ var lv=document.getElementById('s-livegalla'); onLive=!!(lv && lv.classList.contains('active') && window.lgState && window.lgState.date===TSTR); }catch(e){}
+  if(!onLive){ try{ lgOpen(); }catch(e){} }
+  if(ds!==TSTR){
+    window.lgBack={date:ds};
+    _lgBackPaint();
+  }
+  setTimeout(function(){ try{ window.scrollTo(0,0); lgVoiceStart('entry'); }catch(e){} }, onLive?60:420);
+}
+function _lgBackPaint(){
+  var on=!!(window.lgBack && window.lgBack.date);
+  var b=document.getElementById('lg-back-ban'), t=document.getElementById('lg-back-t');
+  var z=document.getElementById('lg-voice-entry'), add=document.getElementById('lg-vadd-entry');
+  if(b) b.style.display=on?'flex':'none';
+  if(t && on) t.textContent='📆 Entry for '+lgFmtEn(window.lgBack.date);
+  if(z) z.classList.toggle('lg-back',on);
+  if(add) add.textContent=on?('Add to '+lgFmtEn(window.lgBack.date)):'Add / जोड़ें';
+}
+function lgBackEnd(reset){
+  window.lgBack=null; _lgBackPaint();
+  if(reset){ try{ lgVoiceReset('entry'); }catch(e){} }
+}
+/* Home reminder: days in the last 7 with no entry, from the day the shop started. */
+function _lgMissDays(){
+  var bik=[], maal=[];
+  try{ bik=DB.get(K.BIKRI)||[]; }catch(e){}
+  try{ maal=DB.get(K.MAAL)||[]; }catch(e){}
+  var has={}, first=null;
+  bik.forEach(function(r){ if(r && r.date && (lgVisibleBoxes(r.lgBoxes).length || (!Array.isArray(r.lgBoxes) && (r.sales||r.expense)))){ has[r.date]=1; if(!first||r.date<first) first=r.date; } });
+  maal.forEach(function(r){ if(r && r.date && !r.placeholder){ has[r.date]=1; if(!first||r.date<first) first=r.date; } });
+  if(!first || !(first < TSTR)) return [];
+  var out=[], t=_lgParseYmd(TSTR);
+  for(var i=7;i>=1;i--){
+    var d=new Date(t.getFullYear(),t.getMonth(),t.getDate()-i), ds=_lgYmd(d);
+    if(ds<first || has[ds] || !lgBackAllowed(ds)) continue;
+    out.push(ds);
+  }
+  return out;
+}
+function lgRenderMissed(){
+  var host=document.getElementById('lg-miss'); if(!host) return;
+  var st=window.lgState;
+  var dk='hk_miss_dismiss_'+(typeof CURRENT_UID!=='undefined'?CURRENT_UID:'');
+  var dis=''; try{ dis=localStorage.getItem(dk)||''; }catch(e){}
+  var days=(st && st.isToday && !st.blocked && dis!==TSTR) ? _lgMissDays() : [];
+  if(!days.length){ host.style.display='none'; host.innerHTML=''; return; }
+  host.innerHTML='<div class="t">📆 Entries missing for '+days.length+' day'+(days.length>1?'s':'')+'</div>'
+    +'<div class="s">Add them now to keep your records complete.</div>'
+    +'<div class="chips">'+days.map(function(ds){ return '<div class="dchip" onclick="lgBackStart(\''+ds+'\',\'voice\')">'+lgFmtEnShort(ds)+'<small>No entries</small></div>'; }).join('')+'</div>'
+    +'<div class="later" onclick="lgMissLater()">Remind me tomorrow ✕</div>';
+  host.style.display='';
+}
+function lgMissLater(){
+  try{ localStorage.setItem('hk_miss_dismiss_'+(typeof CURRENT_UID!=='undefined'?CURRENT_UID:''), TSTR); }catch(e){}
+  lgRenderMissed();
 }
 // Editing works on the sorted view, so map the row back to the real box by ts.
 /* ══ Same-day entry edit — आया/गया only. Purchase rows route to their bill,
@@ -9278,7 +9434,13 @@ function tsSave(){
   try{ if(typeof renderSupplierProfile==='function') renderSupplierProfile(); }catch(e){}
   try{ toast(ok?'✓ Tax split saved':'Saved · marked for CA review'); }catch(e){}
 }
-function eeClose(){ var o=document.getElementById("ee-ov"); if(o) o.classList.remove("show"); _eeBox=null; }
+function eeClose(){
+  var o=document.getElementById("ee-ov"); if(o) o.classList.remove("show");
+  _eeBox=null; _eeRec=null; _eeNew=null;
+  var t=document.getElementById("ee-title"); if(t) t.textContent="एंट्री सुधारें";
+  var sv=document.getElementById("ee-savebtn"); if(sv) sv.textContent="✓ सुधारें";
+  var dl=document.getElementById("ee-delbtn"); if(dl) dl.style.display="";
+}
 /* ══ Mode + Nature at entry ═══════════════════════════════════════════
    Reports used to GUESS cash vs UPI and sale vs collection from the spoken
    note. Now the answer is taken from the sentence up front, shown on the
@@ -9363,17 +9525,19 @@ function eeAskDelete(){ var c=document.getElementById("ee-cov"); if(c) c.classLi
 function eeCancelDelete(){ var c=document.getElementById("ee-cov"); if(c) c.classList.remove("show"); }
 function eeDoDelete(){
   eeCancelDelete();
-  var r=window.lgState && window.lgState.rec;
+  var past=_eeRec, r=_eeRec || (window.lgState && window.lgState.rec);
   if(!r || !_eeBox || !Array.isArray(r.lgBoxes)) return eeClose();
   var ix=r.lgBoxes.indexOf(_eeBox);
   if(ix>-1) r.lgBoxes.splice(ix,1);
   eeClose();
   try{ lgPersistRec(r); }catch(e){}
   try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
+  if(past) lgPastRefresh(r.date);
   try{ toast("🗑 एंट्री हट गई"); }catch(e){}
 }
 function eeSave(){
-  var r=window.lgState && window.lgState.rec;
+  if(_eeNew) return _eeSaveNew();
+  var past=_eeRec, r=_eeRec || (window.lgState && window.lgState.rec);
   if(!r || !_eeBox) return eeClose();
   var v=parseFloat(document.getElementById("ee-amt").value);
   if(!(v>0)){ try{ toast("⚠️ रकम डालिए"); }catch(e){} return; }
@@ -9386,11 +9550,38 @@ function eeSave(){
   _eeBox.method=_eeMode;
   if(_eeDir==="in") _eeBox.nature=_eeNat; else delete _eeBox.nature;
   _eeBox.edited=Date.now();
+  var _dir=_eeDir;
   eeClose();
   try{ lgPersistRec(r); }catch(e){}
   try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
-  try{ if(window.logEvent) window.logEvent("entry_edited",{dir:_eeDir,amount:Math.round(v)}); }catch(e){}
+  if(past) lgPastRefresh(r.date);
+  try{ if(window.logEvent) window.logEvent("entry_edited",{dir:_dir,amount:Math.round(v),forDate:(past && r.date!==TSTR)?r.date:undefined}); }catch(e){}
   try{ toast("✓ एंट्री सुधर गई"); }catch(e){}
+}
+/* New typed entry for a chosen date (calendar → Type). Same sheet, nothing preset. */
+function _eeSaveNew(){
+  var ds=_eeNew, r=_eeRec;
+  if(!ds || !r) return eeClose();
+  if(_eeDir!=="in" && _eeDir!=="out"){ try{ toast("आया या गया चुनिए"); }catch(e){} return; }
+  var v=parseFloat(document.getElementById("ee-amt").value);
+  if(!(v>0)){ try{ toast("⚠️ रकम डालिए"); }catch(e){} return; }
+  var note=(document.getElementById("ee-note").value||"").slice(0,80);
+  if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
+  var bt=(_eeDir==="in")?"cash":"expense";
+  var box={ n:r.lgBoxes.filter(function(b){ return b.type===bt; }).length+1, type:bt, amount:Math.round(v),
+            note:note, ts:lgBackTs(ds), src:"manual", dir:_eeDir, method:_eeMode, addedAt:Date.now() };
+  if(_eeDir==="in") box.nature=_eeNat;
+  r.lgBoxes.push(box);
+  if(ds!==TSTR){ r.lgSaved=true; r.lgSavedAt=r.lgSavedAt||Date.now(); }
+  else { r.lgSaved=false; r.lgSavedAt=null; }
+  var _dir=_eeDir;
+  eeClose();
+  try{ lgPersistRec(r); }catch(e){}
+  try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
+  try{ if(window.logEvent) window.logEvent("box_added",{dir:_dir,method:bt,src:"manual",amount:Math.round(v),voice:false,
+        mode:box.method||"",nature:box.nature||"",forDate:(ds!==TSTR)?ds:undefined}); }catch(e){}
+  lgPastRefresh(ds);
+  try{ toast("✓ ₹"+Math.round(v).toLocaleString("en-IN")+" added to "+(ds===TSTR?"today":lgFmtEn(ds))); }catch(e){}
 }
 function lgEditEntry(i){
   var r=window.lgState && window.lgState.rec;
@@ -9405,7 +9596,7 @@ function lgEditEntry(i){
     try{ toast("खरीद की एंट्री Purchase से बदलें"); }catch(e){}
     return;
   }
-  _eeBox=box;
+  _eeRec=null; _eeNew=null; _eeBox=box;
   _eeMode=box.method||_lgcGuessMode(box.note)||'Cash';
   _eeNat=box.nature||_lgcGuessNat(box.note);
   eeSetDir(lgDirOf(box)==="in"?"in":"out");
@@ -10807,6 +10998,7 @@ function openDatePopup(ds){
           const _bd = (typeof lgDirOf === 'function') ? lgDirOf(b) : 'in';
           if (_bd === 'in') _cnt.cash++; else _cnt.expense++;
         });
+        const _canEd = lgBackAllowed(ds) || ds === TSTR;
         const _rows = _boxes.map((b, _i) => {
           // Colour by DIRECTION, not payment mode: green bar in, orange bar out.
           const _d = (typeof lgDirOf === 'function') ? lgDirOf(b) : 'in';
@@ -10816,13 +11008,15 @@ function openDatePopup(ds){
           const _bthumb = b.billThumb || b.billUrl || '';
           const _bfull = b.billUrl || b.billThumb || '';
           const _bimg = _bthumb ? `<img class="lgent-thumb" src="${_bthumb}" data-full="${_bfull}" onclick="lgpViewBillSrc(this.dataset.full, this.src)" decoding="async" alt="bill">` : '';
-          return `<div class="lgent-row t-${t}"><span class="lgent-num">${_i + 1}</span><span class="lgent-chip t-${t}">${_lbl[t]}</span>${_bimg}${noteHtml}<span class="lgent-amt">${fmt(lgCashOf(b))}</span></div>`;
+          const _isP = (b.src === 'maal' || b.type === 'purchase');
+          const _ed = (_canEd && !_isP && b.ts) ? ` ed" onclick="lgPastEdit('${ds}',${Number(b.ts)})` : '';
+          return `<div class="lgent-row t-${t}${_ed}"><span class="lgent-num">${_i + 1}</span><span class="lgent-chip t-${t}">${_lbl[t]}</span>${_bimg}${noteHtml}<span class="lgent-amt">${fmt(lgCashOf(b))}</span>${_ed ? '<span class="lgent-ed">✏️</span>' : ''}</div>`;
         }).join('');
         const _scrollable = _boxes.length > 4;
         _entryListHtml = `
         <div class="lgent-head">
           <div class="lgent-title">हर एंट्री</div>
-          <div class="lgent-legend">
+          <div class="lgent-legend">${_canEd ? '<span class="lgent-edhint">Tap an entry to edit</span>' : ''}
             <span class="lgd"><span class="lgdot" style="color:#3ec873;">●</span> ${_cnt.cash} आया</span>
             <span class="lgd"><span class="lgdot" style="color:#cc7a47;">●</span> ${_cnt.expense} गया</span>
           </div>
@@ -10853,15 +11047,9 @@ function openDatePopup(ds){
         ${r.notes ? `<div style="margin-top:8px;padding:6px 10px;background:rgba(74,144,212,0.08);border-left:2px solid #4a90d4;border-radius:4px;font-size:11px;color:#b0c8e8;">📝 ${escHTML(r.notes)}</div>` : ''}
         ${_entryListHtml}
         <div class="dpx-actions">
-          <button class="dpx-edit-btn">✏️ सुधारें</button>
-          <button class="dpx-del-btn">🗑️ हटाएं</button>
+          <button class="dpx-del-btn">🗑️ Delete all entries for this day</button>
         </div>
       `;
-      card.querySelector('.dpx-edit-btn').onclick = () => {
-        currentEntry = { type: K.BIKRI, id: r.id, data: r };
-        closeDatePopupDirect();
-        setTimeout(() => buildEditSheet(K.BIKRI, r), 200);
-      };
       card.querySelector('.dpx-del-btn').onclick = () => {
         dpDeleteId = r.id;
         document.getElementById('confirm-popup').classList.add('show');
@@ -10954,16 +11142,22 @@ function openDatePopup(ds){
       <div class="dp-empty-box">
         <div class="dp-empty-icon">📋</div>
         <div class="dp-empty-title">इस दिन कोई एंट्री नहीं</div>
-        <div class="dp-empty-sub">नई एंट्री जोड़ना चाहते हैं?</div>
-      </div>
-      <button class="dp-add-btn" id="dp-add-btn">➕ इस तारीख की एंट्री जोड़ें</button>
-    `;
-    document.getElementById('dp-add-btn').onclick = () => {
-      closeDatePopupDirect();
-      window.pickedEntryDate = ds;
-      document.getElementById('e-date').value = ds;
-      setTimeout(() => go('s-entry'), 200);
-    };
+        ${lgBackAllowed(ds) ? '<div class="dp-empty-sub">You can add the missed entries now</div>' : ''}
+      </div>`;
+  }
+  // ====== Add an entry for this date (current + previous month) ======
+  if (lgBackAllowed(ds)) {
+    const _bar = document.createElement('div');
+    _bar.className = 'dpx-addbar';
+    _bar.innerHTML = '<div class="t">➕ ' + (totalCount === 0 ? ('Add an entry for ' + lgFmtEn(ds)) : 'Add an entry for this date') + '</div>'
+      + '<div class="two"><div class="b bv" onclick="lgBackStart(\'' + ds + '\',\'voice\')">' + _LG_MIC_SVG + 'Speak</div>'
+      + '<div class="b bt" onclick="lgBackStart(\'' + ds + '\',\'type\')">⌨️ Type</div></div>';
+    content.appendChild(_bar);
+  } else if (ds < TSTR) {
+    const _ro = document.createElement('div');
+    _ro.className = 'dpx-ro';
+    _ro.textContent = 'Entries in older months are read-only.';
+    content.appendChild(_ro);
   }
 
   const _sheet=document.getElementById('date-popup-sheet');
@@ -16013,7 +16207,8 @@ function npReopenPreview(){
       try{ lgcRender(); if(typeof toast==='function') toast('आया या गया चुनिए'); }catch(e){}
       return;
     }
-    var r = window.lgState && window.lgState.rec;
+    var _bk = (type==='entry' && window.lgBack && window.lgBack.date && window.lgBack.date!==TSTR) ? window.lgBack.date : null;
+    var r = _bk ? _lgRecFor(_bk) : (window.lgState && window.lgState.rec);
     if(!r){ try{ if(typeof lgGetOrCreateRec==='function'){ window.lgState.date=TSTR; window.lgState.isToday=true; window.lgState.rec=lgGetOrCreateRec(TSTR); r=window.lgState.rec; } }catch(e){} }
     if(!r){ if(typeof toast==='function') toast('❌ आज का हिसाब नहीं खुला', true); return; }
     if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
@@ -16034,16 +16229,18 @@ function npReopenPreview(){
     var _bt = (type==='entry') ? ((S.dir==='in') ? 'cash' : 'expense') : type;
     var typeBoxes = r.lgBoxes.filter(function(b){ return b.type===_bt; });
     r.lgBoxes.push({ n: typeBoxes.length+1, type: _bt, amount: amt,
-      note: (type==='entry' ? (S.note||'') : ''), ts: Date.now(), src: 'voice',
+      note: (type==='entry' ? (S.note||'') : ''), ts: (_bk ? lgBackTs(_bk) : Date.now()), src: 'voice',
+      addedAt: (_bk ? Date.now() : undefined),
       dir: (type==='entry' ? S.dir : undefined),
       method: (type==='entry' && window.LGC ? (LGC.mode||undefined) : undefined),
       nature: (type==='entry' && S.dir==='in' && window.LGC ? (LGC.nat||'Sale') : undefined) });
     try{ if(window.logEvent) window.logEvent('box_added',{
       dir: (type==='entry' ? (S.dir||'') : (_bt==='expense'?'out':'in')),
       method: _bt, src:'voice', amount: amt, voice: !!S.viaVoice,
-      mode: (window.LGC&&LGC.mode)||'', nature: (S.dir==='in'&&window.LGC&&LGC.nat)||'' });
+      mode: (window.LGC&&LGC.mode)||'', nature: (S.dir==='in'&&window.LGC&&LGC.nat)||'', forDate: _bk||undefined });
     }catch(e){}
-    if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
+    if(_bk){ r.lgSaved=true; r.lgSavedAt=r.lgSavedAt||Date.now(); }
+    else if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
     else if(window.lgState.isToday){ r.lgSaved=false; r.lgSavedAt=null; }
     if(typeof lgPersistRec==='function') lgPersistRec(r);
     if(typeof lgRenderTotals==='function') lgRenderTotals();
@@ -16051,7 +16248,10 @@ function npReopenPreview(){
     if(typeof lgRenderEntries==='function') lgRenderEntries();
     if(typeof lgRenderSaveArea==='function') lgRenderSaveArea();
     setState(type,null); S.amt=0; S.note=''; S.dir='';
-    if(typeof toast==='function') toast('✓ ₹'+amt.toLocaleString('en-IN')+' जुड़ गया');
+    if(_bk){
+      try{ lgBackEnd(false); lgRenderMissed(); }catch(e){}
+      if(typeof toast==='function') toast('✓ ₹'+amt.toLocaleString('en-IN')+' added to '+lgFmtEn(_bk));
+    } else if(typeof toast==='function') toast('✓ ₹'+amt.toLocaleString('en-IN')+' जुड़ गया');
     if(typeof loadHome==='function') setTimeout(loadHome,50);
   };
 

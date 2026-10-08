@@ -2018,10 +2018,16 @@ function _tvTimeline(uid, day){
       what = 'Bill scan' + (m.billNo ? ' <span class="tl-dim">· bill '+_tvEsc(m.billNo)+'</span>' : '');
     } else if (e.event === 'voice_path') {
       const sec = Number(m.ms) > 0 ? ' in '+(Number(m.ms)/1000).toFixed(1)+' s' : '';
-      what = 'Voice <span class="tl-tag ok">✓ understood</span><span class="tl-dim">'+sec+' · '+(m.path === 'sr' ? 'fast path' : 'upload path')+'</span>';
+      const how = m.path === 'sr' ? 'fast path'
+                : m.path === 'text' ? 'text pass'
+                : (m.engine === 'chirp' || m.engine === 'chirp-only') ? 'cloud engine'
+                : 'upload path';
+      what = 'Voice <span class="tl-tag ok">✓ understood</span><span class="tl-dim">'+sec+' · '+how
+           + (m.via === 'phone-parse' ? ' · read on phone' : '')+'</span>';
     } else if (e.event === 'voice_sr') {
       what = 'Voice <span class="tl-tag bad">✗</span> <span class="tl-bad">'+_tvEsc(_TV_VOICE_SR[m.err] || m.err || 'failed')+'</span>'
-           + (m.err === 'no-amount' && m.txt ? ' <span class="tl-dim">heard "'+_tvEsc(m.txt)+'"</span>' : '');
+           + (m.err === 'no-amount' && m.txt ? ' <span class="tl-dim">heard "'+_tvEsc(m.txt)+'"</span>' : '')
+           + (m.next === 'text' ? ' <span class="tl-dim">→ sent to text pass</span>' : '');
     } else if (e.event === 'voice_fail') {
       what = 'Voice <span class="tl-tag bad">✗ '+_tvEsc(_TV_VOICE_FAIL[m.err] || m.err || 'failed')+'</span>'
            + (m.err === 'busy' && !m.retried ? ' <span class="tl-dim">retrying in 0.8 s</span>' : '');

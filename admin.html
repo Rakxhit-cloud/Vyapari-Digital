@@ -1837,7 +1837,7 @@ function _admApplyLastSeen(){
   });
 }
 function _admPublish(){
-  const ev = Array.from(_admEvMap.values());
+  const ev = _admDedupeBoxes(Array.from(_admEvMap.values()));
   _tvEvents = ev; window._admEvents = ev;
   const m = {}, sc = {};
   ev.forEach(e => {
@@ -1929,7 +1929,24 @@ async function _tvCohortSave(o){
    too strict for a busy shop counter, where the app is reopened every few minutes), the
    same day (phone time). Old days give the same result as before. */
 const T_GAP_MS = 60*1000;   // 1 minute: only blocks tap-close-tap within seconds
-function _tvAt(e){ const a = Number((e.meta||{}).at); return a > 0 ? a : _admTsMs(e); }
+function _tvAt(e){ const m = e.meta||{}; if (m.replay && Number(m.bts) > 0) return Number(m.bts); const a = Number(m.at); return a > 0 ? a : _admTsMs(e); }
+/* An entry event resent by the phone (meta.replay) is dropped when the original
+   already arrived: same entry time (bts), or an entry of the same amount logged
+   within 15 s of it. Keeps every entry counted exactly once. */
+function _admDedupeBoxes(ev){
+  const orig = {}, seen = new Set();
+  ev.forEach(e => { const m = e.meta||{}; if (e.event === 'box_added' && !m.replay) (orig[e.uid] = orig[e.uid] || []).push(m); });
+  return ev.filter(e => {
+    const m = e.meta||{};
+    if (e.event !== 'box_added' || !m.replay) return true;
+    const bts = Number(m.bts) || 0, key = e.uid+'_'+bts;
+    if (seen.has(key)) return false;
+    const dup = (orig[e.uid]||[]).some(o => (Number(o.bts) > 0 && Number(o.bts) === bts) ||
+      (!o.forDate && Number(o.amount) === Number(m.amount) && Math.abs(Number(o.at) - bts) < 15000));
+    if (dup) return false;
+    seen.add(key); return true;
+  });
+}
 function _tvIsLaunch(e){ return e.event === 'app_open' || e.event === 'app_launch'; }
 function _tvCountOpens(times){
   const ts = times.slice().sort((x,y)=>x-y), counted = new Set(); let last = -Infinity;
@@ -2016,7 +2033,8 @@ function _tvTimeline(uid, day){
       const dir = m.dir === 'in' ? 'आया' : (m.dir === 'out' ? 'गया' : 'Entry');
       const amt = Number(m.amount) > 0 ? ' <span class="tl-amt">₹'+Number(m.amount).toLocaleString('en-IN')+'</span>' : '';
       what = dir + amt + (_TV_SRC[m.src] ? ' <span class="tl-dim">· '+_TV_SRC[m.src]+'</span>' : '')
-           + (m.forDate ? ' <span class="tl-tag no">for '+_tvEsc(_tvShortEn(m.forDate))+'</span>' : '');
+           + (m.forDate ? ' <span class="tl-tag no">for '+_tvEsc(_tvShortEn(m.forDate))+'</span>' : '')
+           + (m.replay ? ' <span class="tl-dim">· sent late by the phone</span>' : '');
     } else if (e.event === 'bill_scanned') {
       what = 'Bill scan' + (m.billNo ? ' <span class="tl-dim">· bill '+_tvEsc(m.billNo)+'</span>' : '');
     } else if (e.event === 'voice_path') {

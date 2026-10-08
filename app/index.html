@@ -15600,13 +15600,33 @@ function npReopenPreview(){
       if(ni>=0 || no>=0){ dir = (ni>no) ? 'in' : 'out'; via='noun'; }
     }
     /* The figure is shown in ₹ above the note, so repeating it there wastes the
-       line: "3500 Purchase" reads better as just "Purchase". Only a leading
-       money phrase is removed — a number later in the sentence (a bill number,
-       a quantity) is left alone. */
-    var note=_lgEnglishise(t).replace(new RegExp('^\\s*(?:₹|rs\\.?|रु\\.?)?\\s*[\\d.,]+\\s*(?:'+_MUL_RE+')?\\s*(?:रुपये|रुपए|रूपये|रुपय|rupees|rupaye|rs\\.?)?\\s*(?:का|के|की|ka|ke|ki)?\\s*','i'),'').trim();
-    /* A bare amount ("1500") has nothing left to say — leave the note empty
-       rather than repeat the figure that is already shown above it. */
-    if(!note && !/^[\s\d.,₹]*$/.test(t)) note=_lgEnglishise(t);
+       line: "उधार मोनू को 7.5 हजार दिए" reads better as "उधार मोनू को दिए".
+       Every run of number words / digits / हज़ार-सौ-लाख whose VALUE equals the
+       amount is removed, wherever it sits, with a following रुपये / का / के.
+       A number with a different value (a bill number, a quantity) stays, and so
+       does any number after नंबर / बिल / no or before किलो, पीस, बजे, तारीख… */
+    var W=t.split(/\s+/).filter(Boolean), keep=[], i2=0;
+    var isNum=function(w){
+      var k=_nk(w).replace(/^(?:₹|rs\.?|रु\.?)/i,'').replace(/[,।]/g,'');
+      return /^\d+(?:\.\d+)?$/.test(k) || _NUM[k]!==undefined || _MUL[k]!==undefined || /^₹\s*$/.test(w);
+    };
+    var CUR=/^(?:रुपये|रुपए|रूपये|रुपय|रुपया|रूपए|rupees|rupaye|rupay|rs\.?|रु\.?|का|के|की|ka|ke|ki)$/i;
+    var BEFORE=/^(?:नंबर|नम्बर|नं\.?|no\.?|number|बिल|bill)$/i;
+    var AFTER=/^(?:किलो|kg|ग्राम|लीटर|पैकेट|पेटी|पीस|pcs|बजे|तारीख|दिन|महीने|महीना|साल|बोरी|दर्जन)$/i;
+    while(i2<W.length){
+      if(!isNum(W[i2])){ keep.push(W[i2]); i2++; continue; }
+      var j2=i2; while(j2<W.length && isNum(W[j2])) j2++;
+      var run=W.slice(i2,j2).join(' '), val=0;
+      try{ val=_amountOf(_fracN(_nk(run))); }catch(e){}
+      var prev=keep.length?_nk(keep[keep.length-1]):'', next=j2<W.length?_nk(W[j2]):'';
+      if(amt>0 && val===amt && !BEFORE.test(prev) && !AFTER.test(next)){
+        while(j2<W.length && CUR.test(_nk(W[j2]))) j2++;   // drop "रुपये", "का" after the figure
+        i2=j2; continue;
+      }
+      for(var q2=i2;q2<j2;q2++) keep.push(W[q2]);
+      i2=j2;
+    }
+    var note=_lgEnglishise(keep.join(' ')).replace(/^\s*(?:का|के|की|ka|ke|ki)\s+/i,'').trim();
     note=note.charAt(0).toUpperCase()+note.slice(1);
     return { amount: amt||0, direction: dir, note: note.slice(0,40), via: via };
   }

@@ -6180,16 +6180,18 @@ window._st = { ref: stRef, uploadBytes, getDownloadURL };
 async function logEvent(name, meta) {
   try {
     const u = auth.currentUser;
-    if (!u) return;
+    if (!u) return false;
+    try { meta = (meta && typeof meta === 'object') ? JSON.parse(JSON.stringify(meta)) : {}; } catch(e) { meta = {}; }
     const d = new Date();
     const day = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     let src = 'web';
     try { src = (localStorage.getItem('hk_reg_source') === 'play') ? 'play' : 'web'; } catch(e) {}
     await setDoc(doc(collection(db, 'analytics_events')), {
       uid: u.uid, event: name, day: day, ts: serverTimestamp(), src: src,
-      meta: Object.assign({ at: d.getTime() }, (function(){ try { const L = window.LKAO; const n = L ? L.queue().length : 0; return n ? { aoq: n, aoe: L.err() } : {}; } catch(e){ return {}; } })(), (meta && typeof meta === 'object') ? meta : {})
+      meta: Object.assign({ at: d.getTime() }, (function(){ try { const L = window.LKAO; const n = L ? L.queue().length : 0; return n ? { aoq: n, aoe: L.err() } : {}; } catch(e){ return {}; } })(), meta)
     });
-  } catch (e) { /* analytics must never break the app */ }
+    return true;
+  } catch (e) { /* analytics must never break the app */ return false; }
 }
 window.logEvent = logEvent;
 
@@ -6543,7 +6545,7 @@ window._fsWrite = async function(uid, colName, item) {
   try {
     setSyncStatus('syncing', '☁️ Sync हो रहा है...');
     const ref = doc(db, 'users', uid, colName, String(item.id));
-    const { ...data } = item;
+    let data; try { data = JSON.parse(JSON.stringify(item)); } catch(e) { data = { ...item }; }
     await setDoc(ref, { ...data, _syncedAt: serverTimestamp() });
     setSyncStatus('synced', '☁️ Cloud Sync ✅');
     // Stage 5: firstEntryAt — fires only once per user, on the very
@@ -9238,6 +9240,32 @@ function lgBackEnd(reset){
   try{ var sl=document.getElementById('dp-voice-slot'); if(sl) sl.remove(); }catch(e){}
   try{ var bar=document.querySelector('#dp-content .dpx-addbar'); if(bar) bar.style.display=''; }catch(e){}
 }
+/* Entry events that never reached the server (v45 dropped them) are sent again,
+   once, for today's voice/typed entries. Admin drops any copy it already has. */
+function _lgBxKey(){ return 'hk_bxlog_'+(typeof CURRENT_UID!=='undefined'?CURRENT_UID:'')+'_'+TSTR; }
+function _lgBxGet(){ try{ return JSON.parse(localStorage.getItem(_lgBxKey())||'[]'); }catch(e){ return []; } }
+function _lgBxMark(ts){ try{ ts=Number(ts); var a=_lgBxGet(); if(a.indexOf(ts)<0){ a.push(ts); localStorage.setItem(_lgBxKey(), JSON.stringify(a.slice(-300))); } }catch(e){} }
+var _lgBxBusy=false, _lgBxLast=0;
+async function lgReplayBoxEvents(){
+  if(_lgBxBusy || Date.now()-_lgBxLast<45000) return;
+  if(!window.logEvent || typeof CURRENT_UID==='undefined' || !CURRENT_UID || CURRENT_UID==='default') return;
+  _lgBxBusy=true; _lgBxLast=Date.now();
+  try{
+    var rec=(DB.get(K.BIKRI)||[]).filter(function(r){ return r && r.date===TSTR && Array.isArray(r.lgBoxes); })[0];
+    if(!rec) return;
+    var done=_lgBxGet(), t0=_lgParseYmd(TSTR).getTime();
+    var list=lgVisibleBoxes(rec.lgBoxes).filter(function(b){ return (b.src==='voice'||b.src==='manual') && Number(b.ts)>=t0 && done.indexOf(Number(b.ts))<0; });
+    for(var i=0;i<list.length;i++){
+      var b=list[i];
+      var ok=await window.logEvent('box_added',{ dir:lgDirOf(b), method:b.type||'', src:b.src, amount:lgCashOf(b),
+        mode:b.method||'', nature:b.nature||'', bts:Number(b.ts), replay:true });
+      if(ok) _lgBxMark(b.ts); else break;
+    }
+  }catch(e){} finally{ _lgBxBusy=false; }
+}
+setTimeout(function(){ try{ lgReplayBoxEvents(); }catch(e){} }, 8000);
+setTimeout(function(){ _lgBxLast=0; try{ lgReplayBoxEvents(); }catch(e){} }, 60000);
+document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') setTimeout(function(){ try{ lgReplayBoxEvents(); }catch(e){} }, 4000); });
 // Editing works on the sorted view, so map the row back to the real box by ts.
 /* ══ Same-day entry edit — आया/गया only. Purchase rows route to their bill,
    because a src:"maal" box mirrors a K.MAAL record and editing it here would
@@ -9544,8 +9572,8 @@ function _eeSaveNew(){
   eeClose();
   try{ lgPersistRec(r); }catch(e){}
   try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
-  try{ if(window.logEvent) window.logEvent("box_added",{dir:_dir,method:bt,src:"manual",amount:Math.round(v),voice:false,
-        mode:box.method||"",nature:box.nature||"",forDate:(ds!==TSTR)?ds:undefined}); }catch(e){}
+  try{ if(window.logEvent) Promise.resolve(window.logEvent("box_added",{dir:_dir,method:bt,src:"manual",amount:Math.round(v),voice:false,
+        mode:box.method||"",nature:box.nature||"",forDate:(ds!==TSTR)?ds:undefined,bts:Number(box.ts)})).then(function(ok){ if(ok) _lgBxMark(box.ts); }); }catch(e){}
   lgPastRefresh(ds);
   try{ toast("✓ ₹"+Math.round(v).toLocaleString("en-IN")+" added to "+(ds===TSTR?"today":lgFmtEn(ds))); }catch(e){}
 }
@@ -16197,16 +16225,17 @@ function npReopenPreview(){
     }
     var _bt = (type==='entry') ? ((S.dir==='in') ? 'cash' : 'expense') : type;
     var typeBoxes = r.lgBoxes.filter(function(b){ return b.type===_bt; });
+    var _bts = (_bk ? lgBackTs(_bk) : Date.now());
     r.lgBoxes.push({ n: typeBoxes.length+1, type: _bt, amount: amt,
-      note: (type==='entry' ? (S.note||'') : ''), ts: (_bk ? lgBackTs(_bk) : Date.now()), src: 'voice',
+      note: (type==='entry' ? (S.note||'') : ''), ts: _bts, src: 'voice',
       addedAt: (_bk ? Date.now() : undefined),
       dir: (type==='entry' ? S.dir : undefined),
       method: (type==='entry' && window.LGC ? (LGC.mode||undefined) : undefined),
       nature: (type==='entry' && S.dir==='in' && window.LGC ? (LGC.nat||'Sale') : undefined) });
-    try{ if(window.logEvent) window.logEvent('box_added',{
+    try{ if(window.logEvent) Promise.resolve(window.logEvent('box_added',{
       dir: (type==='entry' ? (S.dir||'') : (_bt==='expense'?'out':'in')),
       method: _bt, src:'voice', amount: amt, voice: !!S.viaVoice,
-      mode: (window.LGC&&LGC.mode)||'', nature: (S.dir==='in'&&window.LGC&&LGC.nat)||'', forDate: _bk||undefined });
+      mode: (window.LGC&&LGC.mode)||'', nature: (S.dir==='in'&&window.LGC&&LGC.nat)||'', forDate: _bk||undefined, bts: _bts })).then(function(ok){ if(ok) _lgBxMark(_bts); });
     }catch(e){}
     if(_bk){ r.lgSaved=true; r.lgSavedAt=r.lgSavedAt||Date.now(); }
     else if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }

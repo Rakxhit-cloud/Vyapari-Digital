@@ -2291,14 +2291,8 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .lg-back-ban .x{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);color:#e8c870;font-size:11px;cursor:pointer;flex-shrink:0;}
 .lg-voice.row.lg-back{flex-wrap:wrap;}
 .lg-voice.lg-back .lgv-scan{display:none;}
-.lg-miss{background:linear-gradient(135deg,#241d10,#18130b);border:1px solid #5c4a20;border-left:4px solid #d4a850;border-radius:12px;padding:11px 12px;margin:0 0 12px;}
-.lg-miss .t{font-size:13px;font-weight:700;color:#f0d890;}
-.lg-miss .s{font-size:11px;color:#c8b07a;margin-top:2px;}
-.lg-miss .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;}
-.lg-miss .dchip{background:#0e1a38;border:1px solid #6a5420;color:#f0d890;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;line-height:1.25;}
-.lg-miss .dchip small{display:block;font-size:9.5px;color:#a8b4d0;font-weight:500;}
-.lg-miss .dchip:active{transform:scale(.96);}
-.lg-miss .later{display:flex;justify-content:flex-end;margin-top:7px;font-size:11px;color:#8a96b4;cursor:pointer;}
+.dpx-vslot{margin-top:12px;}
+.dpx-vslot .lg-voice{margin:0;}
 .dpx-addbar{margin-top:12px;border:1.5px dashed #6a5420;border-radius:12px;padding:10px;background:rgba(212,168,80,.05);}
 .dpx-addbar .t{font-size:12px;font-weight:700;color:#f0d890;margin-bottom:8px;}
 .dpx-addbar .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
@@ -3403,6 +3397,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         <button type="button" class="n2" onclick="lgAskPick('out')">गया<small>दिए</small></button>
       </div>
     </div>
+    <div id="lg-voice-home" style="display:none;"></div>
     <div class="lg-voice row" id="lg-voice-entry" data-type="entry">
       <div class="lg-back-ban" id="lg-back-ban" style="display:none;"><span class="t" id="lg-back-t"></span><span class="s">Not today</span><span class="x" onclick="lgBackEnd(true)" role="button" aria-label="Cancel">✕</span></div>
       <div class="lg-voice-idle">
@@ -3436,7 +3431,6 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       </div>
       <div class="lg-voice-err" id="lg-verr-entry"></div>
     </div>
-    <div class="lg-miss" id="lg-miss" style="display:none;"></div>
     <div class="lg-el-hd">आज की एंट्री<span class="n" id="lg-el-count">0</span></div>
     <div class="lg-el" id="lg-entry-list"></div>
 
@@ -9050,7 +9044,6 @@ function lgRenderDay(date, blocked) {
     subEl.textContent = window.lgState.isToday ? 'आज · ' + lgFormatDate(date) : lgFormatDate(date);
   }
   document.getElementById('lg-date-label').textContent = lgFormatDate(date);
-  try{ lgRenderMissed(); }catch(e){}
 
   lgRenderTotals();
   lgRenderGrid('cash');
@@ -9177,7 +9170,6 @@ function _lgRecFor(ds){
 function lgPastRefresh(ds){
   try{ var cal=document.getElementById('s-calendar'); if(cal && cal.classList.contains('active') && typeof renderCalendar==='function') renderCalendar(); }catch(e){}
   try{ if(window._dpReopen===ds){ window._dpReopen=null; setTimeout(function(){ window._dpBusy=false; openDatePopup(ds); },260); } }catch(e){}
-  try{ lgRenderMissed(); }catch(e){}
 }
 // Calendar row → edit that one entry (same sheet as today's ✏️).
 function lgPastEdit(ds, ts){
@@ -9197,11 +9189,11 @@ function lgPastEdit(ds, ts){
   var w=document.getElementById("ee-when"); if(w) w.textContent=(ds===TSTR?"आज":lgFmtEn(ds))+" · "+(typeof _lgTime==="function"?_lgTime(box.ts):"");
   var o=document.getElementById("ee-ov"); if(o) o.classList.add("show");
 }
-// Calendar / missed-day card → add an entry for that date.
+// Calendar date popup → add an entry for that date.
 function lgBackStart(ds, how){
   if(!(lgBackAllowed(ds) || ds===TSTR)) return;
-  try{ closeDatePopupDirect(); }catch(e){}
   if(how==='type'){
+    try{ closeDatePopupDirect(); }catch(e){}
     window._dpReopen=ds;
     _eeRec=_lgRecFor(ds); _eeNew=ds; _eeBox=null;
     _eeMode=(typeof _lgcLastMode==='function'&&_lgcLastMode())||'Cash'; _eeNat='Sale';
@@ -9216,14 +9208,18 @@ function lgBackStart(ds, how){
     setTimeout(function(){ try{ a && a.focus(); }catch(e){} },160);
     return;
   }
-  // voice: the Live screen's own mic and card, with the date shown on it
-  var onLive=false; try{ var lv=document.getElementById('s-livegalla'); onLive=!!(lv && lv.classList.contains('active') && window.lgState && window.lgState.date===TSTR); }catch(e){}
-  if(!onLive){ try{ lgOpen(); }catch(e){} }
-  if(ds!==TSTR){
-    window.lgBack={date:ds};
-    _lgBackPaint();
-  }
-  setTimeout(function(){ try{ window.scrollTo(0,0); lgVoiceStart('entry'); }catch(e){} }, onLive?60:420);
+  // voice: the same mic card, moved into this date's popup (never shown on Live)
+  var host=document.getElementById('dp-content'), z=document.getElementById('lg-voice-entry');
+  if(!host || !z || ds===TSTR) return;
+  try{ if(window.lgBack) lgBackEnd(true); }catch(e){}
+  var slot=document.getElementById('dp-voice-slot');
+  if(!slot){ slot=document.createElement('div'); slot.id='dp-voice-slot'; slot.className='dpx-vslot'; host.appendChild(slot); }
+  var bar=host.querySelector('.dpx-addbar'); if(bar) bar.style.display='none';
+  slot.appendChild(z);
+  window.lgBack={date:ds};
+  _lgBackPaint();
+  try{ lgVoiceReset('entry'); }catch(e){}
+  setTimeout(function(){ try{ slot.scrollIntoView({block:'nearest',behavior:'smooth'}); }catch(e){} try{ lgVoiceStart('entry'); }catch(e){} },60);
 }
 function _lgBackPaint(){
   var on=!!(window.lgBack && window.lgBack.date);
@@ -9235,42 +9231,12 @@ function _lgBackPaint(){
   if(add) add.textContent=on?('Add to '+lgFmtEn(window.lgBack.date)):'Add / जोड़ें';
 }
 function lgBackEnd(reset){
-  window.lgBack=null; _lgBackPaint();
   if(reset){ try{ lgVoiceReset('entry'); }catch(e){} }
-}
-/* Home reminder: days in the last 7 with no entry, from the day the shop started. */
-function _lgMissDays(){
-  var bik=[], maal=[];
-  try{ bik=DB.get(K.BIKRI)||[]; }catch(e){}
-  try{ maal=DB.get(K.MAAL)||[]; }catch(e){}
-  var has={}, first=null;
-  bik.forEach(function(r){ if(r && r.date && (lgVisibleBoxes(r.lgBoxes).length || (!Array.isArray(r.lgBoxes) && (r.sales||r.expense)))){ has[r.date]=1; if(!first||r.date<first) first=r.date; } });
-  maal.forEach(function(r){ if(r && r.date && !r.placeholder){ has[r.date]=1; if(!first||r.date<first) first=r.date; } });
-  if(!first || !(first < TSTR)) return [];
-  var out=[], t=_lgParseYmd(TSTR);
-  for(var i=7;i>=1;i--){
-    var d=new Date(t.getFullYear(),t.getMonth(),t.getDate()-i), ds=_lgYmd(d);
-    if(ds<first || has[ds] || !lgBackAllowed(ds)) continue;
-    out.push(ds);
-  }
-  return out;
-}
-function lgRenderMissed(){
-  var host=document.getElementById('lg-miss'); if(!host) return;
-  var st=window.lgState;
-  var dk='hk_miss_dismiss_'+(typeof CURRENT_UID!=='undefined'?CURRENT_UID:'');
-  var dis=''; try{ dis=localStorage.getItem(dk)||''; }catch(e){}
-  var days=(st && st.isToday && !st.blocked && dis!==TSTR) ? _lgMissDays() : [];
-  if(!days.length){ host.style.display='none'; host.innerHTML=''; return; }
-  host.innerHTML='<div class="t">📆 Entries missing for '+days.length+' day'+(days.length>1?'s':'')+'</div>'
-    +'<div class="s">Add them now to keep your records complete.</div>'
-    +'<div class="chips">'+days.map(function(ds){ return '<div class="dchip" onclick="lgBackStart(\''+ds+'\',\'voice\')">'+lgFmtEnShort(ds)+'<small>No entries</small></div>'; }).join('')+'</div>'
-    +'<div class="later" onclick="lgMissLater()">Remind me tomorrow ✕</div>';
-  host.style.display='';
-}
-function lgMissLater(){
-  try{ localStorage.setItem('hk_miss_dismiss_'+(typeof CURRENT_UID!=='undefined'?CURRENT_UID:''), TSTR); }catch(e){}
-  lgRenderMissed();
+  window.lgBack=null; _lgBackPaint();
+  var z=document.getElementById('lg-voice-entry'), h=document.getElementById('lg-voice-home');
+  if(z && h && h.nextElementSibling!==z) h.parentNode.insertBefore(z, h.nextSibling);
+  try{ var sl=document.getElementById('dp-voice-slot'); if(sl) sl.remove(); }catch(e){}
+  try{ var bar=document.querySelector('#dp-content .dpx-addbar'); if(bar) bar.style.display=''; }catch(e){}
 }
 // Editing works on the sorted view, so map the row back to the real box by ts.
 /* ══ Same-day entry edit — आया/गया only. Purchase rows route to their bill,
@@ -10963,6 +10929,7 @@ function openDatePopup(ds){
   subEl.style.color = totalCount > 0 ? '#5dcaa5' : '#8a6020';
   document.querySelector('.date-popup-sheet').style.borderTopColor = totalCount > 0 ? '#2dba4d' : '#f0b040';
 
+  try{ if(window.lgBack) lgBackEnd(true); }catch(e){}
   const content = document.getElementById('dp-content');
   content.innerHTML = '';
 
@@ -11170,6 +11137,7 @@ function closeDatePopup(e){
   if(e&&e.target===document.getElementById('date-popup-overlay'))closeDatePopupDirect();
 }
 function closeDatePopupDirect(){
+  try{ if(window.lgBack) lgBackEnd(true); }catch(e){}
   const overlay=document.getElementById('date-popup-overlay');
   const sheet=document.getElementById('date-popup-sheet');
   if(sheet){
@@ -11197,6 +11165,7 @@ function closeDatePopupDirect(){
     if(dy>110){
       // animate down from current drag position, then hide (no class fight)
       const overlay=document.getElementById('date-popup-overlay');
+      try{ if(window.lgBack) lgBackEnd(true); }catch(e){}
       sheet.style.transition='transform .2s ease';
       sheet.style.transform='translateY(100%)';
       setTimeout(()=>{overlay.classList.remove('show');sheet.style.transition='';sheet.style.transform='';dpCurrentDate=null;},200);
@@ -16243,13 +16212,17 @@ function npReopenPreview(){
     else if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
     else if(window.lgState.isToday){ r.lgSaved=false; r.lgSavedAt=null; }
     if(typeof lgPersistRec==='function') lgPersistRec(r);
+    if(!_bk || (window.lgState && window.lgState.rec)){ try{
     if(typeof lgRenderTotals==='function') lgRenderTotals();
     if(typeof lgRenderGrid==='function') lgRenderGrid(_bt);
     if(typeof lgRenderEntries==='function') lgRenderEntries();
     if(typeof lgRenderSaveArea==='function') lgRenderSaveArea();
+    }catch(e){ if(!_bk) throw e; } }
     setState(type,null); S.amt=0; S.note=''; S.dir='';
     if(_bk){
-      try{ lgBackEnd(false); lgRenderMissed(); }catch(e){}
+      try{ lgBackEnd(false); }catch(e){}
+      try{ window._dpBusy=false; openDatePopup(_bk); }catch(e){}
+      try{ var _cal=document.getElementById('s-calendar'); if(_cal && _cal.classList.contains('active') && typeof renderCalendar==='function') renderCalendar(); }catch(e){}
       if(typeof toast==='function') toast('✓ ₹'+amt.toLocaleString('en-IN')+' added to '+lgFmtEn(_bk));
     } else if(typeof toast==='function') toast('✓ ₹'+amt.toLocaleString('en-IN')+' जुड़ गया');
     if(typeof loadHome==='function') setTimeout(loadHome,50);

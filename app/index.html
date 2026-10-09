@@ -3682,7 +3682,16 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         <div class="header-sub" id="lg-screen-sub" style="color:#d4a850;">हर बिक्री · हर खर्चा</div>
       </div>
     </div>
-    <div class="lk-hact"><span class="lk-sync synced" onclick="lkSyncInfo()" role="button" aria-label="Cloud sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 9.2 4.5 4.5 0 0 0 7 18z"/><path class="ck" d="m9.5 13.5 2 2 3.5-3.5"/></svg></span><div class="lg-calbtn" onclick="calOpenFromLive()" aria-label="कैलेंडर"><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg></span><span class="l">कैलेंडर</span></div></div>
+    <div class="lk-hact"><span class="lk-sync synced" onclick="lkSyncInfo()" role="button" aria-label="Cloud sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 9.2 4.5 4.5 0 0 0 7 18z"/><path class="ck" d="m9.5 13.5 2 2 3.5-3.5"/></svg></span><div class="lg-calbtn lkc lkc-a" onclick="calOpenFromLive()" role="button" aria-label="कैलेंडर"><svg viewBox="0 0 48 48" width="40" height="40"><defs>
+<linearGradient id="ca-pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e6e9f1"/></linearGradient>
+<linearGradient id="ca-hd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6a5c"/><stop offset="1" stop-color="#cf2f23"/></linearGradient>
+<linearGradient id="ca-rg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a95ab"/><stop offset=".5" stop-color="#f4f6fb"/><stop offset="1" stop-color="#7b869d"/></linearGradient>
+<filter id="ca-s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.2" stdDeviation="1.1" flood-color="#000" flood-opacity=".45"/></filter></defs>
+<g filter="url(#ca-s)"><rect x="5" y="7" width="38" height="37" rx="6" fill="url(#ca-pg)"/>
+<path d="M5 13a6 6 0 0 1 6-6h26a6 6 0 0 1 6 6v4H5z" fill="url(#ca-hd)"/></g>
+<text x="24" y="15.6" text-anchor="middle" fill="#fff" font-family="Roboto,Arial,sans-serif" font-size="6.6" font-weight="700" letter-spacing=".4" id="lkc-m">OCT</text>
+<text x="24" y="38" text-anchor="middle" fill="#1b2438" font-family="Roboto,Arial,sans-serif" font-size="19" font-weight="700" id="lkc-d">9</text>
+<rect x="13" y="3" width="3.6" height="8" rx="1.8" fill="url(#ca-rg)"/><rect x="31.4" y="3" width="3.6" height="8" rx="1.8" fill="url(#ca-rg)"/></svg></div></div>
   </div>
   <div style="height:4px;background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%);"></div>
   <div class="fw">
@@ -9599,6 +9608,15 @@ async function lgReplayBoxEvents(){
 setTimeout(function(){ try{ lgReplayBoxEvents(); }catch(e){} }, 8000);
 setTimeout(function(){ _lgBxLast=0; try{ lgReplayBoxEvents(); }catch(e){} }, 60000);
 document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') setTimeout(function(){ try{ lgReplayBoxEvents(); }catch(e){} }, 4000); });
+// Calendar button shows today's date.
+(function(){
+  var MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  function paint(){ try{ var n=new Date(), d=document.getElementById('lkc-d'), m=document.getElementById('lkc-m');
+    if(d) d.textContent=String(n.getDate()); if(m) m.textContent=MON[n.getMonth()]; }catch(e){} }
+  window.lkCalPaint=paint; paint();
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') paint(); });
+  setInterval(paint, 60000);
+})();
 // Editing works on the sorted view, so map the row back to the real box by ts.
 /* ══ Same-day entry edit — आया/गया only. Purchase rows route to their bill,
    because a src:"maal" box mirrors a K.MAAL record and editing it here would
@@ -16990,6 +17008,15 @@ body:has(#s-livegalla.active) .toast{bottom:calc(150px + env(safe-area-inset-bot
 @media (prefers-reduced-motion:reduce){.lg-pill-green,.mk-tile-pill{animation:none!important;box-shadow:0 0 10px rgba(61,255,138,.6)!important;}}
 :root[data-theme="light"] .lg-pill-green,:root[data-theme="light"] .mk-tile-pill{color:#0e7a3d!important;background:#e6fbef!important;border-color:#1c9a57!important;text-shadow:none!important;animation:none!important;}
 
+
+/* ── v53: tear-off calendar button ── */
+
+.lkc{margin-left:0!important;cursor:pointer;display:flex!important;align-items:center;justify-content:center;flex-shrink:0;}
+.lkc-a,.lkc-c{width:48px!important;height:48px!important;border-radius:14px!important;background:radial-gradient(120% 120% at 28% 12%,#2a3a66 0%,#16224a 55%,#0c1430 100%)!important;border:1px solid rgba(212,168,80,.45)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 4px 10px rgba(0,0,0,.45)!important;}
+.lkc-x{width:auto!important;height:44px!important;padding:0 12px 0 8px!important;gap:7px;border-radius:14px!important;background:radial-gradient(120% 120% at 28% 12%,#2a3a66 0%,#16224a 55%,#0c1430 100%)!important;border:1px solid rgba(212,168,80,.45)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 4px 10px rgba(0,0,0,.45)!important;}
+.lkc-x span,.lkc-y span{font-size:12.5px;font-weight:700;color:#f0d890;}
+.lkc-y{width:auto!important;height:auto!important;padding:6px 8px 5px!important;flex-direction:column!important;gap:2px;border-radius:14px!important;background:var(--lk-s2)!important;border:1px solid rgba(212,168,80,.55)!important;color:#e8c870!important;}
+.lkc-y span{font-size:9.5px;}
 </style>
 </body>
 </html>

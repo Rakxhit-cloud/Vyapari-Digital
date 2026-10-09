@@ -2092,7 +2092,8 @@ function _tvStats(u){
   const start = p.testerStart || '';
   const t = ag.days[today] || { opens:0, launches:0, inw:0, outw:0, scans:0, fps:{} };
   const wk = ag.weeks[_tvWeek(today)] || { total:0, fps:{} };
-  const uniqScans = Object.keys(wk.fps).length, dupes = wk.total - uniqScans;
+  // Every bill scan counts; repeated scans of the same bill are no longer flagged.
+  const uniqScans = wk.total, dupes = 0;
   let from = start;
   if (!from) { const ds = Object.keys(ag.days).sort(); from = ds[0] || today; }
   let bankedPast = 0;
@@ -2165,12 +2166,12 @@ async function loadTesters(force){
     });
 
     /* ── per-tester rows ── */
-    let qualToday = 0, committed = 0, flagged = 0;
+    let qualToday = 0, committed = 0, weekScans = 0;
     const rows = testers.map(u => {
       const s = stats[u.uid], p = s.p, t = s.t;
       committed += s.banked * s.rate;
       if (s.qToday) qualToday++;
-      if (s.dupes > 0) flagged++;
+      weekScans += (s.wk && s.wk.total) || 0;
       const par = (k, got, need, extra) => {
         const hit = got >= need, pct = Math.max(3, Math.min(100, Math.round(got/need*100)));
         return '<div class="par '+(hit?'hit':'part')+'"><div class="k">'+k+'</div><div class="v">'+got+'/'+need+(extra?'<span class="pextra">'+extra+'</span>':'')+'</div>'
@@ -2231,7 +2232,7 @@ async function loadTesters(force){
       '<div class="stat-card"><div class="stat-label">Active testers</div><div class="stat-value">'+testers.length+'</div><div class="stat-sub">of 12 needed for Play</div></div>'
     + '<div class="stat-card"><div class="stat-label">Qualified today</div><div class="stat-value">'+qualToday+'<span style="font-size:17px;color:#7f90b8">/'+testers.length+'</span></div><div class="stat-sub">hit all daily targets</div></div>'
     + '<div class="stat-card"><div class="stat-label">Committed payout</div><div class="stat-value">₹'+committed.toLocaleString('en-IN')+'</div><div class="stat-sub">earned so far, not yet due</div></div>'
-    + '<div class="stat-card"><div class="stat-label">Flagged</div><div class="stat-value" style="color:'+(flagged?'#ff8a7a':'#e8d8b8')+'">'+flagged+'</div><div class="stat-sub">duplicate bill scans</div></div>';
+    + '<div class="stat-card"><div class="stat-label">Bill scans</div><div class="stat-value">'+weekScans+'</div><div class="stat-sub">all testers · this week</div></div>';
 
     box.innerHTML = rows.length ? rows.join('')
       : '<div class="av-empty">No testers yet. Tap <b>+ Add tester</b> to add one.</div>';

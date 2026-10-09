@@ -13,6 +13,173 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Live Khaata</title>
 <script>
+/* ===== LK native bridge (Phase 1 groundwork) =====
+   Does NOTHING in a browser or the current Play app: every line below sits
+   behind LK.native, which is true only inside the Capacitor Android app.
+   Inside that app it maps the web APIs this file already uses onto native
+   plugins, so the rest of the code runs unchanged:
+     navigator.vibrate          → Haptics
+     navigator.share / canShare → Share (+ Filesystem for PDFs, Excel, photos)
+     SpeechRecognition          → Android SpeechRecognizer (system mic permission)
+   Login, App Check and notifications move in Phase 2, once the shell exists. */
+(function(){
+  var C = window.Capacitor;
+  var LK = window.LK = {
+    native: !!(C && typeof C.isNativePlatform === 'function' && C.isNativePlatform()),
+    platform: (C && typeof C.getPlatform === 'function') ? C.getPlatform() : 'web',
+    plugin: function(n){ try{ return (C && C.Plugins && C.Plugins[n]) || null; }catch(e){ return null; } }
+  };
+  if(!LK.native) return;
+
+  try{ document.documentElement.classList.add('lk-native'); }catch(e){}
+  // The native app IS the installed Play app: same signal the TWA gives with ?src=play.
+  try{ if(!localStorage.getItem('hk_reg_source')) localStorage.setItem('hk_reg_source','play'); }catch(e){}
+
+  /* ── Haptics ── */
+  var H = LK.plugin('Haptics');
+  if(H){
+    try{
+      navigator.vibrate = function(p){
+        var ms = Array.isArray(p) ? p.reduce(function(a,b,i){ return i%2===0 ? a+(+b||0) : a; },0) : (+p||0);
+        if(ms<=0) return true;
+        try{ ms<=25 ? H.impact({style:'LIGHT'}) : H.vibrate({duration:Math.min(ms,1000)}); }catch(e){}
+        return true;
+      };
+    }catch(e){}
+  }
+
+  /* ── Share (text, links and files) ── */
+  var SH = LK.plugin('Share'), FS = LK.plugin('Filesystem');
+  function _b64(file){
+    return new Promise(function(res,rej){
+      var r = new FileReader();
+      r.onload = function(){ var s=String(r.result||''); res(s.slice(s.indexOf(',')+1)); };
+      r.onerror = rej; r.readAsDataURL(file);
+    });
+  }
+  function _safeName(f,i){
+    var n = (f && f.name) || ('file-'+i);
+    return n.replace(/[^\w.\-ऀ-ॿ]+/g,'_').slice(-80);
+  }
+  if(SH){
+    try{
+      navigator.canShare = function(d){
+        if(!d) return false;
+        if(d.files && d.files.length && !FS) return false;
+        return true;
+      };
+      navigator.share = function(d){
+        d = d || {};
+        var files = Array.prototype.slice.call(d.files||[]);
+        var go = function(uris){
+          var o = {};
+          if(d.title) o.title = d.title;
+          if(d.text) o.text = d.text;
+          if(d.url) o.url = d.url;
+          if(uris && uris.length) o.files = uris;
+          if(d.title) o.dialogTitle = d.title;
+          return SH.share(o).then(function(){ return undefined; }, function(e){
+            var m = String((e && e.message) || e || '');
+            var err = new Error(m || 'Share canceled'); err.name = /cancel/i.test(m) ? 'AbortError' : 'NotAllowedError';
+            throw err;
+          });
+        };
+        if(!files.length) return go(null);
+        return Promise.all(files.map(function(f,i){
+          return _b64(f).then(function(data){
+            return FS.writeFile({ path:'share/'+Date.now()+'_'+_safeName(f,i), data:data, directory:'CACHE', recursive:true });
+          }).then(function(w){ return w.uri; });
+        })).then(go);
+      };
+    }catch(e){}
+  }
+
+  /* ── Speech recognition: same object shape the voice engine already uses ── */
+  var SRP = LK.plugin('SpeechRecognition');
+  if(SRP){
+    var _ERR = { AUDIO:'audio-capture', INSUFFICIENT_PERMISSIONS:'not-allowed', NETWORK:'network', NETWORK_TIMEOUT:'network',
+                 NO_MATCH:'no-speech', SPEECH_TIMEOUT:'no-speech', RECOGNIZER_BUSY:'aborted', CLIENT:'aborted',
+                 SERVER:'network', SERVER_DISCONNECTED:'network' };
+    var _busy = false;
+    function NativeSR(){
+      this.lang = 'hi-IN'; this.interimResults = true; this.continuous = true; this.maxAlternatives = 1;
+      this.onstart = this.onaudiostart = this.onsoundstart = this.onspeechstart = this.onaudioend = null;
+      this.onresult = this.onerror = this.onend = null;
+      this._subs = []; this._text = ''; this._done = false; this._err = null; this._spoke = false;
+    }
+    NativeSR.prototype._fire = function(n, ev){ try{ if(typeof this[n]==='function') this[n](ev||{}); }catch(e){} };
+    NativeSR.prototype._result = function(text, fin){
+      var alt = { transcript: text, confidence: fin ? 0.9 : 0 };
+      var res = [alt]; res.isFinal = !!fin; res.item = function(i){ return res[i]; };
+      var list = [res]; list.item = function(i){ return list[i]; };
+      this._fire('onresult', { resultIndex: 0, results: list });
+    };
+    NativeSR.prototype._finish = function(){
+      if(this._done) return; this._done = true; _busy = false;
+      var self = this;
+      if(this._text) this._result(this._text, true);
+      if(this._err) this._fire('onerror', { error: this._err });
+      this._fire('onaudioend');
+      this._subs.forEach(function(h){ try{ h && h.remove && h.remove(); }catch(e){} });
+      this._subs = [];
+      setTimeout(function(){ self._fire('onend'); }, 0);
+    };
+    NativeSR.prototype._sub = function(ev, fn){
+      var self = this;
+      try{ Promise.resolve(SRP.addListener(ev, fn)).then(function(h){ if(self._done){ try{ h.remove(); }catch(e){} } else self._subs.push(h); }); }catch(e){}
+    };
+    NativeSR.prototype.start = function(){
+      var self = this;
+      if(_busy) throw new Error('InvalidStateError');
+      _busy = true; this._done = false; this._text = ''; this._err = null;
+      var begin = function(){
+        self._sub('partialResults', function(e){
+          var t = (e && ((e.matches && e.matches[0]) || e.accumulatedText)) || '';
+          if(!t) return;
+          if(!self._spoke){ self._spoke = true; self._fire('onsoundstart'); self._fire('onspeechstart'); }
+          self._text = t; self._result(t, false);
+        });
+        self._sub('error', function(e){ self._err = _ERR[e && e.code] || 'aborted'; });
+        self._sub('listeningState', function(e){
+          var st = e && (e.state || e.status);
+          if(st === 'started'){ self._fire('onaudiostart'); }
+          else if(st === 'stopped'){ if(e.errorCode && !self._err) self._err = _ERR[e.errorCode] || 'aborted'; self._finish(); }
+        });
+        self._fire('onstart');
+        return SRP.start({ language: self.lang || 'hi-IN', maxResults: Math.max(1, self.maxAlternatives||1), partialResults: true, popup: false })
+          .catch(function(e){
+            var m = String((e && e.message) || e || '');
+            if(!self._err) self._err = /permission/i.test(m) ? 'not-allowed' : (/stopped before final/i.test(m) ? null : 'aborted');
+            self._finish();
+          });
+      };
+      Promise.resolve(SRP.checkPermissions ? SRP.checkPermissions() : { speechRecognition:'granted' })
+        .then(function(p){
+          if(p && p.speechRecognition === 'granted') return true;
+          return SRP.requestPermissions().then(function(q){ return !!(q && q.speechRecognition === 'granted'); });
+        })
+        .then(function(ok){
+          if(!ok){ self._err = 'not-allowed'; self._finish(); return; }
+          return begin();
+        })
+        .catch(function(){ self._err = 'not-allowed'; self._finish(); });
+    };
+    NativeSR.prototype.stop = function(){
+      var self = this;
+      try{ Promise.resolve(SRP.stop()).catch(function(){}); }catch(e){}
+      // if the engine never reports "stopped", close the session ourselves
+      setTimeout(function(){ if(!self._done) self._finish(); }, 1600);
+    };
+    NativeSR.prototype.abort = function(){
+      var self = this; this._text = '';
+      try{ Promise.resolve(SRP.forceStop ? SRP.forceStop({timeout:600}) : SRP.stop()).catch(function(){}); }catch(e){}
+      setTimeout(function(){ if(!self._done){ self._err = self._err || 'aborted'; self._finish(); } }, 700);
+    };
+    try{ window.SpeechRecognition = NativeSR; window.webkitSpeechRecognition = NativeSR; }catch(e){}
+  }
+})();
+</script>
+<script>
 /* ===== APP LAUNCH tracking v4 — capture + delivery core =====
    Runs in <head>, before Firebase or the page body has loaded.
 

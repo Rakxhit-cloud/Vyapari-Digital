@@ -3083,7 +3083,8 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 </svg></div>
       <div style="min-width:0;flex:1;"><div id="hk-greeting" style="font-size:13px;color:#d4a850;font-weight:700;margin-bottom:3px;display:none;"></div><div id="hk-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div><div id="hk-brand" style="font-size:11px;color:#e8d8b8;font-weight:500;"><span style="color:#d4a850;font-weight:700;">Live</span> Khaata · अब हिसाब चलेगा LIVE<span class="lk-livedot sm"></span></div></div>
     </div>
-    <div style="background:#14254a;border:1px solid #2a4078;border-radius:8px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#d4a850;font-weight:500;" id="t-day"></div><div style="font-size:10px;color:#e8d8b8;font-weight:500;" id="t-date"></div></div>
+    <div class="lk-hact"><span class="lk-sync synced" onclick="lkSyncInfo()" role="button" aria-label="Cloud sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 9.2 4.5 4.5 0 0 0 7 18z"/><path class="ck" d="m9.5 13.5 2 2 3.5-3.5"/></svg></span>
+    <div class="lk-datechip" style="background:#14254a;border:1px solid #2a4078;border-radius:8px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#d4a850;font-weight:500;" id="t-day"></div><div style="font-size:10px;color:#e8d8b8;font-weight:500;" id="t-date"></div></div></div>
   </div>
   <div class="pad">
     <div id="biz-name-fallback" style="display:none;background:linear-gradient(135deg,#2a1f08 0%,#1a1408 100%);border:1px solid #4a3818;border-left:3px solid #d4a850;border-radius:8px;padding:10px 12px;margin-bottom:10px;align-items:center;justify-content:space-between;gap:8px;">
@@ -3513,7 +3514,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         <div class="header-sub" id="lg-screen-sub" style="color:#d4a850;">हर बिक्री · हर खर्चा</div>
       </div>
     </div>
-    <div class="lg-calbtn" onclick="calOpenFromLive()"><span class="e">📆</span><span class="l">कैलेंडर</span></div>
+    <div class="lk-hact"><span class="lk-sync synced" onclick="lkSyncInfo()" role="button" aria-label="Cloud sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 9.2 4.5 4.5 0 0 0 7 18z"/><path class="ck" d="m9.5 13.5 2 2 3.5-3.5"/></svg></span><div class="lg-calbtn" onclick="calOpenFromLive()" aria-label="कैलेंडर"><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg></span><span class="l">कैलेंडर</span></div></div>
   </div>
   <div style="height:4px;background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%);"></div>
   <div class="fw">
@@ -3530,31 +3531,21 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     <div class="lg-totals-card">
       <div class="lg-totals-stripe"></div>
       <div class="lg-totals-body">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:11px;border-bottom:1px solid #2a4078;margin-bottom:11px;">
+        <div class="lkt-top">
           <div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#d4a850;font-weight:600;margin-bottom:4px;"><span style="font-size:15px;">💰</span> शेष · BALANCE</div>
-            <div style="font-size:30px;font-weight:600;color:#e8d8b8;line-height:1;" id="lg-tot-profit">₹0</div>
-            <div id="lg-tot-open" style="font-size:10px;color:#8aa0d8;font-weight:500;margin-top:3px;display:none;"></div>
+            <div class="lkt-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><rect x="4" y="7.5" width="16.5" height="11.5" rx="2.5"/><circle cx="16" cy="13.2" r="1.2" fill="currentColor" stroke="none"/></svg><span>शेष · BALANCE</span></div>
+            <div class="lkt-bal" id="lg-tot-profit">₹0</div>
+            <div id="lg-tot-open" class="lkt-open" style="display:none;"></div>
           </div>
-          <div style="font-size:10px;color:#8aa0d8;text-align:right;line-height:1.4;" id="lg-date-label">—</div>
+          <div class="lkt-date" id="lg-date-label">—</div>
         </div>
-        <div style="display:flex;">
-          <div style="flex:1;text-align:center;">
-            <div style="font-size:11px;color:#8aef7a;font-weight:600;margin-bottom:3px;">↓ आया</div>
-            <div style="font-size:16px;font-weight:700;color:#8aef7a;" id="lg-tot-sales">₹0</div>
-          </div>
-          <div style="flex:1;text-align:center;border-left:1px solid #2a4078;">
-            <div style="font-size:11px;color:#cc7a47;font-weight:600;margin-bottom:3px;">↑ गया</div>
-            <div style="font-size:16px;font-weight:700;color:#cc7a47;" id="lg-tot-expense">₹0</div>
-          </div>
-          <div style="flex:1;text-align:center;border-left:1px solid #2a4078;">
-            <div style="font-size:11px;color:#b0a0e8;font-weight:600;margin-bottom:3px;">📝 एंट्री</div>
-            <div style="font-size:16px;font-weight:700;color:#b0a0e8;" id="lg-tot-count">0 बार</div>
-          </div>
+        <div class="lkt-row">
+          <div><div class="lkt-l in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>आया</div><div class="lkt-v in" id="lg-tot-sales">₹0</div></div>
+          <div><div class="lkt-l out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>गया</div><div class="lkt-v out" id="lg-tot-expense">₹0</div></div>
+          <div><div class="lkt-l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/></svg>एंट्री</div><div class="lkt-v" id="lg-tot-count">0 बार</div></div>
         </div>
       </div>
     </div>
-
     <!-- entry: one voice row + one list -->
     <div id="lg-ask" class="lg-ask" style="display:none;">
       <div class="h">🤔 दिशा साफ़ नहीं</div>
@@ -3673,13 +3664,13 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 
     <!-- Purchase / खरीद section (5th block — photo-first, files into supplier ledger) -->
     <div style="margin-bottom:18px;">
-      <div class="lg-cat-head">
+      <div class="lg-cat-head lkp-head">
         <div class="lg-cat-head-left">
-          <span style="font-size:22px;">📦</span>
-          <span style="font-size:17px;color:#c9a24b;font-weight:700;">Purchase / खरीद</span>
-          <div class="lg-pill" style="background:#221a08;border:1px solid #6a5220;color:#e8c870;"><span class="lg-dot" style="background:#e8c870;"></span>LIVE</div>
+          <span class="lkp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8 12 4l8.5 4v8.5L12 20.5 3.5 16.5z"/><path d="M3.5 8 12 12l8.5-4M12 12v8.5"/></svg></span>
+          <span class="lkp-t">Purchase / खरीद</span>
+          <div class="lg-pill lk-pill-gold"><span class="lg-dot"></span>LIVE</div>
         </div>
-        <div style="font-size:11px;color:#c9a24b;font-weight:500;" id="lg-pur-meta">₹0 · 0 एंट्री</div>
+        <div class="lkp-meta" id="lg-pur-meta">₹0 · 0 एंट्री</div>
       </div>
       <div class="lg-cat-sub">माल की खरीद · बिल की फोटो से</div>
       <div class="lg-box-grid" id="lg-grid-purchase"></div>
@@ -3701,7 +3692,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 
     <!-- Manual Save / Closing button (or "saved" banner when done) -->
     <div id="lg-save-area">
-      <button class="lg-save-btn" onclick="lgConfirmClosing()">💾 Closing करें / Save</button>
+      <button class="lg-save-btn" onclick="lgConfirmClosing()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>Closing करें / Save</button>
     </div>
 
   </div>
@@ -6166,9 +6157,9 @@ textarea.st-biz-in{resize:none;}
 </div>
 
 <div class="bottom-nav">
-  <div class="nav-item active" id="n-home" onclick="go('s-home')"><div class="nav-icon">🏠</div><div class="nav-lbl">होम</div><div class="nav-dot"></div></div>
-  <div class="nav-item" id="n-entry" onclick="go('s-entry')"><div class="nav-icon">⚡</div><div class="nav-lbl">तुरंत एंट्री</div></div>
-  <div class="nav-item" id="n-more" onclick="toggleMore()"><div class="nav-icon">⋯</div><div class="nav-lbl">और</div></div>
+  <div class="nav-item active" id="n-home" onclick="go('s-home')"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v8.5a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg></div><div class="nav-lbl">होम</div><div class="nav-dot"></div></div>
+  <div class="nav-item" id="n-entry" onclick="go('s-entry')"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg></div><div class="nav-lbl">तुरंत एंट्री</div></div>
+  <div class="nav-item" id="n-more" onclick="toggleMore()"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></div><div class="nav-lbl">और</div></div>
 </div>
 </div>
 
@@ -6421,7 +6412,12 @@ function setSyncStatus(state, msg) {
   if (!dot || !txt) return;
   dot.className = 'sync-dot ' + state;
   txt.textContent = msg;
+  try { document.querySelectorAll('.lk-sync').forEach(function(el){ el.className = 'lk-sync ' + state; el.setAttribute('title', String(msg||'').replace(/^☁️\s*/,'')); }); } catch(e) {}
 }
+// The sync strip became an icon in the top bar; a tap shows the full status.
+window.lkSyncInfo = function(){
+  try { var t = document.getElementById('sync-status-txt'); if (t && typeof toast === 'function') toast(String(t.textContent||'').replace(/^☁️\s*/,'')); } catch(e) {}
+};
 
 // ══════════════════════════════════════════════════════════
 // WRITE QUEUE (Phase 2 — Reliability)
@@ -9257,6 +9253,8 @@ function lgRenderTotals() {
 }
 
 // One list for the whole day, newest first, scrolling past four rows.
+var _LK_PEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>';
+var _LK_SAVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>';
 var _LG_AR_IN  = '<svg viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>';
 var _LG_AR_OUT = '<svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
 function _lgTime(ts){
@@ -9304,7 +9302,7 @@ function lgRenderEntries(){
       +'<span class="m"><span class="a">₹'+amt.toLocaleString('en-IN')+'</span>'+tag+_lgcTags(b,d)
       +'<div class="nt">'+_lgLabel(b)+clip+billTxt+'</div></span>'
       +'<span class="rt"><div class="tm">'+_lgTime(b.ts)+'</div>'
-      +'<div class="ed">'+(_isP?'→':'✏️')+'</div></span></div>';
+      +'<div class="ed">'+(_isP?'→':_LK_PEN)+'</div></span></div>';
   }).join('');
 }
 /* ══ Past-date entries (calendar) ══════════════════════════════════════
@@ -9836,9 +9834,9 @@ function lgRenderSaveArea() {
   if (r.lgSaved && hasBoxes) {
     area.innerHTML = '<div class="lg-saved-banner">✓ ' + lgFormatDate(r.date) + ' — Closing हो चुका है</div>';
   } else if (window.lgState.blocked) {
-    area.innerHTML = '<button class="lg-save-btn" onclick="lgConfirmClosing()">💾 ' + lgFormatDate(r.date) + ' का Closing करें / Save</button>';
+    area.innerHTML = '<button class="lg-save-btn" onclick="lgConfirmClosing()">' + _LK_SAVE + lgFormatDate(r.date) + ' का Closing करें / Save</button>';
   } else {
-    area.innerHTML = '<button class="lg-save-btn" onclick="lgConfirmClosing()">💾 Closing करें / Save</button>';
+    area.innerHTML = '<button class="lg-save-btn" onclick="lgConfirmClosing()">' + _LK_SAVE + 'Closing करें / Save</button>';
   }
 }
 
@@ -16588,6 +16586,178 @@ function npReopenPreview(){
   .mk-tile-cta { font-size: 18px; padding: 15px 22px; }
   .mk-tile-pill { font-size: 15px; padding: 6px 14px; }
 }
+</style>
+<style id="lk-ui">
+/* ═══ Live Khaata UI refresh — Batch A (Home, Live हिसाब, top bars, bottom bar, toasts) ═══
+   One colour system. Dark is the default; the Light values are ready for the
+   Appearance switch (Batch D) and are not used until data-theme="light" is set. */
+:root{
+  --lk-bg:#0b1120; --lk-s1:#131c30; --lk-s2:#1a2540; --lk-ol:#26324e;
+  --lk-tx:#f2ede2; --lk-tx2:#a7b2ca; --lk-tx3:#6f7b97;
+  --lk-gold:#d4a850; --lk-gold2:#e8c870; --lk-on-gold:#1a1206; --lk-pill:#1d1708;
+  --lk-in:#46c987; --lk-out:#ec8a6c; --lk-inbg:rgba(70,201,135,.13); --lk-outbg:rgba(236,138,108,.13);
+  --lk-vbg:#0f2a1f; --lk-vol:#1f5a3c; --lk-vtx:#9af0bb; --lk-micbg:#0b1a14;
+  --lk-chip:#1e2a46; --lk-chiptx:#b8c6e6; --lk-nav:#0e1628; --lk-amber:#f0b040;
+  --lk-shadow:none;
+}
+:root[data-theme="light"]{
+  --lk-bg:#f6f3ec; --lk-s1:#ffffff; --lk-s2:#f1ede3; --lk-ol:#e5dfd1;
+  --lk-tx:#13203a; --lk-tx2:#5a6479; --lk-tx3:#8b93a6;
+  --lk-gold:#b98a2e; --lk-gold2:#d4a850; --lk-on-gold:#1a1206; --lk-pill:#fbf3e0;
+  --lk-in:#1c9a57; --lk-out:#cf5236; --lk-inbg:#e6f5ec; --lk-outbg:#fbebe6;
+  --lk-vbg:#e9f6ee; --lk-vol:#bfe3cd; --lk-vtx:#11663b; --lk-micbg:#ffffff;
+  --lk-chip:#eef1f7; --lk-chiptx:#3b4a6b; --lk-nav:#ffffff; --lk-amber:#c98a12;
+  --lk-shadow:0 1px 2px rgba(20,32,58,.05);
+}
+
+body{background:var(--lk-bg);font-family:Roboto,'Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;}
+
+/* ── sync: strip → top-bar icon ── */
+.sync-status-bar{display:none!important;}
+.lk-hact{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
+.lk-sync{width:36px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--lk-in);border-radius:12px;}
+.lk-sync svg{width:22px;height:22px;}
+.lk-sync.syncing{color:var(--lk-amber);animation:pulse .9s ease-in-out infinite;}
+.lk-sync.offline{color:var(--lk-tx3);}
+.lk-sync.error{color:var(--lk-out);}
+.lk-sync:not(.synced) .ck{display:none;}
+
+/* ── top bars (every screen) ── */
+.header{background:var(--lk-bg)!important;border-bottom:1px solid var(--lk-ol)!important;padding:10px 16px 12px;}
+.header-title{font-size:19px;font-weight:600;color:var(--lk-tx);letter-spacing:-.2px;}
+.header-sub{font-size:12px;color:var(--lk-tx2);}
+.header .lg-pill{background:var(--lk-pill)!important;color:var(--lk-gold)!important;border:1px solid color-mix(in srgb,var(--lk-gold) 55%,transparent)!important;border-radius:99px;padding:3px 8px;}
+.header .lg-pill .lg-dot{background:currentColor!important;}
+#s-livegalla .header-icon{width:42px;height:42px;border-radius:12px;border:none!important;box-shadow:none;}
+#s-livegalla .header-icon svg{width:30px;height:30px;}
+#lg-screen-sub{color:var(--lk-tx2)!important;}
+#s-livegalla > .header + div[style*="height:4px"]{display:none!important;}
+.lg-calbtn{margin-left:0;width:40px;height:40px;border-radius:12px;background:var(--lk-s2);border:1px solid var(--lk-ol);color:var(--lk-gold);}
+.lg-calbtn .e{display:flex;}
+.lg-calbtn .e svg{width:21px;height:21px;}
+.lg-calbtn .l{display:none;}
+#hk-business{color:var(--lk-tx)!important;}
+#hk-brand{color:var(--lk-tx2)!important;}
+#s-home .lk-datechip{background:var(--lk-s2)!important;border:1px solid var(--lk-ol)!important;border-radius:10px!important;}
+#s-home .lk-datechip #t-day{color:var(--lk-gold)!important;font-weight:600!important;}
+#s-home .lk-datechip #t-date{color:var(--lk-tx)!important;}
+
+/* ── bottom bar ── */
+.bottom-nav{background:var(--lk-nav);border-top:1px solid var(--lk-ol);padding:8px 6px calc(10px + env(safe-area-inset-bottom))!important;align-items:center;}
+.nav-item{gap:4px;padding:0 4px;border-bottom:none!important;}
+.nav-icon{width:58px;height:30px;border-radius:99px;display:flex;align-items:center;justify-content:center;opacity:1;color:var(--lk-tx2);font-size:0!important;transition:background .2s;}
+.nav-icon svg{width:22px;height:22px;}
+.nav-lbl{font-size:11.5px!important;color:var(--lk-tx2);font-weight:500;}
+.nav-item.active{border-bottom:none;padding-bottom:0;}
+.nav-item.active .nav-icon{background:color-mix(in srgb,var(--lk-gold) 22%,transparent);color:var(--lk-gold2);}
+.nav-item.active .nav-lbl{color:var(--lk-tx);font-weight:600;font-size:11.5px;}
+:root[data-theme="light"] .nav-item.active .nav-icon{color:#8a6416;}
+
+/* ── toasts ── */
+.toast{background:var(--lk-s2);border:1px solid var(--lk-ol);color:var(--lk-tx);border-radius:14px;bottom:calc(80px + env(safe-area-inset-bottom));}
+.toast::before{background:var(--lk-in);color:#04140d;box-shadow:none;}
+body:has(#s-livegalla.active) .toast{bottom:calc(150px + env(safe-area-inset-bottom));}
+
+/* ── Home tiles ── */
+.lg-home-tile,.mk-tile,.pair-tile{background:var(--lk-s1)!important;border:1px solid var(--lk-ol)!important;border-radius:20px!important;box-shadow:var(--lk-shadow)!important;}
+.lg-home-stripe,.mk-tile-stripe{display:none!important;}
+.lg-home-tile{margin:14px 0 12px;}
+.mk-tile{margin-top:0!important;}
+.lg-home-body,.mk-tile-body{padding:16px!important;gap:14px!important;}
+.lg-home-icon,.mk-tile-icon{width:58px!important;height:58px!important;border-radius:16px!important;border:none!important;animation:none!important;box-shadow:none!important;}
+.lg-home-icon svg{width:42px!important;height:42px!important;}
+.mk-tile-icon svg{width:36px!important;height:36px!important;}
+.mk-tile-icon{background:linear-gradient(135deg,#3f2c14,#2a1d0c)!important;}
+.lg-home-title,.mk-tile-title{font-size:17px!important;font-weight:700;color:var(--lk-tx)!important;letter-spacing:-.2px;}
+.lg-home-sub,.mk-tile-sub{font-size:12.5px!important;color:var(--lk-tx2)!important;margin-top:3px!important;}
+.lg-home-cta,.mk-tile-cta,.pair-cta{background:var(--lk-gold2)!important;color:var(--lk-on-gold)!important;border:none!important;box-shadow:none!important;font-size:14px!important;font-weight:700;padding:9px 16px!important;border-radius:12px!important;}
+.lg-pill-green,.mk-tile-pill{background:var(--lk-inbg)!important;color:var(--lk-in)!important;border:1px solid color-mix(in srgb,var(--lk-in) 45%,transparent)!important;border-radius:99px!important;font-size:10px!important;padding:3px 8px!important;letter-spacing:.5px;}
+.lg-dot-green,.mk-tile-dot{background:currentColor!important;width:6px!important;height:6px!important;box-shadow:none!important;}
+.mk-tile-pill .mk-tile-dot{background:var(--lk-in)!important;}
+.home-pair{gap:12px!important;margin-top:12px!important;}
+.pair-body{padding:14px!important;}
+.pair-top{flex-direction:column;align-items:flex-start!important;gap:8px!important;}
+.pair-icon{width:46px!important;height:46px!important;border-radius:13px!important;background:var(--lk-s2)!important;border:1px solid var(--lk-ol)!important;font-size:22px!important;}
+.pair-icon svg{width:28px!important;height:28px!important;}
+.pair-title{font-size:16px!important;color:var(--lk-tx)!important;}
+.pair-mono{font-size:10px!important;color:var(--lk-gold)!important;letter-spacing:1px;}
+.pair-sub{font-size:12px!important;color:var(--lk-tx2)!important;}
+.pair-cta{display:flex!important;justify-content:center;width:100%;margin-top:12px!important;}
+#stmt-tile{box-shadow:var(--lk-shadow)!important;}
+
+/* ── Live हिसाब: balance card ── */
+.lg-totals-card{background:var(--lk-s1);border:1px solid var(--lk-ol);border-radius:20px;margin-bottom:12px;box-shadow:var(--lk-shadow);}
+.lg-totals-stripe{display:none;}
+.lg-totals-body{padding:16px 18px 14px;}
+.lkt-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.lkt-lbl{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--lk-gold);letter-spacing:.3px;}
+.lkt-lbl svg{width:17px;height:17px;}
+.lkt-bal{font-size:36px;font-weight:600;letter-spacing:-1px;margin-top:6px;color:var(--lk-tx);font-variant-numeric:tabular-nums;line-height:1.05;}
+.lkt-open{font-size:12px;color:var(--lk-tx2);margin-top:3px;}
+.lkt-date{display:none;}
+.lkt-row{display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:14px;padding-top:12px;border-top:1px solid var(--lk-ol);}
+.lkt-row>div{text-align:center;border-left:1px solid var(--lk-ol);min-width:0;}
+.lkt-row>div:first-child{border-left:none;}
+.lkt-l{display:flex;align-items:center;justify-content:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--lk-tx2);}
+.lkt-l svg{width:13px;height:13px;}
+.lkt-l.in,.lkt-v.in{color:var(--lk-in);}
+.lkt-l.out,.lkt-v.out{color:var(--lk-out);}
+.lkt-v{font-size:19px;font-weight:600;margin-top:3px;color:var(--lk-tx);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── Live हिसाब: voice card ── */
+.lg-voice[data-type="entry"]{--vac:var(--lk-in);background:var(--lk-vbg);border:1px solid var(--lk-vol);border-radius:20px;}
+.lg-voice.row{padding:12px 12px 12px 14px;gap:13px;margin:0 0 12px;}
+.lg-voice[data-type="entry"] .lg-voice-mic{width:56px;height:56px;background:var(--lk-micbg);border:2px solid var(--lk-in);color:var(--lk-in);box-shadow:0 0 0 6px color-mix(in srgb,var(--lk-in) 12%,transparent);}
+.lg-voice[data-type="entry"] .lg-voice-mic svg{width:24px;height:24px;}
+:root[data-theme="light"] .lg-voice[data-type="entry"] .lg-voice-mic{background:var(--lk-in);color:#fff;}
+.lg-voice[data-type="entry"] .lg-voice-cap{font-size:15.5px;font-weight:700;color:var(--lk-vtx);}
+.lg-voice[data-type="entry"] .lgv-tx .lg-voice-sub{font-size:12px;color:var(--lk-tx2);margin-top:2px;}
+.lg-voice[data-type="entry"] .lgv-scan{width:74px;min-height:66px;border-radius:14px;border:1px solid color-mix(in srgb,var(--lk-gold) 55%,transparent);background:var(--lk-pill);box-shadow:none;display:flex;flex-direction:column-reverse;align-items:center;justify-content:center;gap:4px;padding:6px 4px;}
+.lg-voice[data-type="entry"] .lgv-scan .lb{font-size:10.5px;font-weight:700;color:var(--lk-gold);letter-spacing:0;margin:0;}
+.lg-voice[data-type="entry"] .lgv-scan svg{filter:none;}
+.lg-voice.lg-back .lgv-scan{display:none!important;}
+
+/* ── Live हिसाब: today's entries as one list ── */
+.lg-el-hd{font-size:14.5px;font-weight:600;color:var(--lk-tx);margin:2px 4px 8px;}
+.lg-el-hd .n{font-size:12px;font-weight:500;color:var(--lk-tx2);}
+#lg-entry-list{background:var(--lk-s1);border:1px solid var(--lk-ol);border-radius:20px;padding:2px 0;max-height:none;box-shadow:var(--lk-shadow);margin-bottom:14px;}
+#lg-entry-list .lg-en{background:transparent!important;border:none!important;border-top:1px solid var(--lk-ol)!important;border-radius:0!important;padding:10px 14px;margin:0!important;gap:12px;align-items:center;}
+#lg-entry-list .lg-en:first-child{border-top:none!important;}
+#lg-entry-list .lg-en .ar{width:36px;height:36px;border-radius:50%;border:none!important;}
+#lg-entry-list .lg-en.i .ar{background:var(--lk-inbg);color:var(--lk-in);}
+#lg-entry-list .lg-en.o .ar{background:var(--lk-outbg);color:var(--lk-out);}
+#lg-entry-list .lg-en .ar svg{width:17px;height:17px;stroke-width:2.4;}
+#lg-entry-list .lg-en .m .a{font-size:16.5px;font-weight:700;letter-spacing:0;font-variant-numeric:tabular-nums;}
+#lg-entry-list .lg-en.i .m .a{color:var(--lk-in);}
+#lg-entry-list .lg-en.o .m .a{color:var(--lk-out);}
+#lg-entry-list .lg-en .tg{background:var(--lk-chip)!important;color:var(--lk-chiptx)!important;border:none!important;font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:6px;vertical-align:2px;}
+#lg-entry-list .lg-en .m .nt{font-size:13px;color:var(--lk-tx2);margin-top:2px;}
+#lg-entry-list .lg-en .rt .tm{font-size:11.5px;color:var(--lk-tx3);}
+#lg-entry-list .lg-en .rt .ed{opacity:1;color:var(--lk-tx3);margin-top:4px;display:flex;justify-content:flex-end;}
+#lg-entry-list .lg-en .rt .ed svg{width:16px;height:16px;}
+#lg-entry-list .lg-el-empty{color:var(--lk-tx3);font-size:12.5px;padding:20px 14px;}
+
+/* ── Live हिसाब: purchase strip ── */
+.lkp-head{margin-bottom:4px!important;padding:0 4px!important;}
+.lkp-ic{display:flex;color:var(--lk-gold);}
+.lkp-ic svg{width:18px;height:18px;}
+.lkp-t{font-size:14.5px;font-weight:600;color:var(--lk-tx);}
+.lk-pill-gold{background:var(--lk-pill)!important;color:var(--lk-gold)!important;border:1px solid color-mix(in srgb,var(--lk-gold) 55%,transparent)!important;border-radius:99px!important;padding:3px 8px!important;}
+.lk-pill-gold .lg-dot{background:currentColor!important;width:6px;height:6px;}
+.lkp-meta{font-size:12px;color:var(--lk-tx2);}
+#s-livegalla .lkp-head + .lg-cat-sub{font-size:12.5px;color:var(--lk-tx2);padding:0 4px;margin-bottom:8px;}
+#lg-grid-purchase{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;}
+.lg-add-purchase{background:var(--lk-s2)!important;border:1px dashed color-mix(in srgb,var(--lk-gold) 60%,transparent)!important;color:var(--lk-gold)!important;border-radius:12px!important;min-height:44px;font-weight:400;}
+.lg-box-purchase{background:var(--lk-s1)!important;border:1px solid var(--lk-ol)!important;border-radius:12px!important;}
+.lg-box-purchase .lg-box-num{color:var(--lk-tx3)!important;}
+.lg-box-purchase .lg-box-amt{color:var(--lk-tx)!important;}
+
+/* ── Live हिसाब: Closing / Save pinned above the bottom bar ── */
+#lg-save-area{position:sticky;bottom:calc(66px + env(safe-area-inset-bottom));z-index:60;background:var(--lk-bg);margin:4px -12px 0;padding:10px 12px;border-top:1px solid var(--lk-ol);}
+.lg-save-btn{display:flex;align-items:center;justify-content:center;gap:9px;margin:0;height:50px;padding:0 14px;border:none!important;border-radius:14px;background:var(--lk-gold2);color:var(--lk-on-gold);font-size:15.5px;font-weight:700;box-shadow:none!important;}
+:root[data-theme="light"] .lg-save-btn{background:#d4a850;}
+.lg-save-btn svg{width:19px;height:19px;flex-shrink:0;}
+.lg-saved-banner{margin:0;background:var(--lk-inbg);border:1px solid color-mix(in srgb,var(--lk-in) 45%,transparent);color:var(--lk-in);border-radius:14px;}
 </style>
 </body>
 </html>

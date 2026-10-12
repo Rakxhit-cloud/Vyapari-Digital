@@ -1810,10 +1810,14 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ══════════════════ TESTERS TAB ══════════════════
-   Daily minimum for a qualified day: 2 app opens + 2 entries in total,
+   Daily minimum for a qualified day: 1 app open + 2 entries in total,
    आया and गया counted together (2 आया, 2 गया, or 1 of each).
+   Relaxed from 2 opens to 1 on 12 Oct 2026; days before that keep the old
+   2-open rule so past results and payouts don't change.
    Scans are weekly and shown for information; they do not decide a day.  */
-const T_TARGET = { opens: 2, entries: 2, scansWeek: 5 };
+const T_TARGET = { opens: 1, entries: 2, scansWeek: 5 };
+const T_OPENS_FROM = '2026-10-12';
+function _tvOpensNeed(d){ return (!d || d >= T_OPENS_FROM) ? T_TARGET.opens : 2; }
 let _tvEvents = null;
 
 function _tvDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -2082,7 +2086,7 @@ function _tvTimeline(uid, day){
        + '</div>';
 }
 function _tvEntries(c){ return c ? (c.inw||0)+(c.outw||0) : 0; }
-function _tvQualified(c){ return !!c && c.opens>=T_TARGET.opens && _tvEntries(c)>=T_TARGET.entries; }
+function _tvQualified(c, d){ return !!c && c.opens>=_tvOpensNeed(d) && _tvEntries(c)>=T_TARGET.entries; }
 function _tvEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function _tvShort(ds){ if(!ds) return ''; const d=new Date(ds+'T00:00:00'); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
 function _tvLong(ds){ const d=new Date(ds+'T00:00:00'); return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}); }
@@ -2102,11 +2106,11 @@ function _tvStats(u){
   let from = start;
   if (!from) { const ds = Object.keys(ag.days).sort(); from = ds[0] || today; }
   let bankedPast = 0;
-  Object.keys(ag.days).forEach(d => { if (d < from || d >= today) return; if (_tvQualified(ag.days[d])) bankedPast++; });
+  Object.keys(ag.days).forEach(d => { if (d < from || d >= today) return; if (_tvQualified(ag.days[d], d)) bankedPast++; });
   const elapsed = Math.max(0, _tvDiff(today, from));
   const lost = Math.max(0, elapsed - bankedPast);
   const started = today >= from;
-  const qToday = started && _tvQualified(t);
+  const qToday = started && _tvQualified(t, today);
   const banked = Math.min(plan, bankedPast + (qToday ? 1 : 0));
   const left = (T_TARGET.opens-t.opens>0?1:0)+(T_TARGET.entries-_tvEntries(t)>0?1:0);
   let lastOpen = null; Object.keys(ag.days).forEach(d => { if (ag.days[d].opens>0 && (!lastOpen||d>lastOpen)) lastOpen = d; });
@@ -2195,12 +2199,12 @@ async function loadTesters(force){
         let d = today, guard = 0;
         while (d >= s.from && guard < 60) {
           const c = s.ag.days[d] || { opens:0, launches:0, inw:0, outw:0, scans:0 };
-          const q = _tvQualified(c), isToday = d === today;
+          const q = _tvQualified(c, d), isToday = d === today;
           const cls = (got, need) => got >= need ? 'tok' : (isToday ? 'tdim' : 'tbad');
           const res = q ? '<span class="tok">✓ qualified</span>'
                     : (isToday ? '<span class="tdim">in progress · till midnight</span>'
                     : '<span class="tbad">✗ missed'+(s.ag.days[d]?'':' · no activity')+'</span>');
-          lines.push('<tr><td>'+_tvLong(d)+'</td><td class="num '+cls(c.opens,T_TARGET.opens)+'">'+c.opens+'/'+T_TARGET.opens+'</td><td class="num tdim">'+(c.launches||0)+'</td>'
+          lines.push('<tr><td>'+_tvLong(d)+'</td><td class="num '+cls(c.opens,_tvOpensNeed(d))+'">'+c.opens+'/'+_tvOpensNeed(d)+'</td><td class="num tdim">'+(c.launches||0)+'</td>'
             + '<td class="num '+cls(_tvEntries(c),T_TARGET.entries)+'">'+_tvEntries(c)+'/'+T_TARGET.entries
             + ' <span class="tdim">('+c.inw+' आया · '+c.outw+' गया)</span></td>'
             + '<td class="num">'+c.scans+'</td><td>'+res+'</td></tr>');

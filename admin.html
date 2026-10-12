@@ -2052,6 +2052,11 @@ function _tvTimeline(uid, day){
     } else if (e.event === 'voice_fail') {
       what = 'Voice <span class="tl-tag bad">✗ '+_tvEsc(_TV_VOICE_FAIL[m.err] || m.err || 'failed')+'</span>'
            + (m.err === 'busy' && !m.retried ? ' <span class="tl-dim">retrying in 0.8 s</span>' : '');
+    } else if (e.event === 'cash_check') {
+      const g = Math.round(Number(m.gap) || 0);
+      what = (m.kind === 'reset' ? 'Cash in hand reset' : 'Cash in hand count')
+           + (m.kind !== 'reset' && g ? ' <span class="tl-dim">· ₹'+Math.abs(g).toLocaleString('en-IN')+(g < 0 ? ' short' : ' extra')+'</span>' : '')
+           + (m.reason ? ' <span class="tl-dim">· '+_tvEsc(m.reason)+'</span>' : '');
     } else if (e.event === 'trial_ended_screen') {
       what = '<span class="tl-warn">Trial-ended screen shown</span>';
     } else return;   // screen views and duplicate entry logs are left out

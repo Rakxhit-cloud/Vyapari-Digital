@@ -3730,6 +3730,11 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
           <div><div class="lkt-l out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>गया</div><div class="lkt-v out" id="lg-tot-expense">₹0</div></div>
           <div><div class="lkt-l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/></svg>एंट्री</div><div class="lkt-v" id="lg-tot-count">0 बार</div></div>
         </div>
+        <div class="lkg-strip" id="lkg-strip">
+          <div class="lkg-m c" onclick="cihOpen()"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></svg></i><div><div class="k">CASH</div><div class="v" id="lkg-cash">₹0</div></div></div>
+          <div class="lkg-m u" onclick="cihOpen()"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 18h2"/></svg></i><div><div class="k">UPI</div><div class="v" id="lkg-upi">₹0</div></div></div>
+          <div class="lkg-btn" id="lkg-btn" onclick="cihOpen()" role="button">Count<br>cash in hand</div>
+        </div>
       </div>
     </div>
     <!-- entry: one voice row + one list -->
@@ -7002,9 +7007,11 @@ window._fsLoadAll = async function(uid) {
       const wSnap = await getDoc(doc(db, 'users', uid, 'meta', 'wipe'));
       if (wSnap.exists() && window._applyRemoteWipe) window._applyRemoteWipe((wSnap.data() || {}).ts || 0);
     } catch(wErr) { console.warn('wipe marker load err:', wErr); }
-    const cols = ['bikri', 'maal', 'udhaar', 'goal'];
+    const cols = ['bikri', 'maal', 'udhaar', 'goal', 'cih'];
     for (const colName of cols) {
-      const snap = await getDocs(collection(db, 'users', uid, colName));
+      let snap;
+      try { snap = await getDocs(collection(db, 'users', uid, colName)); }
+      catch(colErr) { if (colName === 'cih') { console.warn('cih load err:', colErr); continue; } throw colErr; }
       if (snap.empty) continue;
       const cloudItems = [];
       snap.forEach(d => {
@@ -7082,7 +7089,7 @@ window._isRecentlyDeleted = function(id){
 // device actually disappears here. col narrows the search; omitted = all.
 window._applyTombLocally = function(uid, id, col){
   if(!uid || uid==='default' || !id) return false;
-  var cols = col ? [col] : ['bikri','maal','udhaar','goal'];
+  var cols = col ? [col] : ['bikri','maal','udhaar','goal','cih'];
   var removed = false;
   cols.forEach(function(c){
     var lsKey = 'hk_' + uid + '_' + c, arr;
@@ -7157,7 +7164,7 @@ window._startRealtimeSync = function(uid) {
   if (!uid || uid === 'default') return;
   window._stopRealtimeSync();          // never stack duplicate listeners
   window._rtUid = uid;
-  const cols = ['bikri', 'maal', 'udhaar', 'goal'];
+  const cols = ['bikri', 'maal', 'udhaar', 'goal', 'cih'];
   cols.forEach(colName => {
     try {
       const unsub = onSnapshot(
@@ -8533,7 +8540,7 @@ window._fsWipeAll = async function() {
   // this account was wiped at this instant and clears what it holds.
   await setDoc(doc(db, 'users', uid, 'meta', 'wipe'),
     { ts, at: serverTimestamp(), device: (navigator.userAgent || '').slice(0, 90) });
-  const cols = ['bikri', 'maal', 'udhaar', 'goal'];
+  const cols = ['bikri', 'maal', 'udhaar', 'goal', 'cih'];
   let deleted = 0;
   for (const colName of cols) {
     const snap = await getDocs(collection(db, 'users', uid, colName));
@@ -8592,7 +8599,7 @@ window._fsDeleteConfirm = async function(otp) {
   await reauthenticateWithCredential(user, cred);
   const uid = user.uid;
   // 1) Delete all Firestore data FIRST (works while still logged in; owner-only rules)
-  const cols = ['bikri', 'maal', 'goal'];
+  const cols = ['bikri', 'maal', 'goal', 'cih'];
   for (const colName of cols) {
     const snap = await getDocs(collection(db, 'users', uid, colName));
     for (const d of snap.docs) { try { await deleteDoc(doc(db, 'users', uid, colName, d.id)); } catch(e){} }
@@ -9050,7 +9057,7 @@ const DB = {
   }
 };
 
-const K={BIKRI:'bikri',MAAL:'maal',UDHAAR:'udhaar',GOAL:'goal'};
+const K={BIKRI:'bikri',MAAL:'maal',UDHAAR:'udhaar',GOAL:'goal',CIH:'cih'};
 const TODAY=new Date();
 
 // ============================================================
@@ -9471,6 +9478,7 @@ function lgRenderTotals() {
   document.getElementById('lg-tot-expense').textContent = fmt(io.outward);
   document.getElementById('lg-tot-count').textContent = count + ' बार';
   if (typeof lgRenderEntries === 'function') lgRenderEntries();
+  try { if (window.cihPaint) window.cihPaint(); } catch(e) {}
 }
 
 // One list for the whole day, newest first, scrolling past four rows.
@@ -12328,7 +12336,7 @@ function closeMaalEdit(){document.getElementById('maal-edit-overlay').classList.
 
 // ===== Delete account & data — UI flow =====
 /* ══ Nuclear data wipe — every collection, nothing preserved ══ */
-var DR_COLS=[K.BIKRI,K.MAAL,K.UDHAAR,K.GOAL];
+var DR_COLS=[K.BIKRI,K.MAAL,K.UDHAAR,K.GOAL,K.CIH];
 function _drScan(){
   var bikri=DB.get(K.BIKRI)||[], boxes=0;
   bikri.forEach(function(r){ if(Array.isArray(r.lgBoxes)) boxes+=r.lgBoxes.length; });
@@ -17273,5 +17281,485 @@ body:has(#s-livegalla.active) .toast{bottom:calc(150px + env(safe-area-inset-bot
 .mkp-billtot .pen{display:inline-block;color:var(--lk-tx3);font-size:0!important;width:14px;height:14px;vertical-align:-1px;margin-left:4px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z'/%3E%3Cpath d='m13.5 6.5 4 4'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z'/%3E%3Cpath d='m13.5 6.5 4 4'/%3E%3C/svg%3E") center/contain no-repeat;}
 #s-calendar .header-sub{color:var(--lk-tx2)!important;}
 </style>
+<style id="lk-cih">
+/* ---- Galla Level 1 (mockup) ---- */
+.lkg-strip{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--lk-ol);}
+.lkg-m{flex:1;min-width:0;display:flex;align-items:center;gap:6px;background:var(--lk-bg);border:1px solid var(--lk-ol);border-radius:12px;padding:7px 7px;}
+.lkg-m i{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-style:normal;}
+.lkg-m i svg{width:15px;height:15px;}
+.lkg-m.c i{background:rgba(70,201,135,.14);color:var(--lk-in);}
+.lkg-m.u i{background:rgba(110,150,255,.15);color:#8fb0ff;}
+.lkg-m .k{font-size:10.5px;color:var(--lk-tx3);font-weight:600;letter-spacing:.2px;line-height:1.1}
+.lkg-m .v{font-size:14px;font-weight:700;color:var(--lk-tx);font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:1px;}
+.lkg-btn{flex-shrink:0;width:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--lk-gold2);color:var(--lk-on-gold);border-radius:12px;padding:6px 11px;min-height:44px;font-weight:700;font-size:12.5px;line-height:1.15;text-align:center;white-space:nowrap;}
+.lkg-btn small{font-size:10px;font-weight:600;opacity:.75}
+.lkg-btn.done{font-size:12.5px;background:var(--lk-inbg);color:var(--lk-in);border:1px solid color-mix(in srgb,var(--lk-in) 45%,transparent);}
+/* sheet */
+.lkg-ov{position:fixed;inset:0;background:rgba(3,6,14,.72);z-index:3000;}
+.lkg-sh{position:fixed;left:0;right:0;bottom:0;z-index:3001;background:var(--lk-s1);border-top:1px solid var(--lk-ol);border-radius:26px 26px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.5);padding:10px 16px 22px;font-family:inherit;color:var(--lk-tx);}
+.lkg-grab{width:38px;height:4px;border-radius:4px;background:var(--lk-ol);margin:2px auto 14px;}
+.lkg-hd{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.lkg-hic{width:44px;height:44px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 120% at 28% 12%,#3dbb7a 0%,#167447 52%,#0a3a22 100%);border:1px solid rgba(160,255,200,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 3px 8px rgba(0,0,0,.45);color:#fff}
+.lkg-hic svg{width:26px;height:26px}
+.lkg-t{font-size:19px;font-weight:700;}.lkg-s{font-size:12.5px;color:var(--lk-tx2);margin-top:2px;}
+.lkg-x{margin-left:auto;width:36px;height:36px;border-radius:50%;background:var(--lk-s2);border:1px solid var(--lk-ol);color:var(--lk-tx2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.lkg-lbl{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--lk-tx3);text-transform:uppercase;margin:2px 2px 8px;}
+.lkg-in{display:flex;align-items:center;gap:10px;background:var(--lk-bg);border:1.5px solid var(--lk-gold);border-radius:16px;padding:10px 12px 10px 16px;box-shadow:0 0 0 3px color-mix(in srgb,var(--lk-gold) 18%,transparent);margin-bottom:14px;}
+.lkg-in .r{font-size:22px;color:var(--lk-tx3)}
+.lkg-in .n{font-size:32px;font-weight:700;flex:1;font-variant-numeric:tabular-nums;}
+.lkg-in .n.ph{color:var(--lk-tx3);font-weight:600}
+.lkg-in .mic{width:46px;height:46px;border-radius:50%;background:#0b1a14;border:2px solid var(--lk-in);color:var(--lk-in);display:flex;align-items:center;justify-content:center}
+.lkg-in .mic svg{width:20px;height:20px}
+.lkg-info{display:flex;gap:10px;background:var(--lk-bg);border:1px solid var(--lk-ol);border-radius:14px;padding:11px 12px;margin-bottom:10px;font-size:13px;line-height:1.5;color:var(--lk-tx2)}
+.lkg-info b{color:var(--lk-tx)}
+.lkg-info .ii{width:28px;height:28px;border-radius:9px;background:var(--lk-s2);color:var(--lk-gold2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.lkg-calc{background:var(--lk-bg);border:1px solid var(--lk-ol);border-radius:16px;padding:4px 14px;margin-bottom:14px;}
+.lkg-cr{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:13.5px;border-top:1px solid var(--lk-ol);}
+.lkg-cr:first-child{border-top:none}
+.lkg-cr .k{color:var(--lk-tx2)}.lkg-cr .v{font-weight:700;font-variant-numeric:tabular-nums}
+.lkg-cr.in .v{color:var(--lk-in)}.lkg-cr.out .v{color:var(--lk-out)}
+.lkg-cr.tot{border-top:1.5px solid var(--lk-ol);padding:11px 0 10px}
+.lkg-cr.tot .k{color:var(--lk-tx);font-weight:700;font-size:14px}.lkg-cr.tot .v{font-size:21px;color:var(--lk-gold2)}
+.lkg-go{height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:16px;background:var(--lk-gold2);color:var(--lk-on-gold);}
+.lkg-go.o{background:var(--lk-s2);border:1px solid var(--lk-ol);color:var(--lk-tx)}
+.lkg-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lkg-hint{font-size:11.5px;color:var(--lk-tx3);text-align:center;margin-top:10px;line-height:1.45}
+.lkg-res{border-radius:18px;padding:18px 16px 16px;text-align:center;margin-bottom:12px}
+.lkg-res .ic{width:56px;height:56px;border-radius:50%;margin:0 auto 9px;display:flex;align-items:center;justify-content:center}
+.lkg-res .ic svg{width:28px;height:28px}
+.lkg-res .t{font-size:22px;font-weight:800}
+.lkg-res .s{font-size:13px;color:var(--lk-tx2);margin-top:4px;line-height:1.45}
+.lkg-res.ok{background:var(--lk-inbg);border:1px solid color-mix(in srgb,var(--lk-in) 45%,transparent)}
+.lkg-res.ok .ic{background:var(--lk-in);color:#04170d;box-shadow:0 0 0 6px rgba(70,201,135,.18)}
+.lkg-res.ok .t{color:var(--lk-in)}
+.lkg-res.sh{background:rgba(255,107,107,.11);border:1px solid rgba(255,107,107,.45)}
+.lkg-res.sh .ic{background:#e5484d;color:#fff;box-shadow:0 0 0 6px rgba(229,72,77,.2)}
+.lkg-res.sh .t{color:#ff7b7b}
+.lkg-res.ex{background:rgba(240,176,64,.11);border:1px solid rgba(240,176,64,.45)}
+.lkg-res.ex .ic{background:var(--lk-amber);color:#1a1206;box-shadow:0 0 0 6px rgba(240,176,64,.2)}
+.lkg-res.ex .t{color:var(--lk-amber)}
+.lkg-q{font-size:13.5px;font-weight:600;margin:2px 2px 9px;color:var(--lk-tx)}
+.lkg-a{display:flex;align-items:center;gap:12px;background:var(--lk-bg);border:1px solid var(--lk-ol);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.lkg-a .ai{width:34px;height:34px;border-radius:10px;background:var(--lk-s2);display:flex;align-items:center;justify-content:center;color:var(--lk-gold2);flex-shrink:0}
+.lkg-a .ai svg{width:18px;height:18px}
+.lkg-a .at{font-size:14px;font-weight:600}.lkg-a .as{font-size:11.5px;color:var(--lk-tx2);margin-top:1px}
+.lkg-a .ch{margin-left:auto;color:var(--lk-tx3);font-size:18px}
+.lkg-a.on{border-color:var(--lk-gold);background:color-mix(in srgb,var(--lk-gold) 10%,var(--lk-bg))}
+.lkg-a.on .ch{color:var(--lk-gold2)}
+.lkg-tag{font-size:10.5px;background:rgba(110,150,255,.15);color:#a9c0ff;border-radius:6px;padding:2px 7px;margin-left:6px;font-weight:600;vertical-align:2px}
+
+.lkg-info .ii svg{width:16px;height:16px}
+.lkg-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.lkg-chip{border:1px solid var(--lk-ol);background:var(--lk-bg);border-radius:99px;padding:8px 13px;font-size:13px;color:var(--lk-tx2);font-weight:600}
+.lkg-chip.on{border-color:var(--lk-gold);color:var(--lk-gold2);background:color-mix(in srgb,var(--lk-gold) 12%,var(--lk-bg))}
+.lkg-note{background:var(--lk-bg);border:1.5px solid var(--lk-gold);border-radius:14px;padding:12px 14px;font-size:14px;color:var(--lk-tx);margin-bottom:6px;box-shadow:0 0 0 3px color-mix(in srgb,var(--lk-gold) 18%,transparent)}
+.lkg-note small{display:block;font-size:10.5px;color:var(--lk-tx3);margin-top:4px;text-align:right}
+.lkg-link{display:flex;justify-content:center;gap:18px;margin-top:12px;font-size:13px;font-weight:600;color:var(--lk-gold2)}
+.lkg-link span{opacity:.95}
+.lkg-wk{display:flex;align-items:center;gap:8px;background:var(--lk-bg);border:1px solid var(--lk-ol);border-radius:12px;padding:9px 12px;font-size:12.5px;color:var(--lk-tx2);margin-bottom:12px}
+.lkg-wk b{color:#ff8a8a}.lkg-wk .r{margin-left:auto;color:var(--lk-gold2);font-weight:600}
+.lkg-hr{display:flex;gap:11px;padding:10px 2px;border-top:1px solid var(--lk-ol)}
+.lkg-hr:first-of-type{border-top:none}
+.lkg-hr .i{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lkg-hr .i svg{width:17px;height:17px}
+.lkg-hr .i.c{background:var(--lk-inbg);color:var(--lk-in)}.lkg-hr .i.r{background:rgba(110,150,255,.15);color:#8fb0ff}
+.lkg-hr .a{font-size:13.5px;font-weight:600}.lkg-hr .s{font-size:11.5px;color:var(--lk-tx2);margin-top:2px}
+.lkg-hr .s i{font-style:normal;color:var(--lk-tx)}
+.lkg-hr .t{margin-left:auto;font-size:11px;color:var(--lk-tx3);text-align:right;white-space:nowrap}
+.lkg-bd{font-size:10.5px;font-weight:700;border-radius:99px;padding:2px 8px;display:inline-block;margin-top:4px}
+.lkg-bd.ok{background:var(--lk-inbg);color:var(--lk-in)}.lkg-bd.sh{background:rgba(255,107,107,.12);color:#ff8a8a}.lkg-bd.sm{background:rgba(240,176,64,.12);color:var(--lk-amber)}
+
+/* ---- Cash in hand (v56) ---- */
+.lkg-m,.lkg-btn{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.lkg-btn.sh{background:rgba(255,107,107,.12);color:#ff8a8a;border:1px solid rgba(255,107,107,.45);font-size:12.5px}
+.lkg-btn.ex{background:rgba(240,176,64,.12);color:var(--lk-amber);border:1px solid rgba(240,176,64,.45);font-size:12.5px}
+#lkg-root{display:none}
+#lkg-root.show{display:block}
+.lkg-ov{z-index:8500;animation:lkg-fade .18s ease}
+.lkg-sh{z-index:8501;max-height:92vh;overflow-y:auto;padding-bottom:calc(22px + env(safe-area-inset-bottom));animation:lkg-up .24s cubic-bezier(.2,.8,.2,1);max-width:560px;margin:0 auto}
+@keyframes lkg-up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes lkg-fade{from{opacity:0}to{opacity:1}}
+.lkg-x,.lkg-go,.lkg-a,.lkg-chip,.lkg-link span,.lkg-wk .r,.lkg-in .mic,.lkg-lim b{cursor:pointer}
+.lkg-in input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:var(--lk-tx);font-size:32px;font-weight:700;font-family:inherit;font-variant-numeric:tabular-nums;padding:0}
+.lkg-in input::placeholder{color:var(--lk-tx3);font-weight:600}
+.lkg-in .mic.on{background:var(--lk-in);color:#04170d;animation:lkg-pulse 1s ease-in-out infinite}
+@keyframes lkg-pulse{50%{box-shadow:0 0 0 8px rgba(70,201,135,.18)}}
+input.lkg-note{width:100%;font-family:inherit;outline:none}
+.lkg-cnt{font-size:10.5px;color:var(--lk-tx3);text-align:right;margin:0 2px 4px}
+.lkg-lim{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--lk-tx2);margin-bottom:12px;flex-wrap:wrap}
+.lkg-lim b{border:1px solid var(--lk-ol);background:var(--lk-bg);border-radius:99px;padding:5px 11px;font-size:12.5px;color:var(--lk-tx2);font-weight:600}
+.lkg-lim b.on{border-color:var(--lk-gold);color:var(--lk-gold2);background:color-mix(in srgb,var(--lk-gold) 12%,var(--lk-bg))}
+.lkg-empty{font-size:13px;color:var(--lk-tx3);text-align:center;padding:18px 6px}
+.lkg-wk b.ok{color:var(--lk-in)}.lkg-wk b.ex{color:var(--lk-amber)}
+.lkg-err{font-size:12px;color:#ff8a8a;margin:-6px 2px 10px;min-height:0}
+
+</style>
+<div id="lkg-root"></div>
+<script>
+/* ===== Cash in hand (v56) =====
+   A second, separate figure next to the balance card. The balance (शेष),
+   आया/गया, profit and statements are never touched by anything here.
+     should be about = last count or reset + Cash आया − Cash गया since then
+   UPI / Bank / Cheque never count. Counts and resets live in their own
+   collection ('cih'), synced like every other collection. */
+(function(){
+  var COL='cih';
+  var IC={
+    cash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></svg>',
+    upi:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 18h2"/></svg>',
+    galla:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2.5"/><path d="M3 11h18M10 15h4"/><path d="M8 7V5h8v2"/></svg>',
+    mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>',
+    plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>',
+    bank:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg>',
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    bang:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 7v6M12 17h.01"/></svg>',
+    reset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>'
+  };
+  var REASONS=[['bank','Deposited in bank'],['home','Taken home'],['emergency','Emergency'],['fresh','Starting fresh'],['other','✎ Other']];
+  var RLABEL={bank:'Deposited in bank',home:'Taken home',emergency:'Emergency',fresh:'Starting fresh',other:'Other',smallexp:'Added as small expenses',missed:'Missed entry'};
+  var EXPLAINED={bank:1,home:1,smallexp:1};
+
+  function uid(){ try{ return (typeof CURRENT_UID!=='undefined' && CURRENT_UID) ? CURRENT_UID : 'default'; }catch(e){ return 'default'; } }
+  function lsKey(){ return 'hk_'+uid()+'_'+COL; }
+  function load(){ try{ var a=JSON.parse(localStorage.getItem(lsKey())||'[]'); return Array.isArray(a)?a.filter(function(x){ return x && x.kind; }):[]; }catch(e){ return []; } }
+  function store(a){ try{ localStorage.setItem(lsKey(), JSON.stringify(a)); }catch(e){} }
+  function cloud(item){ try{ if(window._fsWrite) window._fsWrite(uid(), COL, item); }catch(e){} }
+  function add(item){
+    item.id=Date.now()+'_'+Math.random().toString(36).substr(2,5);
+    item.updatedAt=Date.now();
+    var a=load(); a.push(item); store(a); cloud(item);
+    try{ if(window.logEvent) window.logEvent('cash_check',{kind:item.kind, gap:Math.round(item.gap||0), reason:item.reason||''}); }catch(e){}
+    return item;
+  }
+  function limit(){ var v=0; try{ v=parseInt(localStorage.getItem('hk_'+uid()+'_cihlim'),10); }catch(e){} return (v===50||v===100||v===200)?v:100; }
+  function setLimitVal(v){ try{ localStorage.setItem('hk_'+uid()+'_cihlim', String(v)); }catch(e){} }
+
+  function rs(n){ return '₹'+Math.abs(Math.round(n||0)).toLocaleString('en-IN'); }
+  function signed(n){ n=Math.round(n||0); return (n>0?'+':(n<0?'−':''))+rs(n); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function ymd(d){ d=new Date(d); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function today(){ return ymd(Date.now()); }
+  function clock(ts){ return new Date(ts).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit',hour12:true}).replace(/\s?([ap])\.?m\.?/i,function(_,x){ return ' '+x.toUpperCase()+'M'; }); }
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function dayLbl(ts){
+    var d=ymd(ts), t=today(), y=ymd(Date.now()-864e5);
+    if(d===t) return 'Today'; if(d===y) return 'Yesterday';
+    var x=new Date(ts); return x.getDate()+' '+MON[x.getMonth()];
+  }
+  function when(ts){ var d=dayLbl(ts); return d==='Today' ? clock(ts) : (d+', '+clock(ts)); }
+
+  // Cash or not. Explicit mode first, then the entry type, then the note.
+  function modeOf(b){
+    var m=String(b.method||b.payMode||'');
+    if(m==='UPI'||m==='Bank'||m==='Cheque'||m==='upi') return 'UPI';
+    if(m==='Cash'||m==='cash'||m==='नकद') return 'Cash';
+    if(b.type==='upi') return 'UPI';
+    if(b.type==='cash') return 'Cash';
+    try{ if(typeof _lgcGuessMode==='function'){ var g=_lgcGuessMode(b.note); if(g) return g; } }catch(e){}
+    return 'Cash';
+  }
+  function boxTs(b, date){
+    var t=Number(b && b.ts); if(t>0) return t;
+    var p=String(date||'').split('-'); return new Date(+p[0],(+p[1])-1,+p[2],12).getTime();
+  }
+  function visible(boxes){ try{ return lgVisibleBoxes(boxes); }catch(e){ return (boxes||[]).filter(function(b){ return b && (b.amount||0)>0; }); } }
+  function amtOf(b){ try{ return lgCashOf(b); }catch(e){ return Math.round(b.amount||0); } }
+  function dirOf(b){ try{ return lgDirOf(b); }catch(e){ return (b.type==='cash'||b.type==='upi')?'in':'out'; } }
+
+  function anchor(){
+    var a=load(), best=null;
+    a.forEach(function(x){ if(x.kind!=='count' && x.kind!=='reset') return; if(!best || (x.ts||0)>(best.ts||0)) best=x; });
+    return best;
+  }
+  function since(ts){
+    var rows=[]; try{ rows=DB.get(K.BIKRI)||[]; }catch(e){}
+    var from=ymd(ts), cin=0, cout=0;
+    rows.forEach(function(r){
+      if(!r || !r.date || String(r.date)<from) return;
+      visible(r.lgBoxes).forEach(function(b){
+        if(boxTs(b,r.date)<=ts || modeOf(b)!=='Cash') return;
+        var v=amtOf(b); if(dirOf(b)==='in') cin+=v; else cout+=v;
+      });
+    });
+    return {cin:cin, cout:cout};
+  }
+  function expected(){ var an=anchor(); if(!an) return null; var s=since(an.ts); return {an:an, cin:s.cin, cout:s.cout, exp:Math.round((an.amt||0)+s.cin-s.cout)}; }
+  function weekStart(){ var d=new Date(); d.setHours(0,0,0,0); var w=(d.getDay()+6)%7; d.setDate(d.getDate()-w); return d.getTime(); }
+  function week(extraGap){
+    var ws=weekStart(), net=0, counts=0, resets=0;
+    load().forEach(function(x){
+      if((x.ts||0)<ws) return;
+      if(x.kind==='reset'){ resets++; return; }
+      if(x.kind!=='count' || x.first) return;
+      counts++;
+      if(!EXPLAINED[x.reason]) net+=(x.gap||0);
+    });
+    if(typeof extraGap==='number'){ net+=extraGap; counts++; }
+    return {net:Math.round(net), counts:counts, resets:resets};
+  }
+  function classify(gap){ var L=limit(); if(Math.abs(gap)<=L) return 'ok'; return gap<0?'short':'extra'; }
+
+  /* ---------- card strip ---------- */
+  function todaySplit(){
+    var r=null; try{ r=(window.lgState && window.lgState.rec && window.lgState.rec.date===today()) ? window.lgState.rec : null; }catch(e){}
+    if(!r){ try{ r=(DB.get(K.BIKRI)||[]).filter(function(x){ return x && x.date===today(); })[0]||null; }catch(e){} }
+    var c=0,u=0;
+    visible(r && r.lgBoxes).forEach(function(b){ var v=amtOf(b)*(dirOf(b)==='in'?1:-1); if(modeOf(b)==='Cash') c+=v; else u+=v; });
+    return {cash:c, upi:u};
+  }
+  function paint(){
+    var cs=document.getElementById('lkg-cash'), us=document.getElementById('lkg-upi'), bt=document.getElementById('lkg-btn');
+    if(!cs || !us || !bt) return;
+    var s=todaySplit(); cs.textContent=signed(s.cash); us.textContent=signed(s.upi);
+    var last=null; load().forEach(function(x){ if(!last || (x.ts||0)>(last.ts||0)) last=x; });
+    bt.className='lkg-btn';
+    if(last && last.kind==='count' && ymd(last.ts)===today()){
+      if(last.first){ bt.className='lkg-btn done'; bt.innerHTML='✓ Counted<small>'+clock(last.ts)+'</small>'; return; }
+      if(EXPLAINED[last.reason] && last.reason!=='smallexp'){ bt.className='lkg-btn done'; bt.innerHTML='✓ Counted<small>'+clock(last.ts)+'</small>'; return; }
+      var k=last.reason==='smallexp' ? 'ok' : classify(last.gap||0);
+      if(k==='ok'){ bt.className='lkg-btn done'; bt.innerHTML='✓ Matched<small>'+clock(last.ts)+'</small>'; return; }
+      bt.className='lkg-btn '+(k==='short'?'sh':'ex'); bt.innerHTML=rs(last.gap)+' '+(k==='short'?'short':'extra')+'<small>'+clock(last.ts)+'</small>'; return;
+    }
+    bt.innerHTML='Count<br>cash in hand';
+  }
+
+  /* ---------- sheet ---------- */
+  var S={pending:null, reason:'', listening:null};
+  function root(){ var r=document.getElementById('lkg-root'); if(!r){ r=document.createElement('div'); r.id='lkg-root'; document.body.appendChild(r); } return r; }
+  function show(html, dismissFn){
+    var r=root();
+    r.innerHTML='<div class="lkg-ov" onclick="CIH.'+(dismissFn||'close')+'()"></div><div class="lkg-sh" role="dialog" aria-modal="true"><div class="lkg-grab"></div>'+html+'</div>';
+    r.className='show';
+  }
+  function close(){ stopMic(); var r=document.getElementById('lkg-root'); if(r){ r.className=''; r.innerHTML=''; } S.pending=null; }
+  function hd(t,s,ic,blue){
+    return '<div class="lkg-hd"><div class="lkg-hic"'+(blue?' style="background:radial-gradient(120% 120% at 28% 12%,#5b7fe0 0%,#2a4aa8 52%,#14245a 100%);border-color:rgba(160,190,255,.4)"':'')+'>'+(ic||IC.galla)+'</div>'
+      +'<div><div class="lkg-t">'+t+'</div><div class="lkg-s">'+s+'</div></div><div class="lkg-x" onclick="CIH.close()" aria-label="Close">✕</div></div>';
+  }
+  function input(ph){
+    return '<div class="lkg-in"><span class="r">₹</span><input id="lkg-amt" type="text" inputmode="numeric" autocomplete="off" placeholder="'+(ph||'0')+'" oninput="CIH.fmtIn(this)" onkeydown="if(event.key===\'Enter\'){this.blur();}">'
+      +'<span class="mic" id="lkg-mic" onclick="CIH.mic()" aria-label="Say the amount">'+IC.mic+'</span></div><div class="lkg-err" id="lkg-err"></div>';
+  }
+  function fmtIn(el){
+    var d=String(el.value||'').replace(/[^0-9]/g,'').replace(/^0+(?=\d)/,'').slice(0,9);
+    el.value=d ? Number(d).toLocaleString('en-IN') : '';
+    var e=document.getElementById('lkg-err'); if(e) e.textContent='';
+  }
+  function readAmt(){
+    var el=document.getElementById('lkg-amt'); if(!el) return null;
+    var d=String(el.value||'').replace(/[^0-9]/g,''); if(d==='') return null;
+    return parseInt(d,10);
+  }
+  function err(m){ var e=document.getElementById('lkg-err'); if(e) e.textContent=m; }
+  function focusAmt(){ setTimeout(function(){ try{ var el=document.getElementById('lkg-amt'); if(el) el.focus(); }catch(e){} },260); }
+  function wkLine(net, extra){
+    var t = net<0 ? '<b>'+rs(net)+' short</b> in total' : (net>0 ? '<b class="ex">'+rs(net)+' extra</b> in total' : '<b class="ok">no gap</b>');
+    return '<div class="lkg-wk">This week: '+t+(extra||'')+'</div>';
+  }
+
+  function open(){
+    try{ if(typeof _lgCloseKeypad==='function') _lgCloseKeypad(); }catch(e){}
+    var e=expected();
+    if(!e){ return first(); }
+    var an=e.an, lbl=(an.kind==='reset'?'Reset ':'Counted ')+(dayLbl(an.ts)==='Today'?'at ':'on ')+when(an.ts);
+    show(hd('Count cash in hand','Today · '+clock(Date.now()))
+      +'<div class="lkg-lbl">Estimate · from your Cash entries</div><div class="lkg-calc">'
+      +'<div class="lkg-cr"><span class="k">'+lbl+'</span><span class="v">'+rs(an.amt)+'</span></div>'
+      +'<div class="lkg-cr in"><span class="k">+ Cash आया since then</span><span class="v">'+rs(e.cin)+'</span></div>'
+      +'<div class="lkg-cr out"><span class="k">− Cash गया since then</span><span class="v">'+rs(e.cout)+'</span></div>'
+      +'<div class="lkg-cr tot"><span class="k">Should be about</span><span class="v">'+(e.exp<0?'−':'')+rs(e.exp)+'</span></div></div>'
+      +'<div class="lkg-q">How much cash do you have in hand now?</div>'+input()
+      +'<div class="lkg-go" onclick="CIH.check()">Check</div>'
+      +'<div class="lkg-link"><span onclick="CIH.reset()">↺ Reset cash in hand</span><span onclick="CIH.hist()">☰ History</span></div>');
+    focusAmt();
+  }
+  function first(){
+    show(hd('Count cash in hand','First time · one count, that’s it')
+      +'<div class="lkg-q">How much cash do you have in hand right now?</div>'+input()
+      +'<div class="lkg-info"><span class="ii">'+IC.galla+'</span><div>This becomes your <b>starting cash</b>. After this, Live Khaata works out what your cash in hand should be from your <b>Cash</b> entries.</div></div>'
+      +'<div class="lkg-info"><span class="ii">'+IC.upi+'</span><div><b>UPI is not counted.</b> Your bank app already shows that balance.</div></div>'
+      +'<div class="lkg-go" style="margin-top:14px" onclick="CIH.saveFirst()">Save starting cash</div>');
+    focusAmt();
+  }
+  function saveFirst(){
+    var v=readAmt(); if(v===null) return err('Enter the cash you have in hand');
+    add({kind:'count', first:true, ts:Date.now(), amt:v, exp:v, gap:0, lim:limit()});
+    close(); paint();
+    try{ toast('✓ Starting cash saved: '+rs(v)); }catch(e){}
+  }
+  function check(){
+    var v=readAmt(); if(v===null) return err('Enter the cash you have in hand');
+    var e=expected(); if(!e) return first();
+    S.pending={amt:v, exp:e.exp, gap:v-e.exp};
+    result();
+  }
+  function act(fn,ic,t,s){ return '<div class="lkg-a" onclick="CIH.'+fn+'"><span class="ai">'+IC[ic]+'</span><div><div class="at">'+t+'</div><div class="as">'+s+'</div></div><span class="ch">›</span></div>'; }
+  function result(){
+    var p=S.pending; if(!p) return close();
+    var k=classify(p.gap), w=week(p.gap), base=rs(p.amt)+' counted · about '+(p.exp<0?'−':'')+rs(p.exp)+' expected';
+    var wk=wkLine(w.net,'<span class="r" onclick="CIH.done(\'\',\'hist\')">History ›</span>');
+    var html;
+    if(k==='ok' && p.gap===0){
+      html='<div class="lkg-res ok"><div class="ic">'+IC.check+'</div><div class="t">Cash in hand matches</div><div class="s">'+base+'</div></div>'
+        +'<div class="lkg-go" onclick="CIH.done(\'\')">Done</div><div class="lkg-hint">The next count starts from '+rs(p.amt)+'.</div>';
+    } else if(k==='ok'){
+      html='<div class="lkg-res ok"><div class="ic">'+IC.check+'</div><div class="t">Matches roughly</div><div class="s">'+base+'<br><b style="color:var(--lk-amber)">'+rs(p.gap)+' '+(p.gap<0?'short':'extra')+'</b> · within your '+rs(limit())+' small-gap limit</div></div>'
+        +wk
+        +(p.gap<0
+          ? '<div class="lkg-two"><div class="lkg-go o" style="font-size:14px" onclick="CIH.smallExp()">Add as small expenses</div><div class="lkg-go" onclick="CIH.done(\'\')">Done</div></div>'
+            +'<div class="lkg-hint">"Add as small expenses" saves one '+rs(p.gap)+' Cash गया (chai, pen etc.). Optional.</div>'
+          : '<div class="lkg-go" onclick="CIH.done(\'\')">Done</div><div class="lkg-hint">The next count starts from '+rs(p.amt)+'.</div>');
+    } else if(k==='short'){
+      html='<div class="lkg-res sh"><div class="ic">'+IC.bang+'</div><div class="t">'+rs(p.gap)+' short</div><div class="s">'+base+'</div></div>'
+        +wk+'<div class="lkg-q">Know where it went? <span style="color:var(--lk-tx3);font-weight:500">(optional)</span></div>'
+        +act('missed()','plus','Missed a cash entry','Add it now, then count again')
+        +act("done('home')",'home','Taken home','Not counted in आया/गया or profit')
+        +act("done('bank')",'bank','Deposited in bank','Not counted in आया/गया or profit')
+        +'<div class="lkg-go o" style="margin-top:12px" onclick="CIH.done(\'\')">Leave it · Done</div><div class="lkg-hint">Saved on today’s date. The next count starts from '+rs(p.amt)+'.</div>';
+    } else {
+      html='<div class="lkg-res ex"><div class="ic">'+IC.bang+'</div><div class="t">'+rs(p.gap)+' extra</div><div class="s">'+base+'<br>A cash आया may have been missed.</div></div>'
+        +wk+'<div class="lkg-two"><div class="lkg-go o" onclick="CIH.missed()">+ Add entry</div><div class="lkg-go" onclick="CIH.done(\'\')">Done</div></div>'
+        +'<div class="lkg-hint">Saved on today’s date. The next count starts from '+rs(p.amt)+'.</div>';
+    }
+    show(html,'dismissResult');
+  }
+  function done(reason, then){
+    var p=S.pending; if(!p) return close();
+    add({kind:'count', ts:Date.now(), amt:p.amt, exp:p.exp, gap:Math.round(p.gap), lim:limit(), reason:reason||''});
+    S.pending=null; close(); paint();
+    if(reason==='bank') try{ toast('✓ Saved · '+rs(p.gap)+' deposited in bank'); }catch(e){}
+    else if(reason==='home') try{ toast('✓ Saved · '+rs(p.gap)+' taken home'); }catch(e){}
+    else try{ toast('✓ Cash in hand saved: '+rs(p.amt)); }catch(e){}
+    if(then==='hist') hist();
+  }
+  function dismissResult(){ done(''); }
+  // Record the gap as one Cash गया just BEFORE the count, so the next count
+  // doesn't subtract it a second time.
+  function smallExp(){
+    var p=S.pending; if(!p || p.gap>=0) return done('');
+    var ts=Date.now(), amt=Math.abs(Math.round(p.gap));
+    try{
+      var ds=today(), r=(typeof _lgRecFor==='function') ? _lgRecFor(ds) : lgGetOrCreateRec(ds);
+      if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
+      r.lgBoxes.push({ n:r.lgBoxes.filter(function(b){ return b.type==='expense'; }).length+1, type:'expense', amount:amt,
+        note:'Small expenses · chai, pen etc.', ts:ts-1000, src:'cih', dir:'out', method:'Cash', addedAt:ts });
+      r.lgSaved=false; r.lgSavedAt=null;
+      lgPersistRec(r);
+      try{ if(window.lgState && window.lgState.date===ds && typeof lgRenderTotals==='function') lgRenderTotals(); }catch(e){}
+    }catch(e){ try{ toast('Could not add the entry',true); }catch(_){} return; }
+    add({kind:'count', ts:ts, amt:p.amt, exp:p.exp, gap:Math.round(p.gap), lim:limit(), reason:'smallexp'});
+    S.pending=null; close(); paint();
+    try{ toast('✓ '+rs(amt)+' added as small expenses'); }catch(e){}
+  }
+  function missed(){
+    var p=S.pending, dir=(p && p.gap>0)?'in':'out';
+    close();
+    try{
+      lgBackStart(today(),'type');
+      window._dpReopen=null;
+      if(typeof eeSetDir==='function') eeSetDir(dir);
+      _eeMode='Cash'; if(typeof _eePaint==='function') _eePaint();
+    }catch(e){}
+    try{ toast('Add the missed entry, then count again'); }catch(e){}
+  }
+
+  /* ---------- reset ---------- */
+  function reset(){
+    S.reason='';
+    show(hd('Reset cash in hand','Start again from a new amount · any time',IC.reset,true)
+      +'<div class="lkg-q">New cash in hand</div>'+input()
+      +'<div class="lkg-q">Reason</div><div class="lkg-chips" id="lkg-chips">'
+      +REASONS.map(function(r){ return '<span class="lkg-chip" data-r="'+r[0]+'" onclick="CIH.pick(\''+r[0]+'\')">'+r[1]+'</span>'; }).join('')+'</div>'
+      +'<input class="lkg-note" id="lkg-note" maxlength="60" placeholder="Note (optional)" oninput="CIH.cnt()"><div class="lkg-cnt" id="lkg-cnt">0 / 60</div>'
+      +'<div class="lkg-err" id="lkg-err2"></div>'
+      +'<div class="lkg-go" style="margin-top:8px" onclick="CIH.saveReset()">Save reset</div><div class="lkg-hint">Saved in history with your note. Sales, profit and statements stay the same.</div>');
+    focusAmt();
+  }
+  function pick(r){
+    S.reason=r;
+    var c=document.getElementById('lkg-chips'); if(c) Array.prototype.forEach.call(c.children,function(x){ x.classList.toggle('on', x.getAttribute('data-r')===r); });
+    var n=document.getElementById('lkg-note'); if(n){ n.placeholder=(r==='other')?'Write a short note':'Note (optional)'; if(r==='other') setTimeout(function(){ try{ n.focus(); }catch(e){} },50); }
+    var e=document.getElementById('lkg-err2'); if(e) e.textContent='';
+  }
+  function cnt(){ var n=document.getElementById('lkg-note'), c=document.getElementById('lkg-cnt'), e=document.getElementById('lkg-err2'); if(n&&c) c.textContent=String(n.value||'').length+' / 60'; if(e) e.textContent=''; }
+  function saveReset(){
+    var v=readAmt(); if(v===null) return err('Enter the new cash in hand');
+    var note=String((document.getElementById('lkg-note')||{}).value||'').trim().slice(0,60);
+    var e2=document.getElementById('lkg-err2');
+    if(!S.reason){ if(e2) e2.textContent='Pick a reason'; return; }
+    if(S.reason==='other' && !note){ if(e2) e2.textContent='Write a short note for "Other"'; return; }
+    add({kind:'reset', ts:Date.now(), amt:v, reason:S.reason, note:note});
+    close(); paint();
+    try{ toast('✓ Cash in hand reset to '+rs(v)); }catch(e){}
+  }
+
+  /* ---------- history ---------- */
+  function hist(){
+    var a=load().sort(function(x,y){ return (y.ts||0)-(x.ts||0); }).slice(0,60), w=week(), L=limit();
+    var rows=a.map(function(x){
+      var t='<div class="t">'+dayLbl(x.ts)+'<br>'+clock(x.ts)+'</div>';
+      if(x.kind==='reset'){
+        var why=RLABEL[x.reason]||'Reset';
+        var s=(x.reason==='other' && x.note) ? 'Other · <i>"'+esc(x.note)+'"</i>' : (esc(why)+(x.note?' · <i>"'+esc(x.note)+'"</i>':''));
+        return '<div class="lkg-hr"><span class="i r">'+IC.reset+'</span><div><div class="a">Reset to '+rs(x.amt)+'</div><div class="s">'+s+'</div></div>'+t+'</div>';
+      }
+      var bd, sub;
+      if(x.first){ sub='starting cash'; bd='<span class="lkg-bd ok">Start</span>'; }
+      else {
+        sub='about '+(x.exp<0?'−':'')+rs(x.exp)+' expected';
+        var lim=x.lim||L, g=x.gap||0;
+        if(EXPLAINED[x.reason]) bd='<span class="lkg-bd ok">'+rs(g)+' · '+esc(RLABEL[x.reason])+'</span>';
+        else if(g===0) bd='<span class="lkg-bd ok">Matches</span>';
+        else if(Math.abs(g)<=lim) bd='<span class="lkg-bd sm">'+rs(g)+' '+(g<0?'short':'extra')+' · small</span>';
+        else bd='<span class="lkg-bd '+(g<0?'sh':'sm')+'">'+rs(g)+' '+(g<0?'short':'extra')+'</span>';
+      }
+      return '<div class="lkg-hr"><span class="i c">'+IC.check+'</span><div><div class="a">Counted '+rs(x.amt)+'</div><div class="s">'+sub+'</div>'+bd+'</div>'+t+'</div>';
+    }).join('');
+    show(hd('Cash in hand history','Counts and resets · newest first')
+      +wkLine(w.net,' · '+w.counts+' count'+(w.counts===1?'':'s')+' · '+w.resets+' reset'+(w.resets===1?'':'s'))
+      +'<div class="lkg-lim">Small-gap limit '+[50,100,200].map(function(v){ return '<b class="'+(v===L?'on':'')+'" onclick="CIH.setLimit('+v+')">₹'+v+'</b>'; }).join('')+'</div>'
+      +(rows || '<div class="lkg-empty">No counts yet. Tap “Count cash in hand” to start.</div>'));
+  }
+  function setLimit(v){ setLimitVal(v); hist(); paint(); }
+
+  /* ---------- say the amount ---------- */
+  function stopMic(){ try{ if(S.listening){ S.listening.abort ? S.listening.abort() : S.listening.stop(); } }catch(e){} S.listening=null; var m=document.getElementById('lkg-mic'); if(m) m.classList.remove('on'); }
+  function mic(){
+    if(S.listening) return stopMic();
+    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){ try{ toast('Voice is not available here. Please type the amount.',true); }catch(e){} return; }
+    var r; try{ r=new SR(); }catch(e){ return; }
+    r.lang='hi-IN'; r.interimResults=false; r.maxAlternatives=3; try{ r.continuous=false; }catch(e){}
+    var m=document.getElementById('lkg-mic'); if(m) m.classList.add('on');
+    S.listening=r;
+    r.onresult=function(ev){
+      var best=0;
+      try{
+        var res=ev.results[ev.results.length-1];
+        for(var i=0;i<res.length && !best;i++){
+          var txt=res[i].transcript||'';
+          var p=(typeof window._lgParseHi==='function') ? window._lgParseHi(txt) : null;
+          best=(p && p.amount>0) ? Math.round(p.amount) : (parseInt(String(txt).replace(/[^0-9]/g,''),10)||0);
+        }
+      }catch(e){}
+      var el=document.getElementById('lkg-amt');
+      if(best>0 && el){ el.value=best.toLocaleString('en-IN'); err(''); }
+      else err('Could not catch the amount. Please try again or type it.');
+    };
+    r.onerror=function(){ err('Could not catch the amount. Please try again or type it.'); };
+    r.onend=function(){ S.listening=null; var mm=document.getElementById('lkg-mic'); if(mm) mm.classList.remove('on'); };
+    try{ r.start(); }catch(e){ S.listening=null; if(m) m.classList.remove('on'); }
+  }
+
+  window.CIH={open:open, close:close, check:check, saveFirst:saveFirst, done:done, dismissResult:dismissResult, smallExp:smallExp,
+    missed:missed, reset:reset, pick:pick, cnt:cnt, saveReset:saveReset, hist:hist, setLimit:setLimit, mic:mic, fmtIn:fmtIn,
+    paint:paint, _expected:expected, _week:week, _load:load};
+  window.cihPaint=paint;
+  window.cihOpen=open;
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) try{ paint(); }catch(e){} });
+})();
+
+</script>
 </body>
 </html>

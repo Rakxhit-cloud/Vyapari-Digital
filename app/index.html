@@ -1185,9 +1185,6 @@ body.notif-modal-open { overflow: hidden; }
 .trial-days { font-size: 11px; font-weight: 800; color: #50a0f0; }
 .trial-sub { font-size: 8px; color: #305080; margin-top: 1px; }
 .trial-badge { font-size: 8px; background: #1a2a40; border: 1px solid #2a4a60; color: #4080c0; padding: 3px 8px; border-radius: 5px; font-weight: 700; }
-/* ── Install Sheet ── */
-.install-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
-.install-overlay.show { display: flex; }
 
 /* ===== Already Registered Screen (browser, registered users) ===== */
 #screen-already-registered { position: fixed; inset: 0; z-index: 99998; background: #0a1530; display: none; flex-direction: column; padding: 24px 16px; overflow-y: auto; }
@@ -1237,26 +1234,9 @@ body.notif-modal-open { overflow: hidden; }
 .bb-open-label { font-size: 13px; color: #c8b880; text-align: center; margin-bottom: 16px; font-weight: 500; }
 .bb-install-btn { background: linear-gradient(135deg, #f0c040 0%, #d4a020 100%); color: #1a0a04; border: 1.5px solid #f0c040; border-radius: 12px; padding: 13px 22px; font-size: 14px; font-weight: 700; text-align: center; width: 100%; max-width: 280px; cursor: pointer; letter-spacing: 0.3px; box-shadow: 0 2px 8px rgba(240, 192, 64, 0.25); }
 .bb-install-btn:active { opacity: 0.85; transform: scale(0.98); }
-.install-sheet { background: #0a1530; border-radius: 20px 20px 0 0; border-top: 2px solid #d4a850; padding: 20px 20px 32px; width: 100%; max-width: 480px; animation: slideUp .3s ease; }
-.install-sheet-handle { width: 40px; height: 4px; background: #4a3878; border-radius: 2px; margin: 0 auto 16px; }
-.install-sheet-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-.install-sheet-appicon { width: 60px; height: 60px; border: 2px solid #d4a850; border-radius: 14px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(212, 168, 80, 0.25); overflow: hidden; background: #0a1530; display: flex; align-items: center; justify-content: center; }
-.install-sheet-appicon img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.install-sheet-appname { font-size: 19px; font-weight: 500; color: #e8d8b8; letter-spacing: -0.3px; }
-.install-sheet-appsub { font-size: 11px; color: #b0a0e8; margin-top: 3px; }
-.install-sheet-divider { height: 1px; background: #2a4078; margin-bottom: 16px; }
-.install-sheet-steps { margin-bottom: 18px; }
-.install-step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
-.install-step-num { width: 24px; height: 24px; background: #4a3818; border: 1.5px solid #d4a850; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: #d4a850; flex-shrink: 0; margin-top: 1px; }
-.install-step-text { font-size: 13px; color: #b0a0e8; line-height: 1.6; }
-.install-step-text strong { color: #e8d8b8; font-weight: 500; }
-.install-sheet-benefits { display: flex; gap: 8px; margin-bottom: 20px; }
 .install-benefit { flex: 1; background: #14254a; border: 1px solid #2a4078; border-radius: 9px; padding: 10px 6px; text-align: center; }
 .install-benefit-icon { font-size: 16px; margin-bottom: 4px; }
 .install-benefit-text { font-size: 10px; color: #d4a850; font-weight: 500; }
-.install-sheet-btn { width: 100%; background: linear-gradient(135deg, #d4a850 0%, #e8c870 100%); border: 2px solid #f0d890; color: #1a1208; font-size: 15px; font-weight: 500; padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 10px; letter-spacing: .3px; box-shadow: 0 2px 0 #8a6818; }
-.install-sheet-btn:active { opacity: .85; }
-.install-sheet-later { width: 100%; background: transparent; border: none; color: #b0a0e8; font-size: 12px; padding: 8px; cursor: pointer; }
 
 /* Portrait tablets have the extra height — go a step larger again */
 /* ── Responsive: ignore Android system text scaling ── */
@@ -2899,38 +2879,6 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 
 <div id="main-app" style="display:none;">
 
-<!-- Install Sheet -->
-<div class="install-overlay" id="install-banner">
-  <div class="install-sheet">
-    <div class="install-sheet-handle"></div>
-    <div class="install-sheet-top">
-      <div class="install-sheet-appicon"><img src="/icon-192.png" alt="Live Khaata"></div>
-      <div>
-        <div class="install-sheet-appname">Live Khaata</div>
-        <div class="install-sheet-appsub">📲 होम स्क्रीन पर इंस्टॉल करें — बिल्कुल फ्री</div>
-      </div>
-    </div>
-    <div class="install-sheet-divider"></div>
-    <div class="install-sheet-benefits">
-      <div class="install-benefit"><div class="install-benefit-icon">⚡</div><div class="install-benefit-text">तेज़ खुलेगा</div></div>
-      <div class="install-benefit"><div class="install-benefit-icon">📵</div><div class="install-benefit-text">Offline काम</div></div>
-      <div class="install-benefit"><div class="install-benefit-icon">🖥️</div><div class="install-benefit-text">Full Screen</div></div>
-      <div class="install-benefit"><div class="install-benefit-icon">🔔</div><div class="install-benefit-text">Notification</div></div>
-    </div>
-    <div class="install-sheet-steps" id="install-steps-android">
-      <div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">नीचे <strong>इंस्टॉल करें</strong> बटन दबाएं</div></div>
-      <div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Chrome का popup आएगा — <strong>Install</strong> दबाएं</div></div>
-      <div class="install-step"><div class="install-step-num">3</div><div class="install-step-text">होम स्क्रीन पर <strong>हिसाब icon</strong> दिखेगा ✅</div></div>
-    </div>
-    <div class="install-sheet-steps" id="install-steps-ios" style="display:none;">
-      <div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Safari में <strong>Share बटन (⬆️)</strong> दबाएं</div></div>
-      <div class="install-step"><div class="install-step-num">2</div><div class="install-step-text"><strong>"Add to Home Screen"</strong> चुनें</div></div>
-      <div class="install-step"><div class="install-step-num">3</div><div class="install-step-text">ऊपर <strong>Add</strong> दबाएं — होम स्क्रीन पर icon आ जाएगा ✅</div></div>
-    </div>
-    <button class="install-sheet-btn" id="install-banner-btn">📲 अभी इंस्टॉल करें</button>
-    <button class="install-sheet-later" id="install-banner-dismiss">बाद में करूँगा / करूँगी</button>
-  </div>
-</div>
 <div class="sync-status-bar">
   <span class="sync-dot synced" id="sync-dot"></span>
   <span class="sync-status-txt" id="sync-status-txt">☁️ Cloud Sync चालू है</span>
@@ -13672,7 +13620,7 @@ history.pushState({app:1}, '', location.href);
     if(isOpen(_clm)){ creditListClose(); return true; }
     var _bv=document.getElementById('bill-viewer');
     if(isOpen(_bv)){ closeBillViewer(); return true; }
-    const ov=['lg-keypad-modal','lg-box-action','del-acct-overlay','maal-edit-overlay','mk-pop-overlay','supplier-pay-overlay','lg-note-modal','action-popup','confirm-popup','edit-popup','maal-ledger-overlay','install-banner'];
+    const ov=['lg-keypad-modal','lg-box-action','del-acct-overlay','maal-edit-overlay','mk-pop-overlay','supplier-pay-overlay','lg-note-modal','action-popup','confirm-popup','edit-popup','maal-ledger-overlay',];
     for(const id of ov){const el=document.getElementById(id);if(isOpen(el)){el.classList.remove('show');el.classList.remove('compact');el.classList.remove('kbd-open');if(el.style.display)el.style.display='';return true;}}
     const more=document.getElementById('more-menu');
     if(more && more.style.display==='block'){more.style.display='none';return true;}
@@ -15048,104 +14996,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 </script>
 
 <script>
-(function() {
-  let deferredPrompt = null;
-  const BANNER_KEY = 'hk_install_dismissed_at';
-  const REMIND_DAYS = 3;
-
-  // Detect iOS
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  if (isIOS) {
-    document.getElementById('install-steps-android').style.display = 'none';
-    document.getElementById('install-steps-ios').style.display = 'block';
-  }
-
-  function isInstalled() {
-    return window.matchMedia('(display-mode: standalone)').matches ||
-           window.navigator.standalone === true;
-  }
-
-  function shouldShowBanner() {
-    if (window.LK && window.LK.native) return false;   // the native Play app is already installed
-    if (isInstalled()) return false;
-    const dismissedAt = localStorage.getItem(BANNER_KEY);
-    if (!dismissedAt) return true;
-    if (dismissedAt === 'installed') return false;
-    const daysSince = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
-    return daysSince >= REMIND_DAYS;
-  }
-
-  function showBanner() {
-    if (shouldShowBanner()) {
-      document.getElementById('install-banner').classList.add('show');
-    }
-  }
-
-  function hideBanner() {
-    document.getElementById('install-banner').classList.remove('show');
-  }
-
-  // Capture Chrome's native prompt
-  window.addEventListener('beforeinstallprompt', function(e) {
-    e.preventDefault();
-    deferredPrompt = e;
-  });
-
-  // Show after login
-  const appEl = document.getElementById('main-app');
-  const observer = new MutationObserver(function() {
-    if (appEl.style.display !== 'none') {
-      setTimeout(showBanner, 2000);
-      observer.disconnect();
-    }
-  });
-  observer.observe(appEl, { attributes: true, attributeFilter: ['style'] });
-  if (appEl.style.display !== 'none') {
-    setTimeout(showBanner, 2000);
-  }
-
-  // Install button
-  document.getElementById('install-banner-btn').addEventListener('click', async function() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      hideBanner();
-      if (outcome === 'accepted') {
-        localStorage.setItem(BANNER_KEY, 'installed');
-      }
-    } else if (isIOS) {
-      // iOS — steps already shown, just close
-      hideBanner();
-      localStorage.setItem(BANNER_KEY, Date.now().toString());
-    } else {
-      // Android fallback — Chrome menu
-      alert('Chrome menu (⋮) दबाएं → "Add to Home screen" या "Install app" चुनें');
-      hideBanner();
-      localStorage.setItem(BANNER_KEY, Date.now().toString());
-    }
-  });
-
-  // Dismiss
-  document.getElementById('install-banner-dismiss').addEventListener('click', function() {
-    localStorage.setItem(BANNER_KEY, Date.now().toString());
-    hideBanner();
-  });
-
-  // Close on overlay tap
-  document.getElementById('install-banner').addEventListener('click', function(e) {
-    if (e.target === this) {
-      localStorage.setItem(BANNER_KEY, Date.now().toString());
-      hideBanner();
-    }
-  });
-
-  // Auto hide once installed
-  window.addEventListener('appinstalled', function() {
-    localStorage.setItem(BANNER_KEY, 'installed');
-    hideBanner();
-  });
-})();
+/* Install sheet removed: Live Khaata is installed only from the Play Store. */
 
 // ============================================================
 // PWA Detection & Browser Block Screen
@@ -15255,17 +15106,11 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     }, 1500);
   };
 
-  // Install button handler — reuses existing deferredPrompt mechanism
+  // Install button → Play Store listing
   var bbBtn = document.getElementById('bb-install-btn');
   if (bbBtn) {
     bbBtn.addEventListener('click', function(){
-      // Try to fire native install prompt by clicking the existing hidden install banner button
-      var existingBtn = document.getElementById('install-banner-btn');
-      if (existingBtn) {
-        existingBtn.click();
-      } else {
-        alert('Chrome menu (⋮) से "Add to Home screen" या "Install app" चुनें');
-      }
+      window.location.href = 'https://play.google.com/store/apps/details?id=app.livekhaata.twa';
     });
   }
 
@@ -15327,15 +15172,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
   var arBtn = document.getElementById('ar-install-btn');
   if (arBtn) {
     arBtn.addEventListener('click', function(){
-      var existingBtn = document.getElementById('install-banner-btn');
-      if (existingBtn) {
-        existingBtn.click();
-      } else {
-        // Fallback: open install banner overlay
-        var banner = document.getElementById('install-banner');
-        if (banner) banner.classList.add('show');
-        else alert('Chrome menu (⋮) से "Add to Home screen" या "Install app" चुनें');
-      }
+      window.location.href = 'https://play.google.com/store/apps/details?id=app.livekhaata.twa';
     });
   }
 

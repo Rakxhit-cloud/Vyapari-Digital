@@ -87,7 +87,7 @@
         if(!files.length) return go(null);
         return Promise.all(files.map(function(f,i){
           return _b64(f).then(function(data){
-            return FS.writeFile({ path:'share/'+Date.now()+'_'+_safeName(f,i), data:data, directory:'CACHE', recursive:true });
+            return FS.writeFile({ path:'share/'+Date.now()+'-'+i+'/'+_safeName(f,i), data:data, directory:'CACHE', recursive:true });
           }).then(function(w){ return w.uri; });
         })).then(go);
       };
@@ -100,7 +100,7 @@
     var _ERR = { AUDIO:'audio-capture', INSUFFICIENT_PERMISSIONS:'not-allowed', NETWORK:'network', NETWORK_TIMEOUT:'network',
                  NO_MATCH:'no-speech', SPEECH_TIMEOUT:'no-speech', RECOGNIZER_BUSY:'aborted', CLIENT:'aborted',
                  SERVER:'network', SERVER_DISCONNECTED:'network' };
-    var _busy = false;
+    var _busy = false, _permOK = false;
     function NativeSR(){
       this.lang = 'hi-IN'; this.interimResults = true; this.continuous = true; this.maxAlternatives = 1;
       this.onstart = this.onaudiostart = this.onsoundstart = this.onspeechstart = this.onaudioend = null;
@@ -153,19 +153,26 @@
             self._finish();
           });
       };
-      Promise.resolve(SRP.checkPermissions ? SRP.checkPermissions() : { speechRecognition:'granted' })
+      Promise.resolve(_permOK ? { speechRecognition:'granted' } : (SRP.checkPermissions ? SRP.checkPermissions() : { speechRecognition:'granted' }))
         .then(function(p){
           if(p && p.speechRecognition === 'granted') return true;
           return SRP.requestPermissions().then(function(q){ return !!(q && q.speechRecognition === 'granted'); });
         })
         .then(function(ok){
           if(!ok){ self._err = 'not-allowed'; self._finish(); return; }
+          _permOK = true;
           return begin();
         })
         .catch(function(){ self._err = 'not-allowed'; self._finish(); });
     };
     NativeSR.prototype.stop = function(){
       var self = this;
+      if(this._text){
+        // Words already heard: deliver them now; Android finishes its pass in the background.
+        try{ Promise.resolve(SRP.stop()).catch(function(){}); }catch(e){}
+        this._finish();
+        return;
+      }
       try{ Promise.resolve(SRP.stop()).catch(function(){}); }catch(e){}
       // if the engine never reports "stopped", close the session ourselves
       setTimeout(function(){ if(!self._done) self._finish(); }, 1600);
@@ -15059,6 +15066,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
   }
 
   function shouldShowBanner() {
+    if (window.LK && window.LK.native) return false;   // the native Play app is already installed
     if (isInstalled()) return false;
     const dismissedAt = localStorage.getItem(BANNER_KEY);
     if (!dismissedAt) return true;

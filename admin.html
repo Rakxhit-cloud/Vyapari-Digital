@@ -2048,7 +2048,8 @@ function _tvTimeline(uid, day){
                 : (m.engine === 'chirp' || m.engine === 'chirp-only') ? 'cloud engine'
                 : 'upload path';
       what = 'Voice <span class="tl-tag ok">✓ understood</span><span class="tl-dim">'+sec+' · '+how
-           + (m.via === 'phone-parse' ? ' · read on phone' : '')+'</span>';
+           + (m.via === 'phone-parse' ? ' · read on phone' : '')
+           + (Number(m.guess) > 1 ? ' · <span class="tl-tag ok">Google guess #'+Number(m.guess)+'</span>' : '')+'</span>';
     } else if (e.event === 'voice_sr') {
       what = 'Voice <span class="tl-tag bad">✗</span> <span class="tl-bad">'+_tvEsc(_TV_VOICE_SR[m.err] || m.err || 'failed')+'</span>'
            + (m.err === 'no-amount' && m.txt ? ' <span class="tl-dim">heard "'+_tvEsc(m.txt)+'"</span>' : '')

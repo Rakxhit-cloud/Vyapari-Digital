@@ -105,19 +105,21 @@
       this.lang = 'hi-IN'; this.interimResults = true; this.continuous = true; this.maxAlternatives = 1;
       this.onstart = this.onaudiostart = this.onsoundstart = this.onspeechstart = this.onaudioend = null;
       this.onresult = this.onerror = this.onend = null;
-      this._subs = []; this._text = ''; this._done = false; this._err = null; this._spoke = false;
+      this._subs = []; this._text = ''; this._alts = []; this._done = false; this._err = null; this._spoke = false;
     }
     NativeSR.prototype._fire = function(n, ev){ try{ if(typeof this[n]==='function') this[n](ev||{}); }catch(e){} };
-    NativeSR.prototype._result = function(text, fin){
+    NativeSR.prototype._result = function(text, fin, more){
       var alt = { transcript: text, confidence: fin ? 0.9 : 0 };
-      var res = [alt]; res.isFinal = !!fin; res.item = function(i){ return res[i]; };
+      var res = [alt];
+      (more || []).forEach(function(m){ if(m && m !== text) res.push({ transcript: String(m), confidence: 0 }); });
+      res.isFinal = !!fin; res.item = function(i){ return res[i]; };
       var list = [res]; list.item = function(i){ return list[i]; };
       this._fire('onresult', { resultIndex: 0, results: list });
     };
     NativeSR.prototype._finish = function(){
       if(this._done) return; this._done = true; _busy = false;
       var self = this;
-      if(this._text) this._result(this._text, true);
+      if(this._text) this._result(this._text, true, this._alts);
       if(this._err) this._fire('onerror', { error: this._err });
       this._fire('onaudioend');
       this._subs.forEach(function(h){ try{ h && h.remove && h.remove(); }catch(e){} });
@@ -131,13 +133,15 @@
     NativeSR.prototype.start = function(){
       var self = this;
       if(_busy) throw new Error('InvalidStateError');
-      _busy = true; this._done = false; this._text = ''; this._err = null;
+      _busy = true; this._done = false; this._text = ''; this._alts = []; this._err = null;
       var begin = function(){
         self._sub('partialResults', function(e){
           var t = (e && ((e.matches && e.matches[0]) || e.accumulatedText)) || '';
           if(!t) return;
           if(!self._spoke){ self._spoke = true; self._fire('onsoundstart'); self._fire('onspeechstart'); }
-          self._text = t; self._result(t, false);
+          self._text = t;
+          self._alts = (e && e.matches && e.matches.length > 1) ? e.matches.slice(1, 5).map(String) : [];
+          self._result(t, false);
         });
         self._sub('error', function(e){ self._err = _ERR[e && e.code] || 'aborted'; });
         self._sub('listeningState', function(e){
@@ -8241,7 +8245,7 @@ function launchApp(uid) {
   // legitimately in-app, so treat it as PWA-confirmed and proceed.
   var isFreshSession = false;
   try { isFreshSession = (sessionStorage.getItem('hk_fresh_session') === '1'); } catch(e){}
-  var isPwaMode = isPlaySrc || isFreshSession;
+  var isPwaMode = isPlaySrc || isFreshSession || !!(window.LK && window.LK.native);
   try {
     isPwaMode = isPwaMode ||
                 (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
@@ -15003,6 +15007,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
 // ============================================================
 (function(){
   function isPWA() {
+    try { if (window.LK && LK.native) return true; } catch(e){}
     // Live detection (flaky on freshly-installed PWAs — display-mode media
     // query can return false during the first few seconds after install on
     // some Android browsers, including Samsung Internet and Chrome WebView).
@@ -16172,20 +16177,41 @@ function npReopenPreview(){
     fin=String(fin||'').trim(); if(!fin) return;
     S.srText=_srJoin((S.srText||'').trim(), fin);
   }
+  /* Google returns up to 5 guesses for each phrase. The top guess is kept
+     whenever it has an amount and a direction; otherwise the first other guess
+     that has both wins (e.g. "पांच सौ मिले" ranked 2nd). If the top guess has an
+     amount but no direction, a lower guess can only supply the direction for the
+     SAME amount. Same reply from Google, no extra wait. */
+  function _srBest(S){
+    var top=_srAll(S), tp=top?_lgParseHi(top):{amount:0,direction:'unclear'};
+    function good(p){ return p && p.amount>0 && (p.direction==='in' || p.direction==='out'); }
+    if(good(tp) || !(S.srAlts && S.srAlts.length)) return { txt:top, p:tp, rank:1 };
+    var firstAmt=null;
+    for(var k=0;k<S.srAlts.length;k++){
+      var t=_srClean(_srJoin(_srJoin((S.srAltBase||'').trim(), String(S.srAlts[k]).trim()), (S.srInterim||'').trim()));
+      if(!t) continue;
+      var p=_lgParseHi(t);
+      // top guess already has an amount: a lower guess may only add the direction, never change the amount
+      if(good(p) && (!(tp.amount>0) || p.amount===tp.amount)) return { txt:t, p:p, rank:k+2 };
+      if(!firstAmt && p.amount>0) firstAmt={ txt:t, p:p, rank:k+2 };
+    }
+    if(tp.amount>0) return { txt:top, p:tp, rank:1 };
+    return firstAmt || { txt:top, p:tp, rank:1 };
+  }
   /* Returns true when the transcript alone answered it — audio never leaves the phone. */
   function _srFinish(type){
     var S=LGV[type];
     if(S.srUsed) return true;
-    var txt=_srAll(S);
+    var B=_srBest(S), txt=B.txt;
     if(!txt) return false;   // an error after a good transcript is irrelevant — the words are the result
-    var p=_lgParseHi(txt);
+    var p=B.p;
     if(!p.amount || p.amount<=0) return false;
     S.srUsed=true;
     S.amt=p.amount; S.note=p.note; S.dir=p.direction; S.raw=txt;
     var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+p.amount.toLocaleString('en-IN');
     var nel=el('lg-vnote-'+type); if(nel) nel.textContent=p.note||'';
     setState(type,'res');
-    try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now()),dir:p.direction,via:p.via||'none'}); }catch(e){}
+    try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now()),dir:p.direction,via:p.via||'none',guess:B.rank,guesses:1+((S.srAlts&&S.srAlts.length)||0)}); }catch(e){}
     return true;
   }
   /* v4.4 — UNCLEAR CLIPS ONLY go to the server.
@@ -16283,12 +16309,13 @@ function npReopenPreview(){
     S.timer=setInterval(function(){ if(tel) tel.textContent=((Date.now()-S.t0)/1000).toFixed(1)+'s'; },100);
     var R=window.SpeechRecognition||window.webkitSpeechRecognition, r;
     try{ r=new R(); }catch(e){ _srBlock(); return _audioStart(type); }
-    S.sr=r; r.lang='hi-IN'; r.interimResults=true; r.continuous=true; r.maxAlternatives=1;
+    S.sr=r; r.lang='hi-IN'; r.interimResults=true; r.continuous=true; r.maxAlternatives=5;
+    S.srAlts=[]; S.srAltBase='';
     S.trace=[]; var _tr=function(n){ S.trace.push(n+'@'+(Date.now()-S.t0)+'ms'); };
     /* Show the amount the moment it is heard, then stop after a short pause. */
     function endpoint(){
       if(S.endT){ clearTimeout(S.endT); S.endT=null; }
-      var all=_srAll(S), p=all?_lgParseHi(all):{amount:0};
+      var B=_srBest(S), all=B.txt, p=all?B.p:{amount:0};
       if(live){
         var head=(p.amount>0)?('<b class="lg-live-amt">₹'+p.amount.toLocaleString('en-IN')+'</b> '):'';
         live.innerHTML=head+_esc(S.srText||'')+(S.srInterim?('<span class="dim"> '+_esc(S.srInterim)+'</span>'):'');
@@ -16311,8 +16338,13 @@ function npReopenPreview(){
     r.onresult=function(ev){
       var itm='';
       for(var i=ev.resultIndex;i<ev.results.length;i++){
-        var tr=ev.results[i][0].transcript;
-        if(ev.results[i].isFinal) _srMerge(S,tr); else itm+=tr;
+        var RS=ev.results[i], tr=RS[0].transcript;
+        if(RS.isFinal){
+          var base=S.srText||'', al=[];
+          for(var k=1;k<RS.length && k<5;k++){ var at=RS[k] && RS[k].transcript; if(at && at.trim()) al.push(at); }
+          _srMerge(S,tr);
+          S.srAltBase=base; S.srAlts=al;
+        } else itm+=tr;
       }
       S.srInterim=itm.trim();
       endpoint();

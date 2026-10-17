@@ -2467,6 +2467,133 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .lg-voice.err .lg-voice-err{display:block;}
 .lg-box-voiceicon{position:absolute;top:2px;right:2px;font-size:10px;line-height:1;z-index:2;filter:drop-shadow(0 0 3px rgba(0,0,0,0.9));}
 </style>
+<style id="lk-rn">
+/* ===== Registration: native style (v63) ===== */
+.auth-screen.rn{background:#0B1120;padding:0;align-items:stretch;justify-content:flex-start;flex-direction:column;font-family:Roboto,'Segoe UI',system-ui,sans-serif;color:#EDE6D6;overflow:hidden;}
+.auth-screen.rn.hidden{display:none;}
+.rn-bar{height:56px;flex-shrink:0;display:flex;align-items:center;gap:4px;padding:0 10px 0 4px;}
+.rn-back{width:48px;height:48px;border:none;background:transparent;color:#EDE6D6;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.rn-back:active{background:#18233D;}
+.rn-back svg{width:24px;height:24px;}
+.rn-back.ghost{visibility:hidden;}
+.rn-steps{flex:1;display:flex;gap:4px;padding-right:8px;}
+.rn-steps span{flex:1;height:4px;border-radius:4px;background:#26324F;}
+.rn-steps span.on{background:#D4A850;}
+.rn-body{flex:1;min-height:0;overflow-y:auto;padding:4px 24px 12px;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch;}
+.rn-h{font-size:27px;line-height:34px;font-weight:600;letter-spacing:-.3px;margin:8px 0 6px;color:#EDE6D6;}
+.rn-hi{font-family:'Noto Sans Devanagari',Roboto,sans-serif;font-size:15.5px;line-height:22px;font-weight:500;color:#D9B86A;margin:0 0 10px;}
+.rn-s{font-size:14.5px;line-height:21px;color:#8E9AB8;margin:0 0 24px;}
+.rn-s b{color:#EDE6D6;font-weight:500;}
+.rn-link{color:#D4A850;font-weight:600;cursor:pointer;margin-left:6px;white-space:nowrap;}
+.rn .auth-error{text-align:left;font-size:13px;border-radius:10px;padding:10px 12px;margin:0 0 14px;}
+.rn .auth-success{text-align:left;font-size:13px;border-radius:10px;padding:10px 12px;margin:0 0 14px;}
+.rn .auth-loader{margin:0 0 14px;}
+
+/* brand row (first screen) */
+.rn-brand{display:flex;align-items:center;gap:12px;margin:18px 0 26px;}
+.rn-brand img{width:52px;height:52px;border-radius:14px;flex-shrink:0;}
+.rn-brand-nm{font-size:19px;font-weight:600;color:#EDE6D6;}
+.rn-brand-nm em{font-style:normal;color:#E84545;}
+.rn-brand-tag{font-family:'Noto Sans Devanagari',Roboto,sans-serif;font-size:12.5px;color:#8E9AB8;margin-top:2px;display:flex;align-items:center;gap:6px;}
+.rn-brand-tag .lk-livedot{margin-left:0;}
+
+/* outlined text field */
+.rn-tf{position:relative;border:1.5px solid #2B3A5C;border-radius:12px;min-height:58px;display:flex;align-items:center;gap:12px;padding:0 14px;margin:8px 0 6px;transition:border-color .15s;}
+.rn-tf:focus-within{border:2px solid #D4A850;padding:0 13.5px;}
+.rn-tf label{position:absolute;top:-9px;left:11px;padding:0 5px;background:#0B1120;font-size:12px;color:#8E9AB8;line-height:16px;}
+.rn-tf:focus-within label{color:#D4A850;}
+.rn-tf .rn-pre{font-size:17px;color:#EDE6D6;padding-right:12px;border-right:1px solid #2B3A5C;height:26px;display:flex;align-items:center;flex-shrink:0;}
+.rn-tf input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:#EDE6D6;font-size:17px;letter-spacing:.3px;padding:16px 0;font-family:inherit;}
+.rn-tf input::placeholder{color:#5F6B8C;letter-spacing:0;}
+.rn-tf svg{width:22px;height:22px;color:#8E9AB8;flex-shrink:0;}
+.rn-help{font-size:12px;color:#8E9AB8;margin:0 0 16px 14px;}
+
+/* bottom action area */
+.rn-act{flex-shrink:0;padding:10px 20px calc(14px + env(safe-area-inset-bottom));}
+.rn-btn{width:100%;height:54px;border:none;border-radius:100px;background:#D4A850;color:#1A1208;font-size:16px;font-weight:600;letter-spacing:.1px;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;-webkit-tap-highlight-color:transparent;}
+.rn-btn:active{filter:brightness(.92);}
+.rn-btn:disabled{background:#2A3248;color:#6D7792;cursor:default;filter:none;}
+.rn-tbtn{display:block;width:100%;background:transparent;border:none;text-align:center;font-size:14px;font-weight:600;color:#D4A850;padding:14px 0 4px;font-family:inherit;cursor:pointer;}
+.rn-tbtn.m{color:#8E9AB8;font-weight:500;}
+.rn .gl-btn-wrap{display:block;min-height:54px;margin:0;}
+.rn .gl-nbtn{max-width:none;height:54px;border-radius:100px;border:none;font-size:16px;font-weight:500;color:#1F1F1F;}
+.rn .gl-busy{margin-top:10px;}
+.rn-alt{border-top:1px solid #1C2640;margin-top:6px;padding-top:12px;}
+.rn-alt .rn-q{font-size:13.5px;color:#8E9AB8;text-align:center;margin-bottom:10px;}
+.rn-alt .gl-btn-wrap,.rn-alt .gl-nbtn{min-height:46px;height:46px;}
+
+/* OTP */
+.rn-otp{display:flex;gap:8px;margin:0 0 16px;}
+.rn-otp .otp-digit{flex:1;width:auto;min-width:0;height:58px;border-radius:12px;border:1.5px solid #2B3A5C;background:transparent;color:#EDE6D6;font-size:24px;font-weight:500;text-align:center;outline:none;padding:0;font-family:inherit;}
+.rn-otp .otp-digit:focus{border:2px solid #D4A850;background:transparent;box-shadow:none;}
+.rn-otp.done .otp-digit{border-color:#3E7D58;background:#0F2219;color:#CDEFD8;}
+.rn-note{display:none;align-items:center;gap:10px;font-size:13.5px;line-height:19px;color:#EDE6D6;background:#111A2E;border-radius:12px;padding:12px 14px;margin-bottom:4px;}
+.rn-note.show{display:flex;}
+.rn-note .rn-spin{width:18px;height:18px;border-radius:50%;border:2.5px solid #2C3A5E;border-top-color:#D4A850;animation:spin .9s linear infinite;flex-shrink:0;}
+.rn-note.ok{background:#0F2219;color:#BFE8CC;}
+.rn-note.ok .rn-spin{display:none;}
+.rn-note svg{width:18px;height:18px;color:#62C287;flex-shrink:0;display:none;}
+.rn-note.ok svg{display:block;}
+.rn .resend-timer{text-align:left;font-size:13.5px;color:#8E9AB8;margin-top:16px;}
+.rn .resend-link{color:#D4A850;font-weight:600;}
+.rn #resend-countdown b{color:#EDE6D6;font-weight:500;font-variant-numeric:tabular-nums;}
+
+/* benefit / promise lists */
+.rn-li{display:flex;gap:16px;align-items:flex-start;padding:11px 0;}
+.rn-li .rn-ico{width:42px;height:42px;border-radius:50%;background:#1B2747;color:#D4A850;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rn-li .rn-ico svg{width:21px;height:21px;}
+.rn-li .t{font-size:15px;font-weight:500;margin:2px 0 3px;color:#EDE6D6;}
+.rn-li .d{font-size:13.5px;line-height:19px;color:#8E9AB8;}
+.rn-fine{font-size:12px;color:#8E9AB8;line-height:17px;margin-top:auto;padding-top:14px;}
+
+/* done screen */
+.rn-body.rn-center{align-items:center;text-align:center;}
+.rn-check{width:84px;height:84px;border-radius:50%;background:#11281C;display:flex;align-items:center;justify-content:center;margin:48px 0 18px;flex-shrink:0;}
+.rn-check svg{width:44px;height:44px;color:#62C287;}
+.rn-card{width:100%;background:#111A2E;border-radius:16px;padding:4px 16px;text-align:left;margin-top:6px;}
+.rn-row{display:flex;align-items:center;gap:14px;padding:14px 0;}
+.rn-row + .rn-row{border-top:1px solid #222D48;}
+.rn-row svg{width:20px;height:20px;color:#8E9AB8;flex-shrink:0;}
+.rn-row .k{font-size:12px;color:#8E9AB8;}
+.rn-row .v{font-size:15px;margin-top:2px;color:#EDE6D6;word-break:break-all;}
+
+/* terms */
+.rn-doc h3{font-size:15px;font-weight:600;margin:18px 0 5px;color:#EDE6D6;}
+.rn-doc p{font-size:13.5px;line-height:20px;color:#8E9AB8;margin:0;}
+.rn-doc .rn-price{background:#111A2E;border-radius:12px;padding:12px 14px;margin-top:8px;}
+.rn-doc .rn-price .big{font-size:15px;color:#EDE6D6;font-weight:600;margin-bottom:4px;}
+.rn-sheet{background:#111A2E;border-radius:20px 20px 0 0;padding:14px 20px calc(14px + env(safe-area-inset-bottom));flex-shrink:0;}
+.rn-chk{display:flex;gap:12px;align-items:center;font-size:14px;line-height:19px;color:#EDE6D6;margin-bottom:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.rn-chk .terms-agree-chk{width:22px;height:22px;border:2px solid #4A5778;border-radius:6px;background:transparent;}
+.rn-chk .terms-agree-chk.checked{background:#D4A850;border-color:#D4A850;}
+
+/* PIN setup (first time only) */
+.rn-pin-only{display:none;}
+#app-lock-screen.rn-pin{background:#0B1120;padding:0;align-items:stretch;justify-content:flex-start;}
+#app-lock-screen.rn-pin .alck-card:not(#alck-mode-unlock){display:none !important;}
+#app-lock-screen.rn-pin #alck-mode-unlock{max-width:none;height:100%;background:transparent;border:none;border-radius:0;box-shadow:none;padding:0;display:flex !important;flex-direction:column;}
+#app-lock-screen.rn-pin #alck-mode-unlock::before,
+#app-lock-screen.rn-pin .alck-status-pill,
+#app-lock-screen.rn-pin .alck-app-row,
+#app-lock-screen.rn-pin .alck-step-dots,
+#app-lock-screen.rn-pin .alck-recovery{display:none !important;}
+#app-lock-screen.rn-pin .rn-pin-only{display:block;}
+#app-lock-screen.rn-pin .rn-bar.rn-pin-only{display:flex;}
+#app-lock-screen.rn-pin .alck-title{font-size:27px;line-height:34px;font-weight:600;letter-spacing:-.3px;text-align:left;margin:8px 24px 6px;color:#EDE6D6;}
+#app-lock-screen.rn-pin .rn-hi{margin:0 24px 8px;}
+#app-lock-screen.rn-pin .rn-s{margin:0 24px;}
+#app-lock-screen.rn-pin .alck-err-banner{margin:16px 24px 0;width:auto;}
+#app-lock-screen.rn-pin .alck-dots-row{gap:22px;margin:30px 0 0;}
+#app-lock-screen.rn-pin .alck-dot{width:16px;height:16px;border:2px solid #4A5778;background:transparent;box-shadow:none;}
+#app-lock-screen.rn-pin .alck-dot.filled{background:#D4A850;border-color:#D4A850;box-shadow:none;}
+#app-lock-screen.rn-pin .alck-keypad{margin-top:auto;gap:0;padding:0 18px calc(18px + env(safe-area-inset-bottom));}
+#app-lock-screen.rn-pin .alck-key{height:64px;background:transparent;border:none;box-shadow:none;border-radius:50%;width:64px;justify-self:center;font-size:28px;font-weight:400;color:#EDE6D6;}
+#app-lock-screen.rn-pin .alck-key:active{background:#1B2747;transform:none;}
+#app-lock-screen.rn-pin .alck-key.del{color:#8E9AB8;font-size:24px;}
+#app-lock-screen.rn-pin .alck-key.bio{display:none !important;}
+@media (prefers-reduced-motion: reduce){ .rn-note .rn-spin{animation:none;} }
+
+</style>
 </head>
 <body> <!-- Splash Screen -->
 <div id="app-lock-screen">
@@ -2479,7 +2606,10 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         <div class="alck-app-meta-tag" id="alck-tag-text">App locked</div>
       </div>
     </div>
+    <div class="rn-bar rn-pin-only"><span class="rn-back ghost"></span><div class="rn-steps" aria-label="Step 7 of 7"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div></div>
     <div class="alck-title" id="alck-title-text">PIN डालें</div>
+    <div class="rn-hi rn-pin-only" id="alck-rn-hi">4 अंक का PIN बनाएं</div>
+    <div class="rn-s rn-pin-only" id="alck-rn-s">You will use it every time you open the app.</div>
     <div class="alck-bio-banner" id="alck-bio-banner" style="display:none;">👆 Fingerprint भी use कर सकते हैं</div>
     <div class="alck-err-banner" id="alck-err-banner" style="display:none;"></div>
     <div class="alck-step-dots" id="alck-step-dots" style="display:none;">
@@ -2586,114 +2716,112 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
   </div>
 </div>
 
-<div class="auth-screen hidden" id="screen-phone">
-  <div class="auth-logo"><img src="/icon-512.png" alt="Live Khaata" style="width:100%;height:100%;object-fit:contain;"></div>
-  <div class="auth-title"><span style="color:#d4a850;">Live</span> Khaata</div>
-  <div class="auth-sub">अब हिसाब चलेगा LIVE<span class="lk-livedot"></span></div>
-  <div class="auth-card">
-    <div class="auth-label">📱 अपना मोबाइल नंबर डालें</div>
+<div class="auth-screen rn hidden" id="screen-phone">
+  <div class="rn-body">
+    <div class="rn-brand"><img src="data:image/png;base64,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" alt="Live Khaata">
+      <div><div class="rn-brand-nm"><em>Live</em> Khaata</div><div class="rn-brand-tag">अब हिसाब चलेगा LIVE<span class="lk-livedot sm"></span></div></div></div>
+    <h1 class="rn-h">What's your mobile number?</h1>
+    <div class="rn-hi">अपना मोबाइल नंबर डालें</div>
+    <div class="rn-s">We'll send you an OTP to check it. This number becomes your shop's ID.</div>
     <div class="auth-error" id="phone-error"></div>
-    <div class="auth-input-row">
-      <div class="auth-prefix">🇮🇳 +91</div>
-      <input class="auth-input" type="tel" id="phone-input" placeholder="10 अंक का नंबर" maxlength="10" inputmode="numeric" pattern="[0-9]*">
-    </div>
-    <button class="auth-btn" id="send-otp-btn" onclick="sendOTP()">📨 OTP भेजें</button>
-    <div class="auth-hint">आपके नंबर पर एक OTP भेजा जाएगा<br>यह नंबर आपकी दुकान की पहचान बनेगा</div>
-    <div id="gl-recover-wrap" style="display:none;">
-      <div class="gl-or"><span>या</span></div>
-      <div class="gl-q">नंबर बदल गया या फ़ोन खो गया?</div>
+    <div class="rn-tf"><label for="phone-input">Mobile number</label><span class="rn-pre">+91</span>
+      <input type="tel" id="phone-input" placeholder="10-digit number" maxlength="10" inputmode="numeric" pattern="[0-9]*" autocomplete="tel-national"></div>
+  </div>
+  <div class="rn-act">
+    <button class="rn-btn" id="send-otp-btn" onclick="sendOTP()">Send OTP</button>
+    <div id="gl-recover-wrap" class="rn-alt" style="display:none;">
+      <div class="rn-q">Changed your number or lost your phone?</div>
       <div class="gl-btn-wrap" id="gl-btn-recover"></div>
       <div class="auth-error" id="gl-recover-error"></div>
-      <div class="gl-busy" id="gl-recover-busy">⏳ खाता खोज रहे हैं…</div>
+      <div class="gl-busy" id="gl-recover-busy">⏳ Finding your account…</div>
     </div>
   </div>
 </div>
 
-<div class="auth-screen hidden" id="screen-otp">
-  <div style="width:70px;height:70px;background:linear-gradient(135deg, #6a4818 0%, #8a5a20 50%, #4a3010 100%);border:2px solid #d4a850;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;box-shadow:0 4px 12px rgba(212, 168, 80, 0.25);">🔐</div>
-  <div class="auth-title">OTP दर्ज करें</div>
-  <div class="auth-sub" id="otp-sub">+91 XXXXXXXXXX पर भेजा गया</div>
-  <div class="auth-card">
-    <div class="auth-label">6 अंक का OTP</div>
+<div class="auth-screen rn hidden" id="screen-otp">
+  <div class="rn-bar"><button type="button" class="rn-back" aria-label="Back" onclick="backToPhone()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="rn-steps" aria-label="Step 2 of 7"><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div></div>
+  <div class="rn-body">
+    <h1 class="rn-h">Enter the OTP</h1>
+    <div class="rn-hi">SMS में आया OTP डालें</div>
+    <div class="rn-s"><span id="otp-sub">Sent to +91 XXXXXXXXXX</span><span class="rn-link" onclick="backToPhone()">Edit</span></div>
     <div class="auth-error" id="otp-error"></div>
     <div class="auth-success" id="otp-success"></div>
-    <div class="auth-loader" id="otp-loader"></div>
-    <div class="otp-inputs">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o1">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o2">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o3">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o4">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o5">
-      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o6">
+    <div class="rn-otp" id="otp-boxes">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o1" autocomplete="one-time-code" aria-label="OTP digit 1">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o2" aria-label="OTP digit 2">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o3" aria-label="OTP digit 3">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o4" aria-label="OTP digit 4">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o5" aria-label="OTP digit 5">
+      <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" id="o6" aria-label="OTP digit 6">
     </div>
-    <button class="auth-btn" id="verify-otp-btn" onclick="verifyOTP()">✅ OTP सत्यापित करें</button>
-    <button class="auth-btn-secondary" onclick="backToPhone()">← नंबर बदलें</button>
+    <div class="auth-loader" id="otp-loader"></div>
+    <div class="rn-note" id="otp-auto"><span class="rn-spin"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span id="otp-auto-txt">Reading the SMS. The OTP will fill in by itself.</span></div>
     <div class="resend-timer">
-      OTP नहीं मिला? <span class="resend-link" id="resend-link" onclick="resendOTP()" style="display:none;">दोबारा भेजें</span>
-      <span id="resend-countdown">30 सेकंड में दोबारा भेज सकते हैं</span>
+      <span class="resend-link" id="resend-link" onclick="resendOTP()" style="display:none;">Resend OTP</span>
+      <span id="resend-countdown">Resend OTP in <b>0:30</b></span>
     </div>
   </div>
+  <div class="rn-act"><button class="rn-btn" id="verify-otp-btn" onclick="verifyOTP()">Verify</button></div>
 </div>
 
 <!-- ===== Google account linking ===== -->
-<div class="auth-screen hidden" id="screen-google">
-  <div class="gl-ico">🛡️</div>
-  <div class="auth-title">अपना खाता सुरक्षित करें</div>
-  <div class="auth-sub">Secure your account with Google</div>
-  <div class="auth-card">
-    <div class="gl-steps"><span class="on"></span><span class="on"></span><span></span><span></span></div>
-    <div class="gl-why">
-      <div class="gl-wrow"><span>📱</span><div>नंबर बदलने या फ़ोन खोने पर भी आपका <b>पूरा हिसाब</b> इसी Google खाते से वापस मिलेगा।</div></div>
-      <div class="gl-wrow"><span>🧾</span><div>लाइसेंस और GST इनवॉइस इसी ईमेल पर सुरक्षित रहेंगे।</div></div>
-      <div class="gl-wrow"><span>⚡</span><div>बस एक टैप, कोई पासवर्ड नहीं।</div></div>
-    </div>
+<div class="auth-screen rn hidden" id="screen-google">
+  <div class="rn-bar"><span class="rn-back ghost"></span><div class="rn-steps" aria-label="Step 3 of 7"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span></div></div>
+  <div class="rn-body">
+    <h1 class="rn-h">Keep your khaata safe</h1>
+    <div class="rn-hi">Google से खाता सुरक्षित करें</div>
+    <div class="rn-s" style="margin-bottom:12px">Link your Google account. It takes one tap.</div>
+      <div class="rn-li"><div class="rn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg></div><div><div class="t">Lost your phone or number?</div><div class="d">Get your full records back with this Google account.</div></div></div>
+      <div class="rn-li"><div class="rn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2.5h9l4 4v15H6z"/><path d="M14.5 2.5v4.5H19M9.5 12h6M9.5 16h6"/></svg></div><div><div class="t">Licence and GST invoices</div><div class="d">Kept safe on this email.</div></div></div>
+      <div class="rn-li"><div class="rn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></div><div><div class="t">No password needed</div><div class="d">You sign in with the Google account already on this phone.</div></div></div>
+    <div class="rn-fine">We only take your name and email address. We never read your emails.</div>
+  </div>
+  <div class="rn-act">
     <div class="auth-error" id="gl-link-error"></div>
     <div class="gl-btn-wrap" id="gl-btn-link"></div>
-    <div class="gl-busy" id="gl-link-busy">⏳ Google खाता जोड़ रहे हैं…</div>
-    <button class="auth-btn-secondary" id="gl-link-skip" style="display:none;" onclick="glContinue()">Google अभी नहीं खुल रहा। आगे बढ़ें, बाद में जोड़ें</button>
-    <div class="auth-hint">हम आपके ईमेल नहीं पढ़ते। केवल आपका नाम और ईमेल पता लिया जाता है।</div>
+    <div class="gl-busy" id="gl-link-busy">⏳ Linking your Google account…</div>
+    <button class="rn-tbtn m" id="gl-link-skip" style="display:none;" onclick="glContinue()">Google is not opening. Continue, and link it later</button>
   </div>
 </div>
 
-<div class="auth-screen hidden" id="screen-google-done">
-  <div class="gl-ico">✅</div>
-  <div class="auth-title">खाता सुरक्षित हो गया</div>
-  <div class="auth-sub">Your account is now protected</div>
-  <div class="auth-card">
-    <div class="gl-linked">
-      <div class="gl-lrow"><span class="gl-lk">📱 मोबाइल</span><span class="gl-lv" id="gl-done-phone"></span></div>
-      <div class="gl-lrow"><span class="gl-lk">✉️ Google</span><span class="gl-lv" id="gl-done-email"></span></div>
+<div class="auth-screen rn hidden" id="screen-google-done">
+  <div class="rn-bar"><span class="rn-back ghost"></span><div class="rn-steps" aria-label="Step 3 of 7"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span></div></div>
+  <div class="rn-body rn-center">
+    <div class="rn-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h1 class="rn-h" style="margin-top:0">Your account is safe</h1>
+    <div class="rn-hi">खाता सुरक्षित हो गया</div>
+    <div class="rn-s" style="margin-bottom:16px">You can log in with either of these.</div>
+    <div class="rn-card">
+      <div class="rn-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg><div><div class="k">Mobile</div><div class="v" id="gl-done-phone"></div></div></div>
+      <div class="rn-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/></svg><div><div class="k">Google</div><div class="v" id="gl-done-email"></div></div></div>
     </div>
-    <div class="auth-success show" style="margin-top:14px;">अब आप इनमें से किसी से भी लॉगिन कर सकते हैं।</div>
-    <button class="auth-btn" onclick="glContinue()">आगे बढ़ें · Continue</button>
   </div>
+  <div class="rn-act"><button class="rn-btn" onclick="glContinue()">Continue</button></div>
 </div>
 
-<div class="auth-screen hidden" id="screen-google-phone">
-  <div class="gl-ico">🔄</div>
-  <div class="auth-title">आपका खाता मिल गया</div>
-  <div class="auth-sub" id="gl-found-sub"></div>
-  <div class="auth-card">
+<div class="auth-screen rn hidden" id="screen-google-phone">
+  <div class="rn-body">
+    <h1 class="rn-h" style="margin-top:24px">We found your account</h1>
+    <div class="rn-hi">आपका खाता मिल गया</div>
+    <div class="rn-s" id="gl-found-sub"></div>
     <div class="gl-found" id="gl-found-old"></div>
     <div id="gl-np-step1">
-      <div class="auth-label">📱 अपना नया मोबाइल नंबर डालें</div>
-      <div class="auth-input-row">
-        <div class="auth-prefix">🇮🇳 +91</div>
-        <input class="auth-input" type="tel" id="gl-np-input" placeholder="10 अंक का नंबर" maxlength="10" inputmode="numeric" pattern="[0-9]*">
-      </div>
-      <div class="auth-error" id="gl-np-error"></div>
-      <button class="auth-btn" id="gl-np-send" onclick="glSendNewOtp()">📨 OTP भेजें</button>
+      <div class="rn-tf"><label for="gl-np-input">New mobile number</label><span class="rn-pre">+91</span>
+        <input type="tel" id="gl-np-input" placeholder="10-digit number" maxlength="10" inputmode="numeric" pattern="[0-9]*"></div>
+      <div class="auth-error" id="gl-np-error" style="margin-top:8px"></div>
+      <button class="rn-btn" id="gl-np-send" onclick="glSendNewOtp()" style="margin-top:12px">Send OTP</button>
     </div>
     <div id="gl-np-step2" style="display:none;">
-      <div class="auth-label" id="gl-np-sent"></div>
-      <input class="auth-input gl-otp" type="tel" id="gl-np-otp" placeholder="6 अंक का OTP" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
-      <div class="auth-error" id="gl-np-error2"></div>
-      <button class="auth-btn" id="gl-np-verify" onclick="glVerifyNewOtp()" style="margin-top:14px;">✅ नंबर सत्यापित करें</button>
-      <button class="auth-btn-secondary" onclick="glNewNumberBack()">← नंबर बदलें</button>
+      <div class="rn-s" id="gl-np-sent" style="margin-bottom:8px"></div>
+      <div class="rn-tf"><label for="gl-np-otp">OTP</label>
+        <input type="tel" id="gl-np-otp" placeholder="6-digit OTP" maxlength="6" inputmode="numeric" autocomplete="one-time-code" style="letter-spacing:6px"></div>
+      <div class="auth-error" id="gl-np-error2" style="margin-top:8px"></div>
+      <button class="rn-btn" id="gl-np-verify" onclick="glVerifyNewOtp()" style="margin-top:12px">Verify number</button>
+      <button class="rn-tbtn m" onclick="glNewNumberBack()">Change number</button>
     </div>
-    <div class="auth-hint">नया नंबर सत्यापित होते ही आपका पूरा हिसाब और लाइसेंस इसी नंबर पर आ जाएगा।</div>
-    <button class="auth-btn-secondary" onclick="glKeepOldNumber()">मेरा नंबर वही है, आगे बढ़ें</button>
+    <div class="rn-fine">As soon as the new number is verified, your full records and licence move to it.</div>
   </div>
+  <div class="rn-act"><button class="rn-tbtn" onclick="glKeepOldNumber()">My number is the same, continue</button></div>
 </div>
 
 <div id="gl-modal" class="gl-modal-bg" style="display:none;">
@@ -2708,119 +2836,59 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
   </div>
 </div>
 
-<div class="auth-screen hidden" id="screen-terms" style="padding:0;justify-content:flex-start;">
-  <div class="terms-hero">
-    <div class="terms-hero-icon">📋</div>
-    <div class="terms-hero-title">नियम और शर्तें</div>
-    <div class="terms-hero-title-en">Terms &amp; Conditions</div>
-    <div class="terms-hero-sub">उपयोग करने से पहले ज़रूर पढ़ें</div>
-    <div class="terms-progress">
-      <div class="terms-dot active"></div>
-      <div class="terms-dot"></div>
-      <div class="terms-dot"></div>
-    </div>
+<div class="auth-screen rn hidden" id="screen-terms">
+  <div class="rn-bar"><span class="rn-back ghost"></span><div class="rn-steps" aria-label="Step 4 of 7"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div></div>
+  <div class="rn-body rn-doc">
+    <h1 class="rn-h" style="margin-top:2px">Terms &amp; Conditions</h1>
+    <div class="rn-hi">नियम और शर्तें</div>
+    <h3>1. About the service</h3>
+    <p>Live Khaata is a digital account book for small traders and shopkeepers. It keeps a record of your daily sales, expenses, stock and udhaar.</p>
+    <h3>2. Free trial and subscription</h3>
+    <div class="rn-price"><div class="big">Free for 30 days, then ₹149 every 3 months</div><p>Pay yourself every 3 months, or turn on UPI AutoPay. AutoPay starts only with your approval, you get a notice 24 hours before every payment, and you can cancel it anytime.</p></div>
+    <h3>3. Data and privacy</h3>
+    <p>Your data is kept safe on Google Firebase. It is never shared with any other company.</p>
+    <h3>4. Your responsibility</h3>
+    <p>You are responsible for keeping your account safe. Do not share your OTP or PIN with anyone.</p>
+    <h3>5. Changes to the service</h3>
+    <p>We may improve or change the app from time to time. We will tell you about any important change.</p>
+    <h3>6. Contact us</h3>
+    <p>For any problem, email us at support@livekhaata.app. We try to reply within 24 hours.</p>
   </div>
-  <div class="terms-sections-area">
-    <div class="terms-sec-card">
-      <div class="terms-sec-icon">🛡️</div>
-      <div class="terms-sec-title">1. सेवा के बारे में</div>
-      <div class="terms-sec-title-en">About the Service</div>
-      <div class="terms-sec-text">Live Khaata एक डिजिटल हिसाब-किताब ऐप है जो छोटे व्यापारियों और दुकानदारों के लिए बनाया गया है। यह ऐप आपकी दैनिक बिक्री, खर्च, माल और उधार का रिकॉर्ड रखने में मदद करता है।</div>
-    </div>
-    <div class="terms-sec-card terms-trial-card">
-      <div class="terms-sec-icon">🎁</div>
-      <div class="terms-sec-title">2. फ्री ट्रायल और सदस्यता</div>
-      <div class="terms-sec-title-en">Free Trial &amp; Subscription</div>
-      <div class="terms-trial-head">30 दिन मुफ़्त, फिर ₹149 / 3 महीने।</div>
-      <div class="terms-trial-head-en">Free for 30 days, then ₹149 every 3 months.</div>
-      <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span><b>मैनुअल या ऑटो-पे</b> — आप चुनें। हर 3 महीने खुद pay करें, या UPI AutoPay से अपने-आप। <span class="terms-trial-en">Pay manually every 3 months, or turn on UPI AutoPay.</span></span></div>
-      <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span><b>ऑटो-पे आपकी मंज़ूरी से ही चालू होगा</b> — बिना अनुमति कुछ नहीं कटेगा। <span class="terms-trial-en">AutoPay starts only with your approval.</span></span></div>
-      <div class="terms-trial-row"><span class="terms-trial-dot">•</span><span>हर कटौती से <b>24 घंटे पहले सूचना</b>, और mandate आप <b>कभी भी बंद</b> कर सकते हैं। <span class="terms-trial-en">24-hour notice before every debit; cancel anytime.</span></span></div>
-    </div>
-    <div class="terms-sec-card">
-      <div class="terms-sec-icon">🔒</div>
-      <div class="terms-sec-title">3. डेटा और गोपनीयता</div>
-      <div class="terms-sec-title-en">Data &amp; Privacy</div>
-      <div class="terms-sec-text">आपका सारा डेटा सुरक्षित रखा जाता है। आपका डेटा किसी तीसरे पक्ष के साथ साझा नहीं किया जाएगा। हम Google Firebase का उपयोग सुरक्षित डेटा संग्रहण के लिए करते हैं।</div>
-    </div>
-    <div class="terms-sec-card">
-      <div class="terms-sec-icon">👤</div>
-      <div class="terms-sec-title">4. उपयोगकर्ता की ज़िम्मेदारी</div>
-      <div class="terms-sec-title-en">User Responsibility</div>
-      <div class="terms-sec-text">आप अपने खाते की सुरक्षा के लिए स्वयं ज़िम्मेदार हैं। अपना मोबाइल नंबर किसी और को न दें।</div>
-    </div>
-    <div class="terms-sec-card">
-      <div class="terms-sec-icon">🔄</div>
-      <div class="terms-sec-title">5. सेवा में बदलाव</div>
-      <div class="terms-sec-title-en">Service Changes</div>
-      <div class="terms-sec-text">हम समय-समय पर ऐप में सुधार और बदलाव कर सकते हैं। किसी भी महत्वपूर्ण बदलाव की सूचना आपको दी जाएगी।</div>
-    </div>
-    <div class="terms-sec-card">
-      <div class="terms-sec-icon">📞</div>
-      <div class="terms-sec-title">6. संपर्क</div>
-      <div class="terms-sec-title-en">Contact Us</div>
-      <div class="terms-sec-text">किसी भी समस्या के लिए WhatsApp पर संपर्क करें। हम 24 घंटे के अंदर जवाब देने की कोशिश करेंगे।</div>
-    </div>
-  </div>
-  <div class="terms-bottom">
-    <div class="terms-agree-box" onclick="toggleTermsCheck()">
-      <div class="terms-agree-chk" id="terms-checkbox"></div>
-      <div>
-        <div class="terms-agree-lbl">मैंने सभी नियम और शर्तें पढ़ ली हैं और मैं सहमत हूँ।</div>
-        <div class="terms-agree-lbl-en">I have read and agree to all Terms &amp; Conditions</div>
-      </div>
-    </div>
-    <button class="terms-agree-main-btn" id="terms-agree-btn" onclick="agreeTerms()" disabled>✅ सहमत हूँ — आगे बढ़ें</button>
-    <div class="terms-agree-main-btn-en">I Agree — Continue</div>
+  <div class="rn-sheet">
+    <div class="rn-chk" onclick="toggleTermsCheck()"><div class="terms-agree-chk" id="terms-checkbox"></div><div>I have read and agree to the Terms &amp; Conditions</div></div>
+    <button class="rn-btn" id="terms-agree-btn" onclick="agreeTerms()" disabled>Agree and continue</button>
   </div>
 </div>
 
 <!-- Privacy Promise Screen -->
-<div class="auth-screen hidden" id="screen-privacy" style="padding:0;justify-content:flex-start;overflow-y:auto;">
-  <div style="width:100%;max-width:520px;margin:0 auto;padding:32px 22px 24px;box-sizing:border-box;">
-    <div style="text-align:center;margin-bottom:28px;">
-      <div style="font-size:34px;margin-bottom:14px;line-height:1;">🔒</div>
-      <div style="color:#fff;font-size:20px;font-weight:600;letter-spacing:-0.3px;line-height:1.25;">आपका Data, सुरक्षित</div>
-      <div style="color:#8aa0d8;font-size:12px;margin-top:6px;font-weight:400;">Your data stays private</div>
-    </div>
-    <div style="color:#c8d0e8;font-size:13px;line-height:1.65;margin-bottom:28px;">Live Khaata आपके business की निजी जानकारी रखने के लिए बना है। हमने इसे इस तरह design किया है कि आपकी एंट्री सिर्फ़ आप तक रहें।</div>
-    <div style="margin-bottom:20px;">
-      <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">हम क्या नहीं देख सकते</div>
-      <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">आपकी बिक्री, खर्चा, माल की रकम, और notes — कुछ भी नहीं।</div>
-    </div>
-    <div style="height:1px;background:#1a2a4a;margin:18px 0;"></div>
-    <div style="margin-bottom:20px;">
-      <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">कौन access कर सकता है</div>
-      <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">सिर्फ़ आप, अपने PIN से। कोई third-party को access नहीं है।</div>
-    </div>
-    <div style="height:1px;background:#1a2a4a;margin:18px 0;"></div>
-    <div style="margin-bottom:20px;">
-      <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">Data कहाँ रहता है</div>
-      <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">आपके phone में और encrypted cloud backup में। Phone खो जाए तो दूसरे phone पर वापस मिल जाता है।</div>
-    </div>
-    <div style="height:1px;background:#1a2a4a;margin:18px 0;"></div>
-    <div style="margin-bottom:32px;">
-      <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;">कभी share या sell नहीं</div>
-      <div style="color:#8aa0d8;font-size:12px;line-height:1.65;">बाज़ार की अन्य Apps के विपरीत, आपका Data कभी third-party को नहीं बेचा जाता।</div>
-    </div>
-    <button onclick="acceptPrivacy()" style="width:100%;background:#d4a850;border:none;color:#0a0820;font-size:14px;font-weight:600;padding:13px;border-radius:10px;cursor:pointer;letter-spacing:0.2px;">Agree and Continue</button>
+<div class="auth-screen rn hidden" id="screen-privacy">
+  <div class="rn-bar"><button type="button" class="rn-back" aria-label="Back" onclick="rnGo('screen-privacy','screen-terms')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="rn-steps" aria-label="Step 5 of 7"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span></div></div>
+  <div class="rn-body">
+    <h1 class="rn-h">Your data is safe</h1>
+    <div class="rn-hi">आपका हिसाब, सिर्फ़ आपका</div>
+    <div class="rn-s" style="margin-bottom:10px">Live Khaata is made to keep your business details private.</div>
+      <div class="rn-li"><div class="rn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></div><div><div class="t">Only you can open it</div><div class="d">Your khaata opens with your PIN. No other company gets access.</div></div></div>
+      <div class="rn-li"><div class="rn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 8.5a4 4 0 0 1-.5 9.5z"/></svg></div><div><div class="t">Backed up safely</div><div class="d">Kept in your phone and a secure cloud backup. A new phone gets everything back.</div></div></div>
+      <div class="rn-li"><div class="rn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M21 19H3"/></svg></div><div><div class="t">What we use</div><div class="d">Only app activity, like when an entry is added, to fix problems and improve the app.</div></div></div>
+      <div class="rn-li"><div class="rn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.3-7.5 9.5-4.3-1.2-7.5-5-7.5-9.5V6z"/></svg></div><div><div class="t">Never sold</div><div class="d">Your data is never sold or given to any other company.</div></div></div>
   </div>
+  <div class="rn-act"><button class="rn-btn" onclick="acceptPrivacy()">Agree and continue</button></div>
 </div>
 
 <!-- Name Screen -->
-<div class="auth-screen hidden" id="screen-name">
-  <div style="width:70px;height:70px;background:linear-gradient(135deg, #6a4818 0%, #8a5a20 50%, #4a3010 100%);border:2px solid #d4a850;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;box-shadow:0 4px 12px rgba(212, 168, 80, 0.25);">👤</div>
-  <div class="auth-title">अपनी जानकारी दें</div>
-  <div class="auth-sub">Apna naam aur dukaan ka naam batayein</div>
-  <div class="auth-card">
-    <div class="auth-label">👤 आपका नाम</div>
-    <input class="auth-input" type="text" id="name-input" placeholder="जैसे: Ramesh Kumar" style="margin-bottom:14px;" maxlength="40">
-    <div class="auth-label">🏪 दुकान/Business का नाम</div>
-    <input class="auth-input" type="text" id="business-input" placeholder="जैसे: Sharma Medical Store" style="margin-bottom:6px;" maxlength="60">
-    <div style="font-size:9px;color:#5a80b0;margin-bottom:14px;">यह नाम app के top par दिखेगा</div>
+<div class="auth-screen rn hidden" id="screen-name">
+  <div class="rn-bar"><button type="button" class="rn-back" aria-label="Back" onclick="rnGo('screen-name','screen-privacy')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="rn-steps" aria-label="Step 6 of 7"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div></div>
+  <div class="rn-body">
+    <h1 class="rn-h">Tell us about your shop</h1>
+    <div class="rn-hi">अपना और दुकान का नाम लिखें</div>
+    <div class="rn-s">This shows at the top of your app.</div>
     <div class="auth-error" id="name-error"></div>
-    <button class="auth-btn" onclick="saveName()">✅ आगे बढ़ें · Continue</button>
+    <div class="rn-tf"><label for="name-input">Your name</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg><input type="text" id="name-input" placeholder="e.g. Ramesh Kumar" maxlength="40" autocomplete="name" oninput="rnNameCheck()"></div>
+    <div class="rn-help">&nbsp;</div>
+    <div class="rn-tf"><label for="business-input">Shop or business name</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9.5L5 4h14l1.5 5.5M4 9.5h16v11H4zM9.5 20.5v-6h5v6"/></svg><input type="text" id="business-input" placeholder="e.g. Sharma Medical Store" maxlength="60" oninput="rnNameCheck()"></div>
+    <div class="rn-help">You can change this later</div>
   </div>
+  <div class="rn-act"><button class="rn-btn" id="name-continue-btn" onclick="saveName()" disabled>Continue</button></div>
 </div>
 
 <div id="screen-browser-block">
@@ -7398,6 +7466,9 @@ async function glInit(){
   _gl.init=true;
 }
 const _GL_NTXT={continue_with:'Google से जारी रखें',signin_with:'Google से साइन इन करें',signup_with:'Google से साइन अप करें'};
+const _GL_NTXT_EN={continue_with:'Continue with Google',signin_with:'Sign in with Google',signup_with:'Sign up with Google'};
+function glEn(id){ return id!=='gl-modal-error'; }   // registration + login screens are English; the existing-user pop-up stays Hindi
+function glT(id,en,hi){ return glEn(id) ? en : hi; }
 const _GL_GSVG='<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
 function glNative(){ try{ return !!(window.LK && LK.native && LK.plugin('SocialLogin')); }catch(e){ return false; } }
 async function glNativeGoogle(errId){
@@ -7412,14 +7483,14 @@ async function glNativeGoogle(errId){
   }catch(e){
     const m=String((e && (e.code || e.message)) || e || '');
     if(/cancel/i.test(m)) return;                       // user closed the account picker
-    glErr(errId,'Google खाता नहीं खुल सका। फ़ोन में Google खाता जुड़ा है, यह जाँचकर दोबारा कोशिश करें।');
+    glErr(errId,glT(errId,'Could not open Google. Check that a Google account is added on this phone, then try again.','Google खाता नहीं खुल सका। फ़ोन में Google खाता जुड़ा है, यह जाँचकर दोबारा कोशिश करें।'));
     glLog('google_err',{ stage:'native', code:m.slice(0,80) });
   }
 }
 async function glRender(elId, text, errId){
   if(glNative()){
     const el=glEl(elId); if(!el) return;
-    el.innerHTML='<button type="button" class="gl-nbtn">'+_GL_GSVG+'<span>'+(_GL_NTXT[text]||_GL_NTXT.continue_with)+'</span></button>';
+    var _TX=glEn(errId)?_GL_NTXT_EN:_GL_NTXT; el.innerHTML='<button type="button" class="gl-nbtn">'+_GL_GSVG+'<span>'+(_TX[text]||_TX.continue_with)+'</span></button>';
     el.firstChild.addEventListener('click',()=>glNativeGoogle(errId));
     return;
   }
@@ -7428,9 +7499,9 @@ async function glRender(elId, text, errId){
     const el=glEl(elId); if(!el) return;
     el.innerHTML='';
     const w=Math.max(220, Math.min(320, (el.parentElement&&el.parentElement.clientWidth)||300));
-    google.accounts.id.renderButton(el,{ type:'standard', theme:'outline', size:'large', shape:'rectangular', text:text||'continue_with', logo_alignment:'center', width:w, locale:'hi' });
+    google.accounts.id.renderButton(el,{ type:'standard', theme:'outline', size:'large', shape:'rectangular', text:text||'continue_with', logo_alignment:'center', width:w, locale:(glEn(errId)?'en':'hi') });
   }catch(e){
-    glErr(errId,'Google लोड नहीं हो सका। इंटरनेट जाँचकर दोबारा कोशिश करें।');
+    glErr(errId,glT(errId,'Could not load Google. Check your internet and try again.','Google लोड नहीं हो सका। इंटरनेट जाँचकर दोबारा कोशिश करें।'));
     if(errId==='gl-link-error'){ const k=glEl('gl-link-skip'); if(k) k.style.display='block'; }
     glLog('google_err',{stage:'load'});
   }
@@ -7458,13 +7529,13 @@ async function glLinkWith(cred){
     const c=(e&&e.code)||'';
     if(c==='auth/provider-already-linked'){ await glSaveLinked(u); glAfterLink(u); }
     else if(c==='auth/credential-already-in-use'||c==='auth/email-already-in-use'||c==='auth/account-exists-with-different-credential'){
-      glErr(errId,'यह Google खाता किसी दूसरे Live Khaata खाते से पहले से जुड़ा है। कृपया कोई दूसरा Google खाता चुनें।');
+      glErr(errId,glT(errId,'This Google account is already linked to another Live Khaata account. Please choose a different Google account.','यह Google खाता किसी दूसरे Live Khaata खाते से पहले से जुड़ा है। कृपया कोई दूसरा Google खाता चुनें।'));
       try{ google.accounts.id.disableAutoSelect(); }catch(_){}
       glLog('google_err',{stage:'link',code:'in-use'});
     } else if(c==='auth/network-request-failed'){
-      glErr(errId,'इंटरनेट कनेक्शन नहीं है। दोबारा कोशिश करें।');
+      glErr(errId,glT(errId,'No internet connection. Please try again.','इंटरनेट कनेक्शन नहीं है। दोबारा कोशिश करें।'));
     } else {
-      glErr(errId,'Google खाता नहीं जुड़ सका। दोबारा कोशिश करें।');
+      glErr(errId,glT(errId,'Could not link your Google account. Please try again.','Google खाता नहीं जुड़ सका। दोबारा कोशिश करें।'));
       _gl.fails=(_gl.fails||0)+1;
       if(!inModal && _gl.fails>=2){ const k=glEl('gl-link-skip'); if(k) k.style.display='block'; }
       glLog('google_err',{stage:'link',code:c||'unknown'});
@@ -7483,7 +7554,7 @@ async function glSaveLinked(u){
 function glAfterLink(u){
   if(_gl.ctx==='modal'){
     const m=glEl('gl-modal'); if(m) m.style.display='none';
-    try{ if(window.toast) toast('✅ Google खाता जुड़ गया'); }catch(e){}
+    try{ if(window.toast) toast(_gl.ctx==='modal' ? '✅ Google खाता जुड़ गया' : '✅ Google account linked'); }catch(e){}
     return;
   }
   const ph=glEl('gl-done-phone'); if(ph) ph.textContent=glMaskPhone(u.phoneNumber||'');
@@ -7558,7 +7629,7 @@ async function glRecoverWith(cred){
       // Not linked to any Live Khaata account: undo the empty account it created.
       window._glRecovering=false;
       try{ await r.user.delete(); }catch(e){ try{ await fbSignOut(auth); }catch(_){} }
-      glErr('gl-recover-error','इस Google खाते से कोई Live Khaata खाता जुड़ा नहीं है। अपने मोबाइल नंबर से लॉगिन करें।');
+      glErr('gl-recover-error','No Live Khaata account is linked to this Google account. Please log in with your mobile number.');
       glLog('google_recover',{result:'no-account'});
       return;
     }
@@ -7568,7 +7639,7 @@ async function glRecoverWith(cred){
   }catch(e){
     window._glRecovering=false;
     const c=(e&&e.code)||'';
-    glErr('gl-recover-error', c==='auth/network-request-failed' ? 'इंटरनेट कनेक्शन नहीं है। दोबारा कोशिश करें।' : 'Google से लॉगिन नहीं हो सका। दोबारा कोशिश करें।');
+    glErr('gl-recover-error', c==='auth/network-request-failed' ? 'No internet connection. Please try again.' : 'Could not log in with Google. Please try again.');
     glLog('google_err',{stage:'recover',code:c||'unknown'});
     console.warn('google recover error:',c,e);
   }finally{ glBusy('gl-recover-busy',false); }
@@ -7581,7 +7652,7 @@ async function glShowNewNumber(u){
     if(snap.exists()){ const d=snap.data(); name=d.name||''; shop=d.businessName||''; }
   }catch(e){}
   const sub=glEl('gl-found-sub'); if(sub) sub.textContent=[name,shop].filter(Boolean).join(' · ') || glMaskEmail(glEmailOf(u));
-  const old=glEl('gl-found-old'); if(old) old.innerHTML='पुराना नंबर: <b>'+(glMaskPhone(u.phoneNumber||'')||'—')+'</b>';
+  const old=glEl('gl-found-old'); if(old) old.innerHTML='Old number: <b>'+(glMaskPhone(u.phoneNumber||'')||'—')+'</b>';
   glEl('gl-np-step1').style.display='block'; glEl('gl-np-step2').style.display='none';
   glErr('gl-np-error',''); glErr('gl-np-error2','');
   glShowOnly('screen-google-phone');
@@ -7591,28 +7662,28 @@ window.glShowNewNumber=glShowNewNumber;
 window.glSendNewOtp=async function(){
   const n=(glEl('gl-np-input').value||'').trim();
   glErr('gl-np-error','');
-  if(!/^[6-9]\d{9}$/.test(n)) return glErr('gl-np-error','❌ सही 10 अंक का मोबाइल नंबर डालें');
+  if(!/^[6-9]\d{9}$/.test(n)) return glErr('gl-np-error','❌ Enter a valid 10-digit mobile number');
   const u=auth.currentUser;
-  if(u && u.phoneNumber==='+91'+n) return glErr('gl-np-error','यह वही पुराना नंबर है। नीचे "मेरा नंबर वही है" चुनें।');
-  const btn=glEl('gl-np-send'); btn.disabled=true; btn.textContent='⏳ भेज रहे हैं...';
+  if(u && u.phoneNumber==='+91'+n) return glErr('gl-np-error','This is your old number. Tap "My number is the same" below.');
+  const btn=glEl('gl-np-send'); btn.disabled=true; btn.textContent='Sending…';
   try{
     setupRecaptcha();
     _gl.vid=await new PhoneAuthProvider(auth).verifyPhoneNumber('+91'+n, recaptchaVerifier);
     _gl.newPhone=n;
-    glEl('gl-np-sent').textContent='+91 '+n+' पर भेजा गया 6 अंक का OTP';
+    glEl('gl-np-sent').textContent='6-digit OTP sent to +91 '+n;
     glEl('gl-np-step1').style.display='none'; glEl('gl-np-step2').style.display='block';
     setTimeout(()=>{ const i=glEl('gl-np-otp'); if(i) i.focus(); },200);
   }catch(e){
-    glErr('gl-np-error','❌ OTP नहीं भेज सका। दोबारा कोशिश करें।');
+    glErr('gl-np-error','❌ Could not send the OTP. Please try again.');
     console.warn('new number otp:',e);
-  }finally{ btn.disabled=false; btn.textContent='📨 OTP भेजें'; }
+  }finally{ btn.disabled=false; btn.textContent='Send OTP'; }
 };
 window.glNewNumberBack=function(){ glEl('gl-np-step2').style.display='none'; glEl('gl-np-step1').style.display='block'; glErr('gl-np-error2',''); };
 window.glVerifyNewOtp=async function(){
   const code=(glEl('gl-np-otp').value||'').trim();
   glErr('gl-np-error2','');
-  if(!/^\d{6}$/.test(code)) return glErr('gl-np-error2','❌ 6 अंक का OTP डालें');
-  const btn=glEl('gl-np-verify'); btn.disabled=true; btn.textContent='⏳ जाँच रहे हैं...';
+  if(!/^\d{6}$/.test(code)) return glErr('gl-np-error2','❌ Enter the 6-digit OTP');
+  const btn=glEl('gl-np-verify'); btn.disabled=true; btn.textContent='Checking…';
   const u=auth.currentUser, oldPhone=(u&&u.phoneNumber)||'';
   try{
     await updatePhoneNumber(u, PhoneAuthProvider.credential(_gl.vid, code));
@@ -7624,11 +7695,11 @@ window.glVerifyNewOtp=async function(){
     glFinishRecovery(u.uid);
   }catch(e){
     const c=(e&&e.code)||'';
-    if(c==='auth/invalid-verification-code'||c==='auth/code-expired') glErr('gl-np-error2','❌ गलत OTP। दोबारा कोशिश करें।');
-    else if(c==='auth/credential-already-in-use'||c==='auth/account-exists-with-different-credential') glErr('gl-np-error2','यह नंबर किसी दूसरे Live Khaata खाते से जुड़ा है। कोई दूसरा नंबर डालें।');
-    else glErr('gl-np-error2','नंबर नहीं बदल सका। दोबारा कोशिश करें।');
+    if(c==='auth/invalid-verification-code'||c==='auth/code-expired') glErr('gl-np-error2','❌ Wrong OTP. Please try again.');
+    else if(c==='auth/credential-already-in-use'||c==='auth/account-exists-with-different-credential') glErr('gl-np-error2','This number is linked to another Live Khaata account. Please use a different number.');
+    else glErr('gl-np-error2','Could not change the number. Please try again.');
     console.warn('update phone:',c,e);
-  }finally{ btn.disabled=false; btn.textContent='✅ नंबर सत्यापित करें'; }
+  }finally{ btn.disabled=false; btn.textContent='Verify number'; }
 };
 window.glKeepOldNumber=function(){ const u=auth.currentUser; if(u) glFinishRecovery(u.uid); };
 function glFinishRecovery(uid){
@@ -7638,26 +7709,88 @@ function glFinishRecovery(uid){
   location.reload();   // clean start: the normal routing opens the restored account
 }
 
+/* ===== Native auto-read OTP =====
+   Inside the Android app the OTP is sent by Android's own Firebase login, which
+   reads the SMS by itself (SMS Retriever) and needs no reCAPTCHA. The code it
+   reads is passed to the same web sign-in as a typed OTP, so accounts, PINs and
+   data are exactly as before. Any problem on the native side falls back to the
+   normal web OTP, so login can never get stuck. */
+function _natFA(){ try{ return (window.LK && LK.native && LK.plugin('FirebaseAuthentication')) || null; }catch(e){ return null; } }
+const _nat = { subs: [], vid: null };
+function _natClear(){ _nat.subs.forEach(function(h){ try{ h && h.remove && h.remove(); }catch(e){} }); _nat.subs = []; }
+function _otpNote(state, txt){
+  var n = document.getElementById('otp-auto'); if (!n) return;
+  n.classList.toggle('show', !!state); n.classList.toggle('ok', state === 'ok');
+  var t = document.getElementById('otp-auto-txt'); if (t && txt) t.textContent = txt;
+}
+function _otpBoxesDone(on){ var b = document.getElementById('otp-boxes'); if (b) b.classList.toggle('done', !!on); }
+window.otpFill = function(code, auto){
+  code = String(code || '').replace(/\D/g, '').slice(0, 6);
+  if (code.length !== 6) return;
+  ['o1','o2','o3','o4','o5','o6'].forEach(function(id, i){ var el = document.getElementById(id); if (el) el.value = code[i]; });
+  try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch(e){}
+  if (auto) { _otpBoxesDone(true); _otpNote('ok', 'OTP filled in. Checking it now…'); }
+  setTimeout(function(){ window.verifyOTP(); }, auto ? 150 : 250);
+};
+function _natSend(e164, resend){
+  var FA = _natFA();
+  if (!FA) return Promise.reject(new Error('no-native'));
+  _natClear();
+  return new Promise(function(resolve, reject){
+    var settled = false;
+    var tm = setTimeout(function(){ bad(new Error('native-timeout')); }, 40000);
+    function ok(){ if (!settled) { settled = true; clearTimeout(tm); resolve(); } }
+    function bad(e){ if (!settled) { settled = true; clearTimeout(tm); _natClear(); reject(e); } }
+    Promise.all([
+      FA.addListener('phoneCodeSent', function(e){ _nat.vid = e && e.verificationId; ok(); }),
+      FA.addListener('phoneVerificationCompleted', function(e){
+        var code = e && e.verificationCode;
+        if (code && _nat.vid) { ok(); setTimeout(function(){ window.otpFill(code, true); }, 0); }
+        else if (!settled) bad(new Error('instant'));    // verified with no SMS: the web sign-in can't use that, so send a normal OTP
+      }),
+      FA.addListener('phoneVerificationFailed', function(e){ bad(new Error((e && e.message) || 'failed')); })
+    ]).then(function(hs){
+      _nat.subs = hs;
+      return FA.signInWithPhoneNumber({ phoneNumber: e164, skipNativeAuth: true, resendCode: !!resend, timeout: 60 });
+    }).catch(bad);
+  });
+}
+async function _sendOtp(e164, resend){
+  if (_natFA()) {
+    try {
+      await _natSend(e164, resend);
+      confirmationResult = { native: true, confirm: function(code){ return signInWithCredential(auth, PhoneAuthProvider.credential(_nat.vid, code)); } };
+      _otpNote('wait', 'Reading the SMS. The OTP will fill in by itself.');
+      try { if (window.logEvent) window.logEvent('otp_native', { step: 'sent', resend: !!resend }); } catch(e){}
+      return;
+    } catch (e) {
+      try { if (window.logEvent) window.logEvent('otp_native', { step: 'fallback', why: String((e && e.message) || e).slice(0, 80) }); } catch(_){}
+    }
+  }
+  _otpNote(false);
+  setupRecaptcha();
+  confirmationResult = await signInWithPhoneNumber(auth, e164, recaptchaVerifier);
+}
 window.sendOTP = async function() {
   const phone = document.getElementById('phone-input').value.trim();
   const errEl = document.getElementById('phone-error');
   errEl.classList.remove('show');
-  if (phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) { errEl.textContent = '❌ सही 10 अंक का मोबाइल नंबर डालें'; errEl.classList.add('show'); return; }
+  if (phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) { errEl.textContent = '❌ Enter a valid 10-digit mobile number'; errEl.classList.add('show'); return; }
   const btn = document.getElementById('send-otp-btn');
-  btn.disabled = true; btn.textContent = '⏳ भेज रहे हैं...';
+  btn.disabled = true; btn.textContent = 'Sending…';
   try {
-    setupRecaptcha();
-    confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone, recaptchaVerifier);
+    _otpBoxesDone(false);
+    await _sendOtp('+91' + phone, false);
     document.getElementById('screen-phone').classList.add('hidden');
     document.getElementById('screen-otp').classList.remove('hidden');
-    document.getElementById('otp-sub').textContent = '+91 ' + phone + ' पर OTP भेजा गया';
+    document.getElementById('otp-sub').textContent = 'Sent to +91 ' + phone;
     document.getElementById('o1').focus();
     startResendTimer();
   } catch (err) {
     console.error(err);
-    errEl.textContent = '❌ OTP नहीं भेज सका। दोबारा कोशिश करें।';
+    errEl.textContent = '❌ Could not send the OTP. Please try again.';
     errEl.classList.add('show');
-    btn.disabled = false; btn.textContent = '📨 OTP भेजें';
+    btn.disabled = false; btn.textContent = 'Send OTP';
   }
 };
 
@@ -7671,12 +7804,12 @@ window.startRecoveryOtp = async function(phone10){
     document.getElementById('screen-terms').classList.add('hidden');
     var _nm = document.getElementById('screen-name'); if (_nm) _nm.classList.add('hidden');
     document.getElementById('screen-otp').classList.remove('hidden');
-    if (sub) sub.textContent = 'xxxxxx' + last4 + ' पर OTP भेज रहे हैं…';
+    if (sub) sub.textContent = 'Sending OTP to xxxxxx' + last4 + '…';
     ['o1','o2','o3','o4','o5','o6'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
     var _pin = document.getElementById('phone-input'); if (_pin) _pin.value = phone10;
-    setupRecaptcha();
-    confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone10, recaptchaVerifier);
-    if (sub) sub.textContent = 'xxxxxx' + last4 + ' पर OTP भेजा गया — OTP डालें';
+    _otpBoxesDone(false);
+    await _sendOtp('+91' + phone10, false);
+    if (sub) sub.textContent = 'OTP sent to xxxxxx' + last4 + '. Enter it below.';
     var _o1 = document.getElementById('o1'); if (_o1) _o1.focus();
     startResendTimer();
   } catch (err) {
@@ -7685,7 +7818,7 @@ window.startRecoveryOtp = async function(phone10){
     document.getElementById('screen-otp').classList.add('hidden');
     document.getElementById('screen-phone').classList.remove('hidden');
     var errEl2 = document.getElementById('phone-error');
-    if (errEl2) { errEl2.textContent = '❌ OTP नहीं भेज सका। दोबारा कोशिश करें।'; errEl2.classList.add('show'); }
+    if (errEl2) { errEl2.textContent = '❌ Could not send the OTP. Please try again.'; errEl2.classList.add('show'); }
   }
 };
 
@@ -7693,15 +7826,16 @@ window.verifyOTP = async function() {
   const otp = ['o1','o2','o3','o4','o5','o6'].map(id => document.getElementById(id).value).join('');
   const errEl = document.getElementById('otp-error'), succEl = document.getElementById('otp-success'), loader = document.getElementById('otp-loader');
   errEl.classList.remove('show'); succEl.classList.remove('show');
-  if (otp.length !== 6) { errEl.textContent = '❌ 6 अंक का OTP डालें'; errEl.classList.add('show'); return; }
+  if (otp.length !== 6) { errEl.textContent = '❌ Enter the 6-digit OTP'; errEl.classList.add('show'); return; }
   const btn = document.getElementById('verify-otp-btn');
-  btn.disabled = true; btn.textContent = '⏳ जाँच रहे हैं...'; loader.classList.add('show');
+  btn.disabled = true; btn.textContent = 'Checking…'; loader.classList.add('show');
   try {
     const cred = await confirmationResult.confirm(otp);
     // Tear down the invisible reCAPTCHA now that OTP is verified. Left in the DOM,
     // Firebase's body-level reCAPTCHA overlay can be resurfaced by the lock's
     // visibility toggle and silently capture taps over the home screen.
     if (recaptchaVerifier) { try { recaptchaVerifier.clear(); } catch(e){} recaptchaVerifier = null; }
+    _natClear(); _otpNote(false);
     // CRITICAL: Mark this as a fresh authenticated PWA session in progress.
     // Downstream code paths (showAlreadyRegisteredScreen, showBrowserBlockScreen,
     // pwaGate timer) check this flag and refuse to auto-sign-out the user
@@ -7716,11 +7850,12 @@ window.verifyOTP = async function() {
         window._fsTrackStage(u.uid, 'otpVerifiedAt', u.phoneNumber || '');
       }
     } catch(stageErr) { console.warn('OTP stage track err:', stageErr); }
-    succEl.textContent = '✅ सत्यापन सफल!'; succEl.classList.add('show'); loader.classList.remove('show');
+    succEl.textContent = '✅ Verified!'; succEl.classList.add('show'); loader.classList.remove('show');
   } catch (err) {
     console.error(err);
-    errEl.textContent = '❌ गलत OTP। दोबारा कोशिश करें।'; errEl.classList.add('show');
-    btn.disabled = false; btn.textContent = '✅ OTP सत्यापित करें'; loader.classList.remove('show');
+    _otpBoxesDone(false); _otpNote(false);
+    errEl.textContent = '❌ Wrong OTP. Please try again.'; errEl.classList.add('show');
+    btn.disabled = false; btn.textContent = 'Verify'; loader.classList.remove('show');
   }
 };
 
@@ -7728,37 +7863,41 @@ window.backToPhone = function() {
   document.getElementById('screen-otp').classList.add('hidden');
   document.getElementById('screen-phone').classList.remove('hidden');
   document.getElementById('send-otp-btn').disabled = false;
-  document.getElementById('send-otp-btn').textContent = '📨 OTP भेजें';
+  document.getElementById('send-otp-btn').textContent = 'Send OTP';
   ['o1','o2','o3','o4','o5','o6'].forEach(id => document.getElementById(id).value = '');
   if (resendCountdown) clearInterval(resendCountdown);
+  _natClear(); _otpNote(false); _otpBoxesDone(false);
 };
 
 window.resendOTP = async function() {
   const phone = document.getElementById('phone-input').value.trim();
   try {
-    setupRecaptcha();
-    confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone, recaptchaVerifier);
+    _otpBoxesDone(false);
+    await _sendOtp('+91' + phone, true);
     document.getElementById('otp-error').classList.remove('show');
     document.getElementById('resend-link').style.display = 'none';
     document.getElementById('resend-countdown').style.display = 'inline';
     startResendTimer();
-  } catch (err) { document.getElementById('otp-error').textContent = '❌ दोबारा नहीं भेज सका'; document.getElementById('otp-error').classList.add('show'); }
+  } catch (err) { document.getElementById('otp-error').textContent = '❌ Could not resend. Please try again.'; document.getElementById('otp-error').classList.add('show'); }
 };
 
 function startResendTimer() {
   let secs = 30;
   const countEl = document.getElementById('resend-countdown'), linkEl = document.getElementById('resend-link');
   countEl.style.display = 'inline'; linkEl.style.display = 'none';
-  countEl.textContent = secs + ' सेकंड में दोबारा भेज सकते हैं';
+  const _fmt = (n) => 'Resend OTP in <b>0:' + String(n).padStart(2,'0') + '</b>';
+  countEl.innerHTML = _fmt(secs);
   if (resendCountdown) clearInterval(resendCountdown);
   resendCountdown = setInterval(() => {
     secs--;
     if (secs <= 0) { clearInterval(resendCountdown); countEl.style.display = 'none'; linkEl.style.display = 'inline'; }
-    else countEl.textContent = secs + ' सेकंड में दोबारा भेज सकते हैं';
+    else countEl.innerHTML = _fmt(secs);
   }, 1000);
 }
 
 let termsChecked = false;
+window.rnGo = function(from, to){ var a=document.getElementById(from), b=document.getElementById(to); if(a) a.classList.add('hidden'); if(b) b.classList.remove('hidden'); };
+window.rnNameCheck = function(){ var n=(document.getElementById('name-input')||{}).value||'', b=(document.getElementById('business-input')||{}).value||'', btn=document.getElementById('name-continue-btn'); if(btn) btn.disabled = !(n.trim() && b.trim()); };
 window.toggleTermsCheck = function() {
   termsChecked = !termsChecked;
   document.getElementById('terms-checkbox').classList.toggle('checked', termsChecked);
@@ -7804,8 +7943,8 @@ window.saveName = async function() {
   const businessName = document.getElementById('business-input').value.trim();
   const errEl = document.getElementById('name-error');
   errEl.classList.remove('show');
-  if (!name) { errEl.textContent = '❌ नाम ज़रूर डालें'; errEl.classList.add('show'); return; }
-  if (!businessName) { errEl.textContent = '❌ दुकान/Business का नाम ज़रूर डालें'; errEl.classList.add('show'); return; }
+  if (!name) { errEl.textContent = '❌ Please enter your name'; errEl.classList.add('show'); return; }
+  if (!businessName) { errEl.textContent = '❌ Please enter your shop name'; errEl.classList.add('show'); return; }
   // Save locally first for instant UI
   try {
     localStorage.setItem('hk_owner_name', name);
@@ -8610,6 +8749,12 @@ window._fsDeleteConfirm = async function(otp) {
     if (idx === arr.length - 1 && el.value.length === 1) setTimeout(() => window.verifyOTP(), 300);
   });
   el.addEventListener('keydown', e => { if (e.key === 'Backspace' && !el.value && idx > 0) document.getElementById(arr[idx-1]).focus(); });
+  el.addEventListener('paste', e => {
+    const t = ((e.clipboardData || window.clipboardData) && (e.clipboardData || window.clipboardData).getData('text') || '').replace(/\D/g,'');
+    if (t.length !== 6) return;
+    e.preventDefault();
+    if (window.otpFill) window.otpFill(t, false);
+  });
 });
 </script>
 
@@ -13129,6 +13274,8 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
   function showRecovery(show) {
     const el = $('alck-recovery-link');
     if (el) el.style.display = show ? 'block' : 'none';
+    const sw = $('alck-switch-account-link');
+    if (sw) sw.textContent = show ? '📱 दूसरे नंबर से लॉगिन करें' : '📱 Log in with a different number';
   }
   function renderDots() {
     const dots = document.querySelectorAll('#alck-dots-row .alck-dot');
@@ -13185,8 +13332,9 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     currentMode = 'setup-new';
     showUnlockCard();
     setPill(isFirstTime ? '🔐 SETUP' : '🔐 NEW PIN', false);
-    setTag('सुरक्षा सेटअप');
-    setTitle('अपना PIN बनाएं');
+    setTag('Security setup');
+    setTitle(isFirstTime ? 'Create a 4-digit PIN' : 'Create your PIN');
+    rnPin(!!isFirstTime);
     showErr('');
     showBio(false);
     showSteps(true, 1);
@@ -13194,7 +13342,11 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     renderDots();
   }
 
+  function rnPin(on){ const s = $('app-lock-screen'); if (s) s.classList.toggle('rn-pin', !!on); if (on) rnPinHi('4 अंक का PIN बनाएं', 'You will use it every time you open the app.'); }
+  function rnPinOn(){ const s = $('app-lock-screen'); return !!(s && s.classList.contains('rn-pin')); }
+  function rnPinHi(hi, sub){ const a = $('alck-rn-hi'), b = $('alck-rn-s'); if (a) a.textContent = hi; if (b) b.textContent = sub; }
   async function enterUnlockMode() {
+    rnPin(false);
     pinBuffer = [];
     currentMode = 'unlock';
     showUnlockCard();
@@ -13220,6 +13372,7 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
   }
 
   async function enterChangePinMode() {
+    rnPin(false);
     pinBuffer = [];
     firstPinForConfirm = '';
     currentMode = 'change-old';
@@ -13310,6 +13463,7 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     const s = $('app-lock-screen');
     if (!s) return;
     s.classList.remove('active');
+    s.classList.remove('rn-pin');
     document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(el => el.style.visibility = 'visible');
     pinBuffer = [];
     if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
@@ -13437,7 +13591,8 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
       pinBuffer = [];
       renderDots();
       currentMode = 'setup-confirm';
-      setTitle('PIN दोबारा डालें');
+      setTitle('Enter your PIN again');
+      rnPinHi('PIN दोबारा डालें', 'Type the same 4 digits to confirm.');
       showErr('');
       showSteps(true, 2);
     } else if (currentMode === 'setup-confirm') {
@@ -13451,16 +13606,17 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
         // defensively clear the overlay so nothing intercepts input.
         await onUnlockSuccess(true);
         try { var _sm = document.getElementById('success-modal-overlay'); if (_sm) { _sm.classList.remove('show'); _sm.style.pointerEvents = 'none'; } } catch(e){}
-        if (typeof toast === 'function') toast('🔐 PIN set हो गया');
+        if (typeof toast === 'function') toast('🔐 PIN is set');
         try { if (typeof loadHome === 'function') loadHome(); } catch(e){}
       } else {
         flashError();
         setTimeout(() => {
           firstPinForConfirm = '';
           currentMode = 'setup-new';
-          setTitle('अपना PIN बनाएं');
+          setTitle(rnPinOn() ? 'Create a 4-digit PIN' : 'Create your PIN');
+          rnPinHi('4 अंक का PIN बनाएं', 'You will use it every time you open the app.');
           showSteps(true, 1);
-          showErr('❌ PIN match नहीं हुआ — दोबारा try करें');
+          showErr('❌ PINs do not match. Please try again.');
         }, 600);
       }
     } else if (currentMode === 'change-old') {

@@ -7727,6 +7727,7 @@ function _otpBoxesDone(on){ var b = document.getElementById('otp-boxes'); if (b)
 window.otpFill = function(code, auto){
   code = String(code || '').replace(/\D/g, '').slice(0, 6);
   if (code.length !== 6) return;
+  if (auto) { var _b = document.getElementById('otp-boxes'); if (_b && _b.classList.contains('done')) return; }   // already filled by the other reader
   ['o1','o2','o3','o4','o5','o6'].forEach(function(id, i){ var el = document.getElementById(id); if (el) el.value = code[i]; });
   try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch(e){}
   if (auto) { _otpBoxesDone(true); _otpNote('ok', 'OTP filled in. Checking it now…'); }
@@ -7755,12 +7756,39 @@ function _natSend(e164, resend){
     }).catch(bad);
   });
 }
+/* Android SMS User Consent: when the OTP SMS arrives Android shows a one-tap
+   "Allow" sheet; the SMS text comes back here and the 6-digit code is filled in.
+   No SMS permission needed and it works with any OTP SMS. */
+const _sms = { subs: [] };
+function _smsPlugin(){ try{ return (window.LK && LK.native && LK.plugin('SmsConsent')) || null; }catch(e){ return null; } }
+function _smsStop(){ _sms.subs.forEach(function(h){ try{ h && h.remove && h.remove(); }catch(e){} }); _sms.subs = []; var P = _smsPlugin(); if (P) { try{ P.stop(); }catch(e){} } }
+async function _smsStart(){
+  var P = _smsPlugin(); if (!P) return false;
+  _smsStop();
+  try {
+    _sms.subs.push(await P.addListener('smsReceived', function(e){
+      var m = String((e && e.message) || '').match(/(^|\D)(\d{6})(?!\d)/);
+      try { if (window.logEvent) window.logEvent('otp_native', { step: 'sms', got: !!m }); } catch(_){}
+      if (m) window.otpFill(m[2], true);
+    }));
+    _sms.subs.push(await P.addListener('smsFailed', function(e){
+      try { if (window.logEvent) window.logEvent('otp_native', { step: 'sms-' + String((e && e.reason) || 'fail') }); } catch(_){}
+      var b = document.getElementById('otp-boxes');
+      if (!(b && b.classList.contains('done'))) _otpNote(false);
+    }));
+    await P.start();
+    return true;
+  } catch (e) {
+    try { if (window.logEvent) window.logEvent('otp_native', { step: 'sms-start-fail', why: String((e && e.message) || e).slice(0, 60) }); } catch(_){}
+    return false;
+  }
+}
 async function _sendOtp(e164, resend){
   if (_natFA()) {
     try {
       await _natSend(e164, resend);
       confirmationResult = { native: true, confirm: function(code){ return signInWithCredential(auth, PhoneAuthProvider.credential(_nat.vid, code)); } };
-      _otpNote('wait', 'Reading the SMS. The OTP will fill in by itself.');
+      _otpNote('wait', (await _smsStart()) ? 'When the SMS arrives, tap Allow. The OTP fills in by itself.' : 'Reading the SMS. The OTP will fill in by itself.');
       try { if (window.logEvent) window.logEvent('otp_native', { step: 'sent', resend: !!resend }); } catch(e){}
       return;
     } catch (e) {
@@ -7770,6 +7798,7 @@ async function _sendOtp(e164, resend){
   _otpNote(false);
   setupRecaptcha();
   confirmationResult = await signInWithPhoneNumber(auth, e164, recaptchaVerifier);
+  if (await _smsStart()) _otpNote('wait', 'When the SMS arrives, tap Allow. The OTP fills in by itself.');
 }
 window.sendOTP = async function() {
   const phone = document.getElementById('phone-input').value.trim();
@@ -7835,7 +7864,7 @@ window.verifyOTP = async function() {
     // Firebase's body-level reCAPTCHA overlay can be resurfaced by the lock's
     // visibility toggle and silently capture taps over the home screen.
     if (recaptchaVerifier) { try { recaptchaVerifier.clear(); } catch(e){} recaptchaVerifier = null; }
-    _natClear(); _otpNote(false);
+    _natClear(); _smsStop(); _otpNote(false);
     // CRITICAL: Mark this as a fresh authenticated PWA session in progress.
     // Downstream code paths (showAlreadyRegisteredScreen, showBrowserBlockScreen,
     // pwaGate timer) check this flag and refuse to auto-sign-out the user
@@ -7866,7 +7895,7 @@ window.backToPhone = function() {
   document.getElementById('send-otp-btn').textContent = 'Send OTP';
   ['o1','o2','o3','o4','o5','o6'].forEach(id => document.getElementById(id).value = '');
   if (resendCountdown) clearInterval(resendCountdown);
-  _natClear(); _otpNote(false); _otpBoxesDone(false);
+  _natClear(); _smsStop(); _otpNote(false); _otpBoxesDone(false);
 };
 
 window.resendOTP = async function() {

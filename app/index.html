@@ -7761,9 +7761,19 @@ function _natSend(e164, resend){
    No SMS permission needed and it works with any OTP SMS. */
 const _sms = { subs: [] };
 function _smsPlugin(){ try{ return (window.LK && LK.native && LK.plugin('SmsConsent')) || null; }catch(e){ return null; } }
-function _smsStop(){ _sms.subs.forEach(function(h){ try{ h && h.remove && h.remove(); }catch(e){} }); _sms.subs = []; var P = _smsPlugin(); if (P) { try{ P.stop(); }catch(e){} } }
+function _smsStop(){ _sms.subs.forEach(function(h){ try{ h && h.remove && h.remove(); }catch(e){} }); _sms.subs = []; var P = _smsPlugin(); if (P && _sms.ok) { try{ var p = P.stop(); if (p && p.catch) p.catch(function(){}); }catch(e){} } }
+/* Only the reader in app build 16+ (it answers info() with v>=2) is used.
+   Build 15's reader could crash the app, so it is never started. */
+async function _smsReady(P){
+  if (_sms.ok !== undefined) return _sms.ok;
+  var v = 0;
+  try { var r = await Promise.race([ P.info(), new Promise(function(res){ setTimeout(function(){ res(null); }, 1500); }) ]); v = Number(r && r.v) || 0; } catch(e){ v = 0; }
+  _sms.ok = v >= 2;
+  return _sms.ok;
+}
 async function _smsStart(){
   var P = _smsPlugin(); if (!P) return false;
+  if (!(await _smsReady(P))) return false;
   _smsStop();
   try {
     _sms.subs.push(await P.addListener('smsReceived', function(e){
@@ -7772,7 +7782,7 @@ async function _smsStart(){
       if (m) window.otpFill(m[2], true);
     }));
     _sms.subs.push(await P.addListener('smsFailed', function(e){
-      try { if (window.logEvent) window.logEvent('otp_native', { step: 'sms-' + String((e && e.reason) || 'fail') }); } catch(_){}
+      try { if (window.logEvent) window.logEvent('otp_native', { step: 'sms-' + String((e && e.reason) || 'fail'), why: String((e && e.detail) || '').slice(0, 120) }); } catch(_){}
       var b = document.getElementById('otp-boxes');
       if (!(b && b.classList.contains('done'))) _otpNote(false);
     }));

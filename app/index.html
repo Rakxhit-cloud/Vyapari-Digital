@@ -7752,7 +7752,9 @@ function _natSend(e164, resend){
       FA.addListener('phoneVerificationFailed', function(e){ bad(new Error((e && e.message) || 'failed')); })
     ]).then(function(hs){
       _nat.subs = hs;
-      return FA.signInWithPhoneNumber({ phoneNumber: e164, skipNativeAuth: true, resendCode: !!resend, timeout: 60 });
+      // timeout 0 = Firebase's own SMS reader stays off. It crashes the app when the
+      // "Allow" (SMS User Consent) broadcast reaches it; our reader fills the OTP instead.
+      return FA.signInWithPhoneNumber({ phoneNumber: e164, skipNativeAuth: true, resendCode: !!resend, timeout: 0 });
     }).catch(bad);
   });
 }

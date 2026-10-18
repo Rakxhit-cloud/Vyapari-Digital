@@ -3067,7 +3067,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
   <div class="more-item" onclick="alckOpenChangePinFlow();toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:1.5px solid #7a6cf0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div> <span style="color:#e8d8b8;font-weight:500;">PIN बदलें · Change PIN</span> <span style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:6px;background:rgba(240, 192, 64, 0.15);color:#f0c040;border:1px solid #d4a020;font-weight:500;">SECURE</span></div>
   <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4a3818 0%,#2a1808 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📅</div> <span style="color:#e8d8b8;font-weight:500;">महीने का हिसाब</span></div>
   <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1810 0%,#1a0f08 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎯</div> <span style="color:#e8d8b8;font-weight:500;">लक्ष्य</span></div>
-  <div class="more-item" onclick="signOut();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
+  <div class="more-item" onclick="signOutAsk();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
   <div class="more-item" onclick="toggleMore();drOpen();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1408 0%,#1a0c05 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🧹</div> <span style="color:#f0a878;font-weight:500;">सब कुछ मिटाएं · Wipe all data</span></div>
   <div class="more-item" style="border-bottom:none;" onclick="toggleMore();openDeleteAccount();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3a0a0a 0%,#220505 100%);border:1.5px solid #c0392b;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🗑️</div> <span style="color:#ff7a7a;font-weight:500;">मेरा खाता और डेटा मिटाएं</span></div>
 </div>
@@ -7732,6 +7732,7 @@ window.glKeepOldNumber=function(){ const u=auth.currentUser; if(u) glFinishRecov
 function glFinishRecovery(uid){
   try{ localStorage.removeItem('hk_gl_need_phone_'+uid); }catch(e){}
   try{ sessionStorage.setItem('hk_fresh_session','1'); }catch(e){}
+  try{ window._alckForgetUnlock(); }catch(e){}
   window._glRecovering=false;
   location.reload();   // clean start: the normal routing opens the restored account
 }
@@ -7909,7 +7910,8 @@ window.verifyOTP = async function() {
     // pwaGate timer) check this flag and refuse to auto-sign-out the user
     // when it's set. This prevents the OTP→PIN→OTP loop caused by flaky
     // display-mode detection right after a fresh PWA install.
-    try { sessionStorage.setItem('hk_fresh_session', '1'); } catch(e){}
+    try { sessionStorage.setItem('hk_fresh_session', '1'); sessionStorage.setItem('hk_otp_at', String(Date.now())); } catch(e){}
+    try { window._alckForgetUnlock(); } catch(e){}
     // Stage 1: OTP verified — create skeleton profile immediately
     // so partial registrations are still visible in admin panel
     try {
@@ -8191,7 +8193,13 @@ window.selectMode = function(mode) {
 };
 
 // Expose signOut globally for browser block screen
+/* Forget "PIN already entered in this session", so the next login always meets the PIN screen. */
+window._alckForgetUnlock = function(){
+  try { sessionStorage.removeItem('alck_unlocked_session'); sessionStorage.removeItem('alck_hidden_at'); } catch(e){}
+  window._alckInitDone = false;
+};
 window.firebaseSignOut = function() {
+  try { window._alckForgetUnlock(); } catch(e){}
   try { return fbSignOut(auth); } catch(e) { console.warn('signOut err:', e); }
 };
 
@@ -8701,8 +8709,13 @@ async function saveFCMToken(uid) {
     console.warn('FCM token error:', e);
   }
 }
+window.signOutAsk = function() {
+  if (!confirm('लॉग आउट करें?\n\nआपका पूरा हिसाब आपके account में सुरक्षित रहेगा। दोबारा खोलने के लिए OTP और आपका PIN लगेगा।')) return;
+  window.signOut();
+};
 window.signOut = async function() {
-  try { sessionStorage.removeItem('hk_fresh_session'); } catch(e){}
+  try { sessionStorage.removeItem('hk_fresh_session'); sessionStorage.removeItem('hk_otp_at'); } catch(e){}
+  try { window._alckForgetUnlock(); } catch(e){}
   window._rtUid = null;
   if (window._stopRealtimeSync) window._stopRealtimeSync();
   await fbSignOut(auth);
@@ -13545,6 +13558,16 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
 
   // ---------- Recovery (OTP) ----------
   window.alckStartRecovery = async function() {
+    let otpAt = 0; try { otpAt = parseInt(sessionStorage.getItem('hk_otp_at') || '0', 10) || 0; } catch(e){}
+    if (otpAt && (Date.now() - otpAt) < 10 * 60 * 1000) {
+      if (!confirm('नया PIN बनाएं?\n\nआपने अभी OTP से अपना नंबर verify किया है, इसलिए दोबारा OTP की ज़रूरत नहीं है।')) return;
+      [PIN_HASH_KEY, PIN_SALT_KEY, ATTEMPTS_KEY, LOCKOUT_UNTIL_KEY, BIO_ENABLED_KEY, BIO_CREDID_KEY].forEach(function(k){ try { localStorage.removeItem(k); } catch(e){} });
+      try { sessionStorage.removeItem('hk_otp_at'); } catch(e){}
+      if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+      activateLockScreen();
+      enterSetupMode(true);
+      return;
+    }
     const phone = (window._currentAuthUser && window._currentAuthUser.phoneNumber) || '';
     if (!phone) {
       alert('Phone number नहीं मिला। कृपया support से contact करें।');

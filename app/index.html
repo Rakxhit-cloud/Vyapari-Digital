@@ -3670,6 +3670,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     <div class="mv-cal" id="cal-grid"></div>
     <div class="mv-leg"><span><i class="mv-d g"></i>More in</span><span><i class="mv-d r"></i>More out</span><span><i class="mv-d n"></i>No entries</span></div>
     <div class="mv-csum" id="cal-ins"></div>
+    <div class="mv-foot" id="cal-hint"></div>
     <div id="cal-section" style="display:none;"></div>
   </div>
 </div>
@@ -11093,7 +11094,7 @@ function initApp(uid){
   document.getElementById('t-date').textContent=TODAY.toLocaleDateString('hi-IN',{day:'numeric',month:'long'});
   document.getElementById('e-date').value=TSTR;
   document.getElementById('g-month').value=MSTR;
- document.getElementById('month-nav-heading').textContent=CUR_YEAR+' — महीनेवार';
+ try{ var _mnh=document.getElementById('month-nav-heading'); if(_mnh) _mnh.textContent=CUR_YEAR+' — महीनेवार'; }catch(e){}
   loadHome();
   // Live गल्ला: after a short delay (to let Firestore sync finish),
   // check whether there's an unsaved past day. If yes, block.
@@ -11625,7 +11626,7 @@ function calDayTotals(y,m){
 }
 function calSetLens(l){calLens=l;renderCalendar();}
 function calSetSub(s){calSub=s;renderCalendar();}
-function calOpenFromLive(){window._mpinDest='s-calendar';openMahina();}
+function calOpenFromLive(){window._calMode='live';window._mpinDest='s-calendar';openMahina();}
 function _mpinGo(){
   var dst=window._mpinDest||'s-mahina';window._mpinDest=null;go(dst);
   if(dst==='s-calendar'){
@@ -13631,8 +13632,9 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     setTag('App locked');
     setTitle('PIN डालें');
     showErr('');
-    const bioOk = (localStorage.getItem(BIO_ENABLED_KEY) === '1') && await isBioSupported();
-    showBio(bioOk);
+    const bioSup = await isBioSupported();
+    const bioOk = (localStorage.getItem(BIO_ENABLED_KEY) === '1') && bioSup;
+    showBio(bioSup);   // key shows whenever the phone has a fingerprint; first tap turns it on after the PIN
     showSteps(false);
     showRecovery(true);
     renderDots();
@@ -13812,7 +13814,16 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
 
     // Offer biometric setup on a successful PIN unlock — but NOT immediately after
     // first-time PIN creation (skipBioOffer), so PIN setup finishes uninterrupted.
-    if (!skipBioOffer && localStorage.getItem(BIO_ENABLED_KEY) !== '1' && localStorage.getItem(BIO_OFFERED_KEY) !== '1') {
+    if (!skipBioOffer && window._bioWant && localStorage.getItem(BIO_ENABLED_KEY) !== '1') {
+      // Asked for it on the lock screen: the PIN just proved it is the owner, so set it up now.
+      window._bioWant = false;
+      setTimeout(async () => {
+        const ok = await setupBiometric();
+        if (ok && typeof showSuccessModal === 'function') showSuccessModal('Fingerprint चालू', '👆 अगली बार से फ़िंगरप्रिंट से खोलें');
+        else if (!ok && !window._bioCancel && typeof toast === 'function') toast('⚠️ Fingerprint चालू नहीं हुआ — फिर कोशिश करें');
+        try { if (window.logEvent) window.logEvent('bio_setup', { ok: !!ok, from: 'lock_key' }); } catch(e){}
+      }, 500);
+    } else if (!skipBioOffer && localStorage.getItem(BIO_ENABLED_KEY) !== '1' && localStorage.getItem(BIO_OFFERED_KEY) !== '1') {
       const supported = await isBioSupported();
       if (supported) {
         localStorage.setItem(BIO_OFFERED_KEY, '1');
@@ -13841,6 +13852,11 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
       return;
     }
     if (digit === 'bio') {
+      if (localStorage.getItem(BIO_ENABLED_KEY) !== '1' || !localStorage.getItem(BIO_CREDID_KEY)) {
+        window._bioWant = true;
+        if (typeof toast === 'function') toast('पहले PIN डालें — फिर Fingerprint चालू हो जाएगा');
+        return;
+      }
       const ok = await verifyBiometric();
       if (ok) await onUnlockSuccess();
       else {
@@ -18720,14 +18736,22 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     }
   };
   window.mvOpenDays=function(){
+    window._calMode='month';
     calYear=CUR_YEAR; calMonth=window.mvMi;
     go('s-calendar');
+  };
+  // Live हिसाब calendar → straight to the day's full page; Month view → summary sheet.
+  window.calTap=function(ds){
+    if(window._calMode==='live'){ try{ openDatePopup(ds); }catch(e){} return; }
+    try{ window.mvDayOpen(ds); }
+    catch(e){ try{ openDatePopup(ds); }catch(x){} }
   };
 
   /* Day by day */
   window.renderCalendar=function(){
     if(calYear>CUR_YEAR || (calYear===CUR_YEAR && calMonth>CUR_MONTH)){ calYear=CUR_YEAR; calMonth=CUR_MONTH; }
-    var lbl=$('cal-label'); if(lbl) lbl.textContent='Day by day · '+MN[calMonth]+(calYear!==CUR_YEAR?(' '+calYear):'');
+    var lbl=$('cal-label'); if(lbl) lbl.textContent=(window._calMode==='live'?'Calendar · ':'Day by day · ')+MN[calMonth]+(calYear!==CUR_YEAR?(' '+calYear):'');
+    var hint=$('cal-hint'); if(hint) hint.textContent=(window._calMode==='live'?'Tap a date to see, add or change its entries.':'Tap a date to see what came in and went out.');
     var nx=$('mv-cal-next'); if(nx) nx.classList.toggle('off', calYear===CUR_YEAR && calMonth>=CUR_MONTH);
     var map={}; try{ map=calDayTotals(calYear,calMonth); }catch(e){}
     var g=$('cal-grid'); if(!g) return;
@@ -18746,7 +18770,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
           em='<em class="'+(net>=0?'g':'r')+'">'+(net>=0?'+':'−')+calShort(Math.abs(net))+'</em>';
         } else em='<em>—</em>';
       }
-      h+='<span class="'+cls.join(' ')+'"'+(fut?'':' onclick="mvDayOpen(\''+ds+'\')"')+'><b>'+d+'</b>'+em+'</span>';
+      h+='<span class="'+cls.join(' ')+'"'+(fut?'':' onclick="calTap(\''+ds+'\')"')+'><b>'+d+'</b>'+em+'</span>';
     }
     g.innerHTML=h;
     var sm=$('cal-ins');

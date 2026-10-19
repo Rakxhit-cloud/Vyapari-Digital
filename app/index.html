@@ -3600,7 +3600,6 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     </div>
     <div class="mv-tip" id="mv-cmp" hidden></div>
     <div class="mv-list">
-      <div class="mv-li tap" onclick="mvOpenDays()" role="button"><span class="mv-lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><div class="mv-lt"><div class="t">Day by day</div><div class="s">Money in and out for each day</div></div><span class="ch">›</span></div>
       <div class="mv-li tap" id="mv-pay-row" onclick="go('s-suppliers')" role="button" hidden><span class="mv-lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9.5L5 4h14l1.5 5.5M4 9.5h16v11H4zM9.5 20.5v-6h5v6"/></svg></span><div class="mv-lt"><div class="t">To pay suppliers</div><div class="s" id="mv-pay-n"></div></div><span class="mv-lv" id="mv-pay">₹0</span><span class="ch">›</span></div>
     </div>
   </div>
@@ -3621,8 +3620,6 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     <div id="mvo-body"></div>
   </div>
 </div>
-
-<div id="mv-day-ov" onclick="if(event.target===this)mvDayClose()"></div>
 
 <div class="dpm-ov" id="dpm-ov" onclick="if(event.target===this)dpMaalClose()">
   <div class="dpm">
@@ -3662,16 +3659,46 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
   </div>
 </div>
 
-<div id="s-calendar" class="screen mv">
-  <div class="mv-bar"><button type="button" class="mv-back" onclick="lkNavBack('s-mahina')" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="mv-ttl" id="cal-label">Day by day</div>
-    <div class="mv-mn"><span onclick="calPrev()" aria-label="Previous month">‹</span><span id="mv-cal-next" onclick="calNext()" aria-label="Next month">›</span></div></div>
-  <div class="mv-body">
-    <div class="mv-calh"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-    <div class="mv-cal" id="cal-grid"></div>
-    <div class="mv-leg"><span><i class="mv-d g"></i>More in</span><span><i class="mv-d r"></i>More out</span><span><i class="mv-d n"></i>No entries</span></div>
-    <div class="mv-csum" id="cal-ins"></div>
-    <div class="mv-foot" id="cal-hint"></div>
-    <div id="cal-section" style="display:none;"></div>
+<div id="s-calendar" class="screen">
+  <div class="header" style="border-bottom-color:#7a6cf0;">
+    <div class="header-left">
+      <button onclick="lkNavBack('s-home')" style="background:#1a1545;border:1.5px solid #4a3878;width:38px;height:38px;border-radius:10px;color:#d4a850;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;">←</button>
+      <div class="header-icon" style="background:linear-gradient(135deg,#1a1545 0%,#0d0a30 100%);border:2px solid #7a6cf0;"><svg viewBox="0 0 48 48" width="40" height="40"><defs>
+<linearGradient id="cx-pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e6e9f1"/></linearGradient>
+<linearGradient id="cx-hd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6a5c"/><stop offset="1" stop-color="#cf2f23"/></linearGradient>
+<linearGradient id="cx-rg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a95ab"/><stop offset=".5" stop-color="#f4f6fb"/><stop offset="1" stop-color="#7b869d"/></linearGradient>
+<filter id="cx-s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.2" stdDeviation="1.1" flood-color="#000" flood-opacity=".45"/></filter></defs>
+<g filter="url(#cx-s)"><rect x="5" y="7" width="38" height="37" rx="6" fill="url(#cx-pg)"/>
+<path d="M5 13a6 6 0 0 1 6-6h26a6 6 0 0 1 6 6v4H5z" fill="url(#cx-hd)"/></g>
+<text x="24" y="15.6" text-anchor="middle" fill="#fff" font-family="Roboto,Arial,sans-serif" font-size="6.6" font-weight="700" letter-spacing=".4" class="lkc-m">OCT</text>
+<text x="24" y="38" text-anchor="middle" fill="#1b2438" font-family="Roboto,Arial,sans-serif" font-size="19" font-weight="700" class="lkc-d">9</text>
+<rect x="13" y="3" width="3.6" height="8" rx="1.8" fill="url(#cx-rg)"/><rect x="31.4" y="3" width="3.6" height="8" rx="1.8" fill="url(#cx-rg)"/></svg></div>
+      <div>
+        <div class="header-title" style="color:#d4a850;">Calendar</div>
+        <div class="header-sub" style="color:#b0a0e8;">Pick a month, then a date</div>
+      </div>
+    </div>
+  </div>
+  <div class="fw">
+    <div class="month-grid" id="month-grid"></div>
+    <div id="cal-section" style="display:none;">
+      <div class="cal-wrapper">
+        <div class="cal-lens">
+          <div class="cal-tb in" id="cal-tab-in" onclick="calSetLens('in')"><div class="n">↓ आया</div><div class="v">₹0</div></div>
+          <div class="cal-tb out on" id="cal-tab-out" onclick="calSetLens('out')"><div class="n">↑ गया</div><div class="v">₹0</div></div>
+        </div>
+        <div class="cal-sub" id="cal-sub">
+          <span class="cal-c on" id="cal-sub-all" onclick="calSetSub('all')">All</span>
+          <span class="cal-c" id="cal-sub-maal" onclick="calSetSub('maal')">माल · Stock</span>
+          <span class="cal-c" id="cal-sub-kharcha" onclick="calSetSub('kharcha')">खर्चा · Expense</span>
+        </div>
+        <div class="cal-header"><div class="cal-month-label" id="cal-label"></div><div style="display:flex;gap:6px;"><div class="cal-nav" onclick="calPrev()">◀</div><div class="cal-nav" onclick="calNext()">▶</div></div></div>
+        <div class="cal-days-header"><div class="cal-day-name">सो</div><div class="cal-day-name">मं</div><div class="cal-day-name">बु</div><div class="cal-day-name">गु</div><div class="cal-day-name">शु</div><div class="cal-day-name">श</div><div class="cal-day-name">र</div></div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-heatleg" id="cal-heatleg"></div>
+        <div class="cal-ins" id="cal-ins" style="display:none;"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -11592,7 +11619,6 @@ function toggleMahiney(){
 }
 function toggleMahineyFromBtn(){
   // One-tap open: navigate to the dedicated calendar screen and build the grid.
-  if (window.mvOpenDays) { window.mvOpenDays(); return; }
   if (typeof go === 'function') go('s-calendar');
   if (typeof buildMonthGrid === 'function') buildMonthGrid();
 }
@@ -11626,7 +11652,7 @@ function calDayTotals(y,m){
 }
 function calSetLens(l){calLens=l;renderCalendar();}
 function calSetSub(s){calSub=s;renderCalendar();}
-function calOpenFromLive(){window._calMode='live';window._mpinDest='s-calendar';openMahina();}
+function calOpenFromLive(){window._mpinDest='s-calendar';openMahina();}
 function _mpinGo(){
   var dst=window._mpinDest||'s-mahina';window._mpinDest=null;go(dst);
   if(dst==='s-calendar'){
@@ -18112,7 +18138,6 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
       if(now==='s-calc' && window.calcShow) window.calcShow();
       if(now==='s-mahina' && window.mvRender) window.mvRender();
       if((now==='s-mahina-in' || now==='s-mahina-out') && window.mvRenderDetail) window.mvRenderDetail();
-      if(now==='s-calendar' && cur!=='s-calendar' && typeof renderCalendar==='function') renderCalendar();
       if(cur==='s-calc' && now!=='s-calc' && window.calcHide) window.calcHide();
     }catch(e){}
     return res;
@@ -18130,7 +18155,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
   /* ---- open layers ---- */
   var RX_ID=/(^|[-_])(ov|cov|overlay|modal|popup|sheet|scrim|cscrim|viewer|menu|chooser|card)$/i;
   var EXTRA={'lg-box-action':1,'udhaar-chooser':1,'credit-modal':1,'credit-list-modal':1,'bill-viewer':1,
-    'uc-seldel-confirm':1,'ucfile-confirm':1,'mk-seldel-confirm':1,'mkp-seldel-confirm':1,'mv-day-ov':1};
+    'uc-seldel-confirm':1,'ucfile-confirm':1,'mk-seldel-confirm':1,'mkp-seldel-confirm':1};
   var SKIP={'app-lock-screen':1,'splash-screen':1,'toast':1};
   var RX_CLOSE=/(close|dismiss|cancel|hide)\w*\s*\(/i;
   var RX_LATER=/^(✕|×|✖|x|बाद में|later|not now|skip|रहने दें|cancel|close|बंद करें|बंद)$/i;
@@ -18169,8 +18194,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     'date-popup-overlay':function(){ if(typeof closeDatePopupDirect==='function') closeDatePopupDirect(); },
     'stmt-sheet':function(e){ var bb=[].slice.call(e.querySelectorAll('.bb')).filter(vis)[0]; if(bb) bb.click(); else if(window.stmtFlowClose) stmtFlowClose(); },
     'stmt-scrim':function(){ if(window.stmtFlowClose) stmtFlowClose(); },
-    'more-menu':function(e){ e.style.display='none'; },
-    'mv-day-ov':function(){ if(window.mvDayClose) mvDayClose(); }
+    'more-menu':function(e){ e.style.display='none'; }
   };
   function closeLayer(e){
     if(KNOWN[e.id]){ KNOWN[e.id](e); return; }
@@ -18735,73 +18759,6 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
       b2.innerHTML=h2;
     }
   };
-  window.mvOpenDays=function(){
-    window._calMode='month';
-    calYear=CUR_YEAR; calMonth=window.mvMi;
-    go('s-calendar');
-  };
-  // Live हिसाब calendar → straight to the day's full page; Month view → summary sheet.
-  window.calTap=function(ds){
-    if(window._calMode==='live'){ try{ openDatePopup(ds); }catch(e){} return; }
-    try{ window.mvDayOpen(ds); }
-    catch(e){ try{ openDatePopup(ds); }catch(x){} }
-  };
-
-  /* Day by day */
-  window.renderCalendar=function(){
-    if(calYear>CUR_YEAR || (calYear===CUR_YEAR && calMonth>CUR_MONTH)){ calYear=CUR_YEAR; calMonth=CUR_MONTH; }
-    var lbl=$('cal-label'); if(lbl) lbl.textContent=(window._calMode==='live'?'Calendar · ':'Day by day · ')+MN[calMonth]+(calYear!==CUR_YEAR?(' '+calYear):'');
-    var hint=$('cal-hint'); if(hint) hint.textContent=(window._calMode==='live'?'Tap a date to see, add or change its entries.':'Tap a date to see what came in and went out.');
-    var nx=$('mv-cal-next'); if(nx) nx.classList.toggle('off', calYear===CUR_YEAR && calMonth>=CUR_MONTH);
-    var map={}; try{ map=calDayTotals(calYear,calMonth); }catch(e){}
-    var g=$('cal-grid'); if(!g) return;
-    var fd=new Date(calYear,calMonth,1).getDay(), off=(fd===0)?6:fd-1, dim=new Date(calYear,calMonth+1,0).getDate();
-    var h='', tin=0, tout=0;
-    for(var i=0;i<off;i++) h+='<span class="e"></span>';
-    for(var d=1;d<=dim;d++){
-      var ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-      var t=map[ds], fut=(ds>TSTR), cls=[];
-      if(fut) cls.push('fut'); if(ds===TSTR) cls.push('today');
-      var em='';
-      if(!fut){
-        if(t && (t.inw>0 || t.out>0)){
-          tin+=t.inw; tout+=t.out;
-          var net=t.inw-t.out;
-          em='<em class="'+(net>=0?'g':'r')+'">'+(net>=0?'+':'−')+calShort(Math.abs(net))+'</em>';
-        } else em='<em>—</em>';
-      }
-      h+='<span class="'+cls.join(' ')+'"'+(fut?'':' onclick="calTap(\''+ds+'\')"')+'><b>'+d+'</b>'+em+'</span>';
-    }
-    g.innerHTML=h;
-    var sm=$('cal-ins');
-    if(sm) sm.innerHTML='<div><span class="g">↓ In</span><b>'+rs(tin)+'</b></div><div><span class="r">↑ Out</span><b>'+rs(tout)+'</b></div><div><span>Left</span><b>'+rs(tin-tout)+'</b></div>';
-  };
-  window.buildMonthGrid=function(){};
-
-  function tm(ts){ try{ var d=new Date(ts); return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
-  window.mvDayOpen=function(ds){
-    var ov=$('mv-day-ov'); if(!ov) return;
-    var rec=null; try{ rec=(DB.get(K.BIKRI)||[]).find(function(r){ return r && r.date===ds; }); }catch(e){}
-    var bx=lgVisibleBoxes(rec && rec.lgBoxes).slice().sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
-    var io=lgInOut(bx), dt=new Date(ds+'T12:00:00');
-    var h='<div class="gr"></div><div class="hd"><div><div class="t">'+dt.getDate()+' '+MN[dt.getMonth()]+'</div><div class="s">'+DN[dt.getDay()]+' · '+n(bx.length,'entry','entries')+'</div></div><div class="x" onclick="mvDayClose()">✕</div></div>';
-    if(bx.length){
-      h+='<div class="io"><div><span class="g">↓ In</span><b>'+rs(io.inward)+'</b></div><div><span class="r">↑ Out</span><b>'+rs(io.outward)+'</b></div><div><span>Left</span><b>'+rs(io.inward-io.outward)+'</b></div></div>';
-      bx.slice(0,3).forEach(function(b){
-        var inn=(lgDirOf(b)==='in'), nt=String(b.note||'').trim();
-        if(!nt) nt = b.type==='purchase' ? 'Stock purchase' : (inn?'Money in':'Money out');
-        var md=(b.type==='purchase'||b.src==='maal') ? 'Supplier' : modeOf(b);
-        h+='<div class="en"><i class="'+(inn?'g':'r')+'">'+(inn?'↓':'↑')+'</i><div><div class="nt">'+esc(nt)+'</div><div class="mt">'+(md==='Unknown'?'':md+' · ')+tm(b.ts)+'</div></div><b>'+rs(lgCashOf(b))+'</b></div>';
-      });
-      h+='<button class="more" onclick="mvDayAll(\''+ds+'\')">'+(bx.length>3?('See all '+bx.length+' entries ›'):'Open this day ›')+'</button>';
-    } else {
-      h+='<div class="none">No entries on this day.</div><button class="more" onclick="mvDayAll(\''+ds+'\')">Add an entry for this day ›</button>';
-    }
-    ov.innerHTML='<div class="mv-sh" onclick="event.stopPropagation()">'+h+'</div>';
-    ov.classList.add('show');
-  };
-  window.mvDayClose=function(){ var ov=$('mv-day-ov'); if(ov) ov.classList.remove('show'); };
-  window.mvDayAll=function(ds){ window.mvDayClose(); setTimeout(function(){ try{ openDatePopup(ds); }catch(e){} },120); };
 })();
 
 </script>

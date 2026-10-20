@@ -2674,18 +2674,38 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 
 </style>
 <style id="lk-v70">
-/* ===== v70: Calculator (add-up, आया only) ===== */
+/* ===== v74: Calculator (bill tabs, hold to speak, native spacing) ===== */
 #s-calc.screen{padding-bottom:0;}
 #s-calc [hidden]{display:none!important;}
 .mv [hidden]{display:none!important;}
 #s-calc.screen.active{display:flex;flex-direction:column;height:100vh;height:100dvh;box-sizing:border-box;padding-bottom:var(--lk-navh,70px);overflow:hidden;}
-#s-calc{--cx-ink:#0B1120;--cx-sf:#111A2E;--cx-line:#1E2A44;--cx-gold:#D4A850;--cx-text:#EDE6D6;--cx-mut:#8E9AB8;--cx-g:#6FD39A;--cx-b:#8FB8F5;background:var(--cx-ink);color:var(--cx-text);font-family:Roboto,'Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;}
+#s-calc{--cx-ink:#0B1120;--cx-sf:#111A2E;--cx-line:#1E2A44;--cx-gold:#D4A850;--cx-text:#EDE6D6;--cx-mut:#8E9AB8;--cx-g:#6FD39A;--cx-b:#8FB8F5;--cx-kh:52px;background:var(--cx-ink);color:var(--cx-text);font-family:Roboto,'Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;}
 #s-calc .cx-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px 8px;flex-shrink:0;}
 #s-calc .cx-ttl{font-size:20px;font-weight:600;}
-#s-calc .cx-today{font-size:12.5px;color:var(--cx-mut);white-space:nowrap;}
-#s-calc .cx-today b{color:var(--cx-g);font-weight:600;margin-left:4px;font-size:13.5px;}
-#s-calc .cx-roll{flex:1;min-height:110px;margin:0 12px;background:#0E1526;border:1px solid var(--cx-line);border-radius:16px;display:flex;flex-direction:column;position:relative;overflow:hidden;}
-#s-calc .cx-lines{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:8px 12px 0;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch;}
+#s-calc .cx-today{font-size:12px;color:var(--cx-mut);white-space:nowrap;background:var(--cx-sf);border:1px solid var(--cx-line);border-radius:100px;padding:6px 11px;}
+#s-calc .cx-today b{color:var(--cx-g);font-weight:600;margin-left:3px;}
+/* bill tabs */
+#s-calc .cx-tabs{display:flex;align-items:center;gap:6px;padding:0 14px 10px;flex-shrink:0;}
+#s-calc .cx-tscroll{flex:0 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;}
+#s-calc .cx-tscroll::-webkit-scrollbar{display:none;}
+#s-calc .cx-tabs.rf .cx-tscroll{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);}
+#s-calc .cx-tabs.lf .cx-tscroll{-webkit-mask-image:linear-gradient(90deg,transparent,#000 22px);mask-image:linear-gradient(90deg,transparent,#000 22px);}
+#s-calc .cx-tabs.lf.rf .cx-tscroll{-webkit-mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent);}
+#s-calc .cx-tb{flex:0 0 auto;display:flex;align-items:baseline;gap:6px;padding:8px 13px;border-radius:100px;border:1px solid #2B3A5C;font-size:13px;color:var(--cx-mut);white-space:nowrap;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;}
+#s-calc .cx-tb i{font-style:normal;max-width:110px;overflow:hidden;text-overflow:ellipsis;}
+#s-calc .cx-tb b{font-weight:600;color:var(--cx-text);font-variant-numeric:tabular-nums;}
+#s-calc .cx-tb.on{background:#2A2210;border-color:var(--cx-gold);color:#F3D37A;}
+#s-calc .cx-tb.on b{color:#F3D37A;}
+#s-calc .cx-tadd{flex:0 0 auto;display:flex;align-items:center;gap:4px;height:36px;padding:0 11px;border-radius:100px;border:1px solid #2B3A5C;background:none;color:var(--cx-gold);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+#s-calc .cx-tadd svg{width:16px;height:16px;}
+#s-calc .cx-tadd em{font-style:normal;font-size:10.5px;font-weight:700;background:var(--cx-gold);color:#1A1208;border-radius:100px;padding:1px 6px;}
+#s-calc .cx-tadd.off{opacity:.35;}
+/* bill card: lines, total, save */
+#s-calc .cx-card{flex:1;min-height:120px;margin:0 14px;background:#0E1526;border:1px solid var(--cx-line);border-radius:22px;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+#s-calc .cx-st{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--cx-mut);padding:8px 10px 0;flex-shrink:0;}
+#s-calc .cx-st.rec{color:#F09A9A;}#s-calc .cx-st.ok{color:#8FD8AC;}#s-calc .cx-st.tip{color:var(--cx-gold);}
+#s-calc .cx-st .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#E2574C;animation:cxBlink 1s steps(1) infinite;}
+#s-calc .cx-lines{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:8px 14px 0;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch;}
 #s-calc .cx-lines::before{content:'';flex:1 0 auto;}
 #s-calc .cx-ln{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:16px;padding:7px 4px;border-bottom:1px dashed #1E2A44;color:#C9CFDE;font-variant-numeric:tabular-nums;border-radius:8px;cursor:pointer;}
 #s-calc .cx-ln b{font-weight:500;color:var(--cx-text);}
@@ -2693,30 +2713,34 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 #s-calc .cx-ln.cur.ed{background:#2A2210;border-color:var(--cx-gold);}
 #s-calc .cx-ln.cur .ex::after{content:'';display:inline-block;width:2px;height:17px;background:var(--cx-gold);margin-left:3px;vertical-align:-3px;animation:cxBlink 1s steps(1) infinite;}
 #s-calc .cx-ln em{font-style:normal;font-size:10.5px;color:var(--cx-gold);margin-left:auto;margin-right:10px;}
+#s-calc .cx-ln.pend{color:#E8C878;border-bottom-color:#3A3420;cursor:default;}
+#s-calc .cx-ln.pend b{color:#E8C878;}
+#s-calc .cx-ln.pend span::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#E2574C;margin-right:7px;vertical-align:2px;}
+#s-calc .cx-ln.new{background:#10261A;border-bottom-color:transparent;padding:7px 8px;margin-top:2px;transition:background .6s;}
+#s-calc .cx-ln.new b{color:#8FD8AC;}
+#s-calc .cx-ln.gone{text-decoration:line-through;opacity:.35;cursor:default;}
 @keyframes cxBlink{50%{opacity:0;}}
 #s-calc .cx-emp{margin:auto 0;text-align:center;color:var(--cx-mut);font-size:13.5px;line-height:1.6;padding:14px 8px;}
 #s-calc .cx-more{position:absolute;top:0;left:0;right:0;text-align:center;font-size:11.5px;color:var(--cx-gold);padding:7px 0 10px;background:linear-gradient(#0E1526 65%,rgba(14,21,38,0));z-index:2;pointer-events:none;}
-#s-calc .cx-said{font-size:13px;color:var(--cx-gold);font-style:italic;text-align:center;padding:4px 12px 0;min-height:18px;}
-#s-calc .cx-tot{display:flex;align-items:baseline;gap:8px;padding:8px 14px 10px;flex-shrink:0;border-top:1px solid #182240;}
+#s-calc .cx-tot{display:flex;align-items:baseline;gap:8px;padding:8px 16px 4px;flex-shrink:0;}
 #s-calc .cx-tot span{font-size:12.5px;color:var(--cx-mut);}
-#s-calc .cx-tot b{font-size:32px;font-weight:600;margin-left:auto;font-variant-numeric:tabular-nums;letter-spacing:-.3px;}
-#s-calc .cx-lis{font-size:12px;color:#F09A9A;text-align:center;padding:0 0 8px;}
-#s-calc .cx-lis i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#E2574C;margin-right:6px;vertical-align:1px;animation:cxBlink 1s steps(1) infinite;}
-#s-calc .cx-save{display:flex;gap:8px;margin:8px 12px 0;flex-shrink:0;}
-#s-calc .cx-save button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:50px;border-radius:14px;font-size:15.5px;font-weight:600;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-#s-calc .cx-save svg{width:20px;height:20px;}
+#s-calc .cx-tot b{font-size:34px;font-weight:600;margin-left:auto;font-variant-numeric:tabular-nums;letter-spacing:-.3px;}
+#s-calc .cx-save{display:flex;gap:8px;padding:6px 10px 10px;flex-shrink:0;}
+#s-calc .cx-save button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#s-calc .cx-save svg{width:19px;height:19px;}
 #s-calc .cx-sc{background:#0F2219;border:1px solid #2E6B48;color:var(--cx-g);}
 #s-calc .cx-su{background:#10203A;border:1px solid #2F5A9A;color:var(--cx-b);}
 #s-calc .cx-save button:active{filter:brightness(1.25);}
 #s-calc .cx-save.off button{opacity:.4;}
-#s-calc .cx-snack{display:flex;align-items:center;gap:10px;margin:8px 12px 0;background:#1E2A44;border-radius:14px;padding:0 12px;height:50px;flex-shrink:0;}
+#s-calc .cx-snack{display:flex;align-items:center;gap:10px;margin:6px 10px 10px;background:#1E2A44;border-radius:14px;padding:0 12px;height:48px;flex-shrink:0;}
 #s-calc .cx-snack .ok{width:26px;height:26px;border-radius:50%;background:#3E9B66;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 #s-calc .cx-snack .ok svg{width:15px;height:15px;}
-#s-calc .cx-snack b{font-size:14px;display:block;font-weight:600;}
-#s-calc .cx-snack small{font-size:11.5px;color:var(--cx-mut);}
+#s-calc .cx-snack b{font-size:13.5px;display:block;font-weight:600;}
+#s-calc .cx-snack small{font-size:11px;color:var(--cx-mut);}
 #s-calc .cx-snack .undo{margin-left:auto;color:var(--cx-gold);font-weight:700;font-size:14px;padding:12px 4px 12px 12px;cursor:pointer;}
-#s-calc .cx-keys{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,var(--cx-kh,52px));gap:7px;margin:8px 12px 10px;flex-shrink:0;}
-#s-calc .cx-k{border-radius:13px;background:#141E35;display:flex;align-items:center;justify-content:center;font-size:21px;color:var(--cx-text);user-select:none;-webkit-user-select:none;cursor:pointer;-webkit-tap-highlight-color:transparent;font-variant-numeric:tabular-nums;}
+/* keypad: even spacing, clear gap above the bottom bar */
+#s-calc .cx-keys{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,var(--cx-kh));gap:9px;padding:12px 14px 16px;flex-shrink:0;}
+#s-calc .cx-k{border-radius:16px;background:#141E35;display:flex;align-items:center;justify-content:center;font-size:21px;color:var(--cx-text);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer;-webkit-tap-highlight-color:transparent;font-variant-numeric:tabular-nums;}
 #s-calc .cx-k:active{background:#26365E;}
 #s-calc .cx-k.f{color:var(--cx-mut);font-size:17px;}
 #s-calc .cx-k.f svg{width:22px;height:22px;}
@@ -2724,11 +2748,24 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 #s-calc .cx-k.tall{grid-row:span 2;}
 #s-calc .cx-k.eq{background:var(--cx-gold);color:#1A1208;font-weight:700;font-size:24px;}
 #s-calc .cx-k.eq:active{filter:brightness(1.1);}
-#s-calc .cx-k.mic{color:var(--cx-gold);}
-#s-calc .cx-k.mic svg{width:22px;height:22px;}
-#s-calc .cx-k.mic.rec{background:#E2574C;color:#fff;}
-@media (max-height:700px){ #s-calc{--cx-kh:46px;} #s-calc .cx-save button,#s-calc .cx-snack{height:46px;} #s-calc .cx-tot b{font-size:28px;} #s-calc .cx-bar{padding:8px 16px 6px;} }
-@media (max-height:600px){ #s-calc{--cx-kh:40px;} #s-calc .cx-keys{gap:5px;} }
+#s-calc .cx-k.mic{flex-direction:column;gap:2px;background:#1E2A44;color:var(--cx-gold);touch-action:none;transition:transform .12s, box-shadow .12s;}
+#s-calc .cx-k.mic svg{width:21px;height:21px;}
+#s-calc .cx-k.mic small{font-size:9.5px;color:var(--cx-mut);letter-spacing:.2px;}
+#s-calc .cx-k.mic.rec{background:#E2574C;color:#fff;box-shadow:0 0 0 6px rgba(226,87,76,.22);transform:scale(1.05);}
+#s-calc .cx-k.mic.rec small{color:#fff;}
+#s-calc .cx-k.mic.can{background:#2A2F3A;color:var(--cx-mut);transform:scale(1.05);}
+/* name sheet */
+#cx-name-ov{position:fixed;inset:0;z-index:2600;background:rgba(3,6,14,.62);display:none;}
+#cx-name-ov.show{display:block;}
+#cx-name-ov .sh{position:absolute;left:0;right:0;bottom:0;background:#121B30;border-radius:22px 22px 0 0;padding:8px 16px calc(20px + env(safe-area-inset-bottom));border-top:1px solid #24304C;color:#EDE6D6;font-family:Roboto,'Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;}
+#cx-name-ov .gr{width:36px;height:4px;border-radius:4px;background:#3A4560;margin:0 auto 12px;}
+#cx-name-ov .t{font-size:17px;font-weight:600;margin-bottom:12px;}
+#cx-name-ov input{width:100%;height:48px;border:2px solid #D4A850;border-radius:12px;background:#0E1526;color:#EDE6D6;font-size:16px;padding:0 14px;font-family:inherit;outline:none;box-sizing:border-box;}
+#cx-name-ov .hint{font-size:12px;color:#8E9AB8;margin:8px 2px 14px;}
+#cx-name-ov .save{width:100%;height:48px;border-radius:100px;border:none;background:#D4A850;color:#1A1208;font-weight:600;font-size:15px;font-family:inherit;cursor:pointer;}
+#cx-name-ov .close{display:block;text-align:center;color:#F08C7A;font-size:14px;font-weight:600;margin-top:14px;padding:6px;cursor:pointer;}
+@media (max-height:720px){ #s-calc{--cx-kh:46px;} #s-calc .cx-save button,#s-calc .cx-snack{height:44px;} #s-calc .cx-tot b{font-size:29px;} #s-calc .cx-bar{padding:8px 16px 6px;} #s-calc .cx-keys{gap:8px;padding:10px 14px 14px;} }
+@media (max-height:620px){ #s-calc{--cx-kh:40px;} #s-calc .cx-keys{gap:6px;padding:8px 12px 10px;} #s-calc .cx-tb{padding:6px 11px;} }
 
 /* ===== v70: Month view (simple English, native) ===== */
 .screen.mv{padding-bottom:calc(var(--lk-navh,70px) + 16px);background:#0B1120;color:#EDE6D6;font-family:Roboto,'Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;}
@@ -3704,20 +3741,26 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 
 <div id="s-calc" class="screen">
   <div class="cx-bar"><div class="cx-ttl">Calculator</div><div class="cx-today">Today's आया <b id="cx-today">₹0</b></div></div>
-  <div class="cx-roll">
+  <div class="cx-tabs" id="cx-tabs"><div class="cx-tscroll" id="cx-tscroll"></div><button type="button" class="cx-tadd" id="cx-tadd" onclick="calcNewBill()" aria-label="New bill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><em hidden>1</em></button></div>
+  <div class="cx-card">
     <div class="cx-more" id="cx-more" hidden></div>
+    <div class="cx-st" id="cx-st" hidden></div>
     <div class="cx-lines" id="cx-lines"></div>
-    <div class="cx-said" id="cx-said" hidden></div>
     <div class="cx-tot"><span id="cx-tot-l">Total</span><b id="cx-total">₹0</b></div>
-    <div class="cx-lis" id="cx-lis" hidden><i></i>Listening… tap the mic to stop</div>
+    <div class="cx-save off" id="cx-save">
+      <button type="button" class="cx-sc" onclick="calcSave('Cash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg><span>Cash आया</span></button>
+      <button type="button" class="cx-su" onclick="calcSave('UPI')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg><span>UPI आया</span></button>
+    </div>
+    <div class="cx-snack" id="cx-snack" hidden><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b id="cx-snack-t">₹0 आया</b><small id="cx-snack-s">Saved to Live हिसाब</small></div><span class="undo" onclick="calcUndo()">Undo</span></div>
   </div>
-  <div class="cx-save off" id="cx-save">
-    <button type="button" class="cx-sc" onclick="calcSave('Cash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg><span>Cash आया</span></button>
-    <button type="button" class="cx-su" onclick="calcSave('UPI')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg><span>UPI आया</span></button>
-  </div>
-  <div class="cx-snack" id="cx-snack" hidden><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b id="cx-snack-t">₹0 आया</b><small>Added to Live हिसाब</small></div><span class="undo" onclick="calcUndo()">Undo</span></div>
-  <div class="cx-keys"><div class="cx-k f" onclick="calcKey('C')">C</div><div class="cx-k f" onclick="calcKey('⌫')" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg></div><div class="cx-k op" onclick="calcKey('×')">×</div><div class="cx-k op" onclick="calcKey('−')">−</div><div class="cx-k" onclick="calcKey('7')">7</div><div class="cx-k" onclick="calcKey('8')">8</div><div class="cx-k" onclick="calcKey('9')">9</div><div class="cx-k op tall" onclick="calcKey('+')">+</div><div class="cx-k" onclick="calcKey('4')">4</div><div class="cx-k" onclick="calcKey('5')">5</div><div class="cx-k" onclick="calcKey('6')">6</div><div class="cx-k" onclick="calcKey('1')">1</div><div class="cx-k" onclick="calcKey('2')">2</div><div class="cx-k" onclick="calcKey('3')">3</div><div class="cx-k eq tall" onclick="calcKey('=')">=</div><div class="cx-k mic" id="cx-mic" onclick="calcMic()" aria-label="Add up by voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></div><div class="cx-k" onclick="calcKey('0')">0</div><div class="cx-k" onclick="calcKey('00')">00</div></div>
+  <div class="cx-keys"><div class="cx-k f" onclick="calcKey('C')">C</div><div class="cx-k f" onclick="calcKey('⌫')" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg></div><div class="cx-k op" onclick="calcKey('×')">×</div><div class="cx-k op" onclick="calcKey('−')">−</div><div class="cx-k" onclick="calcKey('7')">7</div><div class="cx-k" onclick="calcKey('8')">8</div><div class="cx-k" onclick="calcKey('9')">9</div><div class="cx-k op tall" onclick="calcKey('+')">+</div><div class="cx-k" onclick="calcKey('4')">4</div><div class="cx-k" onclick="calcKey('5')">5</div><div class="cx-k" onclick="calcKey('6')">6</div><div class="cx-k" onclick="calcKey('1')">1</div><div class="cx-k" onclick="calcKey('2')">2</div><div class="cx-k" onclick="calcKey('3')">3</div><div class="cx-k eq tall" onclick="calcKey('=')">=</div><div class="cx-k mic" id="cx-mic" role="button" aria-label="Hold to speak amounts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><small>Hold</small></div><div class="cx-k" onclick="calcKey('0')">0</div><div class="cx-k" onclick="calcKey('00')">00</div></div>
 </div>
+
+<div id="cx-name-ov" onclick="if(event.target===this)calcNameClose()"><div class="sh"><div class="gr"></div><div class="t" id="cx-name-t">Name this bill</div>
+  <input id="cx-name-in" type="text" maxlength="20" placeholder="e.g. Gupta ji" autocomplete="off" enterkeyhint="done">
+  <div class="hint">Helps you tell bills apart. The name is added to the entry's note when you save.</div>
+  <button type="button" class="save" onclick="calcNameSave()">Save name</button>
+  <span class="close" onclick="calcBillClose()">Close bill without saving</span></div></div>
 
 <div id="s-entry" class="screen">
   <div class="header" style="background:#111;border-bottom:none;">
@@ -18194,7 +18237,8 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     'date-popup-overlay':function(){ if(typeof closeDatePopupDirect==='function') closeDatePopupDirect(); },
     'stmt-sheet':function(e){ var bb=[].slice.call(e.querySelectorAll('.bb')).filter(vis)[0]; if(bb) bb.click(); else if(window.stmtFlowClose) stmtFlowClose(); },
     'stmt-scrim':function(){ if(window.stmtFlowClose) stmtFlowClose(); },
-    'more-menu':function(e){ e.style.display='none'; }
+    'more-menu':function(e){ e.style.display='none'; },
+    'cx-name-ov':function(){ if(window.calcNameClose) calcNameClose(); }
   };
   function closeLayer(e){
     if(KNOWN[e.id]){ KNOWN[e.id](e); return; }
@@ -18294,218 +18338,307 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
   });
 })();
 
-/* ---------- 2. Calculator: add up a bill, save it as आया ----------
-   Nothing is kept except the saved entry. The lines live only on screen and
-   clear on save, when the app locks, when the app is closed, or next day. */
+/* ---------- 2. Calculator: add up bills, save each as आया ----------
+   v74: several open bills (tabs, up to 10), hold-to-speak, roomier layout.
+   Nothing is kept except saved entries: open bills live only in memory and
+   clear when the app locks, when it is closed, or on the next day. */
 (function(){
-  var CX={lines:[], cur:null, edit:-1, day:'', voice:false, sr:null, srOn:false, srT0:0, snackT:null, undo:null, usedVoice:false};
+  var MAXB=10;
+  var CX={bills:[], act:0, day:'', snackT:null, undo:null, snackShown:false, stT:null,
+          sr:null, hold:null};
   function today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
   function blank(sign){ return {sign:sign||'+', a:'', op:false, b:''}; }
-  CX.cur=blank('+'); CX.day=today();
+  // Lowest free number, so open bills stay "Bill 1 … Bill 10".
+  function freeNo(){ var used={}; CX.bills.forEach(function(b){ used[b.no]=1; }); for(var n=1;;n++){ if(!used[n]) return n; } }
+  function newBill(){ return {no:freeNo(), name:'', lines:[], cur:blank('+'), edit:-1, voice:false, saved:false}; }
+  function resetAll(){ CX.bills=[]; CX.bills=[newBill()]; CX.act=0; }
+  function B(){ if(!CX.bills.length) resetAll(); if(CX.act>=CX.bills.length) CX.act=CX.bills.length-1; return CX.bills[CX.act]; }
+  resetAll(); CX.day=today();
   function $(id){ return document.getElementById(id); }
   function inr(n){ n=Math.round(n||0); return (n<0?'−':'')+'₹'+Math.abs(n).toLocaleString('en-IN'); }
   function num(n){ return Number(n||0).toLocaleString('en-IN'); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function vib(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms||12); }catch(e){} }
   function lineVal(l){ var v=(Number(l.a)||0)*(l.b!=null && l.b!=='' ? (Number(l.b)||0) : 1); return l.sign==='-' ? -v : v; }
-  function curOk(){ var c=CX.cur; return c.a!=='' && (!c.op || c.b!==''); }
-  function curToLine(){ var c=CX.cur; return {sign:c.sign, a:Number(c.a)||0, b:(c.op && c.b!=='') ? (Number(c.b)||0) : null}; }
-  function total(){
-    var t=0; CX.lines.forEach(function(l,i){ if(i!==CX.edit) t+=lineVal(l); });
-    if(CX.cur.a!==''){ var c=CX.cur; var v=(Number(c.a)||0)*((c.op && c.b!=='') ? (Number(c.b)||0) : 1); t+= (c.sign==='-' ? -v : v); }
-    else if(CX.edit>-1){ /* editing a line, emptied */ }
-    return Math.round(t);
+  function curOk(b){ var c=b.cur; return c.a!=='' && (!c.op || c.b!==''); }
+  function curToLine(b){ var c=b.cur; return {sign:c.sign, a:Number(c.a)||0, b:(c.op && c.b!=='') ? (Number(c.b)||0) : null}; }
+  function curVal(b){ var c=b.cur; if(c.a==='') return 0; var v=(Number(c.a)||0)*((c.op && c.b!=='') ? (Number(c.b)||0) : 1); return c.sign==='-' ? -v : v; }
+  function billTotal(b){
+    var t=0; b.lines.forEach(function(l,i){ if(i===b.edit) return; if(l.pend && CX.hold && CX.hold.cancel) return; t+=lineVal(l); });
+    return Math.round(t+curVal(b));
   }
-  function count(){ return CX.lines.length - (CX.edit>-1?1:0) + (CX.cur.a!==''?1:0); }
+  function count(b){ var n=0; b.lines.forEach(function(l,i){ if(i!==b.edit && !(l.pend && CX.hold && CX.hold.cancel)) n++; }); if(b.edit>-1 || b.cur.a!=='') n++; return n; }
+  function label(b){ return b.name ? b.name : ('Bill '+b.no); }
   function exprOf(l, first){
     var s=(first ? (l.sign==='-'?'− ':'') : (l.sign==='-'?'− ':'+ '))+num(l.a);
     if(l.b!=null) s+=' × '+num(l.b);
     return s;
   }
-  function curExpr(first){
-    var c=CX.cur, s=(first ? (c.sign==='-'?'− ':'') : (c.sign==='-'?'− ':'+ '));
+  function curExpr(b, first){
+    var c=b.cur, s=(first ? (c.sign==='-'?'− ':'') : (c.sign==='-'?'− ':'+ '));
     s+=(c.a!==''?num(c.a):'');
     if(c.op) s+=' × '+(c.b!==''?num(c.b):'');
     return s;
   }
-  function commit(){
-    if(!curOk()){ if(CX.edit>-1 && CX.cur.a===''){ CX.lines.splice(CX.edit,1); } CX.edit=-1; return false; }
-    var l=curToLine();
-    if(CX.edit>-1){ CX.lines[CX.edit]=l; CX.edit=-1; } else CX.lines.push(l);
+  function commit(b){
+    if(!curOk(b)){ if(b.edit>-1 && b.cur.a===''){ b.lines.splice(b.edit,1); } b.edit=-1; return false; }
+    var l=curToLine(b);
+    if(b.edit>-1){ b.lines[b.edit]=l; b.edit=-1; } else b.lines.push(l);
     return true;
   }
-  function vib(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms||12); }catch(e){} }
+  function dropPending(b){ b.lines=b.lines.filter(function(l){ return !l.pend; }); }
 
+  /* ---- status line inside the bill card ---- */
+  function status(txt, cls, ms){
+    var s=$('cx-st'); if(!s) return;
+    clearTimeout(CX.stT);
+    s.className='cx-st'+(cls?(' '+cls):''); s.innerHTML=txt||''; s.hidden=!txt;
+    if(ms) CX.stT=setTimeout(function(){ s.hidden=true; s.innerHTML=''; },ms);
+  }
+
+  /* ---- render ---- */
+  function renderTabs(){
+    var sc=$('cx-tscroll'), add=$('cx-tadd'); if(!sc) return;
+    var h='';
+    CX.bills.forEach(function(b,i){
+      h+='<span class="cx-tb'+(i===CX.act?' on':'')+'" data-i="'+i+'"><i>'+esc(label(b))+'</i><b>'+inr(billTotal(b))+'</b></span>';
+    });
+    sc.innerHTML=h;
+    if(add){
+      add.classList.toggle('off', CX.bills.length>=MAXB);
+      var em=add.querySelector('em'); if(em){ em.textContent=String(CX.bills.length); em.hidden=CX.bills.length<4; }
+    }
+    var on=sc.querySelector('.cx-tb.on');
+    if(on){ try{ var l=on.offsetLeft, r=l+on.offsetWidth; if(l<sc.scrollLeft+8) sc.scrollLeft=Math.max(0,l-24); else if(r>sc.scrollLeft+sc.clientWidth-8) sc.scrollLeft=r-sc.clientWidth+24; }catch(e){} }
+    fadeTabs();
+  }
+  function fadeTabs(){
+    var sc=$('cx-tscroll'), w=$('cx-tabs'); if(!sc||!w) return;
+    var over=sc.scrollWidth>sc.clientWidth+2;
+    w.classList.toggle('lf', over && sc.scrollLeft>4);
+    w.classList.toggle('rf', over && sc.scrollLeft+sc.clientWidth < sc.scrollWidth-4);
+  }
   function render(){
     var box=$('cx-lines'); if(!box) return;
-    var h='', n=CX.lines.length, idx=0;
-    var showCur = CX.edit===-1 && (CX.cur.a!=='' || CX.cur.op || n>0 || CX.cur.sign==='-');
-    if(!n && CX.cur.a==='' && !CX.cur.op && CX.cur.sign!=='-'){
-      h='<div class="cx-emp">'+(CX.saved?'Next customer.<br>':'')+'Type or say the amounts.</div>';
+    var b=B(), h='', n=b.lines.length, idx=0, canc=!!(CX.hold && CX.hold.cancel);
+    var showCur = b.edit===-1 && (b.cur.a!=='' || b.cur.op || n>0 || b.cur.sign==='-');
+    if(!n && b.cur.a==='' && !b.cur.op && b.cur.sign!=='-'){
+      h='<div class="cx-emp">'+(b.saved?'Next customer.<br>':'')+'Type or hold the mic to add amounts.</div>';
     } else {
-      CX.lines.forEach(function(l,i){
+      b.lines.forEach(function(l,i){
         var first=(idx===0);
-        if(i===CX.edit){
-          h+='<div class="cx-ln cur ed"><span class="ex">'+curExpr(first)+'</span><em>editing</em><b>'+num(Math.abs(Math.round((Number(CX.cur.a)||0)*((CX.cur.op&&CX.cur.b!=='')?(Number(CX.cur.b)||0):1))))+'</b></div>';
+        if(i===b.edit){
+          h+='<div class="cx-ln cur ed"><span class="ex">'+curExpr(b,first)+'</span><em>editing</em><b>'+num(Math.abs(Math.round(curVal(b))))+'</b></div>';
         } else {
-          var v=lineVal(l);
-          h+='<div class="cx-ln" onclick="calcEditLine('+i+')"><span>'+exprOf(l,first)+'</span><b>'+(v<0?'−':'')+num(Math.abs(v))+'</b></div>';
+          var v=lineVal(l), cls=l.pend?(canc?' gone':' pend'):(l.fresh?' new':'');
+          h+='<div class="cx-ln'+cls+'"'+(l.pend?'':' onclick="calcEditLine('+i+')"')+'><span>'+exprOf(l,first)+'</span><b>'+(v<0?'−':'')+num(Math.abs(v))+'</b></div>';
         }
         idx++;
       });
-      if(showCur){
-        var cv=(Number(CX.cur.a)||0)*((CX.cur.op&&CX.cur.b!=='')?(Number(CX.cur.b)||0):1);
-        h+='<div class="cx-ln cur"><span class="ex">'+curExpr(idx===0)+'</span><b>'+(CX.cur.a!==''?num(Math.round(cv)):'')+'</b></div>';
+      if(showCur && !(CX.hold)){
+        h+='<div class="cx-ln cur"><span class="ex">'+curExpr(b,idx===0)+'</span><b>'+(b.cur.a!==''?num(Math.round(Math.abs(curVal(b)))):'')+'</b></div>';
       }
     }
     box.innerHTML=h;
-    var t=total(), c=count();
+    var t=billTotal(b), c=count(b);
     $('cx-total').textContent=inr(t);
     $('cx-tot-l').textContent= c>1 ? ('Total · '+c+' items') : 'Total';
-    var sv=$('cx-save'); if(sv) sv.classList.toggle('off', !(t>0));
-    // keep the newest line in view
-    var target = box.querySelector('.cx-ln.ed') || null;
+    var sv=$('cx-save'); if(sv) sv.classList.toggle('off', !(t>0) || !!CX.hold);
+    var target = box.querySelector('.cx-ln.ed');
     if(target){ target.scrollIntoView({block:'nearest'}); } else box.scrollTop=box.scrollHeight;
-    moreMark();
+    moreMark(); renderTabs();
   }
   function moreMark(){
     var box=$('cx-lines'), m=$('cx-more'); if(!box||!m) return;
-    var top=box.scrollTop, hid=0;
-    var ls=box.querySelectorAll('.cx-ln');
+    var top=box.scrollTop, hid=0, ls=box.querySelectorAll('.cx-ln');
     for(var i=0;i<ls.length;i++){ if(ls[i].offsetTop + ls[i].offsetHeight/2 < top + 6) hid++; }
-    if(hid>0){ m.textContent='↑ '+hid+' more line'+(hid>1?'s':'')+' · swipe down to check'; m.hidden=false; }
-    else m.hidden=true;
+    if(hid>0){ m.textContent='↑ '+hid+' more line'+(hid>1?'s':'')+' · swipe down to check'; m.hidden=false; } else m.hidden=true;
   }
   function todayIn(){
-    try{
-      var st=window.lgState, ds=TSTR;
-      var r=(st && st.rec && st.rec.date===ds) ? st.rec : lgGetOrCreateRec(ds);
-      return lgInOut(r.lgBoxes).inward;
-    }catch(e){ return 0; }
+    try{ var st=window.lgState, r=(st && st.rec && st.rec.date===TSTR) ? st.rec : lgGetOrCreateRec(TSTR); return lgInOut(r.lgBoxes).inward; }catch(e){ return 0; }
   }
   function paintToday(){ var e=$('cx-today'); if(e) e.textContent=inr(todayIn()); }
-  function reset(){ CX.lines=[]; CX.cur=blank('+'); CX.edit=-1; CX.usedVoice=false; }
 
   window.calcShow=function(){
-    if(CX.day!==today()){ reset(); CX.saved=false; CX.day=today(); hideSnack(true); }
+    if(CX.day!==today()){ stopHold(true); resetAll(); CX.day=today(); hideSnack(); }
     try{ var n=document.querySelector('.bottom-nav'); if(n) document.documentElement.style.setProperty('--lk-navh', Math.ceil(n.getBoundingClientRect().height)+'px'); }catch(e){}
     paintToday(); render();
   };
-  window.calcHide=function(){ stopMic(); };
-  window.calcClearAll=function(){ reset(); hideSnack(true); CX.saved=false; render(); };
+  window.calcHide=function(){ stopHold(true); };
+  window.calcClearAll=function(){ stopHold(true); resetAll(); hideSnack(); render(); };
   window.calcBackHook=function(){
     if(window._lkActive && window._lkActive()!=='s-calc') return false;
-    if(CX.srOn){ stopMic(); return true; }
+    if(CX.hold){ stopHold(true); return true; }
     return false;
   };
 
+  /* ---- keypad ---- */
   window.calcKey=function(k){
-    var c=CX.cur; vib(8);
+    if(CX.hold) return;
+    var b=B(), c=b.cur; vib(8);
     if(CX.snackShown) hideSnack();
+    b.lines.forEach(function(l){ delete l.fresh; });
     if(/^\d$/.test(k) || k==='00'){
-      var part=c.op ? 'b' : 'a';
-      var max= part==='a' ? 7 : 4;
+      var part=c.op ? 'b' : 'a', max= part==='a' ? 7 : 4;
       if(k==='00' && c[part]==='') return;
       if(c[part]==='0' && k!=='00'){ c[part]=k; }
       else if(c[part]==='0' && k==='00'){ return; }
       else { if((c[part]+k).length>max) return; c[part]+=k; }
     } else if(k==='×'){
-      if(c.a==='' && CX.edit===-1 && CX.lines.length){
-        // "× 3" right after a line: multiply that line
-        var last=CX.lines[CX.lines.length-1]; if(last.b==null){ CX.lines.pop(); CX.cur={sign:last.sign,a:String(last.a),op:true,b:''}; }
+      if(c.a==='' && b.edit===-1 && b.lines.length){
+        var last=b.lines[b.lines.length-1]; if(last.b==null){ b.lines.pop(); b.cur={sign:last.sign,a:String(last.a),op:true,b:''}; }
       } else if(c.a!=='' && !c.op){ c.op=true; }
     } else if(k==='+' || k==='−'){
       var sg=(k==='+')?'+':'-';
-      if(c.a===''){ if(CX.edit===-1){ c.sign=sg; c.op=false; c.b=''; } }
-      else { commit(); CX.cur=blank(sg); }
+      if(c.a===''){ if(b.edit===-1){ c.sign=sg; c.op=false; c.b=''; } }
+      else { commit(b); b.cur=blank(sg); }
     } else if(k==='='){
-      commit(); CX.cur=blank('+');
+      commit(b); b.cur=blank('+');
     } else if(k==='C'){
-      if(c.a!=='' || c.op || CX.edit>-1){ CX.edit=-1; CX.cur=blank('+'); }
-      else { reset(); }
+      if(c.a!=='' || c.op || b.edit>-1){ b.edit=-1; b.cur=blank('+'); }
+      else { b.lines=[]; b.cur=blank('+'); b.voice=false; }
     } else if(k==='⌫'){
       if(c.op && c.b!==''){ c.b=c.b.slice(0,-1); }
       else if(c.op){ c.op=false; }
-      else if(c.a!==''){ c.a=c.a.slice(0,-1); if(c.a==='' && CX.edit===-1) c.sign='+'; }
-      else if(CX.edit===-1 && CX.lines.length){
-        var l=CX.lines.pop(); CX.cur={sign:l.sign, a:String(l.a), op:l.b!=null, b:(l.b!=null?String(l.b):'')};
+      else if(c.a!==''){ c.a=c.a.slice(0,-1); if(c.a==='' && b.edit===-1) c.sign='+'; }
+      else if(b.edit===-1 && b.lines.length){
+        var l=b.lines.pop(); b.cur={sign:l.sign, a:String(l.a), op:l.b!=null, b:(l.b!=null?String(l.b):'')};
       }
     }
+    b.saved=false;
     render();
   };
   window.calcEditLine=function(i){
-    if(i<0 || i>=CX.lines.length) return;
-    if(CX.edit===-1 && curOk()){ CX.lines.push(curToLine()); }
-    else if(CX.edit>-1){ commit(); }
-    var l=CX.lines[i]; CX.edit=i;
-    CX.cur={sign:l.sign, a:String(l.a), op:l.b!=null, b:(l.b!=null?String(l.b):'')};
+    if(CX.hold) return;
+    var b=B(); if(i<0 || i>=b.lines.length) return;
+    if(b.edit===-1 && curOk(b)){ b.lines.push(curToLine(b)); }
+    else if(b.edit>-1){ commit(b); }
+    var l=b.lines[i]; b.edit=i;
+    b.cur={sign:l.sign, a:String(l.a), op:l.b!=null, b:(l.b!=null?String(l.b):'')};
     vib(10); render();
   };
 
+  /* ---- bill tabs ---- */
+  window.calcTab=function(i){
+    if(CX.hold || i===CX.act || i<0 || i>=CX.bills.length) return;
+    CX.act=i; vib(8); if(CX.snackShown) hideSnack(); render();
+  };
+  window.calcNewBill=function(){
+    if(CX.hold) return;
+    if(CX.bills.length>=MAXB){ try{ toast('Up to '+MAXB+' open bills — save or close one first'); }catch(e){} return; }
+    CX.bills.push(newBill()); CX.act=CX.bills.length-1; vib(12); if(CX.snackShown) hideSnack(); render();
+  };
+  function removeBill(i){
+    CX.bills.splice(i,1);
+    if(!CX.bills.length){ resetAll(); }
+    else if(CX.act>=CX.bills.length || CX.act>i) CX.act=Math.max(0,Math.min(CX.act-(CX.act>i?1:0),CX.bills.length-1));
+    else if(CX.act===i) CX.act=Math.min(i,CX.bills.length-1);
+  }
+  var nameIdx=-1;
+  window.calcNameOpen=function(i){
+    if(CX.hold) return;
+    var b=CX.bills[i]; if(!b) return; nameIdx=i;
+    var ov=$('cx-name-ov'), inp=$('cx-name-in'); if(!ov||!inp) return;
+    $('cx-name-t').textContent='Name '+label(b);
+    inp.value=b.name||''; ov.classList.add('show'); vib(15);
+    setTimeout(function(){ try{ inp.focus(); }catch(e){} },120);
+  };
+  window.calcNameClose=function(){ var ov=$('cx-name-ov'); if(ov) ov.classList.remove('show'); try{ $('cx-name-in').blur(); }catch(e){} nameIdx=-1; };
+  window.calcNameSave=function(){
+    var b=CX.bills[nameIdx]; if(b){ b.name=String($('cx-name-in').value||'').trim().slice(0,20); }
+    window.calcNameClose(); render();
+  };
+  window.calcBillClose=function(){
+    var i=nameIdx, b=CX.bills[i]; if(!b) return window.calcNameClose();
+    if((b.lines.length || b.cur.a!=='') && !confirm('Close '+label(b)+' without saving?')) return;
+    window.calcNameClose(); removeBill(i); render();
+  };
+  (function wireTabs(){
+    function init(){
+      var sc=$('cx-tscroll'); if(!sc || sc._wired) return; sc._wired=true;
+      var t=null, moved=false, x0=0, idx=-1, longed=false;
+      sc.addEventListener('pointerdown',function(e){
+        var tb=e.target.closest && e.target.closest('.cx-tb'); if(!tb) return;
+        idx=+tb.getAttribute('data-i'); moved=false; longed=false; x0=e.clientX;
+        clearTimeout(t); t=setTimeout(function(){ if(!moved){ longed=true; window.calcNameOpen(idx); } },520);
+      });
+      sc.addEventListener('pointermove',function(e){ if(Math.abs(e.clientX-x0)>8){ moved=true; clearTimeout(t); } });
+      sc.addEventListener('pointerup',function(){ clearTimeout(t); if(!moved && !longed && idx>-1) window.calcTab(idx); idx=-1; });
+      sc.addEventListener('pointercancel',function(){ clearTimeout(t); idx=-1; });
+      sc.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+      sc.addEventListener('scroll',fadeTabs,{passive:true});
+      var bx=$('cx-lines'); if(bx) bx.addEventListener('scroll', moreMark, {passive:true});
+      var inp=$('cx-name-in'); if(inp) inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); window.calcNameSave(); } });
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+  })();
+
   /* ---- save as आया ---- */
-  function showSnack(amt, method){
+  function showSnack(amt, method, b){
     var sv=$('cx-save'), sn=$('cx-snack'); if(!sn) return;
     $('cx-snack-t').textContent=inr(amt)+' आया · '+method;
+    $('cx-snack-s').textContent=label(b)+' saved to Live हिसाब';
     if(sv) sv.hidden=true; sn.hidden=false; CX.snackShown=true;
     clearTimeout(CX.snackT); CX.snackT=setTimeout(function(){ hideSnack(); },5000);
   }
-  function hideSnack(dropUndo){
+  function hideSnack(){
     var sv=$('cx-save'), sn=$('cx-snack');
     if(sn) sn.hidden=true; if(sv) sv.hidden=false; CX.snackShown=false;
     clearTimeout(CX.snackT); CX.undo=null;
   }
-  function todayRec(){
-    var st=window.lgState||{};
-    if(st.rec && st.rec.date===TSTR) return st.rec;
-    return lgGetOrCreateRec(TSTR);
-  }
+  function todayRec(){ var st=window.lgState||{}; if(st.rec && st.rec.date===TSTR) return st.rec; return lgGetOrCreateRec(TSTR); }
   window.calcSave=function(method){
-    if(CX.edit>-1) commit(); else if(curOk()) commit();
-    CX.cur=blank('+'); CX.edit=-1;
-    var amt=total();
+    if(CX.hold) return;
+    var b=B();
+    if(b.edit>-1) commit(b); else if(curOk(b)) commit(b);
+    b.cur=blank('+'); b.edit=-1;
+    var amt=billTotal(b);
     if(!(amt>0)){ render(); try{ toast('पहले रकम जोड़ें', true); }catch(e){} return; }
     if(window.lgState && window.lgState.blocked){ try{ toast('❌ पहले पिछले दिन का closing करें', true); }catch(e){} return; }
     var r; try{ r=todayRec(); }catch(e){ r=null; }
     if(!r){ try{ toast('❌ आज का हिसाब नहीं खुला', true); }catch(e){} return; }
     if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
     var ts=Date.now();
-    var box={ n:r.lgBoxes.filter(function(b){ return b.type==='cash'; }).length+1, type:'cash', amount:amt,
-              note:'कैलकुलेटर', ts:ts, src:'calc', dir:'in', method:method, nature:'Sale' };
+    var box={ n:r.lgBoxes.filter(function(x){ return x.type==='cash'; }).length+1, type:'cash', amount:amt,
+              note:'कैलकुलेटर'+(b.name?(' · '+b.name):''), ts:ts, src:'calc', dir:'in', method:method, nature:'Sale' };
     r.lgBoxes.push(box);
     r.lgSaved=false; r.lgSavedAt=null;
     try{ lgPersistRec(r); }catch(e){}
-    try{ if(window.lgState && window.lgState.date===TSTR){ window.lgState.rec=r; } if(typeof _lgRenderLive==='function') _lgRenderLive(); if(typeof lgRenderEntries==='function' && window.lgState && window.lgState.rec) lgRenderEntries(); }catch(e){}
+    try{ if(window.lgState && window.lgState.date===TSTR){ window.lgState.rec=r; } if(typeof _lgRenderLive==='function') _lgRenderLive(); }catch(e){}
     try{ if(typeof loadHome==='function') setTimeout(loadHome,60); }catch(e){}
-    try{ if(window.logEvent) Promise.resolve(window.logEvent('box_added',{dir:'in',method:'cash',src:'calc',amount:amt,voice:!!CX.usedVoice,
-          mode:method,nature:'Sale',lines:CX.lines.length,bts:ts})).then(function(ok){ if(ok && typeof _lgBxMark==='function') _lgBxMark(ts); }); }catch(e){}
-    CX.undo={ts:ts, lines:CX.lines.slice(), voice:CX.usedVoice};
-    var keep=CX.undo;
-    reset(); CX.saved=true;
+    try{ if(window.logEvent) Promise.resolve(window.logEvent('box_added',{dir:'in',method:'cash',src:'calc',amount:amt,voice:!!b.voice,
+          mode:method,nature:'Sale',lines:b.lines.length,bills:CX.bills.length,bts:ts})).then(function(ok){ if(ok && typeof _lgBxMark==='function') _lgBxMark(ts); }); }catch(e){}
+    var idx=CX.act, keep={ts:ts, bill:b, idx:idx};
+    b.lines.forEach(function(l){ delete l.fresh; });
+    removeBill(idx);
+    if(CX.bills.length===1 && !CX.bills[0].lines.length && CX.bills[0].cur.a==='') CX.bills[0].saved=true;
     try{ if(navigator.vibrate) navigator.vibrate(25); }catch(e){}
-    showSnack(amt, method); CX.undo=keep;
+    showSnack(amt, method, b); CX.undo=keep;
     paintToday(); render();
   };
   window.calcUndo=function(){
     var u=CX.undo; if(!u) return hideSnack();
     try{
-      var r=todayRec();
-      var ix=-1; (r.lgBoxes||[]).forEach(function(b,i){ if(b && b.src==='calc' && b.ts===u.ts) ix=i; });
+      var r=todayRec(), ix=-1;
+      (r.lgBoxes||[]).forEach(function(x,i){ if(x && x.src==='calc' && x.ts===u.ts) ix=i; });
       if(ix>-1){ r.lgBoxes.splice(ix,1); lgPersistRec(r); }
       if(window.lgState && window.lgState.date===TSTR) window.lgState.rec=r;
       if(typeof _lgRenderLive==='function') _lgRenderLive();
       if(typeof loadHome==='function') setTimeout(loadHome,60);
       if(window.logEvent) window.logEvent('calc_undo',{bts:u.ts});
     }catch(e){}
-    CX.lines=u.lines.slice(); CX.cur=blank('+'); CX.edit=-1; CX.usedVoice=u.voice; CX.saved=false;
+    // put the bill back; drop the blank bill that replaced it
+    if(CX.bills.length===1 && !CX.bills[0].lines.length && CX.bills[0].cur.a===''){ CX.bills=[]; }
+    u.bill.saved=false;
+    var at=Math.min(u.idx, CX.bills.length); CX.bills.splice(at,0,u.bill); CX.act=at;
+    if(CX.bills.some(function(x){ return x!==u.bill && x.no===u.bill.no; })){ var keepNo=u.bill.no; CX.bills.splice(at,1); u.bill.no=freeNo(); CX.bills.splice(at,0,u.bill); }
     hideSnack(); paintToday(); render();
-    try{ toast('एंट्री हटा दी — रकम फिर से स्क्रीन पर'); }catch(e){}
+    try{ toast('Entry removed — the bill is back on screen'); }catch(e){}
   };
 
-  /* ---- add up by voice: numbers only ---- */
+  /* ---- hold to speak: numbers only ---- */
   function words(s){ try{ return (window.vcParse && window.vcParse.words) ? window.vcParse.words(s) : null; }catch(e){ return null; } }
-  function amountOf(s){
-    s=String(s||'').trim(); if(!s) return null;
-    if(/^\d+$/.test(s)) return parseInt(s,10);
-    var w=words(s); return (w!=null && w>0) ? w : null;
-  }
+  function amountOf(s){ s=String(s||'').trim(); if(!s) return null; if(/^\d+$/.test(s)) return parseInt(s,10); var w=words(s); return (w!=null && w>0) ? w : null; }
   window.calcParse=function(text){
     var s=String(text||'');
     var dv={'०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9'};
@@ -18514,7 +18647,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     s=s.replace(/\s*(?:×|\*|\binto\b|\bx\b|गुणा|गुना|\bguna\b)\s*/g,' × ');
     s=s.replace(/\s+(?:के|का|की|ke|ka|ki)\s+/g,' × ');
     s=s.replace(/\s*(?:minus|माइनस|घटा|घटाओ|कम)\s*/g,' |- ');
-    s=s.replace(/\s*(?:\+|plus|प्लस|और|aur|\bor\b|जमा|jama|तथा|,|;)\s*/g,' | ');
+    s=s.replace(/\s*(?:\+|plus|प्लस|और|aur|\band\b|\bor\b|जमा|jama|तथा|,|;)\s*/g,' | ');
     var out=[];
     s.split('|').forEach(function(seg){
       seg=seg.trim(); if(!seg) return;
@@ -18523,19 +18656,16 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
       if(seg.indexOf('×')>-1){
         var p=seg.split('×'), a=amountOf(p[0]), b=amountOf(p.slice(1).join(' '));
         if(a!=null && b!=null){ out.push({sign:sign,a:a,b:b}); return; }
-        if(a!=null){ out.push({sign:sign,a:a,b:null}); return; }
+        if(a!=null){ out.push({sign:sign,a:a,b:null}); }
         return;
       }
       var toks=seg.split(/\s+/);
       if(toks.length>1 && toks.every(function(t){ return /^\d+$/.test(t); })){
-        toks.forEach(function(t,i){ out.push({sign:(i===0?sign:'+'), a:parseInt(t,10), b:null}); });
-        return;
+        toks.forEach(function(t,i){ out.push({sign:(i===0?sign:'+'), a:parseInt(t,10), b:null}); }); return;
       }
-      // digits mixed with words: take each run of digits, else read the words
       var digs=seg.match(/\d+/g);
       if(digs && digs.length>1 && !/सौ|हज़ार|हजार|लाख|sau|hazaar|hazar|lakh/.test(seg)){
-        digs.forEach(function(t,i){ out.push({sign:(i===0?sign:'+'), a:parseInt(t,10), b:null}); });
-        return;
+        digs.forEach(function(t,i){ out.push({sign:(i===0?sign:'+'), a:parseInt(t,10), b:null}); }); return;
       }
       var a1=amountOf(seg);
       if(a1==null && digs && digs.length===1) a1=parseInt(digs[0],10);
@@ -18543,77 +18673,138 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     });
     return out.filter(function(l){ return l.a>0 && l.a<10000000 && (l.b==null || (l.b>0 && l.b<10000)); });
   };
-  function addSpoken(text){
-    var items=window.calcParse(text);
-    if(!items.length) return 0;
-    if(CX.edit>-1) commit(); else if(curOk()) commit();
-    var sg=CX.cur.sign; CX.cur=blank('+');
-    items.forEach(function(it,i){ if(i===0 && sg==='-' && it.sign==='+') it.sign='-'; CX.lines.push(it); });
-    CX.usedVoice=true;
-    if(CX.snackShown) hideSnack();
-    render(); vib(15);
-    return items.length;
+  function setPending(text){
+    var b=B(); dropPending(b);
+    window.calcParse(text).forEach(function(it){ it.pend=true; b.lines.push(it); });
+    render();
   }
-  function micUI(on){
-    var m=$('cx-mic'), l=$('cx-lis'), s=$('cx-said');
-    if(m) m.classList.toggle('rec', !!on);
-    if(l) l.hidden=!on;
-    if(s){ if(!on){ s.hidden=true; s.textContent=''; } }
+  function micUI(state){
+    var m=$('cx-mic'); if(!m) return;
+    m.classList.toggle('rec', state==='rec'); m.classList.toggle('can', state==='can');
+    var sm=m.querySelector('small'); if(sm) sm.textContent = state==='rec' ? 'Listening' : (state==='can' ? 'Cancel' : 'Hold');
   }
-  function stopMic(){
-    if(!CX.srOn) return;
-    CX.srOn=false; micUI(false);
-    var r=CX.sr; CX.sr=null;
-    try{ if(r) r.stop(); }catch(e){}
-  }
-  function startOnce(){
+  function startHold(e){
+    if(CX.hold) return;
     var R=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!R){ CX.srOn=false; micUI(false); try{ toast('इस फ़ोन पर बोलकर जोड़ना नहीं चलता — keypad से डालें', true); }catch(e){} return; }
-    var r; try{ r=new R(); }catch(e){ CX.srOn=false; micUI(false); return; }
+    if(!R){ try{ toast('Voice is not available on this phone — please use the keypad', true); }catch(x){} return; }
+    var b=B();
+    if(b.edit>-1) commit(b); else if(curOk(b)) commit(b);
+    b.cur=blank('+'); b.lines.forEach(function(l){ delete l.fresh; });
+    if(CX.snackShown) hideSnack();
+    CX.hold={t0:Date.now(), y0:(e&&e.clientY)||0, cancel:false, text:'', finals:'', released:false, heard:false, bill:b};
+    vib(20); micUI('rec'); status('<i class="dot"></i>Listening · release to add','rec');
+    var r; try{ r=new R(); }catch(x){ stopHold(true); return; }
     CX.sr=r; r.lang='hi-IN'; r.interimResults=true; r.continuous=true; r.maxAlternatives=1;
-    var done={};
     r.onresult=function(ev){
+      var H=CX.hold; if(!H || CX.sr!==r) return;
       var interim='';
       for(var i=ev.resultIndex;i<ev.results.length;i++){
         var RS=ev.results[i], tr=(RS[0] && RS[0].transcript)||'';
-        if(RS.isFinal){ if(!done[i]){ done[i]=1; var n=addSpoken(tr); var s=$('cx-said'); if(s){ s.hidden=false; s.textContent=n?('"'+tr.trim()+'"'):('समझ नहीं आया: "'+tr.trim()+'"'); } } }
-        else interim+=tr;
+        if(RS.isFinal){ H.finals=(H.finals+' '+tr).trim(); } else interim+=' '+tr;
       }
-      if(interim){ var s2=$('cx-said'); if(s2){ s2.hidden=false; s2.textContent='"'+interim.trim()+'"'; } }
+      H.text=(H.finals+' '+interim).trim();
+      if(H.text) H.heard=true;
+      if(B()===H.bill) setPending(H.text);
     };
     r.onerror=function(ev){
       var er=(ev && ev.error)||'';
-      if(er==='not-allowed' || er==='service-not-allowed'){ CX.srOn=false; micUI(false); try{ toast('माइक की अनुमति दें', true); }catch(e){} }
+      if(er==='not-allowed' || er==='service-not-allowed'){ try{ toast('Please allow the microphone for Live Khaata', true); }catch(x){} stopHold(true); }
     };
     r.onend=function(){
       if(CX.sr!==r) return;
       CX.sr=null;
-      if(CX.srOn && (Date.now()-CX.srT0) < 120000){ setTimeout(function(){ if(CX.srOn && !CX.sr) startOnce(); },180); }
-      else { CX.srOn=false; micUI(false); }
+      var H=CX.hold; if(!H) return;
+      if(H.released) finishHold();
+      else if(Date.now()-H.t0 < 30000){ setTimeout(function(){ if(CX.hold && !CX.hold.released && !CX.sr) restart(); },120); }
+      else { H.released=true; finishHold(); }
     };
-    try{ r.start(); }catch(e){ CX.sr=null; setTimeout(function(){ if(CX.srOn && !CX.sr) startOnce(); },400); }
+    try{ r.start(); }catch(x){ CX.sr=null; setTimeout(function(){ if(CX.hold && !CX.sr) restart(); },300); }
+    try{ if(window.logEvent) window.logEvent('calc_voice',{}); }catch(x){}
+    function restart(){
+      var H=CX.hold; if(!H) return;
+      H.finals=H.text; // keep what was already heard
+      var r2; try{ r2=new R(); }catch(x){ return; }
+      CX.sr=r2; r2.lang='hi-IN'; r2.interimResults=true; r2.continuous=true; r2.maxAlternatives=1;
+      r2.onresult=r.onresult.bind(null); r2.onerror=r.onerror;
+      r2.onresult=function(ev){
+        var H2=CX.hold; if(!H2 || CX.sr!==r2) return;
+        var interim='';
+        for(var i=ev.resultIndex;i<ev.results.length;i++){ var RS=ev.results[i], tr=(RS[0]&&RS[0].transcript)||''; if(RS.isFinal) H2.finals=(H2.finals+' '+tr).trim(); else interim+=' '+tr; }
+        H2.text=(H2.finals+' '+interim).trim(); if(H2.text) H2.heard=true;
+        if(B()===H2.bill) setPending(H2.text);
+      };
+      r2.onend=function(){ if(CX.sr!==r2) return; CX.sr=null; var H3=CX.hold; if(!H3) return; if(H3.released) finishHold(); else if(Date.now()-H3.t0<30000) setTimeout(function(){ if(CX.hold && !CX.hold.released && !CX.sr) restart(); },120); else { H3.released=true; finishHold(); } };
+      try{ r2.start(); }catch(x){ CX.sr=null; }
+    }
   }
-  window.calcMic=function(){
-    if(CX.srOn){ stopMic(); return; }
-    if(CX.snackShown) hideSnack();
-    CX.srOn=true; CX.srT0=Date.now(); micUI(true); vib(15);
-    try{ if(window.logEvent) window.logEvent('calc_voice',{}); }catch(e){}
-    startOnce();
-  };
+  function moveHold(e){
+    var H=CX.hold; if(!H || H.released) return;
+    var up=(H.y0 - e.clientY) > 70;
+    if(up!==H.cancel){
+      H.cancel=up; vib(10);
+      micUI(up?'can':'rec');
+      status(up?'Release to cancel':'<i class="dot"></i>Listening · release to add', up?'can':'rec');
+      render();
+    }
+  }
+  function releaseHold(){
+    var H=CX.hold; if(!H || H.released) return;
+    H.released=true;
+    var short=(Date.now()-H.t0)<400 && !H.heard;
+    if(H.cancel || short){
+      stopHold(true);
+      if(short) status('Hold the mic and speak','tip',1800);
+      else status('Cancelled · nothing added','can',1400);
+      return;
+    }
+    micUI('');
+    status('<i class="dot"></i>Adding…','rec');
+    var r=CX.sr;
+    if(r){ try{ r.stop(); }catch(x){} setTimeout(function(){ if(CX.hold===H) finishHold(); },1500); }
+    else finishHold();
+  }
+  function finishHold(){
+    var H=CX.hold; if(!H) return;
+    CX.hold=null;
+    var b=H.bill, n=0;
+    if(CX.bills.indexOf(b)===-1){ micUI(''); status(''); render(); return; }
+    dropPending(b);
+    window.calcParse(H.text).forEach(function(it){ it.fresh=true; b.lines.push(it); n++; });
+    if(n){ b.voice=true; b.saved=false; vib(18); status('✓ '+n+' amount'+(n>1?'s':'')+' added','ok',1800); }
+    else status(H.heard?'Could not catch an amount — try again':'Nothing heard — hold the mic and speak','tip',2200);
+    micUI(''); render();
+    setTimeout(function(){ b.lines.forEach(function(l){ delete l.fresh; }); if(window._lkActive && window._lkActive()==='s-calc' && B()===b) render(); },1600);
+  }
+  function stopHold(cancel){
+    var H=CX.hold; if(!H) return;
+    CX.hold=null;
+    var r=CX.sr; CX.sr=null;
+    try{ if(r) (r.abort?r.abort():r.stop()); }catch(x){}
+    if(cancel){ try{ dropPending(H.bill); }catch(x){} }
+    micUI(''); status(''); render();
+  }
+  (function wireMic(){
+    function init(){
+      var m=$('cx-mic'); if(!m || m._wired) return; m._wired=true;
+      m.addEventListener('pointerdown',function(e){ e.preventDefault(); try{ m.setPointerCapture(e.pointerId); }catch(x){} startHold(e); });
+      m.addEventListener('pointermove',function(e){ moveHold(e); });
+      m.addEventListener('pointerup',function(e){ try{ m.releasePointerCapture(e.pointerId); }catch(x){} releaseHold(); });
+      m.addEventListener('pointercancel',function(){ releaseHold(); });
+      m.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+  })();
 
-  /* clear when the app locks */
+  /* clear everything when the app locks; stop listening when hidden */
   try{
     var lk=document.getElementById('app-lock-screen');
     if(lk && window.MutationObserver){
-      new MutationObserver(function(){ if(lk.classList.contains('active')){ stopMic(); reset(); hideSnack(true); CX.saved=false; try{ render(); }catch(e){} } })
+      new MutationObserver(function(){ if(lk.classList.contains('active')){ stopHold(true); resetAll(); hideSnack(); window.calcNameClose(); try{ render(); }catch(e){} } })
         .observe(lk,{attributes:true, attributeFilter:['class']});
     }
   }catch(e){}
-  document.addEventListener('visibilitychange',function(){ if(document.hidden) stopMic(); });
-  document.addEventListener('DOMContentLoaded',function(){
-    var b=$('cx-lines'); if(b) b.addEventListener('scroll', moreMark, {passive:true});
-  });
-  try{ var b0=$('cx-lines'); if(b0) b0.addEventListener('scroll', moreMark, {passive:true}); }catch(e){}
+  document.addEventListener('visibilitychange',function(){ if(document.hidden) stopHold(true); });
+  window._calcState=CX;
 })();
 
 /* ---------- 3. Month view ---------- */

@@ -285,6 +285,7 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .tl-tag.bad{background:rgba(224,82,82,.12);border:1px solid #8a3434;color:#ff9a8a;}
 .tl-dim{color:#7f90b8;} .tl-bad{color:#ff9a8a;} .tl-warn{color:#f0b060;} .tl-amt{color:#f0c060;font-weight:600;}
 .tl-empty{font-size:12px;color:#7f90b8;padding:8px 4px;}
+.tl-wait{background:rgba(224,160,90,.1);border:1px solid #8a5a28;border-radius:9px;padding:9px 12px;margin:0 0 8px;font-size:12.5px;color:#f0b060;line-height:1.55;}
 .tl-h .tl-dim{font-size:11.5px;}
 .tl-head .tl-t,.tl-head .tl-l{font-size:10px;font-family:inherit;color:#7f90b8;}
 .tdd-wrap{overflow-x:auto;}
@@ -1087,6 +1088,7 @@ window.loadUsers = async function loadUsers() {
   _usersP = (async () => {
   try {
     allUsers = await window._loadUsersFromFirestore();
+    _admApplyLastSeen();
     renderStats();
     renderUserList();
     _admLoadEvents().then(() => renderUserList()).catch(() => {});
@@ -1810,10 +1812,14 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ══════════════════ TESTERS TAB ══════════════════
-   Daily minimum for a qualified day: 2 app opens + 2 entries in total,
+   Daily minimum for a qualified day: 1 app open + 2 entries in total,
    आया and गया counted together (2 आया, 2 गया, or 1 of each).
+   Relaxed from 2 opens to 1 on 12 Oct 2026; days before that keep the old
+   2-open rule so past results and payouts don't change.
    Scans are weekly and shown for information; they do not decide a day.  */
-const T_TARGET = { opens: 2, entries: 2, scansWeek: 5 };
+const T_TARGET = { opens: 1, entries: 2, scansWeek: 5 };
+const T_OPENS_FROM = '2026-10-12';
+function _tvOpensNeed(d){ return (!d || d >= T_OPENS_FROM) ? T_TARGET.opens : 2; }
 let _tvEvents = null;
 
 function _tvDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -1826,8 +1832,18 @@ function _tvWeek(ds){ const d=new Date(ds+'T00:00:00'); const day=(d.getDay()+6)
    longer re-reads every event ever written (that cost grew every day). */
 let _admEventsP = null, _admEvMap = null, _admEvUnsub = null, _admEvMaxMs = 0, _admLiveAt = null, _admLiveT = null;
 function _admTsMs(e){ const t = e && e.ts; return t ? (t.toMillis ? t.toMillis() : (t.seconds ? t.seconds*1000 : 0)) : 0; }
+/* LAST SEEN = the later of the profile's lastActiveAt and the newest event this
+   user sent (server time). Any launch, entry, scan or voice attempt now proves the
+   user was active, even if the profile heartbeat didn't get written. */
+function _admApplyLastSeen(){
+  const last = window._admLastEv || {};
+  (allUsers||[]).forEach(u => {
+    const p = Number(u.profile && u.profile.lastActiveAt) || 0, e = last[u.uid] || 0;
+    u.lastActive = Math.max(p, e) || null;
+  });
+}
 function _admPublish(){
-  const ev = Array.from(_admEvMap.values());
+  const ev = _admDedupeBoxes(Array.from(_admEvMap.values()));
   _tvEvents = ev; window._admEvents = ev;
   const m = {}, sc = {};
   ev.forEach(e => {
@@ -1835,6 +1851,10 @@ function _admPublish(){
     if (e.event === 'bill_scanned') sc[e.uid] = (sc[e.uid] || 0) + 1;
   });
   window._admActDays = m; window._admScans = sc;
+  const le = {};
+  ev.forEach(e => { const t = _admTsMs(e); if (t > (le[e.uid] || 0)) le[e.uid] = t; });
+  window._admLastEv = le;
+  try { _admApplyLastSeen(); } catch(e){}
   return ev;
 }
 function _admLiveRedraw(){
@@ -1911,15 +1931,50 @@ async function _tvCohortSave(o){
 /* roll raw events into per-day counters for one uid */
 /* LAUNCHES vs OPENS. App v4 records every launch (app_launch); older builds sent
    app_open, already 20 min apart. Both are launches. An OPEN that counts toward
-   the daily target = a launch at least 20 min after the last counted one, the
+   the daily target = a launch at least 1 min after the last counted one (was 20:
+   too strict for a busy shop counter, where the app is reopened every few minutes), the
    same day (phone time). Old days give the same result as before. */
-const T_GAP_MS = 20*60*1000;
-function _tvAt(e){ const a = Number((e.meta||{}).at); return a > 0 ? a : _admTsMs(e); }
+const T_GAP_MS = 60*1000;   // 1 minute: only blocks tap-close-tap within seconds
+function _tvAt(e){ const m = e.meta||{}; if (m.replay && Number(m.bts) > 0) return Number(m.bts); const a = Number(m.at); return a > 0 ? a : _admTsMs(e); }
+/* An entry event resent by the phone (meta.replay) is dropped when the original
+   already arrived: same entry time (bts), or an entry of the same amount logged
+   within 15 s of it. Keeps every entry counted exactly once. */
+function _admDedupeBoxes(ev){
+  const orig = {}, seen = new Set();
+  ev.forEach(e => { const m = e.meta||{}; if (e.event === 'box_added' && !m.replay) (orig[e.uid] = orig[e.uid] || []).push(m); });
+  return ev.filter(e => {
+    const m = e.meta||{};
+    if (e.event !== 'box_added' || !m.replay) return true;
+    const bts = Number(m.bts) || 0, key = e.uid+'_'+bts;
+    if (seen.has(key)) return false;
+    const dup = (orig[e.uid]||[]).some(o => (Number(o.bts) > 0 && Number(o.bts) === bts) ||
+      (!o.forDate && Number(o.amount) === Number(m.amount) && Math.abs(Number(o.at) - bts) < 15000));
+    if (dup) return false;
+    seen.add(key); return true;
+  });
+}
 function _tvIsLaunch(e){ return e.event === 'app_open' || e.event === 'app_launch'; }
 function _tvCountOpens(times){
   const ts = times.slice().sort((x,y)=>x-y), counted = new Set(); let last = -Infinity;
   ts.forEach(t => { if (!(t > 0) || t - last >= T_GAP_MS) { counted.add(t); if (t > 0) last = t; } });
   return counted;
+}
+/* IMPLIED LAUNCH: any event from the app (entry, voice, scan, trial screen...)
+   proves the app was open. If it arrives with no launch or other activity in the
+   previous 10 min, that session's launch never reached us (stuck on an old build,
+   lost on a slow phone), so the session counts as a launch at its first event.
+   Computed here, retroactively: no tester has to reopen anything. When the real
+   launch arrives later, it replaces the implied one automatically. */
+const T_IDLE_MS = 10*60*1000;
+function _tvLaunchList(evs){
+  const out = []; let lastSeen = -Infinity;
+  evs.slice().sort((x,y)=>_tvAt(x)-_tvAt(y)).forEach(e => {
+    const t = _tvAt(e);
+    if (_tvIsLaunch(e)) out.push({ t, implied:false, e });
+    else if (t - lastSeen > T_IDLE_MS) out.push({ t, implied:true, e });
+    lastSeen = Math.max(lastSeen, t);
+  });
+  return out;
 }
 function _tvAggregate(uid){
   const days = {}, weeks = {}, at = {};
@@ -1927,7 +1982,8 @@ function _tvAggregate(uid){
     if (e.uid !== uid || !e.day) return;
     const d = days[e.day] || (days[e.day] = { opens:0, launches:0, inw:0, outw:0, scans:0, fps:{} });
     const m = e.meta || {};
-    if (_tvIsLaunch(e)) { d.launches++; (at[e.day] = at[e.day] || []).push(_tvAt(e)); }
+    (at[e.day] = at[e.day] || []).push(e);
+    if (_tvIsLaunch(e)) { d.launches++; }
     else if (e.event === 'box_added') { if (m.dir === 'in') d.inw++; else if (m.dir === 'out') d.outw++; }
     else if (e.event === 'bill_scanned') {
       d.scans++;
@@ -1935,7 +1991,7 @@ function _tvAggregate(uid){
       w.total++; const fp = m.fp || ('?'+e.day); w.fps[fp] = (w.fps[fp]||0)+1; d.fps[fp]=1;
     }
   });
-  Object.keys(at).forEach(day => { days[day].opens = _tvCountOpens(at[day]).size; });
+  Object.keys(at).forEach(day => { days[day].opens = _tvCountOpens(_tvLaunchList(at[day]).map(x => x.t)).size; });
   return { days, weeks };
 }
 
@@ -1951,39 +2007,63 @@ function _tvLag(e){
   const mins = Math.round(d/60), txt = mins < 60 ? mins+' min' : (Math.floor(mins/60)+' h '+(mins%60)+' min');
   return '<span class="'+(d > 120 ? 'tl-warn' : '')+'">after '+txt+(d > 120 ? ' ⚠ weak network or app was closed' : '')+'</span>';
 }
-const _TV_SRC = { voice:'voice', maal:'purchase', udhaar:'उधार', calc:'calculator' };
+const _TV_SRC = { voice:'voice', manual:'typed', maal:'purchase', udhaar:'उधार', calc:'calculator' };
+// Entries added for a past date (calendar) are labelled with that date, so bulk back-filling is visible.
+function _tvShortEn(ds){ const p=String(ds||'').split('-'); const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return p.length===3 ? (parseInt(p[2],10)+' '+M[parseInt(p[1],10)-1]) : ds; }
 const _TV_VOICE_SR = { 'no-mic':"speech service didn't start, switched to recording", 'no-speech':'nothing heard', 'no-amount':'no amount understood', 'not-allowed':'Google app has no mic permission', 'network':'speech service network error', 'audio-capture':'mic could not start' };
 const _TV_VOICE_FAIL = { perm:'Chrome has no mic permission', busy:'mic busy', nomic:'no microphone found', other:'mic did not start' };
 function _tvTimeline(uid, day){
   const ev = (_tvEvents||[]).filter(e => e.uid === uid && e.day === day);
-  const launches = ev.filter(_tvIsLaunch).map(_tvAt);
-  const counted = _tvCountOpens(launches);
+  const list = _tvLaunchList(ev);
+  const counted = _tvCountOpens(list.map(x => x.t));
+  const impliedBy = new Set(list.filter(x => x.implied).map(x => x.e));
   const rows = [];
   let lastCounted = null, openNo = 0;
   ev.slice().sort((x,y)=>_tvAt(x)-_tvAt(y)).forEach(e => {
     const m = e.meta || {}, t = _tvAt(e);
     let what = '';
+    if (impliedBy.has(e)) {
+      const ok = counted.has(t);
+      if (ok) { openNo++; lastCounted = t; }
+      rows.push('<div class="tl-row"><div class="tl-t">'+_tvClock(t)+'</div><div class="tl-w">Launch '
+        + (ok ? '<span class="tl-tag ok">COUNTED · open '+openNo+'</span>' : '<span class="tl-tag no">not counted</span>')
+        + ' <span class="tl-dim">from activity: the app was clearly open, its launch signal didn\'t arrive</span></div><div class="tl-l"><span class="tl-dim">—</span></div></div>');
+    }
     if (_tvIsLaunch(e)) {
       if (counted.has(t)) { openNo++; lastCounted = t; what = 'Launch <span class="tl-tag ok">COUNTED · open '+openNo+'</span>'; }
       else {
-        const gap = lastCounted ? Math.floor((t - lastCounted)/60000) : 0;
-        what = '<span class="tl-dim">Launch</span> <span class="tl-tag no">not counted</span> <span class="tl-dim">'+gap+' min after '+_tvClock(lastCounted)+' (needs 20)</span>';
+        const gs = lastCounted ? Math.max(0, Math.round((t - lastCounted)/1000)) : 0;
+        what = '<span class="tl-dim">Launch</span> <span class="tl-tag no">not counted</span> <span class="tl-dim">'+gs+' s after '+_tvClock(lastCounted)+' (needs '+Math.round(T_GAP_MS/60000)+' min)</span>';
       }
     } else if (e.event === 'box_added') {
       const dir = m.dir === 'in' ? 'आया' : (m.dir === 'out' ? 'गया' : 'Entry');
       const amt = Number(m.amount) > 0 ? ' <span class="tl-amt">₹'+Number(m.amount).toLocaleString('en-IN')+'</span>' : '';
-      what = dir + amt + (_TV_SRC[m.src] ? ' <span class="tl-dim">· '+_TV_SRC[m.src]+'</span>' : '');
+      what = dir + amt + (_TV_SRC[m.src] ? ' <span class="tl-dim">· '+_TV_SRC[m.src]+'</span>' : '')
+           + (m.forDate ? ' <span class="tl-tag no">for '+_tvEsc(_tvShortEn(m.forDate))+'</span>' : '')
+           + (m.replay ? ' <span class="tl-dim">· sent late by the phone</span>' : '');
     } else if (e.event === 'bill_scanned') {
       what = 'Bill scan' + (m.billNo ? ' <span class="tl-dim">· bill '+_tvEsc(m.billNo)+'</span>' : '');
     } else if (e.event === 'voice_path') {
       const sec = Number(m.ms) > 0 ? ' in '+(Number(m.ms)/1000).toFixed(1)+' s' : '';
-      what = 'Voice <span class="tl-tag ok">✓ understood</span><span class="tl-dim">'+sec+' · '+(m.path === 'sr' ? 'fast path' : 'upload path')+'</span>';
+      const how = m.path === 'sr' ? 'fast path'
+                : m.path === 'text' ? 'text pass'
+                : (m.engine === 'chirp' || m.engine === 'chirp-only') ? 'cloud engine'
+                : 'upload path';
+      what = 'Voice <span class="tl-tag ok">✓ understood</span><span class="tl-dim">'+sec+' · '+how
+           + (m.via === 'phone-parse' ? ' · read on phone' : '')
+           + (Number(m.guess) > 1 ? ' · <span class="tl-tag ok">Google guess #'+Number(m.guess)+'</span>' : '')+'</span>';
     } else if (e.event === 'voice_sr') {
       what = 'Voice <span class="tl-tag bad">✗</span> <span class="tl-bad">'+_tvEsc(_TV_VOICE_SR[m.err] || m.err || 'failed')+'</span>'
-           + (m.err === 'no-amount' && m.txt ? ' <span class="tl-dim">heard "'+_tvEsc(m.txt)+'"</span>' : '');
+           + (m.err === 'no-amount' && m.txt ? ' <span class="tl-dim">heard "'+_tvEsc(m.txt)+'"</span>' : '')
+           + (m.next === 'text' ? ' <span class="tl-dim">→ sent to text pass</span>' : '');
     } else if (e.event === 'voice_fail') {
       what = 'Voice <span class="tl-tag bad">✗ '+_tvEsc(_TV_VOICE_FAIL[m.err] || m.err || 'failed')+'</span>'
            + (m.err === 'busy' && !m.retried ? ' <span class="tl-dim">retrying in 0.8 s</span>' : '');
+    } else if (e.event === 'cash_check') {
+      const g = Math.round(Number(m.gap) || 0);
+      what = (m.kind === 'reset' ? 'Cash in hand reset' : 'Cash in hand count')
+           + (m.kind !== 'reset' && g ? ' <span class="tl-dim">· ₹'+Math.abs(g).toLocaleString('en-IN')+(g < 0 ? ' short' : ' extra')+'</span>' : '')
+           + (m.reason ? ' <span class="tl-dim">· '+_tvEsc(m.reason)+'</span>' : '');
     } else if (e.event === 'trial_ended_screen') {
       what = '<span class="tl-warn">Trial-ended screen shown</span>';
     } else return;   // screen views and duplicate entry logs are left out
@@ -1993,14 +2073,23 @@ function _tvTimeline(uid, day){
   let dev = null;
   (_tvEvents||[]).forEach(e => { const m = e.meta || {}; if (e.uid === uid && m.dev && (!dev || _tvAt(e) > dev.t)) dev = { t:_tvAt(e), dev:m.dev, ver:m.ver||'' }; });
   const devTxt = dev ? _tvEsc(dev.dev) + (dev.ver ? ' · app '+_tvEsc(dev.ver) : '') : 'device shows after the next launch on the new app';
+  // Launches recorded on the phone but not yet delivered (reported by the newest event, app v4.1+)
+  let newest = null;
+  (_tvEvents||[]).forEach(e => { if (e.uid === uid && (!newest || _tvAt(e) > _tvAt(newest))) newest = e; });
+  const nm = (newest && newest.meta) || {};
+  const waiting = Number(nm.aoq) > 0
+    ? '<div class="tl-wait">⚠ '+nm.aoq+' launch'+(nm.aoq>1?'es':'')+' recorded on the phone, not yet delivered (as of '+_tvClock(_tvAt(newest))+')'
+      + (nm.aoe ? '<br><span class="tl-dim">Reason: '+_tvEsc(nm.aoe)+'</span>' : '')
+      + '<br><span class="tl-dim">They are kept on the phone and sent automatically; each will appear here at its real time.</span></div>'
+    : '';
   return '<div class="tl-box"><div class="tl-h"><span class="tl-ht">Today\'s timeline</span><span class="tl-dim">'+_tvLong(day)+' · phone time</span>'
-       + '<span class="tl-dev">'+devTxt+'</span></div>'
+       + '<span class="tl-dev">'+devTxt+'</span></div>' + waiting
        + '<div class="tl-row tl-head"><div class="tl-t">TIME</div><div class="tl-w">WHAT HAPPENED</div><div class="tl-l">REACHED SERVER</div></div>'
        + (rows.length ? rows.join('') : '<div class="tl-empty">No activity yet today.</div>')
        + '</div>';
 }
 function _tvEntries(c){ return c ? (c.inw||0)+(c.outw||0) : 0; }
-function _tvQualified(c){ return !!c && c.opens>=T_TARGET.opens && _tvEntries(c)>=T_TARGET.entries; }
+function _tvQualified(c, d){ return !!c && c.opens>=_tvOpensNeed(d) && _tvEntries(c)>=T_TARGET.entries; }
 function _tvEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function _tvShort(ds){ if(!ds) return ''; const d=new Date(ds+'T00:00:00'); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
 function _tvLong(ds){ const d=new Date(ds+'T00:00:00'); return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}); }
@@ -2015,15 +2104,16 @@ function _tvStats(u){
   const start = p.testerStart || '';
   const t = ag.days[today] || { opens:0, launches:0, inw:0, outw:0, scans:0, fps:{} };
   const wk = ag.weeks[_tvWeek(today)] || { total:0, fps:{} };
-  const uniqScans = Object.keys(wk.fps).length, dupes = wk.total - uniqScans;
+  // Every bill scan counts; repeated scans of the same bill are no longer flagged.
+  const uniqScans = wk.total, dupes = 0;
   let from = start;
   if (!from) { const ds = Object.keys(ag.days).sort(); from = ds[0] || today; }
   let bankedPast = 0;
-  Object.keys(ag.days).forEach(d => { if (d < from || d >= today) return; if (_tvQualified(ag.days[d])) bankedPast++; });
+  Object.keys(ag.days).forEach(d => { if (d < from || d >= today) return; if (_tvQualified(ag.days[d], d)) bankedPast++; });
   const elapsed = Math.max(0, _tvDiff(today, from));
   const lost = Math.max(0, elapsed - bankedPast);
   const started = today >= from;
-  const qToday = started && _tvQualified(t);
+  const qToday = started && _tvQualified(t, today);
   const banked = Math.min(plan, bankedPast + (qToday ? 1 : 0));
   const left = (T_TARGET.opens-t.opens>0?1:0)+(T_TARGET.entries-_tvEntries(t)>0?1:0);
   let lastOpen = null; Object.keys(ag.days).forEach(d => { if (ag.days[d].opens>0 && (!lastOpen||d>lastOpen)) lastOpen = d; });
@@ -2088,12 +2178,12 @@ async function loadTesters(force){
     });
 
     /* ── per-tester rows ── */
-    let qualToday = 0, committed = 0, flagged = 0;
+    let qualToday = 0, committed = 0, weekScans = 0;
     const rows = testers.map(u => {
       const s = stats[u.uid], p = s.p, t = s.t;
       committed += s.banked * s.rate;
       if (s.qToday) qualToday++;
-      if (s.dupes > 0) flagged++;
+      weekScans += (s.wk && s.wk.total) || 0;
       const par = (k, got, need, extra) => {
         const hit = got >= need, pct = Math.max(3, Math.min(100, Math.round(got/need*100)));
         return '<div class="par '+(hit?'hit':'part')+'"><div class="k">'+k+'</div><div class="v">'+got+'/'+need+(extra?'<span class="pextra">'+extra+'</span>':'')+'</div>'
@@ -2112,12 +2202,12 @@ async function loadTesters(force){
         let d = today, guard = 0;
         while (d >= s.from && guard < 60) {
           const c = s.ag.days[d] || { opens:0, launches:0, inw:0, outw:0, scans:0 };
-          const q = _tvQualified(c), isToday = d === today;
+          const q = _tvQualified(c, d), isToday = d === today;
           const cls = (got, need) => got >= need ? 'tok' : (isToday ? 'tdim' : 'tbad');
           const res = q ? '<span class="tok">✓ qualified</span>'
                     : (isToday ? '<span class="tdim">in progress · till midnight</span>'
                     : '<span class="tbad">✗ missed'+(s.ag.days[d]?'':' · no activity')+'</span>');
-          lines.push('<tr><td>'+_tvLong(d)+'</td><td class="num '+cls(c.opens,T_TARGET.opens)+'">'+c.opens+'/'+T_TARGET.opens+'</td><td class="num tdim">'+(c.launches||0)+'</td>'
+          lines.push('<tr><td>'+_tvLong(d)+'</td><td class="num '+cls(c.opens,_tvOpensNeed(d))+'">'+c.opens+'/'+_tvOpensNeed(d)+'</td><td class="num tdim">'+(c.launches||0)+'</td>'
             + '<td class="num '+cls(_tvEntries(c),T_TARGET.entries)+'">'+_tvEntries(c)+'/'+T_TARGET.entries
             + ' <span class="tdim">('+c.inw+' आया · '+c.outw+' गया)</span></td>'
             + '<td class="num">'+c.scans+'</td><td>'+res+'</td></tr>');
@@ -2154,7 +2244,7 @@ async function loadTesters(force){
       '<div class="stat-card"><div class="stat-label">Active testers</div><div class="stat-value">'+testers.length+'</div><div class="stat-sub">of 12 needed for Play</div></div>'
     + '<div class="stat-card"><div class="stat-label">Qualified today</div><div class="stat-value">'+qualToday+'<span style="font-size:17px;color:#7f90b8">/'+testers.length+'</span></div><div class="stat-sub">hit all daily targets</div></div>'
     + '<div class="stat-card"><div class="stat-label">Committed payout</div><div class="stat-value">₹'+committed.toLocaleString('en-IN')+'</div><div class="stat-sub">earned so far, not yet due</div></div>'
-    + '<div class="stat-card"><div class="stat-label">Flagged</div><div class="stat-value" style="color:'+(flagged?'#ff8a7a':'#e8d8b8')+'">'+flagged+'</div><div class="stat-sub">duplicate bill scans</div></div>';
+    + '<div class="stat-card"><div class="stat-label">Bill scans</div><div class="stat-value">'+weekScans+'</div><div class="stat-sub">all testers · this week</div></div>';
 
     box.innerHTML = rows.length ? rows.join('')
       : '<div class="av-empty">No testers yet. Tap <b>+ Add tester</b> to add one.</div>';

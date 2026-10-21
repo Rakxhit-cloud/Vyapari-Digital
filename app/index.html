@@ -136,9 +136,10 @@
     NativeSR.prototype.start = function(){
       var self = this;
       if(_busy) throw new Error('InvalidStateError');
-      _busy = true; this._done = false; this._text = ''; this._alts = []; this._err = null; this._aborted = false; this._permPending = !_permOK;
+      _busy = true; this._done = false; this._text = ''; this._alts = []; this._err = null; this._aborted = false; this._permPending = !_permOK; this._beganAt = 0; this._t0 = Date.now();
       var begin = function(){
         if(self._aborted || self._done){ self._finish(); return; }
+        self._beganAt = Date.now();
         self._live = false;
         self._sub('partialResults', function(e){
           if(!self._live) return;   // late final of the previous session
@@ -16732,6 +16733,7 @@ function npReopenPreview(){
     // डेढ़ / ढाई stand alone
     out=out.replace(/डेढ़|डेढ|देढ़|dedh|dedhh/g,'1.5').replace(/ढाई|अढ़ाई|ढ़ाई|dhai/g,'2.5');
     // साढ़े/सवा/पौने + number word  →  decimal
+    out=out.replace(/(^|\s)(?:साड़े|साडे|सड़े|सडे|सारे|सादे|सांढे)(?=\s+₹?\d|\s+(?:एक|दो|तीन|चार|पांच|पाँच|छह|सात|आठ|नौ|दस)(?:\s|$))/g,'$1साढ़े').replace(/(साढ़े|साढे|सवा|पौने)\s+₹\s*(?=\d)/g,'$1 ');
     out=out.replace(new RegExp('(साढ़े|साढे|सवा|पौने)\\s+([^\\s]+)','g'), function(m,p,w){
       var base=(_HI_NUM[w]!==undefined)?_HI_NUM[w]:(/^\d+(\.\d+)?$/.test(w)?parseFloat(w):null);
       if(base===null) return m;
@@ -16751,7 +16753,8 @@ function npReopenPreview(){
   }
   /* Tokens that are never part of an amount: "9 बजे" is a time, not ₹9. */
   var _AMT_STOP=['बजे','तारीख','तारीक','baje','date','am','pm','%','परसेंट','percent'];
-  function _lgNorm(t){ return String(t||'').replace(/[०-९]/g,function(d){return '०१२३४५६७८९'.indexOf(d);}).replace(/[,\u200b]/g,'').trim(); }
+  function _lgNorm(t){ return String(t||'').replace(/[०-९]/g,function(d){return '०१२३४५६७८९'.indexOf(d);}).replace(/[,\u200b]/g,'')
+    .replace(/(^|\s)आर\s*\.?\s*एस\.?(?=\s|$)/g,'$1आरएस').replace(/(^|\s)(₹)\s+(?=\d)/g,'$1$2').trim(); }
   /* ══ Amount reading v4 ══
      Speech engines return the same word in different Unicode forms: हज़ार with a
      precomposed ज़ or with ज + nukta, पाँच with a candrabindu or पांच with an
@@ -16781,12 +16784,12 @@ function npReopenPreview(){
     var x={'sau':100,'सैकड़ा':100,'hazaar':1000,'hazar':1000,'hajar':1000,'hajaar':1000,'lac':100000,'lakhs':100000,'crore':10000000,'karod':10000000};
     for(k in x) _MUL[_nk(k)]=x[k];
   })();
-  var _FRACN={'साढे':0.5,'सवा':0.25,'पौने':-0.25,'saadhe':0.5,'sadhe':0.5,'sade':0.5,'sawa':0.25,'sava':0.25,'paune':-0.25,'pone':-0.25};
+  var _FRACN={'साढे':0.5,'साडे':0.5,'सडे':0.5,'सढे':0.5,'सारे':0.5,'सादे':0.5,'सांढे':0.5,'सवा':0.25,'पौने':-0.25,'पोने':-0.25,'saadhe':0.5,'sadhe':0.5,'sade':0.5,'saade':0.5,'sare':0.5,'sawa':0.25,'sava':0.25,'paune':-0.25,'pone':-0.25};
   function _fracN(t){
     t=t.replace(/(^|\s)(डेढ|देढ|dedh|dedhh)(?=\s|$)/g,'$11.5').replace(/(^|\s)(ढाई|अढाई|dhai|dhaai|adhai)(?=\s|$)/g,'$12.5');
     t=t.replace(/(^|\s)(1\.5|2\.5)\s+(100|1000|100000)(?=\s|$)/g,function(m,sp,a,b){ return sp+String(parseFloat(a)*parseInt(b,10)); });   // "डेढ़ 1000"
-    t=t.replace(/(^|\s)(साढे|सवा|पौने|saadhe|sadhe|sade|sawa|sava|paune|pone)\s+([^\s]+)/g,function(m,sp,p,w){
-      var f=_FRACN[p];
+    t=t.replace(/(^|\s)(साढे|साडे|सडे|सढे|सारे|सादे|सांढे|सवा|पौने|पोने|saadhe|sadhe|sade|saade|sare|sawa|sava|paune|pone)\s+(?:₹\s*)?([^\s]+)/g,function(m,sp,p,w){
+      var f=_FRACN[p]; w=String(w).replace(/^₹/,'');
       if(_NUM[w]!==undefined) return sp+String(_NUM[w]+f);
       if(/^\d+(\.\d+)?$/.test(w)){ var nv=parseFloat(w), mg=(nv>=1e5&&nv%1e5===0)?1e5:(nv>=1000&&nv%1000===0)?1000:(nv>=100&&nv%100===0)?100:1;
         return sp+String(mg>1?(nv/mg+f)*mg:nv+f); }   // "साढ़े 3000" = 3.5 x 1000
@@ -16798,12 +16801,16 @@ function npReopenPreview(){
       if(!_MUL[w]) return m;
       return (Math.round((parseInt(h,10)+parseInt(mi,10)/60)*100)/100)+' '+w;
     });
+    // "साढ़े तीन 1000" → 3.5 1000 → 3500
+    t=t.replace(/(^|\s)(\d+\.\d+)\s+(100|1000|100000)(?=\s|$)/g,function(m,sp,a,b){ return sp+String(Math.round(parseFloat(a)*parseInt(b,10))); });
+    // a decimal with its multiplier becomes one whole number ("3.5 हजार" → 3500), so every reader agrees
+    t=t.replace(/(^|\s)(\d+\.\d+)\s+([^\s]+)/g,function(m,sp,a,w){ var k=_MUL[w]; return k ? sp+String(Math.round(parseFloat(a)*k)) : m; });
     return t;
   }
   var _UNIT=['बजे','बजकर','तारीख','तारीक','किलो','kg','kilo','ग्राम','gm','gram','लीटर','litre','liter','पीस','piece','pcs','पैकेट','packet',
     'डिब्बे','डिब्बा','बोरी','बोरे','दिन','din','महीने','महीना','साल','%','परसेंट','percent','प्रतिशत','am','pm','मिनट','घंटे','नग','दर्जन','बजा'].map(_nk);
   var _PRE_STOP=['नंबर','नंबर:','no','number','नं','#','मोबाइल','फोन','फ़ोन'].map(_nk);
-  var _MONEY=['रुपये','रुपए','रूपये','रुपय','रुपया','रूपए','रुपे','रु','rs','rupees','rupaye','rupay','rupiya','rupee','₹','inr'].map(_nk);
+  var _MONEY=['रुपये','रुपए','रूपये','रुपय','रुपया','रूपया','रूपए','रुपइया','रुपैया','रुपे','रु','आरएस','rs','rupees','rupaye','rupay','rupiya','rupee','₹','inr'].map(_nk);
   var _JOIN=['और','aur','and'].map(_nk);
   /* The amount is read as a NUMBER PHRASE, not a single token: "2 हज़ार 500",
      "दो हज़ार पाँच सौ" and "एक लाख बीस हज़ार" are one figure each. A number
@@ -16878,7 +16885,7 @@ function npReopenPreview(){
       var k=_nk(w).replace(/^(?:₹|rs\.?|रु\.?)/i,'').replace(/[,।]/g,'');
       return /^\d+(?:\.\d+)?$/.test(k) || _NUM[k]!==undefined || _MUL[k]!==undefined || /^₹\s*$/.test(w);
     };
-    var CUR=/^(?:रुपये|रुपए|रूपये|रुपय|रुपया|रूपए|rupees|rupaye|rupay|rs\.?|रु\.?|का|के|की|ka|ke|ki)$/i;
+    var CUR=/^(?:रुपये|रुपए|रूपये|रुपय|रुपया|रूपया|रूपए|रुपइया|रुपैया|आरएस|rupees|rupaye|rupay|rs\.?|रु\.?|का|के|की|ka|ke|ki)$/i;
     var BEFORE=/^(?:नंबर|नम्बर|नं\.?|no\.?|number|बिल|bill)$/i;
     var AFTER=/^(?:किलो|kg|ग्राम|लीटर|पैकेट|पेटी|पीस|pcs|बजे|तारीख|दिन|महीने|महीना|साल|बोरी|दर्जन)$/i;
     while(i2<W.length){
@@ -16894,11 +16901,16 @@ function npReopenPreview(){
       for(var q2=i2;q2<j2;q2++) keep.push(W[q2]);
       i2=j2;
     }
+    // a currency word on its own is never part of the note ("आरएस Cash sale" → "Cash sale")
+    keep=keep.filter(function(w){ return !/^(?:₹|रुपये|रुपए|रूपये|रुपय|रुपया|रूपया|रूपए|रुपइया|रुपैया|आरएस|rs\.?|rupees|rupaye|rupay|rupee|inr|रु\.?)$/i.test(_nk(w)); });
     var note=_lgEnglishise(keep.join(' ')).replace(/^\s*(?:का|के|की|ka|ke|ki)\s+/i,'').trim();
     note=note.charAt(0).toUpperCase()+note.slice(1);
+    if(amt>0 && amt<1000 && amt%1!==0) amt=0;   // "साढ़े तीन" alone = 3.5: no size word, so not an amount yet
+    if(/^(?:आया|आये|आए|आई|मिले|मिला|मिली|गया|गए|गये|दिए|दिया|दिये|received|paid)$/i.test(note.trim())) note='';   // the Type row already says it
     return { amount: amt||0, direction: dir, note: note.slice(0,40), via: via };
   }
   window._lgParseHi=_lgParseHi;
+  window._lkFracNorm=function(x){ try{ return _fracN(_nk(String(x||'').replace(/[०-९]/g,function(d){return '०१२३४५६७८९'.indexOf(d);}).replace(/(^|\s)आर\s*\.?\s*एस\.?(?=\s|$)/g,'$1 '))); }catch(e){ return String(x||''); } };
   function _srAvail(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
   function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   /* Everything heard so far: final words plus whatever is still being spoken. */
@@ -16983,6 +16995,20 @@ function npReopenPreview(){
   function _srBest(S){
     var top=_srAll(S), tp=top?_lgParseHi(top):{amount:0,direction:'unclear'};
     function good(p){ return p && p.amount>0 && (p.direction==='in' || p.direction==='out'); }
+    /* The top guess holds a half/quarter figure we could not size ("3:30" with no
+       सौ/हज़ार after it): a lower guess may only win if it is that same figure —
+       350 or 3,500 for "3:30" — never 330, 37,000 or 38,000. With no such guess, ask. */
+    if(!(tp.amount>0)){
+      var fv=_fracCue(top);
+      if(fv){
+        for(var k2=0;k2<(S.srAlts||[]).length;k2++){
+          var t2=_srClean(_srJoin(_srJoin((S.srAltBase||'').trim(), String(S.srAlts[k2]).trim()), (S.srInterim||'').trim()));
+          var p2=t2?_lgParseHi(t2):null;
+          if(p2 && p2.amount>0 && _sameFig(p2.amount,fv)) return { txt:t2, p:p2, rank:k2+2 };
+        }
+        return { txt:top, p:{amount:0,direction:tp.direction,note:tp.note}, rank:1, unsized:fv };
+      }
+    }
     if(good(tp) || !(S.srAlts && S.srAlts.length)) return { txt:top, p:tp, rank:1 };
     var firstAmt=null;
     for(var k=0;k<S.srAlts.length;k++){
@@ -16997,11 +17023,27 @@ function npReopenPreview(){
     return firstAmt || { txt:top, p:tp, rank:1 };
   }
   /* Returns true when the transcript alone answered it — audio never leaves the phone. */
+  /* "3:30" / "साढ़े तीन" with no size word → 3.5 (else 0). A clock time (बजे) is not money. */
+  function _fracCue(txt){
+    var t=_nk(_lgNorm(txt));
+    var m=t.match(/(?:^|\s)(\d{1,2}):(15|30|45)(?!\s*(?:बजे|बजकर|baje|am|pm))(?:\s|$)/);
+    if(m) return parseInt(m[1],10)+parseInt(m[2],10)/60;
+    var f=_fracN(t).match(/(?:^|\s)(\d+\.(?:25|5|75))(?:\s|$)/);
+    return f ? parseFloat(f[1]) : 0;
+  }
+  function _sameFig(a,f){ for(var p=1;p<=1e6;p*=10){ if(Math.abs(a-f*p)<0.001) return true; } return false; }
   function _srFinish(type){
     var S=LGV[type];
     if(S.srUsed) return true;
     var B=_srBest(S), txt=B.txt;
     if(!txt) return false;   // an error after a good transcript is irrelevant — the words are the result
+    if(B.unsized){
+      // half figure without its size: ask, never guess (and never send "3:30" to the server)
+      S.srUsed=true;
+      try{ if(window.logEvent) window.logEvent('voice_sr',{err:'unsized',txt:String(txt).slice(0,60),alts:(S.srAlts||[]).slice(0,3).map(function(a){ return String(a).slice(0,40); })}); }catch(e){}
+      _fail(type,'सौ या हज़ार? पूरा बोलें — जैसे "साढ़े तीन हज़ार"');
+      return true;
+    }
     var p=B.p;
     if(!p.amount || p.amount<=0) return false;
     S.srUsed=true;
@@ -17009,7 +17051,7 @@ function npReopenPreview(){
     var ael=el('lg-vamt-'+type); if(ael) ael.textContent='₹'+p.amount.toLocaleString('en-IN');
     var nel=el('lg-vnote-'+type); if(nel) nel.textContent=p.note||'';
     setState(type,'res');
-    try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now()),dir:p.direction,via:p.via||'none',guess:B.rank,guesses:1+((S.srAlts&&S.srAlts.length)||0)}); }catch(e){}
+    try{ if(window.logEvent) window.logEvent('voice_path',{path:'sr',ms:Date.now()-(S.t0||Date.now()),dir:p.direction,via:p.via||'none',guess:B.rank,guesses:1+((S.srAlts&&S.srAlts.length)||0),amt:p.amount,txt:String(txt).slice(0,60),alts:(S.srAlts||[]).slice(0,3).map(function(a){ return String(a).slice(0,40); })}); }catch(e){}
     return true;
   }
   /* v4.4 — UNCLEAR CLIPS ONLY go to the server.
@@ -17087,7 +17129,7 @@ function npReopenPreview(){
   /* Timing. The engine's own end-of-speech detection cut shopkeepers off
      mid-amount ("पाँच… सौ" became ₹5). We listen continuously and decide the
      end ourselves: a short pause once an amount is heard, a longer one before. */
-  var SR_END_WITH_AMT=900, SR_END_NO_AMT=1700, SR_CAP=8000, SR_MIC_WAIT=(window.LK && LK.native) ? 5000 : 3000;
+  var SR_END_WITH_AMT=900, SR_END_NO_AMT=1700, SR_CAP=8000, SR_MIC_WAIT=(window.LK && LK.native) ? 4000 : 3000;
   /* The recogniser opens its own microphone. Calling getUserMedia alongside it
      kills it with audio-capture, so on the fast path we never touch getUserMedia. */
   function _srOnlyStart(type){
@@ -17183,11 +17225,12 @@ function npReopenPreview(){
     S.micWatch=setTimeout(function _mw(){
       if(S.gotMic) return;
       if(r._permPending || (r._permAt && Date.now()-r._permAt<SR_MIC_WAIT)){ S.micWatch=setTimeout(_mw,500); return; }   // permission dialog open / just answered
+      if(r._t0 && Date.now()-r._t0 < SR_MIC_WAIT+2500 && (!r._beganAt || Date.now()-r._beganAt < SR_MIC_WAIT)){ S.micWatch=setTimeout(_mw,250); return; }   // engine asked to start only just now
       // The speech service never took the mic within 3 s. Use the audio pipeline
       // for this tap; block SR on this device only after three such misses.
       var n=_srNoMic();
       try{ if(window.logEvent) window.logEvent('voice_sr',{err:'no-mic',n:n,trace:(S.trace||[]).join('>'),ua:(navigator.userAgent||'').slice(-42)}); }catch(e){}
-      if(n>=3){ _srBlock(); try{ toast('⚠️ Google app को mic की अनुमति दें — तब voice तेज़ चलेगा'); }catch(e){} }
+      if(n>=3 && !(window.LK && LK.native)){ _srBlock(); try{ toast('⚠️ Google app को mic की अनुमति दें — तब voice तेज़ चलेगा'); }catch(e){} }
       S.srActive=false; S.srMode=false;
       if(S.wave){ clearInterval(S.wave); S.wave=null; }
       if(S.timer){ clearInterval(S.timer); S.timer=null; }
@@ -18984,6 +19027,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
   function amountOf(s){ s=String(s||'').trim(); if(!s) return null; if(/^\d+$/.test(s)) return parseInt(s,10); var w=words(s); return (w!=null && w>0) ? w : null; }
   window.calcParse=function(text){
     var s=String(text||'');
+    try{ if(window._lkFracNorm) s=window._lkFracNorm(s); }catch(e){}   // साढ़े तीन हज़ार / 3:30 हज़ार → 3500
     var dv={'०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9'};
     s=s.replace(/[०-९]/g,function(d){ return dv[d]; }).toLowerCase();
     s=s.replace(/(\d),(?=\d)/g,'$1').replace(/₹|रुपये|रुपए|रुपय|रूपये|rupaye|rupay|rupees?|\brs\b\.?/g,' ');

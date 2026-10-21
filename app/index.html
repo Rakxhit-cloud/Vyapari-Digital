@@ -3010,6 +3010,28 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .lk-bootbtn{display:none;margin-top:4px;padding:10px 22px;border-radius:12px;border:1px solid #D4A850;background:none;color:#E8C46A;font:600 14px Roboto,system-ui,sans-serif;cursor:pointer;}
 .lk-bootbtn.show{display:inline-block;}
 </style>
+<style id="lk-v78">
+/* ===== v78: native home header ===== */
+#s-home .header.lkh{display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:12px 6px 14px 16px;background:var(--lk-bg,#0b1120)!important;border-bottom:1px solid var(--lk-ol,#26324e)!important;}
+#s-home .lkh-av{position:relative;width:48px;height:48px;border-radius:50%;border:none;padding:0;flex-shrink:0;cursor:pointer;
+  background:linear-gradient(135deg,#F0C878,#B08830);color:#1A1004;font:700 20px/1 Roboto,'Noto Sans Devanagari',system-ui,sans-serif;
+  display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;box-shadow:0 2px 10px rgba(212,168,80,.25);}
+#s-home .lkh-av:active{transform:scale(.95);}
+#s-home .lkh-dot{position:absolute;right:-1px;bottom:-1px;width:14px;height:14px;border-radius:50%;background:#3DDC84;border:2.5px solid var(--lk-bg,#0b1120);transition:background .25s;}
+#s-home .lkh-t{flex:1;min-width:0;font-family:Roboto,'Noto Sans Devanagari',system-ui,sans-serif;}
+#s-home .lkh-g{font-size:13.5px;color:var(--lk-tx2,#a7b2ca);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#s-home .lkh-g b{color:var(--lk-tx,#f2ede2);font-weight:500;}
+#s-home .lkh-b{font-size:21px;font-weight:700;letter-spacing:-.2px;color:var(--lk-tx,#f2ede2)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;line-height:1.25;}
+#s-home .lkh-s{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--lk-tx2,#a7b2ca);margin-top:3px;white-space:nowrap;overflow:hidden;}
+#s-home .lkh-sd{width:7px;height:7px;border-radius:50%;background:#3DDC84;flex-shrink:0;transition:background .25s;}
+#s-home .lkh-sep{opacity:.6;}
+#s-home .lkh[data-sync="syncing"] .lkh-dot,#s-home .lkh[data-sync="syncing"] .lkh-sd{background:#F0B040;}
+#s-home .lkh[data-sync="offline"] .lkh-dot,#s-home .lkh[data-sync="offline"] .lkh-sd{background:#F0B040;}
+#s-home .lkh[data-sync="error"] .lkh-dot,#s-home .lkh[data-sync="error"] .lkh-sd{background:#EC6A5C;}
+#s-home .lkh .lk-sync{width:44px;height:44px;border-radius:50%;flex-shrink:0;}
+#s-home .lkh .lk-sync:active{background:var(--lk-s2,#1a2540);}
+
+</style>
 </head>
 <body> <!-- Splash Screen -->
 <div id="app-lock-screen" class="nv" data-nv="unlock">
@@ -3457,39 +3479,15 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 </div>
 
 <div id="s-home" class="screen active">
-  <div class="header">
-    <div class="header-left">
-      <div style="width:52px;height:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(212,168,80,0.25));"><svg width="52" height="52" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <g transform="translate(50,12)">
-    <circle cx="0" cy="0" r="4.5" fill="#e84545" stroke="#0a0a14" stroke-width="1.6"/>
-    <path d="M -10 -7 A 12.5 12.5 0 0 0 -10 7" fill="none" stroke="#e02828" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M 10 -7 A 12.5 12.5 0 0 1 10 7" fill="none" stroke="#e02828" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M -16 -11 A 19 19 0 0 0 -16 11" fill="none" stroke="#e02828" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>
-    <path d="M 16 -11 A 19 19 0 0 1 16 11" fill="none" stroke="#e02828" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>
-  </g>
-  <g transform="translate(0,22)">
-    <rect x="20" y="24" width="54" height="64" rx="5" fill="#7a5a18" stroke="#0a0a14" stroke-width="2.5"/>
-    <rect x="24" y="22" width="50" height="60" rx="4" fill="#fdfaf0" stroke="#0a0a14" stroke-width="2.5"/>
-    <g stroke="#0a0a14" stroke-width="2.2">
-      <ellipse cx="24" cy="31" rx="8" ry="3" fill="#15151c"/>
-      <ellipse cx="24" cy="42" rx="8" ry="3" fill="#15151c"/>
-      <ellipse cx="24" cy="53" rx="8" ry="3" fill="#15151c"/>
-      <ellipse cx="24" cy="64" rx="8" ry="3" fill="#15151c"/>
-      <ellipse cx="24" cy="75" rx="8" ry="3" fill="#15151c"/>
-    </g>
-    <line x1="40" y1="55" x2="60" y2="55" stroke="#d4a850" stroke-width="3" stroke-linecap="round"/>
-    <g transform="rotate(40 60 38)">
-      <rect x="56.5" y="4" width="9" height="44" rx="4.5" fill="#2e4570" stroke="#0a0a14" stroke-width="2.5"/>
-      <rect x="56.5" y="39" width="9" height="5" fill="#d4a850" stroke="#0a0a14" stroke-width="2"/>
-      <path d="M 56.5 48 L 65.5 48 L 63 58 L 59 58 Z" fill="#0a1530" stroke="#0a0a14" stroke-width="2.2"/>
-      <path d="M 59 58 L 63 58 L 61 68 Z" fill="#e8c860" stroke="#0a0a14" stroke-width="2"/>
-    </g>
-  </g>
-</svg></div>
-      <div style="min-width:0;flex:1;"><div id="hk-greeting" style="font-size:13px;color:#d4a850;font-weight:700;margin-bottom:3px;display:none;"></div><div id="hk-business" style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:3px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div><div id="hk-brand" style="font-size:11px;color:#e8d8b8;font-weight:500;"><span style="color:#d4a850;font-weight:700;">Live</span> Khaata · अब हिसाब चलेगा LIVE<span class="lk-livedot sm"></span></div></div>
+  <div class="header lkh">
+    <button type="button" class="lkh-av" onclick="if(window.lkMoreToggle) lkMoreToggle()" aria-label="Profile and settings"><span id="lkh-ini">L</span><i class="lkh-dot"></i></button>
+    <div class="lkh-t">
+      <div class="lkh-g" id="hk-greeting"></div>
+      <div class="lkh-b" id="hk-business">Live Khaata</div>
+      <div class="lkh-s"><i class="lkh-sd"></i><span id="lkh-stat">Synced</span><span class="lkh-sep">·</span><span id="lkh-date"></span></div>
     </div>
-    <div class="lk-hact"><span class="lk-sync synced" onclick="lkSyncInfo()" role="button" aria-label="Cloud sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 9.2 4.5 4.5 0 0 0 7 18z"/><path class="ck" d="m9.5 13.5 2 2 3.5-3.5"/></svg></span>
-    <div class="lk-datechip" style="background:#14254a;border:1px solid #2a4078;border-radius:8px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#d4a850;font-weight:500;" id="t-day"></div><div style="font-size:10px;color:#e8d8b8;font-weight:500;" id="t-date"></div></div></div>
+    <span class="lk-sync synced" onclick="lkSyncInfo()" role="button" aria-label="Cloud sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 9.2 4.5 4.5 0 0 0 7 18z"/><path class="ck" d="m9.5 13.5 2 2 3.5-3.5"/></svg></span>
+    <div hidden><span id="hk-brand"></span><span id="t-day"></span><span id="t-date"></span></div>
   </div>
   <div class="pad">
     <div id="biz-name-fallback" style="display:none;background:linear-gradient(135deg,#2a1f08 0%,#1a1408 100%);border:1px solid #4a3818;border-left:3px solid #d4a850;border-radius:8px;padding:10px 12px;margin-bottom:10px;align-items:center;justify-content:space-between;gap:8px;">
@@ -19639,6 +19637,70 @@ window._lkPersistOk=function(r){
     return false;
   }
 };
+
+</script>
+<script id="lk-v78js">
+/* ===================================================================
+   v78 · Native home header: avatar, greeting, shop name, sync + date
+   =================================================================== */
+(function(){
+  function $(i){ return document.getElementById(i); }
+  function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function greet(){
+    var h=new Date().getHours();
+    if(h>=5 && h<12) return 'Good morning';
+    if(h>=12 && h<17) return 'Good afternoon';
+    if(h>=17 && h<21) return 'Good evening';
+    return 'Good night';
+  }
+
+  var last={name:'',biz:''};
+  function paint(){
+    var name=last.name, biz=last.biz;
+    try{ if(!name) name=(localStorage.getItem('hk_owner_name')||'').trim(); if(!biz) biz=(localStorage.getItem('hk_business_name')||'').trim(); }catch(e){}
+    var g=$('hk-greeting'), b=$('hk-business'), ini=$('lkh-ini'), dt=$('lkh-date');
+    if(!g || !b) return;
+    g.innerHTML=esc(greet())+(name ? ', <b>'+esc(name)+' ji</b>' : '');
+    g.style.display='block';
+    b.textContent=biz || name || 'Live Khaata';
+    b.style.display='block';
+    if(ini) ini.textContent=((biz||name||'L').trim().charAt(0)||'L').toUpperCase();
+    if(dt) dt.textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+  }
+  window.lkHeaderPaint=paint;
+
+  /* The Firebase module defines updatePersonalHeaders AFTER this script runs, so
+     wrap whatever gets assigned: run it, then repaint the new header. */
+  var _uph=window.updatePersonalHeaders;
+  function wrapped(name,biz){
+    try{ if(typeof _uph==='function') _uph(name,biz); }catch(e){}
+    last.name=String(name||'').trim(); last.biz=String(biz||'').trim();
+    paint();
+  }
+  try{
+    Object.defineProperty(window,'updatePersonalHeaders',{configurable:true,enumerable:true,
+      get:function(){ return wrapped; }, set:function(f){ if(f!==wrapped) _uph=f; }});
+  }catch(e){ window.updatePersonalHeaders=wrapped; }
+
+  /* sync state → dot colour + words */
+  var WORDS={synced:'Synced', syncing:'Syncing…', offline:'Offline · saved on phone', error:'Sync problem · tap the cloud'};
+  function syncPaint(){
+    var h=document.querySelector('#s-home .header.lkh'), c=h && h.querySelector('.lk-sync'); if(!h || !c) return;
+    var st='synced'; ['syncing','offline','error','synced'].some(function(k){ if(c.classList.contains(k)){ st=k; return true; } return false; });
+    if(navigator.onLine===false && st!=='syncing') st='offline';
+    h.setAttribute('data-sync',st);
+    var t=$('lkh-stat'); if(t) t.textContent=WORDS[st]||'Synced';
+  }
+  function init(){
+    paint(); syncPaint();
+    var c=document.querySelector('#s-home .header.lkh .lk-sync');
+    if(c) new MutationObserver(syncPaint).observe(c,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('online',syncPaint); window.addEventListener('offline',syncPaint);
+    document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ paint(); syncPaint(); } });
+    setInterval(paint, 5*60*1000);   // greeting follows the clock
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
 
 </script>
 </body>

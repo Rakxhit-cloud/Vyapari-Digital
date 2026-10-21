@@ -2881,10 +2881,122 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 #mv-day-ov .more{display:block;width:100%;margin-top:10px;height:46px;border-radius:100px;border:1px solid #2B3A5C;background:none;color:#D4A850;font-weight:600;font-size:14.5px;font-family:inherit;cursor:pointer;}
 
 </style>
+<style id="lk-v75">
+/* ===== v75: More sheet ===== */
+#more-menu.lkm{display:none;position:fixed;inset:0;z-index:3000;font-family:Roboto,'Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;}
+#more-menu.lkm.show{display:block;}
+.lkm-scrim{position:absolute;inset:0;background:rgba(2,5,12,.62);animation:lkmFade .2s ease both;}
+.lkm-sheet{position:absolute;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;max-height:88vh;display:flex;flex-direction:column;
+  background:#0F1A37;border-top:1px solid #26386A;border-radius:24px 24px 0 0;box-shadow:0 -14px 40px rgba(0,0,0,.55);
+  padding:8px 0 calc(10px + env(safe-area-inset-bottom,0px));animation:lkmUp .26s cubic-bezier(.3,.9,.35,1) both;color:#E9EEFB;}
+#more-menu.closing .lkm-scrim{animation:lkmFadeOut .18s ease both;}
+#more-menu.closing .lkm-sheet{animation:lkmDown .18s ease-in both;}
+@keyframes lkmUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes lkmDown{from{transform:none}to{transform:translateY(100%)}}
+@keyframes lkmFade{from{opacity:0}to{opacity:1}}
+@keyframes lkmFadeOut{from{opacity:1}to{opacity:0}}
+.lkm-handle{width:38px;height:4px;border-radius:4px;background:#34466F;margin:2px auto 10px;flex-shrink:0;}
+.lkm-prof{display:flex;align-items:center;gap:12px;padding:2px 18px 12px;border-bottom:1px solid #1F2E57;flex-shrink:0;}
+.lkm-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#F0C878,#B08830);color:#1A1004;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.lkm-pt{min-width:0;}
+.lkm-pt b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lkm-pt span{display:block;font-size:12px;color:#8D9BBD;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lkm-body{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.lkm-sec{font-size:11px;font-weight:600;color:#5D6A8C;letter-spacing:.8px;text-transform:uppercase;padding:10px 18px 2px;}
+.lkm-it{display:flex;align-items:center;gap:14px;width:100%;padding:9px 18px;background:none;border:none;color:inherit;font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:54px;}
+.lkm-it:active{background:#16244A;}
+.lkm-ic{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.lkm-ic svg{width:19px;height:19px;}
+.lkm-ic.t-gold{background:rgba(232,196,106,.14);color:#E8C46A;}
+.lkm-ic.t-violet{background:rgba(122,108,240,.16);color:#A89CFF;}
+.lkm-ic.t-blue{background:rgba(77,163,255,.14);color:#6DB3FF;}
+.lkm-ic.t-green{background:rgba(61,220,132,.13);color:#3DDC84;}
+.lkm-ic.t-grey{background:rgba(141,155,189,.14);color:#B8C3DE;}
+.lkm-ic.t-red{background:rgba(255,107,107,.12);color:#FF6B6B;}
+.lkm-tx{flex:1;min-width:0;}
+.lkm-tx b{display:block;font-size:14.5px;font-weight:500;}
+.lkm-tx>span{display:block;font-size:12px;color:#8D9BBD;margin-top:1px;}
+.lkm-it.danger .lkm-tx b{color:#FF6B6B;}
+.lkm-chev{color:#4B5B82;display:flex;}
+.lkm-chev svg{width:18px;height:18px;}
+.lkm-tog{width:40px;height:22px;border-radius:22px;background:#2A3A63;position:relative;flex-shrink:0;transition:background .2s;}
+.lkm-tog:after{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#C6CFE6;transition:transform .2s,background .2s;}
+.lkm-tog.on{background:#D4A850;}
+.lkm-tog.on:after{transform:translateX(18px);background:#fff;}
+.lkm-tog.busy{opacity:.55;}
+#lkm-bio[hidden]{display:none!important;}
+.lkm-ver{text-align:center;font-size:11px;color:#5D6A8C;padding:10px 0 4px;}
+
+/* ===== v75: app dialog (Log out etc.) ===== */
+#lk-dlg-ov{position:fixed;inset:0;z-index:12000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,5,12,.66);font-family:Roboto,'Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;}
+#lk-dlg-ov.show{display:flex;animation:lkmFade .18s ease both;}
+.lk-dlg{width:100%;max-width:360px;background:#13204A;border:1px solid #2A3D72;border-radius:22px;padding:22px 18px 16px;box-shadow:0 20px 50px rgba(0,0,0,.6);color:#E9EEFB;animation:lkDlgIn .2s cubic-bezier(.3,.9,.35,1) both;}
+@keyframes lkDlgIn{from{transform:scale(.94);opacity:0}to{transform:none;opacity:1}}
+.lk-dlg .ic{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+.lk-dlg .ic svg{width:23px;height:23px;}
+.lk-dlg .ic.t-grey{background:rgba(141,155,189,.16);color:#C6CFE6;}
+.lk-dlg .ic.t-red{background:rgba(255,107,107,.13);color:#FF6B6B;}
+.lk-dlg h3{text-align:center;font-size:18px;font-weight:600;margin:0;}
+.lk-dlg p{text-align:center;font-size:13.5px;color:#9AA7C6;line-height:1.55;margin:8px 0 18px;}
+.lk-dlg .acts{display:flex;gap:10px;}
+.lk-dlg .acts button{flex:1;height:46px;border-radius:13px;border:none;font:inherit;font-size:14.5px;font-weight:600;cursor:pointer;}
+.lk-dlg .no{background:#1B2A55;color:#E9EEFB;}
+.lk-dlg .yes{background:linear-gradient(135deg,#F0C878,#D4A850);color:#1A1004;}
+.lk-dlg .yes.red{background:#C0392B;color:#fff;}
+
+/* ===== v75: Change PIN ===== */
+#app-lock-screen .lkcp-bar,#app-lock-screen .lkcp-steps,#app-lock-screen .lkcp-stp{display:none;}
+#app-lock-screen[data-nv="change"] .lkcp-bar{display:flex;align-items:center;gap:8px;position:absolute;top:0;left:0;right:0;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px 6px;z-index:3;}
+#app-lock-screen .lkcp-bar b{font-size:18px;font-weight:600;color:#EDE6D6;}
+#app-lock-screen .lkcp-back{width:44px;height:44px;border:none;background:none;color:#EDE6D6;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#app-lock-screen .lkcp-back:active{background:#1B2747;}
+#app-lock-screen .lkcp-back svg{width:22px;height:22px;}
+#app-lock-screen[data-nv="change"] .lkcp-steps{display:flex;gap:6px;justify-content:center;margin:4px 0 6px;}
+#app-lock-screen .lkcp-steps i{width:28px;height:4px;border-radius:4px;background:#26365F;}
+#app-lock-screen[data-step="1"] .lkcp-steps i:nth-child(-n+1),
+#app-lock-screen[data-step="2"] .lkcp-steps i:nth-child(-n+2),
+#app-lock-screen[data-step="3"] .lkcp-steps i:nth-child(-n+3){background:#E8C46A;}
+#app-lock-screen[data-nv="change"] .lkcp-stp{display:block;text-align:center;font-size:12px;color:#8D9BBD;margin-bottom:4px;}
+#app-lock-screen[data-nv="change"] #alck-step-dots,
+#app-lock-screen[data-nv="change"] #alck-switch-account-link,
+#app-lock-screen[data-nv="change"] .nv-lock,
+#app-lock-screen[data-nv="change"] #alck-status-pill{display:none!important;}
+
+/* ===== v75: Sales goal ===== */
+.sgl .sgl-pad{padding:4px 16px 24px;}
+.sgl .sgl-card{background:linear-gradient(135deg,#15275A,#0F1C40);border:1px solid #2A3D72;border-radius:18px;padding:16px;}
+.sgl .sgl-m{font-size:12.5px;color:#8E9AB8;}
+.sgl .sgl-a{font-size:26px;font-weight:700;margin-top:4px;color:#EDE6D6;}
+.sgl .sgl-a small{font-size:13px;color:#8E9AB8;font-weight:500;}
+.sgl .sgl-bar{height:8px;border-radius:8px;background:#22325E;margin:12px 0 8px;overflow:hidden;}
+.sgl .sgl-bar i{display:block;height:100%;background:linear-gradient(90deg,#D4A850,#F0C878);border-radius:8px;}
+.sgl .sgl-card.met .sgl-bar i{background:linear-gradient(90deg,#2FB86F,#6FD39A);}
+.sgl .sgl-f{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#8E9AB8;}
+.sgl .sgl-f b{color:#E8C46A;font-weight:600;}
+.sgl .sgl-card.met .sgl-f b{color:#6FD39A;}
+.sgl .sgl-empty{border-style:dashed;}
+.sgl .sgl-empty b{display:block;font-size:15px;font-weight:600;color:#EDE6D6;}
+.sgl .sgl-empty span{display:block;font-size:12.5px;color:#8E9AB8;margin-top:4px;line-height:1.5;}
+.sgl .sgl-form{margin-top:6px;}
+.sgl .sgl-l{display:block;font-size:12px;color:#8E9AB8;margin:14px 0 6px;}
+.sgl .sgl-in{width:100%;height:46px;border-radius:12px;background:#111A2E;border:1px solid #1E2A44;color:#EDE6D6;padding:0 12px;font:inherit;font-size:15px;outline:none;color-scheme:dark;box-sizing:border-box;}
+.sgl .sgl-in:focus{border-color:#D4A850;}
+.sgl .sgl-btn{width:100%;height:48px;border:none;border-radius:14px;background:linear-gradient(135deg,#F0C878,#D4A850);color:#1A1004;font:inherit;font-size:15px;font-weight:600;margin-top:18px;cursor:pointer;}
+.sgl .sgl-btn:active{transform:scale(.99);}
+.sgl .sgl-sec{font-size:11px;font-weight:600;color:#5D6A8C;letter-spacing:.8px;text-transform:uppercase;margin:22px 0 4px;}
+.sgl .sgl-r{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #1E2A44;font-size:14px;color:#EDE6D6;}
+.sgl .sgl-r span{display:block;font-size:12px;color:#8E9AB8;margin-top:2px;}
+.sgl .sgl-chip{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;flex-shrink:0;}
+.sgl .sgl-chip.ok{background:rgba(61,220,132,.14);color:#3DDC84;}
+.sgl .sgl-chip.no{background:rgba(255,107,107,.12);color:#FF6B6B;}
+.sgl .sgl-chip.up{background:rgba(141,155,189,.14);color:#B8C3DE;}
+
+</style>
 </head>
 <body> <!-- Splash Screen -->
 <div id="app-lock-screen" class="nv" data-nv="unlock">
   <div class="alck-card" id="alck-mode-unlock">
+    <div class="lkcp-bar"><button type="button" class="lkcp-back" onclick="alckCancelChange()" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><b>Change PIN</b></div>
     <div class="alck-status-pill" id="alck-status-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg>ED</div>
     <div class="rn-bar rn-pin-only"><span class="rn-back ghost"></span><div class="rn-steps" aria-label="Step 7 of 7"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div></div>
     <div class="nv-mid">
@@ -2892,6 +3004,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       <div class="nv-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg></div>
       <div class="nv-shop nv-shopname">Live Khaata</div>
       <div id="alck-tag-text" hidden>App locked</div>
+      <div class="lkcp-steps" aria-hidden="true"><i></i><i></i><i></i></div><div class="lkcp-stp" id="lkcp-stp">Step 1 of 3</div>
       <div class="alck-title" id="alck-title-text">PIN डालें</div>
       <div class="rn-hi rn-pin-only" id="alck-rn-hi">4 अंक का PIN बनाएं</div>
       <div class="rn-s rn-pin-only" id="alck-rn-s">You will use it every time you open the app.</div>
@@ -3271,13 +3384,25 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     </div>
   </div>
 </div>
-<div class="more-menu" id="more-menu">
-  <div class="more-item" onclick="alckOpenChangePinFlow();toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:1.5px solid #7a6cf0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔐</div> <span style="color:#e8d8b8;font-weight:500;">PIN बदलें · Change PIN</span> <span style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:6px;background:rgba(240, 192, 64, 0.15);color:#f0c040;border:1px solid #d4a020;font-weight:500;">SECURE</span></div>
-  <div class="more-item" onclick="go('s-monthly');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4a3818 0%,#2a1808 100%);border:1.5px solid #d4a850;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📅</div> <span style="color:#e8d8b8;font-weight:500;">महीने का हिसाब</span></div>
-  <div class="more-item" onclick="go('s-goal');toggleMore();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1810 0%,#1a0f08 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎯</div> <span style="color:#e8d8b8;font-weight:500;">लक्ष्य</span></div>
-  <div class="more-item" onclick="signOutAsk();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a0818 0%,#1a0510 100%);border:1.5px solid #e84878;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚪</div> <span style="color:#ff8aa8;font-weight:500;">लॉग आउट</span></div>
-  <div class="more-item" onclick="toggleMore();drOpen();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2a1408 0%,#1a0c05 100%);border:1.5px solid #cc7a47;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🧹</div> <span style="color:#f0a878;font-weight:500;">सब कुछ मिटाएं · Wipe all data</span></div>
-  <div class="more-item" style="border-bottom:none;" onclick="toggleMore();openDeleteAccount();"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3a0a0a 0%,#220505 100%);border:1.5px solid #c0392b;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🗑️</div> <span style="color:#ff7a7a;font-weight:500;">मेरा खाता और डेटा मिटाएं</span></div>
+<div id="more-menu" class="lkm" role="dialog" aria-modal="true" aria-label="More">
+  <div class="lkm-scrim" onclick="lkMoreClose()"></div>
+  <div class="lkm-sheet">
+    <div class="lkm-handle"></div>
+    <div class="lkm-prof"><div class="lkm-av" id="lkm-av">L</div><div class="lkm-pt"><b id="lkm-name">Live Khaata</b><span id="lkm-sub"></span></div></div>
+    <div class="lkm-body">
+    <div class="lkm-sec">Reports</div>
+    <button type="button" class="lkm-it" onclick="lkMoreGo('month')"><span class="lkm-ic t-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span><span class="lkm-tx"><b>Month summary</b><span>Monthly totals · PIN protected</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    <button type="button" class="lkm-it" onclick="lkMoreGo('goal')"><span class="lkm-ic t-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></span><span class="lkm-tx"><b>Sales goal</b><span>Set a target for this month</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    <div class="lkm-sec">Security</div>
+    <button type="button" class="lkm-it" onclick="lkMoreGo('pin')"><span class="lkm-ic t-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="lkm-tx"><b>Change PIN</b><span>Update your 4-digit app PIN</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    <button type="button" class="lkm-it" id="lkm-bio" onclick="lkMoreGo('bio')"><span class="lkm-ic t-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 11v3M8.5 8.5A5 5 0 0 1 17 12v1M7 12a5 5 0 0 1 .4-2M7 15c0 2 .6 3.6 1.5 5M17 16c0 1.4-.3 2.7-.8 4M12 17c0 1.2-.2 2.3-.6 3.4M5 9a8 8 0 0 1 14 0"/></svg></span><span class="lkm-tx"><b>Fingerprint unlock</b><span>Unlock with your finger</span></span><span class="lkm-tog" id="lkm-tog" role="switch" aria-checked="false"></span></button>
+    <div class="lkm-sec">Account</div>
+    <button type="button" class="lkm-it" onclick="lkMoreGo('logout')"><span class="lkm-ic t-grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H4"/></svg></span><span class="lkm-tx"><b>Log out</b><span>Your data stays safe in the cloud</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    <button type="button" class="lkm-it danger" onclick="lkMoreGo('wipe')"><span class="lkm-ic t-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="lkm-tx"><b>Erase all data</b><span>Keeps your account and PIN</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    <button type="button" class="lkm-it danger" onclick="lkMoreGo('delete')"><span class="lkm-ic t-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 8l4 4M21 8l-4 4"/></svg></span><span class="lkm-tx"><b>Delete account</b><span>Removes account and all data</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    <div class="lkm-ver" id="lkm-ver">Live Khaata</div>
+    </div>
+  </div>
 </div>
 <div id="del-recaptcha-container"></div>
 <div id="recaptcha-container"></div>
@@ -6401,16 +6526,20 @@ textarea.st-biz-in{resize:none;}
   <div class="pad" style="padding-top:12px;" id="monthly-list"><div class="loading">⏳</div></div>
 </div>
 
-<div id="s-goal" class="screen">
-  <div class="header"><div class="header-left"><div class="header-icon" style="background:linear-gradient(135deg,#2a1a4a 0%,#1a1230 100%);border:2px solid #7a6cf0;">🎯</div><div><div class="header-title">इस महीने का लक्ष्य</div><div class="header-sub" style="color:#b0a0e8;">टारगेट ट्रैकर</div></div></div></div>
-  <div class="fw">
-    <div class="fcard" style="margin-bottom:12px;">
-      <div class="frow"><div class="flbl">📅 महीना</div><input type="month" class="finput" id="g-month"></div>
-      <div class="frow"><div class="flbl">🎯 बिक्री का लक्ष्य ₹</div><input type="number" class="finput" id="g-target" placeholder="0"></div>
-      <div class="frow"><div class="flbl">📝 नोट</div><input type="text" class="finput" id="g-note" placeholder="कोई बात..."></div>
+<div id="s-goal" class="screen mv sgl">
+  <div class="mv-bar"><button type="button" class="mv-back" onclick="lkNavBack('s-home')" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="mv-ttl">Sales goal</div></div>
+  <div class="sgl-pad">
+    <div id="sgl-now"></div>
+    <div class="sgl-form">
+      <label class="sgl-l" for="g-month">Month</label>
+      <input type="month" class="sgl-in" id="g-month" onchange="lkgPrefill()">
+      <label class="sgl-l" for="g-target">Target amount (₹)</label>
+      <input type="number" inputmode="numeric" class="sgl-in" id="g-target" placeholder="e.g. 100000">
+      <label class="sgl-l" for="g-note">Note (optional)</label>
+      <input type="text" class="sgl-in" id="g-note" maxlength="60" placeholder="e.g. Diwali season">
+      <button type="button" class="sgl-btn" id="sgl-save" onclick="saveGoal()">Save goal</button>
     </div>
-    <button class="sbtn" onclick="saveGoal()">💾 लक्ष्य सेव करें</button>
-    <div style="margin-top:14px;" id="goal-list"><div class="loading">⏳</div></div>
+    <div id="goal-list"></div>
   </div>
 </div>
 
@@ -6524,28 +6653,28 @@ textarea.st-biz-in{resize:none;}
 <div class="popup-overlay mk-center-overlay" id="del-acct-overlay">
   <div class="mk-edit-modal" style="border-color:#c0392b;">
     <div class="mk-edit-head">
-      <div class="mk-pop-title" style="color:#ff7a7a;">🗑️ खाता मिटाएं</div>
+      <div class="mk-pop-title" style="color:#ff7a7a;">Delete account?</div>
       <div class="mk-pop-x" onclick="closeDeleteAccount()">✕</div>
     </div>
 
     <div id="del-step1">
       <div style="font-size:13px;color:#e8c0c0;line-height:1.6;background:rgba(192,57,43,0.1);border:1px solid #5a2020;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
-        यह आपका <b>पूरा खाता</b> और <b>सारा डेटा</b> — बिक्री, खर्चा, माल, सप्लायर, उधार — <b>हमेशा के लिए</b> मिटा देगा।<br>यह वापस नहीं आ सकता।
+        This permanently deletes:<br>• Your account and login<br>• All entries, bills and suppliers<br>• Your shop details
       </div>
       <label style="display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:#cdd8f8;cursor:pointer;margin-bottom:16px;">
         <input type="checkbox" id="del-confirm-check" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;">
-        <span>मैं समझता/समझती हूँ कि सारा डेटा हमेशा के लिए मिट जाएगा</span>
+        <span>I understand this cannot be undone</span>
       </label>
-      <div class="mk-save" style="background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="delAcctProceed()">आगे बढ़ें · OTP भेजें</div>
-      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="closeDeleteAccount()">रद्द करें · Cancel</div>
+      <div class="mk-save" style="background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="delAcctProceed()">Continue · Send code</div>
+      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="closeDeleteAccount()">Cancel</div>
     </div>
 
     <div id="del-step2" style="display:none;">
-      <div style="font-size:12.5px;color:#9ab0e0;margin-bottom:12px;">आपके नंबर पर भेजा गया OTP डालें — पुष्टि के लिए।</div>
-      <input type="tel" inputmode="numeric" maxlength="6" class="mk-in" id="del-otp" placeholder="6-अंकों का OTP" style="text-align:center;font-size:20px;letter-spacing:6px;">
+      <div style="font-size:12.5px;color:#9ab0e0;margin-bottom:12px;">Enter the 6-digit code sent to your number.</div>
+      <input type="tel" inputmode="numeric" maxlength="6" class="mk-in" id="del-otp" placeholder="6-digit code" style="text-align:center;font-size:20px;letter-spacing:6px;">
       <div id="del-err" style="display:none;font-size:11.5px;color:#ff8a8a;margin-top:8px;"></div>
-      <div class="mk-save" id="del-final-btn" style="margin-top:14px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="delAcctConfirm()">🗑️ हमेशा के लिए मिटाएं</div>
-      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="closeDeleteAccount()">रद्द करें · Cancel</div>
+      <div class="mk-save" id="del-final-btn" style="margin-top:14px;background:#922;border-color:#c0392b;color:#ffd0d0;" onclick="delAcctConfirm()">Delete permanently</div>
+      <div class="spay-btn spay-btn-cancel" style="margin-top:9px;" onclick="closeDeleteAccount()">Cancel</div>
     </div>
   </div>
 </div>
@@ -8889,7 +9018,13 @@ async function saveFCMToken(uid) {
   }
 }
 window.signOutAsk = function() {
-  if (!confirm('लॉग आउट करें?\n\nआपका पूरा हिसाब आपके account में सुरक्षित रहेगा। दोबारा खोलने के लिए OTP और आपका PIN लगेगा।')) return;
+  if (window.lkDlg) {
+    window.lkDlg({ icon:'out', tone:'grey', title:'Log out?',
+      text:"Your data stays safe in your account. To log in again you'll need an OTP and your PIN.",
+      ok:'Log out', onOk:function(){ window.signOut(); } });
+    return;
+  }
+  if (!confirm('Log out?')) return;
   window.signOut();
 };
 window.signOut = async function() {
@@ -11252,8 +11387,7 @@ window._refreshCurrentScreen = function(){
     }
   }catch(e){ console.warn('refreshCurrentScreen err:', e); }
 };
-  function toggleMore(){const m=document.getElementById('more-menu');m.style.display=m.style.display==='block'?'none':'block';}
-document.addEventListener('click',e=>{const m=document.getElementById('more-menu'),b=document.getElementById('n-more');if(m&&b&&!m.contains(e.target)&&!b.contains(e.target))m.style.display='none';});
+  function toggleMore(){ if(window.lkMoreToggle) window.lkMoreToggle(); }   /* v75: the More sheet lives in the v75 script */
 // === Premium Success Modal (with Crystal Tinkle audio) ===
 let _smAudioCtx = null;
 function _smGetAC(){
@@ -12996,30 +13130,30 @@ function openDeleteAccount(){
 }
 function closeDeleteAccount(){document.getElementById('del-acct-overlay').classList.remove('show');}
 async function delAcctProceed(){
-  if(!document.getElementById('del-confirm-check').checked){toast('❌ पहले पुष्टि करें',true);return;}
+  if(!document.getElementById('del-confirm-check').checked){toast('❌ Tick the box to confirm',true);return;}
   const btn=document.querySelector('#del-step1 .mk-save');
-  const old=btn.textContent;btn.textContent='OTP भेजा जा रहा है…';btn.style.pointerEvents='none';
+  const old=btn.textContent;btn.textContent='Sending code…';btn.style.pointerEvents='none';
   try{
     await window._fsDeleteSendOTP();
     document.getElementById('del-step1').style.display='none';
     document.getElementById('del-step2').style.display='block';
     setTimeout(()=>{const o=document.getElementById('del-otp');if(o)o.focus();},100);
   }catch(e){
-    toast('❌ OTP नहीं भेज सका, फिर कोशिश करें',true);
+    toast("❌ Couldn't send the code. Try again.",true);
   }finally{ btn.textContent=old;btn.style.pointerEvents=''; }
 }
 async function delAcctConfirm(){
   const otp=(document.getElementById('del-otp').value||'').trim();
   const err=document.getElementById('del-err');
-  if(otp.length<6){err.textContent='पूरा 6-अंकों का OTP डालें';err.style.display='block';return;}
+  if(otp.length<6){err.textContent='Enter the full 6-digit code';err.style.display='block';return;}
   const btn=document.getElementById('del-final-btn');
-  btn.textContent='मिटाया जा रहा है…';btn.style.pointerEvents='none';
+  btn.textContent='Deleting…';btn.style.pointerEvents='none';
   err.style.display='none';
   try{
     await window._fsDeleteConfirm(otp);  // reloads on success
   }catch(e){
-    err.textContent='OTP गलत है या कुछ गड़बड़ हुई — फिर कोशिश करें';err.style.display='block';
-    btn.textContent='🗑️ हमेशा के लिए मिटाएं';btn.style.pointerEvents='';
+    err.textContent='Wrong code or something went wrong. Try again.';err.style.display='block';
+    btn.textContent='Delete permanently';btn.style.pointerEvents='';
   }
 }
 function saveMaalEdit(){
@@ -13727,12 +13861,13 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     showUnlockCard();
     nvMode('change');
     setPill('🔐 CHANGE', false);
-    setTag('PIN बदलें');
-    setTitle('पुराना PIN डालें');
+    setTag('Change PIN');
+    setTitle('Enter your current PIN');
     showErr('');
     showBio(false);
     showSteps(true, 1);
     showRecovery(false);
+    lkcpStep(1);
     renderDots();
   }
 
@@ -13799,6 +13934,43 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     if (window.firebaseSignOut) { try { await window.firebaseSignOut(); } catch(e){} }
   };
 
+  /* v75: Change PIN step bars + "Forgot PIN?" link (only on step 1). */
+  function lkcpStep(n) {
+    const s = $('app-lock-screen'); if (s) s.setAttribute('data-step', String(n || 0));
+    const t = $('lkcp-stp'); if (t && n) t.textContent = 'Step ' + n + ' of 3';
+    const r = $('alck-recovery-link');
+    if (r) {
+      if (n === 1) { r.textContent = 'Forgot PIN?'; r.style.display = 'block'; }
+      else if (n > 1) { r.style.display = 'none'; }
+      else { r.textContent = 'PIN भूल गए?'; }
+    }
+  }
+  /* v75: back / ← on Change PIN. Works ONLY while changing the PIN from inside the
+     unlocked app; the real lock screen (unlock, setup, recovery, lockout) can never
+     be closed this way. */
+  window.alckCancelChange = function() {
+    if (!/^change-/.test(currentMode)) return false;
+    pinBuffer = []; firstPinForConfirm = '';
+    currentMode = 'unlock';
+    deactivateLockScreen();
+    try {
+      document.querySelectorAll('body > div').forEach(function(el){
+        var isRc = (typeof el.className === 'string' && el.className.indexOf('grecaptcha') !== -1)
+                || (el.querySelector && el.querySelector('iframe[src*="recaptcha"], iframe[title*="recaptcha"]'));
+        if (isRc) { el.style.visibility = 'hidden'; el.style.pointerEvents = 'none'; }
+      });
+    } catch(e){}
+    try { localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString()); } catch(e){}
+    return true;
+  };
+  /* v75: Fingerprint switch in the More sheet. */
+  window.alckBio = {
+    supported: function(){ return isBioSupported(); },
+    on: function(){ return localStorage.getItem(BIO_ENABLED_KEY) === '1' && !!localStorage.getItem(BIO_CREDID_KEY); },
+    enable: function(){ return setupBiometric(); },
+    off: function(){ try { localStorage.removeItem(BIO_ENABLED_KEY); localStorage.removeItem(BIO_CREDID_KEY); } catch(e){} }
+  };
+
   window.alckOpenChangePinFlow = async function() {
     if (!pinExists()) {
       // No PIN set yet — go to setup
@@ -13823,6 +13995,7 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     if (!s) return;
     s.classList.remove('active');
     s.classList.remove('rn-pin');
+    try { lkcpStep(0); } catch(e){}
     document.querySelectorAll('body>*:not(#app-lock-screen)').forEach(el => el.style.visibility = 'visible');
     pinBuffer = [];
     if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
@@ -13998,32 +14171,35 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
         pinBuffer = [];
         renderDots();
         currentMode = 'change-new';
-        setTitle('नया PIN डालें');
+        setTitle('Enter a new PIN');
         showErr('');
         showSteps(true, 2);
+        lkcpStep(2);
       } else {
         flashError();
-        showErr('पुराना PIN गलत है');
+        showErr('Wrong PIN. Try again.');
       }
     } else if (currentMode === 'change-new') {
       firstPinForConfirm = pin;
       pinBuffer = [];
       renderDots();
       currentMode = 'change-confirm';
-      setTitle('नया PIN दोबारा डालें');
+      setTitle('Confirm your new PIN');
       showErr('');
+      lkcpStep(3);
     } else if (currentMode === 'change-confirm') {
       if (pin === firstPinForConfirm) {
         await savePin(pin);
-        if (typeof showSuccessModal === 'function') showSuccessModal('PIN बदल गया', '🔐 PIN updated');
+        if (typeof showSuccessModal === 'function') showSuccessModal('PIN changed', '🔐 Your new PIN is set');
         await onUnlockSuccess();
       } else {
         flashError();
         setTimeout(() => {
           firstPinForConfirm = '';
           currentMode = 'change-new';
-          setTitle('नया PIN डालें');
-          showErr('PIN match नहीं हुआ');
+          setTitle('Enter a new PIN');
+          showErr("The PINs didn't match. Enter the new PIN again.");
+          lkcpStep(2);
         }, 600);
       }
     }
@@ -18208,7 +18384,8 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     if(cs.display==='none' || cs.visibility==='hidden' || parseFloat(cs.opacity)<0.05 || cs.pointerEvents==='none') return false;
     var r=e.getBoundingClientRect();
     if(r.width<2 || r.height<2) return false;
-    if(r.bottom<=0 || r.top>=innerHeight || r.right<=0 || r.left>=innerWidth) return false;
+    var vh=Math.min(r.bottom,innerHeight)-Math.max(r.top,0), vw=Math.min(r.right,innerWidth)-Math.max(r.left,0);
+    if(vh<10 || vw<10) return false;   // off-screen or only a sliver showing (a closed sheet resting at the bottom edge)
     return true;
   }
   function isLayer(e){
@@ -18219,12 +18396,13 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     return false;
   }
   function zOf(e){ var z=parseInt(getComputedStyle(e).zIndex,10); return isNaN(z)?0:z; }
-  window._lkTopLayer=function(){
+  window._lkTopLayer=function(skip){
     var best=null, bz=-1;
     var all=document.querySelectorAll('[id],[class]');
     for(var i=0;i<all.length;i++){
       var e=all[i];
       if(!isLayer(e)) continue;
+      if(skip && skip.indexOf(e)>-1) continue;
       if(getComputedStyle(e).position!=='fixed') continue;
       if(!vis(e)) continue;
       var z=zOf(e);
@@ -18237,7 +18415,11 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     'date-popup-overlay':function(){ if(typeof closeDatePopupDirect==='function') closeDatePopupDirect(); },
     'stmt-sheet':function(e){ var bb=[].slice.call(e.querySelectorAll('.bb')).filter(vis)[0]; if(bb) bb.click(); else if(window.stmtFlowClose) stmtFlowClose(); },
     'stmt-scrim':function(){ if(window.stmtFlowClose) stmtFlowClose(); },
-    'more-menu':function(e){ e.style.display='none'; },
+    'more-menu':function(){ if(window.lkMoreClose) lkMoreClose(); },
+    'lk-dlg-ov':function(){ if(window.lkDlgClose) lkDlgClose(); },
+    'del-acct-overlay':function(){ if(typeof closeDeleteAccount==='function') closeDeleteAccount(); },
+    'dreset-overlay':function(){ if(typeof drClose==='function') drClose(); },
+    'mahina-pin-modal':function(){ if(typeof mpinClose==='function') mpinClose(); },
     'cx-name-ov':function(){ if(window.calcNameClose) calcNameClose(); }
   };
   function closeLayer(e){
@@ -18290,16 +18472,27 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     if(r!=='exit' && r!=='armed' && r!=='leave'){ armed=false; clearTimeout(armT); }
     return r==='armed' ? '' : r;
   };
+  var stuck=[], last={el:null,t:0};
+  function sigOf(e){ var t=''; try{ t=e.innerText||''; }catch(x){} return String(e.className)+'|'+t.length+'|'+t.slice(0,160); }
   function step(){
     var lock=document.getElementById('app-lock-screen');
-    if(lock && lock.classList.contains('active')) return 'leave';
+    if(lock && lock.classList.contains('active')){
+      // Change PIN opened from inside the app: back cancels it (the old PIN stays).
+      if(window.alckCancelChange && window.alckCancelChange()) return '';
+      return 'leave';   // the real lock screen can never be passed with back
+    }
     if(window._ucSel && window._ucSel.on && typeof ucExitSelect==='function'){ ucExitSelect(); return ''; }
     if(window._ucpSel && window._ucpSel.on && typeof ucProfExitSelect==='function'){ ucProfExitSelect(); return ''; }
     if(window._mkSel && window._mkSel.on && typeof mkExitSelect==='function'){ mkExitSelect(); return ''; }
     if(window._mkpSel && window._mkpSel.on && typeof mkProfExitSelect==='function'){ mkProfExitSelect(); return ''; }
     if(window.calcBackHook && window.calcBackHook()) return '';
-    var top=window._lkTopLayer();
-    if(top){ closeLayer(top); return ''; }
+    // A layer that back already tried to close but is still showing is skipped,
+    // so one stuck layer can never block the back button.
+    stuck=stuck.filter(function(e){ return vis(e); });
+    var top=window._lkTopLayer(stuck);
+    if(top && last.el===top && last.sig===sigOf(top) && Date.now()-last.t>600){ stuck.push(top); top=window._lkTopLayer(stuck); }
+    if(top){ last={el:top,t:Date.now(),sig:sigOf(top)}; closeLayer(top); return ''; }
+    last={el:null,t:0};
     var a=authBack();
     if(a===true) return '';
     if(a===false) return exitArm();
@@ -18949,6 +19142,172 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
       }
       b2.innerHTML=h2;
     }
+  };
+})();
+
+</script>
+<script id="lk-v75js">
+/* ===================================================================
+   v75 · More sheet, app dialog, Sales goal
+   =================================================================== */
+(function(){
+  function $(i){ return document.getElementById(i); }
+  function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function rs(n){ return '₹'+Math.round(Number(n)||0).toLocaleString('en-IN'); }
+  function say(m,bad){ try{ if(typeof toast==='function') toast(m,bad); }catch(e){} }
+  function ev(n,p){ try{ if(window.logEvent) window.logEvent(n,p||{}); }catch(e){} }
+
+  /* ---------- More sheet ---------- */
+  function fill(){
+    var name='', shop='', ph='';
+    try{ name=(localStorage.getItem('hk_owner_name')||'').trim(); shop=(localStorage.getItem('hk_business_name')||'').trim(); }catch(e){}
+    try{ ph=(window._currentAuthUser && window._currentAuthUser.phoneNumber)||''; }catch(e){}
+    var main=name||shop||'Live Khaata';
+    $('lkm-name').textContent=main;
+    var bits=[]; if(name && shop) bits.push(shop);
+    if(ph){ var d=String(ph).replace(/\D/g,''); if(d.length>=10) bits.push('+91 ••••• •'+d.slice(-3)); }
+    $('lkm-sub').textContent=bits.join(' · ');
+    $('lkm-av').textContent=(main.charAt(0)||'L').toUpperCase();
+    var row=$('lkm-bio'), tog=$('lkm-tog');
+    if(window.alckBio){
+      Promise.resolve(window.alckBio.supported()).then(function(ok){
+        row.hidden=!ok; setTog(window.alckBio.on());
+      }).catch(function(){ row.hidden=true; });
+    } else row.hidden=true;
+    var ver=$('lkm-ver');
+    try{
+      var A=window.LK && LK.native && LK.plugin('App');
+      if(A && A.getInfo) A.getInfo().then(function(i){ if(i && i.version) ver.textContent='Live Khaata · Version '+i.version; }).catch(function(){});
+    }catch(e){}
+  }
+  function setTog(on){ var t=$('lkm-tog'); if(!t) return; t.classList.toggle('on',!!on); t.setAttribute('aria-checked',on?'true':'false'); }
+  function isOpen(){ var m=$('more-menu'); return !!(m && m.classList.contains('show')); }
+  window.lkMoreOpen=function(){
+    var m=$('more-menu'); if(!m) return;
+    fill(); m.classList.remove('closing'); m.classList.add('show');
+    var n=$('n-more'); if(n) n.classList.add('lkm-on');
+  };
+  window.lkMoreClose=function(now){
+    var m=$('more-menu'); if(!m || !m.classList.contains('show')) return;
+    var n=$('n-more'); if(n) n.classList.remove('lkm-on');
+    if(now===true){ m.classList.remove('show','closing'); return; }
+    m.classList.add('closing');
+    setTimeout(function(){ m.classList.remove('show','closing'); },170);
+  };
+  window.lkMoreToggle=function(){ isOpen() ? lkMoreClose() : lkMoreOpen(); };
+
+  var bioBusy=false;
+  window.lkMoreGo=function(what){
+    if(what==='bio'){ toggleBio(); return; }
+    lkMoreClose(true);
+    ev('more_tap',{item:what});
+    if(what==='month'){ if(typeof openMahina==='function') openMahina(); }
+    else if(what==='goal'){ go('s-goal'); }
+    else if(what==='pin'){ if(window.alckOpenChangePinFlow) alckOpenChangePinFlow(); }
+    else if(what==='logout'){ if(window.signOutAsk) signOutAsk(); }
+    else if(what==='wipe'){ if(typeof drOpen==='function') drOpen(); }
+    else if(what==='delete'){ if(typeof openDeleteAccount==='function') openDeleteAccount(); }
+  };
+  function toggleBio(){
+    var B=window.alckBio; if(!B || bioBusy) return;
+    var t=$('lkm-tog');
+    if(B.on()){
+      B.off(); setTog(false); say('Fingerprint unlock is off'); ev('bio_setup',{ok:false,from:'more_off'});
+      return;
+    }
+    bioBusy=true; if(t) t.classList.add('busy');
+    Promise.resolve(B.enable()).then(function(ok){
+      setTog(!!ok);
+      if(ok) say('✓ Fingerprint unlock is on');
+      else say('Fingerprint was not turned on. Try again.',true);
+      ev('bio_setup',{ok:!!ok,from:'more'});
+    }).catch(function(){ setTog(false); }).then(function(){ bioBusy=false; if(t) t.classList.remove('busy'); });
+  }
+
+  /* ---------- App dialog ---------- */
+  var ICONS={
+    out:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H4"/></svg>'
+  };
+  var dlgOk=null;
+  window.lkDlg=function(o){
+    var ov=$('lk-dlg-ov');
+    if(!ov){
+      ov=document.createElement('div'); ov.id='lk-dlg-ov'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true');
+      ov.addEventListener('click',function(e){ if(e.target===ov) lkDlgClose(); });
+      document.body.appendChild(ov);
+    }
+    dlgOk=o.onOk||null;
+    ov.innerHTML='<div class="lk-dlg">'+
+      (o.icon && ICONS[o.icon] ? '<div class="ic t-'+(o.tone||'grey')+'">'+ICONS[o.icon]+'</div>' : '')+
+      '<h3>'+esc(o.title)+'</h3>'+(o.text?'<p>'+esc(o.text)+'</p>':'')+
+      '<div class="acts"><button type="button" class="no" onclick="lkDlgClose()">'+esc(o.cancel||'Cancel')+'</button>'+
+      '<button type="button" class="yes'+(o.red?' red':'')+'" onclick="lkDlgYes()">'+esc(o.ok||'OK')+'</button></div></div>';
+    ov.style.visibility=''; ov.classList.add('show');
+  };
+  window.lkDlgClose=function(){ var ov=$('lk-dlg-ov'); if(ov) ov.classList.remove('show'); dlgOk=null; };
+  window.lkDlgYes=function(){ var f=dlgOk; lkDlgClose(); if(f) try{ f(); }catch(e){ console.warn(e); } };
+
+  /* ---------- Sales goal ---------- */
+  function ym(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+  function label(m){ var p=String(m||'').split('-'); if(p.length<2) return m||''; return new Date(+p[0],+p[1]-1,1).toLocaleDateString('en-IN',{month:'long',year:'numeric'}); }
+  function goalsByMonth(){
+    var map={};
+    (DB.get(K.GOAL)||[]).forEach(function(g){
+      if(!g || !g.month) return;
+      var cur=map[g.month];
+      if(!cur || (g.updatedAt||0)>=(cur.updatedAt||0)) map[g.month]=g;
+    });
+    return map;
+  }
+  function salesOf(m){
+    return (DB.get(K.BIKRI)||[]).reduce(function(s,r){ return s+((r && r.date && r.date.indexOf(m)===0) ? (Number(r.sales)||0) : 0); },0);
+  }
+  window.lkgPrefill=function(){
+    var m=$('g-month').value, g=goalsByMonth()[m];
+    $('g-target').value=g ? (g.target||'') : '';
+    $('g-note').value=g ? (g.note||'') : '';
+    $('sgl-save').textContent=g ? 'Update goal' : 'Save goal';
+  };
+  window.loadGoalScreen=function(){
+    var now=new Date(), cm=ym(now), map=goalsByMonth();
+    var mi=$('g-month'); if(mi && !mi.value) mi.value=cm;
+    lkgPrefill();
+    var g=map[cm], box=$('sgl-now');
+    if(g && g.target>0){
+      var sold=salesOf(cm), pct=Math.min(100,Math.round(sold/g.target*100));
+      var last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(), left=last-now.getDate();
+      var met=sold>=g.target;
+      var right=met ? 'Goal reached 🎉' : rs(g.target-sold)+' to go · '+(left===0?'last day':left+(left===1?' day':' days')+' left');
+      box.innerHTML='<div class="sgl-card'+(met?' met':'')+'"><div class="sgl-m">'+esc(label(cm))+(g.note?' · '+esc(g.note):'')+'</div>'+
+        '<div class="sgl-a">'+rs(sold)+' <small>of '+rs(g.target)+'</small></div>'+
+        '<div class="sgl-bar"><i style="width:'+pct+'%"></i></div>'+
+        '<div class="sgl-f"><span><b>'+pct+'%</b> done</span><span>'+right+'</span></div></div>';
+    } else {
+      box.innerHTML='<div class="sgl-card sgl-empty"><b>No goal for '+esc(label(cm).split(' ')[0])+' yet</b>'+
+        '<span>Set a sales target below. You\'ll see how close you are every day.</span></div>';
+    }
+    var rows=Object.keys(map).filter(function(m){ return m!==cm; }).sort().reverse();
+    var el=$('goal-list');
+    if(!rows.length){ el.innerHTML=''; return; }
+    el.innerHTML='<div class="sgl-sec">Other goals</div>'+rows.map(function(m){
+      var x=map[m], chip;
+      if(m>cm) chip='<span class="sgl-chip up">Upcoming</span>';
+      else { var s=salesOf(m); chip=s>=x.target ? '<span class="sgl-chip ok">Met</span>' : '<span class="sgl-chip no">Missed</span>'; }
+      var sub=m>cm ? 'Target '+rs(x.target) : rs(salesOf(m))+' of '+rs(x.target);
+      return '<div class="sgl-r"><div>'+esc(label(m))+'<span>'+sub+(x.note?' · '+esc(x.note):'')+'</span></div>'+chip+'</div>';
+    }).join('');
+  };
+  window.saveGoal=function(){
+    var m=$('g-month').value, t=parseFloat($('g-target').value)||0, note=($('g-note').value||'').trim();
+    if(!m){ say('❌ Pick a month',true); return; }
+    if(!(t>0)){ say('❌ Enter a target amount',true); return; }
+    var g=goalsByMonth()[m];
+    if(g && g.id) DB.update(K.GOAL,g.id,{target:t,note:note});
+    else DB.push(K.GOAL,{month:m,target:t,note:note});
+    ev('goal_saved',{update:!!g});
+    if(typeof showSuccessModal==='function') showSuccessModal('Goal saved','🎯 '+label(m)+' · '+rs(t));
+    else say('✓ Goal saved');
+    loadGoalScreen();
   };
 })();
 

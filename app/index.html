@@ -102,7 +102,8 @@
     var _ERR = { AUDIO:'audio-capture', INSUFFICIENT_PERMISSIONS:'not-allowed', NETWORK:'network', NETWORK_TIMEOUT:'network',
                  NO_MATCH:'no-speech', SPEECH_TIMEOUT:'no-speech', RECOGNIZER_BUSY:'aborted', CLIENT:'aborted',
                  SERVER:'network', SERVER_DISCONNECTED:'network' };
-    var _busy = false, _permOK = false;
+    var _busy = false, _permOK = false, _nativeIdle = true;
+    try{ SRP.addListener('listeningState', function(e){ var s=e&&(e.state||e.status); if(s==='startingListening'||s==='started') _nativeIdle=false; else if(s==='stopped') _nativeIdle=true; }); }catch(e){}
     function NativeSR(){
       this.lang = 'hi-IN'; this.interimResults = true; this.continuous = true; this.maxAlternatives = 1;
       this.onstart = this.onaudiostart = this.onsoundstart = this.onspeechstart = this.onaudioend = null;
@@ -135,9 +136,12 @@
     NativeSR.prototype.start = function(){
       var self = this;
       if(_busy) throw new Error('InvalidStateError');
-      _busy = true; this._done = false; this._text = ''; this._alts = []; this._err = null;
+      _busy = true; this._done = false; this._text = ''; this._alts = []; this._err = null; this._aborted = false; this._permPending = !_permOK;
       var begin = function(){
+        if(self._aborted || self._done){ self._finish(); return; }
+        self._live = false;
         self._sub('partialResults', function(e){
+          if(!self._live) return;   // late final of the previous session
           var t = (e && ((e.matches && e.matches[0]) || e.accumulatedText)) || '';
           if(!t) return;
           if(!self._spoke){ self._spoke = true; self._fire('onsoundstart'); self._fire('onspeechstart'); }
@@ -148,6 +152,9 @@
         self._sub('error', function(e){ self._err = _ERR[e && e.code] || 'aborted'; });
         self._sub('listeningState', function(e){
           var st = e && (e.state || e.status);
+          if(e && e.state==='startingListening'){ self._live = true; return; }
+          if(st === 'started') self._live = true;
+          if(!self._live) return;   // tail of the previous session
           if(st === 'started'){ self._fire('onaudiostart'); }
           else if(st === 'stopped'){ if(e.errorCode && !self._err) self._err = _ERR[e.errorCode] || 'aborted'; self._finish(); }
         });
@@ -165,9 +172,10 @@
           return SRP.requestPermissions().then(function(q){ return !!(q && q.speechRecognition === 'granted'); });
         })
         .then(function(ok){
+          self._permPending = false; self._permAt = Date.now();
           if(!ok){ self._err = 'not-allowed'; self._finish(); return; }
           _permOK = true;
-          return begin();
+          return (function wait(n){ if(_nativeIdle || n>=20) return begin(); return new Promise(function(r){ setTimeout(r,100); }).then(function(){ return wait(n+1); }); })(0);
         })
         .catch(function(){ self._err = 'not-allowed'; self._finish(); });
     };
@@ -179,12 +187,11 @@
         this._finish();
         return;
       }
-      try{ Promise.resolve(SRP.stop()).catch(function(){}); }catch(e){}
-      // if the engine never reports "stopped", close the session ourselves
-      setTimeout(function(){ if(!self._done) self._finish(); }, 1600);
+      try{ Promise.resolve(SRP.forceStop ? SRP.forceStop({timeout:2500}) : SRP.stop()).catch(function(){}); }catch(e){}
+      setTimeout(function(){ if(!self._done) self._finish(); }, 3000);
     };
     NativeSR.prototype.abort = function(){
-      var self = this; this._text = '';
+      var self = this; this._text = ''; this._aborted = true;
       try{ Promise.resolve(SRP.forceStop ? SRP.forceStop({timeout:600}) : SRP.stop()).catch(function(){}); }catch(e){}
       setTimeout(function(){ if(!self._done){ self._err = self._err || 'aborted'; self._finish(); } }, 700);
     };
@@ -2935,6 +2942,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .lk-dlg .ic{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
 .lk-dlg .ic svg{width:23px;height:23px;}
 .lk-dlg .ic.t-grey{background:rgba(141,155,189,.16);color:#C6CFE6;}
+.lk-dlg .ic.t-green{background:rgba(61,220,132,.14);color:#3DDC84;}
 .lk-dlg .ic.t-red{background:rgba(255,107,107,.13);color:#FF6B6B;}
 .lk-dlg h3{text-align:center;font-size:18px;font-weight:600;margin:0;}
 .lk-dlg p{text-align:center;font-size:13.5px;color:#9AA7C6;line-height:1.55;margin:8px 0 18px;}
@@ -7098,6 +7106,21 @@ window.WriteQueue = (function() {
     return BACKOFF_SCHEDULE_MS[Math.max(0, idx)];
   }
 
+  // Keep only the newest op per doc (each 'set' carries the full record).
+  function _coalesce(q) {
+    const last = {};
+    q.forEach((it, i) => { if (it.attempts <= MAX_ATTEMPTS) last[it.collection + '/' + it.docId] = i; });
+    return q.filter((it, i) => it.attempts > MAX_ATTEMPTS || last[it.collection + '/' + it.docId] === i
+      || (it.op === 'set' && it.collection === 'tomb'));
+  }
+  // Drop queued copies of a doc made before `beforeTs` (a newer direct write landed).
+  function drop(collection, docId, beforeTs) {
+    const q = _read(), id = String(docId);
+    const next = q.filter(it => !(it.collection === collection && it.docId === id && it.op === 'set' && it.firstAttemptAt <= beforeTs));
+    if (next.length !== q.length) _write(next);
+  }
+  function clear() { const k = _storageKey(); if (k) { try { localStorage.removeItem(k); } catch(e){} _notifyChange(0); } }
+
   function _genId() {
     return 'wq_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
   }
@@ -7120,7 +7143,7 @@ window.WriteQueue = (function() {
       nextRetryAt: now + _backoffFor(2)  // schedule next retry
     };
     queue.push(item);
-    _write(queue);
+    _write(_coalesce(queue));
     console.warn('📦 WriteQueue: enqueued', op, collection, docId, '— queue size:', queue.length);
     return item.id;
   }
@@ -7153,7 +7176,7 @@ window.WriteQueue = (function() {
       processed++;
 
       try {
-        await _executeWrite(item);
+        await Promise.race([_executeWrite(item), new Promise((_, rj) => setTimeout(() => rj(new Error('wq-timeout')), 25000))]);
         succeeded++;
         // Don't push back to remaining — successfully synced, drop from queue
       } catch(err) {
@@ -7172,7 +7195,11 @@ window.WriteQueue = (function() {
       }
     }
 
-    _write(remaining);
+    // Items enqueued while we were awaiting writes are in storage, not in `queue`.
+    const seen = new Set(queue.map(i => i.id)), cur = _read(), curIds = new Set(cur.map(i => i.id));
+    const merged = remaining.filter(i => curIds.has(i.id) || i.attempts > MAX_ATTEMPTS)
+      .concat(cur.filter(i => !seen.has(i.id)));
+    _write(_coalesce(merged));
     _flushing = false;
 
     if (processed > 0) {
@@ -7289,7 +7316,9 @@ window.WriteQueue = (function() {
     pendingCount,
     stuckCount,
     onChange,
-    retryStuck
+    retryStuck,
+    drop,
+    clear
   };
 })();
 
@@ -7303,9 +7332,11 @@ window._fsWrite = async function(uid, colName, item) {
   }
   try {
     setSyncStatus('syncing', '☁️ Sync हो रहा है...');
+    const _wStart = Date.now();
     const ref = doc(db, 'users', uid, colName, String(item.id));
     let data; try { data = JSON.parse(JSON.stringify(item)); } catch(e) { data = { ...item }; }
     await setDoc(ref, { ...data, _syncedAt: serverTimestamp() });
+    try { if (window.WriteQueue && window.WriteQueue.drop) window.WriteQueue.drop(colName, item.id, _wStart); } catch(e){}
     setSyncStatus('synced', '☁️ Cloud Sync ✅');
     // Stage 5: firstEntryAt — fires only once per user, on the very
     // first time any entry is written. Cheap localStorage flag prevents
@@ -7392,6 +7423,8 @@ window._fsLoadAll = async function(uid) {
       window._mergeCloudIntoLocal(uid, colName, cloudItems);
     }
     setSyncStatus('synced', '☁️ Data sync हो गया ✅');
+    window._lkCloudLoaded = true;
+    try { if (typeof window._refreshCurrentScreen === 'function') window._refreshCurrentScreen(); } catch(e){}
     // ── Refresh UI after cloud data is in localStorage ──
     if (typeof CURRENT_UID !== 'undefined' && CURRENT_UID !== 'default') {
       if (typeof loadHome === 'function') loadHome();
@@ -7402,6 +7435,7 @@ window._fsLoadAll = async function(uid) {
     }
   } catch(e) {
     console.warn('FS load error:', e);
+    window._lkCloudLoaded = true;   // offline start: local data is all we have
     setSyncStatus('offline', '☁️ Offline — Local data से चल रहा है');
   }
 };
@@ -7479,6 +7513,7 @@ window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
   try { local = JSON.parse(localStorage.getItem(lsKey) || '[]'); } catch(e) { local = []; }
   const merged = [...local];
   let changed = false;
+  let _wipeTs = 0; try { _wipeTs = parseInt(localStorage.getItem('hk_wipe_applied_' + uid) || '0', 10) || 0; } catch(e){}
   cloudItems.forEach(ci => {
     // Suppress entries the user just deleted on this device — don't resurrect them
     // while the Firestore delete is still in flight.
@@ -7489,6 +7524,7 @@ window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
       if (window._fsDelete) { try { window._fsDelete(uid, colName, ci.id); } catch(e){} }
       return;
     }
+    if (_wipeTs && Number(ci.updatedAt || 0) <= _wipeTs) return;   // erased by a wipe
     const idx = merged.findIndex(r => r.id === ci.id);
     if (idx > -1) {
       // Phase 3 conflict resolution — newest edit wins, never drop data.
@@ -7499,6 +7535,7 @@ window._mergeCloudIntoLocal = function(uid, colName, cloudItems) {
       const localR = merged[idx];
       const lU = (typeof localR.updatedAt === 'number') ? localR.updatedAt : null;
       const cU = (typeof ci.updatedAt === 'number') ? ci.updatedAt : null;
+      if (lU !== null && cU !== null && lU === cU) return;   // same version
       let keepLocal;
       if (lU !== null && cU !== null) { keepLocal = lU > cU; }
       else if (lU !== null && cU === null) { keepLocal = true; }
@@ -7542,9 +7579,8 @@ window._startRealtimeSync = function(uid) {
         snap => {
           // Skip the local echo of THIS device's own just-made write (it already
           // rendered locally); only react to confirmed changes from other devices.
-          if (snap.metadata && snap.metadata.hasPendingWrites) return;
           const cloudItems = [];
-          snap.forEach(d => { const { _syncedAt, ...clean } = d.data(); cloudItems.push(clean); });
+          snap.forEach(d => { if (d.metadata && d.metadata.hasPendingWrites) return; const { _syncedAt, ...clean } = d.data(); cloudItems.push(clean); });
           if (!cloudItems.length) return;
           const changed = window._mergeCloudIntoLocal(uid, colName, cloudItems);
           if (changed && typeof window._refreshCurrentScreen === 'function') {
@@ -8865,6 +8901,7 @@ function launchApp(uid) {
   // offline session. Delay briefly so Firestore SDK is fully initialized.
   setTimeout(() => {
     if (window.WriteQueue && navigator.onLine) {
+      try { if (window.WriteQueue.retryStuck) window.WriteQueue.retryStuck(); } catch(e){}
       window.WriteQueue.flush();
     }
   }, 2000);
@@ -9040,6 +9077,14 @@ async function saveFCMToken(uid) {
   }
 }
 window.signOutAsk = function() {
+  var _pend = 0; try { _pend = (window.WriteQueue && window.WriteQueue.pendingCount) ? window.WriteQueue.pendingCount() : 0; } catch(e){}
+  if (window.lkDlg && (_pend > 0 || navigator.onLine === false)) {
+    try { if (window.WriteQueue && navigator.onLine) window.WriteQueue.flush(); } catch(e){}
+    window.lkDlg({ icon:'out', tone:'red', title:'Entries not synced yet',
+      text: (navigator.onLine === false ? 'You are offline. ' : '') + "Some entries haven't reached the cloud yet. Connect to the internet and wait a minute before logging out, or they may be lost.",
+      cancel:'Stay logged in', ok:'Log out anyway', red:true, onOk:function(){ window.signOut(); } });
+    return;
+  }
   if (window.lkDlg) {
     window.lkDlg({ icon:'out', tone:'grey', title:'Log out?',
       text:"Your data stays safe in your account. To log in again you'll need an OTP and your PIN.",
@@ -9141,7 +9186,7 @@ window._fsDeleteConfirm = async function(otp) {
   await reauthenticateWithCredential(user, cred);
   const uid = user.uid;
   // 1) Delete all Firestore data FIRST (works while still logged in; owner-only rules)
-  const cols = ['bikri', 'maal', 'goal', 'cih'];
+  const cols = ['bikri', 'maal', 'udhaar', 'goal', 'cih', 'tomb', 'meta'];
   for (const colName of cols) {
     const snap = await getDocs(collection(db, 'users', uid, colName));
     for (const d of snap.docs) { try { await deleteDoc(doc(db, 'users', uid, colName, d.id)); } catch(e){} }
@@ -10154,7 +10199,6 @@ function lgBackTs(ds){
   return d.getTime();
 }
 function _lgRecFor(ds){
-  if(ds===TSTR && window.lgState && window.lgState.rec && window.lgState.rec.date===TSTR) return window.lgState.rec;
   var r=lgGetOrCreateRec(ds); if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[]; return r;
 }
 function lgPastRefresh(ds){
@@ -10515,22 +10559,31 @@ function eeSetDir(d){
 }
 function eeAskDelete(){ var c=document.getElementById("ee-cov"); if(c) c.classList.add("show"); }
 function eeCancelDelete(){ var c=document.getElementById("ee-cov"); if(c) c.classList.remove("show"); }
+function _eeFresh(){
+  var base=_eeRec || (window.lgState && window.lgState.rec);
+  if(!base || !_eeBox) return null;
+  var fr=lgGetOrCreateRec(base.date);
+  var hit=(fr.lgBoxes||[]).filter(function(b){ return b && Number(b.ts)===Number(_eeBox.ts) && b.type===_eeBox.type; })[0];
+  if(!hit) return null;
+  _eeBox=hit; if(_eeRec) _eeRec=fr;
+  return fr;
+}
 function eeDoDelete(){
   eeCancelDelete();
-  var past=_eeRec, r=_eeRec || (window.lgState && window.lgState.rec);
-  if(!r || !_eeBox || !Array.isArray(r.lgBoxes)) return eeClose();
+  var past=_eeRec, r=_eeFresh();
+  if(!r || !_eeBox || !Array.isArray(r.lgBoxes)){ try{ toast("⚠️ एंट्री बदल गई — फिर से खोलें"); }catch(e){} return eeClose(); }
   var ix=r.lgBoxes.indexOf(_eeBox);
   if(ix>-1) r.lgBoxes.splice(ix,1);
   eeClose();
-  try{ lgPersistRec(r); }catch(e){}
+  if(!window._lkPersistOk(r)) return;
   try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
   if(past) lgPastRefresh(r.date);
   try{ toast("🗑 एंट्री हट गई"); }catch(e){}
 }
 function eeSave(){
   if(_eeNew) return _eeSaveNew();
-  var past=_eeRec, r=_eeRec || (window.lgState && window.lgState.rec);
-  if(!r || !_eeBox) return eeClose();
+  var past=_eeRec, r=_eeFresh();
+  if(!r || !_eeBox){ try{ toast("⚠️ एंट्री बदल गई — फिर से खोलें"); }catch(e){} return eeClose(); }
   var v=parseFloat(document.getElementById("ee-amt").value);
   if(!(v>0)){ try{ toast("⚠️ रकम डालिए"); }catch(e){} return; }
   var note=(document.getElementById("ee-note").value||"").slice(0,80);
@@ -10544,7 +10597,7 @@ function eeSave(){
   _eeBox.edited=Date.now();
   var _dir=_eeDir;
   eeClose();
-  try{ lgPersistRec(r); }catch(e){}
+  if(!window._lkPersistOk(r)) return;
   try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
   if(past) lgPastRefresh(r.date);
   try{ if(window.logEvent) window.logEvent("entry_edited",{dir:_dir,amount:Math.round(v),forDate:(past && r.date!==TSTR)?r.date:undefined}); }catch(e){}
@@ -10568,7 +10621,7 @@ function _eeSaveNew(){
   else { r.lgSaved=false; r.lgSavedAt=null; }
   var _dir=_eeDir;
   eeClose();
-  try{ lgPersistRec(r); }catch(e){}
+  if(!window._lkPersistOk(r)) return;
   try{ lgRenderEntries(); lgRenderTotals && lgRenderTotals(); }catch(e){}
   try{ if(window.logEvent) Promise.resolve(window.logEvent("box_added",{dir:_dir,method:bt,src:"manual",amount:Math.round(v),voice:false,
         mode:box.method||"",nature:box.nature||"",forDate:(ds!==TSTR)?ds:undefined,bts:Number(box.ts)})).then(function(ok){ if(ok) _lgBxMark(box.ts); }); }catch(e){}
@@ -10881,7 +10934,9 @@ function lgpUpload(box, blob, rec, onDone) {
     }).then(function (url) {
       box.billUrl = url;
       box.billPath = path;
-      lgPersistRec(rec);
+      var _fr = lgGetOrCreateRec(rec.date);
+      var _fb = (_fr.lgBoxes || []).filter(function (b) { return b && Number(b.ts) === Number(box.ts) && b.type === box.type; })[0];
+      if (_fb) { _fb.billUrl = url; _fb.billPath = path; lgPersistRec(_fr); }
       if (typeof onDone === 'function') { try { onDone(url, path); } catch (e) {} }
       try { var w = new Image(); w.src = url; } catch (e) {}
     }).catch(function () {
@@ -11285,6 +11340,7 @@ function lgConfirmClosing() {
 // (No longer blocks the user — they are never trapped on an old day.)
 window.lgCheckAndBlock = function() {
   if (!CURRENT_UID || CURRENT_UID === 'default') return false;
+  if (!window._lkCloudLoaded) return false;   // never auto-close a day from a stale local copy
   const autoSaved = lgAutoSavePastDays();
   if (autoSaved.length) {
     setTimeout(() => lgNotifyAutoSaved(autoSaved), 400);
@@ -11371,6 +11427,7 @@ function go(id){
 // Live गल्ला entry screen it refreshes ONLY the saved-entries view (totals+grids),
 // never the keypad / save area / blocker, so in-progress input is never disturbed.
 window._refreshCurrentScreen = function(){
+  try{ if(window.lgState && window.lgState.date && !window.lgState.blocked && typeof lgGetOrCreateRec==='function') window.lgState.rec = lgGetOrCreateRec(window.lgState.date); }catch(e){}
   try{
     const active = document.querySelector('.screen.active');
     if(!active) return;
@@ -12964,6 +13021,8 @@ window._applyRemoteWipe = function(wipeTs){
     DB.set(k, keep);
   });
   try { localStorage.removeItem('hk_lg_recent_saves_' + uid); } catch(e){}
+  try { var qk='hk_writeq_'+uid, q=JSON.parse(localStorage.getItem(qk)||'[]');
+        localStorage.setItem(qk, JSON.stringify(q.filter(function(i){ return i.op==='set' && i.data && Number(i.data.updatedAt||0) > wipeTs; }))); } catch(e){}
   try { localStorage.setItem(key, String(wipeTs)); } catch(e){}
   try { if (window.lgState) window.lgState.rec = null; } catch(e){}
   return removed > 0;
@@ -13136,6 +13195,7 @@ async function drRun(){
   }
   btn.textContent='Erasing…';
   DR_COLS.forEach(function(k){ try{ _drWipe(k); }catch(e){} });
+  try{ if(window.WriteQueue && window.WriteQueue.clear) window.WriteQueue.clear(); }catch(e){}
   try{ localStorage.removeItem('hk_lg_recent_saves_'+CURRENT_UID); }catch(e){}
   try{ localStorage.setItem('hk_wipe_applied_'+CURRENT_UID, String(res&&res.ts?res.ts:Date.now())); }catch(e){}
   try{ toast('✅ All data erased on every device — refreshing'); }catch(e){}
@@ -14107,13 +14167,19 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
       const supported = await isBioSupported();
       if (supported) {
         localStorage.setItem(BIO_OFFERED_KEY, '1');
-        setTimeout(async () => {
-          if (confirm('🔐 Fingerprint से unlock करना है?\n\nAgli baar PIN ke jagah fingerprint use kar sakte hain.')) {
+        setTimeout(() => {
+          const turnOn = async () => {
             const ok = await setupBiometric();
-            if (ok && typeof showSuccessModal === 'function') showSuccessModal('Fingerprint Enable', '👆 Biometric setup done');
-            else if (typeof toast === 'function') toast('⚠️ Fingerprint setup विफल');
-          }
-        }, 800);
+            if (ok && typeof toast === 'function') toast('✓ Fingerprint unlock is on');
+            else if (typeof toast === 'function') toast('Fingerprint was not turned on. You can turn it on from More.', true);
+            try { if (window.logEvent) window.logEvent('bio_setup', { ok: !!ok, from: 'offer' }); } catch(e){}
+          };
+          if (window.lkDlg) {
+            window.lkDlg({ icon:'fp', tone:'green', title:'Unlock with fingerprint?',
+              text:'Next time, open the app with your fingerprint instead of typing the PIN.',
+              cancel:'Not now', ok:'Turn on', onOk: turnOn });
+          } else if (confirm('Unlock with fingerprint next time?')) { turnOn(); }
+        }, 900);
       }
     }
     resetInactivity();
@@ -16632,7 +16698,8 @@ function npReopenPreview(){
     out=out.replace(new RegExp('(साढ़े|साढे|सवा|पौने)\\s+([^\\s]+)','g'), function(m,p,w){
       var base=(_HI_NUM[w]!==undefined)?_HI_NUM[w]:(/^\d+(\.\d+)?$/.test(w)?parseFloat(w):null);
       if(base===null) return m;
-      return String(base+_FRAC[p]);
+      var mg=(_HI_NUM[w]===undefined)?((base>=1e5&&base%1e5===0)?1e5:(base>=1000&&base%1000===0)?1000:(base>=100&&base%100===0)?100:1):1;
+      return String(mg>1?(base/mg+_FRAC[p])*mg:base+_FRAC[p]);
     });
     // साढ़े/सवा/पौने directly before a multiplier: सवा लाख = 1.25 लाख
     out=out.replace(new RegExp('(साढ़े|साढे|सवा|पौने)\\s*('+_MUL_RE+')','g'), function(m,p,mu){
@@ -16680,10 +16747,12 @@ function npReopenPreview(){
   var _FRACN={'साढे':0.5,'सवा':0.25,'पौने':-0.25,'saadhe':0.5,'sadhe':0.5,'sade':0.5,'sawa':0.25,'sava':0.25,'paune':-0.25,'pone':-0.25};
   function _fracN(t){
     t=t.replace(/(^|\s)(डेढ|देढ|dedh|dedhh)(?=\s|$)/g,'$11.5').replace(/(^|\s)(ढाई|अढाई|dhai|dhaai|adhai)(?=\s|$)/g,'$12.5');
+    t=t.replace(/(^|\s)(1\.5|2\.5)\s+(100|1000|100000)(?=\s|$)/g,function(m,sp,a,b){ return sp+String(parseFloat(a)*parseInt(b,10)); });   // "डेढ़ 1000"
     t=t.replace(/(^|\s)(साढे|सवा|पौने|saadhe|sadhe|sade|sawa|sava|paune|pone)\s+([^\s]+)/g,function(m,sp,p,w){
       var f=_FRACN[p];
       if(_NUM[w]!==undefined) return sp+String(_NUM[w]+f);
-      if(/^\d+(\.\d+)?$/.test(w)) return sp+String(parseFloat(w)+f);
+      if(/^\d+(\.\d+)?$/.test(w)){ var nv=parseFloat(w), mg=(nv>=1e5&&nv%1e5===0)?1e5:(nv>=1000&&nv%1000===0)?1000:(nv>=100&&nv%100===0)?100:1;
+        return sp+String(mg>1?(nv/mg+f)*mg:nv+f); }   // "साढ़े 3000" = 3.5 x 1000
       if(_MUL[w]) return sp+(f<0?'0.75':String(1+f))+' '+w;      // सवा लाख = 1.25 लाख
       return m;
     });
@@ -16968,7 +17037,7 @@ function npReopenPreview(){
       if(!raw) return false;
       if(raw==='1'){ localStorage.removeItem('hk_sr_block'); return false; }   // legacy flag from the broken builds
       var o=JSON.parse(raw);
-      if(!o || o.v!==SR_GUARD_VER){ localStorage.removeItem('hk_sr_block'); return false; }
+      if(!o || o.v!==SR_GUARD_VER || Date.now()-(o.t||0)>864e5){ localStorage.removeItem('hk_sr_block'); return false; }
       return true;
     }catch(e){ return false; }
   }
@@ -16992,7 +17061,7 @@ function npReopenPreview(){
     if(S.timer){ clearInterval(S.timer); S.timer=null; }
     if(S.cap){ clearTimeout(S.cap); S.cap=null; }
     setState(type,'rec');
-    S.srMode=true; S.srActive=true; S.srUsed=false; S.srErr=null; S.srText=''; S.srInterim=''; S.t0=Date.now();
+    S.userStop=false; S.srMode=true; S.srActive=true; S.srUsed=false; S.srErr=null; S.srText=''; S.srInterim=''; S.t0=Date.now();
     if(S.srRetried===undefined) S.srRetried=false;
     var live=el('lg-live-'+type); if(live) live.innerHTML='';
     var bars=buildWave(type);
@@ -17015,7 +17084,7 @@ function npReopenPreview(){
       /* "पाँच…" on its own is usually the start of "पाँच सौ": a small bare number
          at the end of the sentence waits as long as no amount at all. */
       var tail=_nk(all).trim().split(/\s+/).pop()||'';
-      var open=p.amount>0 && p.amount<100 && (_NUM[tail]!==undefined || /^\d+$/.test(tail));
+      var open=p.amount>0 && (_NUM[tail]!==undefined || (/^\d+$/.test(tail) && p.amount<100));
       S.endT=setTimeout(function(){ S.endT=null; try{ r.stop(); }catch(e){} }, (p.amount>0 && !open)?SR_END_WITH_AMT:SR_END_NO_AMT);
     }
     r.onstart      = function(){ _tr('start'); };
@@ -17051,15 +17120,16 @@ function npReopenPreview(){
       if(S.cap){ clearTimeout(S.cap); S.cap=null; }
       if(_srFinish(type)) return;
       var er=S.srErr||'', heard=_srAll(S);
+      if(!heard && navigator.onLine===false){ return _fail(type,'इंटरनेट नहीं है — नीचे + से टाइप करें'); }
       // an abort with nothing captured is transient — give it one clean retry
-      if(S.gotMic && !heard && !S.srRetried && er!=='no-speech'){
+      if(S.gotMic && !heard && !S.srRetried && er!=='no-speech' && !S.userStop){
         S.srRetried=true; S.sr=null;
         return setTimeout(function(){ _srOnlyStart(type); }, 120);
       }
       if(er==='audio-capture'||er==='not-allowed'||er==='service-not-allowed'){
         _srBlock(); return _audioStart(type);
       }
-      if(!heard && er!=='no-speech'){
+      if(!heard && er!=='no-speech' && !S.userStop){
         // network trouble or an engine that heard nothing at all — hand this tap
         // to the audio pipeline rather than showing an error. Not a block.
         try{ if(window.logEvent) window.logEvent('voice_sr_rescue',{err:er||'empty',trace:(S.trace||[]).join('>')}); }catch(e){}
@@ -17073,8 +17143,9 @@ function npReopenPreview(){
       return _fail(type,'कुछ नहीं सुना — mic के पास साफ़ बोलिए');
     };
     S.gotMic=false;
-    S.micWatch=setTimeout(function(){
+    S.micWatch=setTimeout(function _mw(){
       if(S.gotMic) return;
+      if(r._permPending || (r._permAt && Date.now()-r._permAt<SR_MIC_WAIT)){ S.micWatch=setTimeout(_mw,500); return; }   // permission dialog open / just answered
       // The speech service never took the mic within 3 s. Use the audio pipeline
       // for this tap; block SR on this device only after three such misses.
       var n=_srNoMic();
@@ -17142,7 +17213,7 @@ function npReopenPreview(){
       try{ if(window.logEvent) window.logEvent('voice_fail',{err:kind,name:nm,retried:retried}); }catch(e){}
       if(kind==='busy' && !retried){ S.gumRetried=true; S.gumT=setTimeout(function(){ S.gumT=null; _audioStart(type); },800); return; }
       S.gumRetried=false;
-      if(kind==='perm') return _fail(type,'Chrome को माइक की अनुमति दें — Settings › Apps › Chrome › Permissions');
+      if(kind==='perm') return _fail(type,(window.LK&&LK.native)?'Live Khaata को माइक की अनुमति दें — Settings › Apps › Live Khaata › Permissions':'Chrome को माइक की अनुमति दें — Settings › Apps › Chrome › Permissions');
       if(kind==='busy') return _fail(type,'माइक अभी किसी दूसरे ऐप में चल रहा है — थोड़ी देर बाद फिर दबाएँ');
       if(kind==='nomic') return _fail(type,'इस फ़ोन में माइक नहीं मिला — नीचे + से टाइप करें');
       _fail(type,'माइक शुरू नहीं हुआ — फिर से दबाएँ या नीचे + से टाइप करें');
@@ -17152,7 +17223,7 @@ function npReopenPreview(){
   window.lgVoiceStop = function(type){
     var S = LGV[type];
     if(S.gumT){ clearTimeout(S.gumT); S.gumT=null; S.gumRetried=false; }   // stopped during the mic-busy retry wait
-    if(S.srMode){ try{ if(S.sr) S.sr.stop(); }catch(e){} return; }   // stop() keeps results; abort() discards them
+    if(S.srMode){ S.userStop=true; try{ if(S.sr) S.sr.stop(); }catch(e){} return; }   // stop() keeps results; abort() discards them
     if(S.timer){ clearInterval(S.timer); S.timer=null; }
     if(S.cap){ clearTimeout(S.cap); S.cap=null; }
     if(S.raf){ cancelAnimationFrame(S.raf); S.raf=null; }
@@ -17203,9 +17274,10 @@ function npReopenPreview(){
       return;
     }
     var _bk = (type==='entry' && window.lgBack && window.lgBack.date && window.lgBack.date!==TSTR) ? window.lgBack.date : null;
-    var r = _bk ? _lgRecFor(_bk) : (window.lgState && window.lgState.rec);
+    var r = _bk ? _lgRecFor(_bk) : ((window.lgState && window.lgState.date) ? lgGetOrCreateRec(window.lgState.date) : null);
     if(!r){ try{ if(typeof lgGetOrCreateRec==='function'){ window.lgState.date=TSTR; window.lgState.isToday=true; window.lgState.rec=lgGetOrCreateRec(TSTR); r=window.lgState.rec; } }catch(e){} }
     if(!r){ if(typeof toast==='function') toast('❌ आज का हिसाब नहीं खुला', true); return; }
+    try{ var _fr=lgGetOrCreateRec(r.date); if(_fr){ r=_fr; if(!_bk && window.lgState) window.lgState.rec=r; } }catch(e){}
     if(!Array.isArray(r.lgBoxes)) r.lgBoxes=[];
     // Double-tapped mic, or the same sentence said twice. Ask before adding a
     // second identical entry inside two minutes.
@@ -17255,7 +17327,7 @@ function npReopenPreview(){
     if(typeof loadHome==='function') setTimeout(loadHome,50);
   };
 
-  window.lgVoiceReset = function(type){ _cleanup(type); LGV[type].amt=0; setState(type,null); };
+  window.lgVoiceReset = function(type){ var _S=LGV[type]; if(_S.micWatch){ clearTimeout(_S.micWatch); _S.micWatch=null; } _srKill(_S); _S.srActive=false; _cleanup(type); LGV[type].amt=0; setState(type,null); };
   function _fail(type,msg){ _cleanup(type); var e=el('lg-verr-'+type); if(e) e.textContent=msg||'फिर से कोशिश करें'; setState(type,'err'); }
   function _cleanup(type){
     var S=LGV[type];
@@ -18817,9 +18889,9 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     if(sn) sn.hidden=true; if(sv) sv.hidden=false; CX.snackShown=false;
     clearTimeout(CX.snackT); CX.undo=null;
   }
-  function todayRec(){ var st=window.lgState||{}; if(st.rec && st.rec.date===TSTR) return st.rec; return lgGetOrCreateRec(TSTR); }
+  function todayRec(){ return lgGetOrCreateRec(TSTR); }
   window.calcSave=function(method){
-    if(CX.hold) return;
+    if(CX.hold){ if(!CX.hold.released) return; var _r=CX.sr; CX.sr=null; try{ if(_r){ _r.onresult=null; _r.onend=null; if(_r.abort) _r.abort(); else _r.stop(); } }catch(x){} finishHold(); }
     var b=B();
     if(b.edit>-1) commit(b); else if(curOk(b)) commit(b);
     b.cur=blank('+'); b.edit=-1;
@@ -18834,7 +18906,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
               note:'कैलकुलेटर'+(b.name?(' · '+b.name):''), ts:ts, src:'calc', dir:'in', method:method, nature:'Sale' };
     r.lgBoxes.push(box);
     r.lgSaved=false; r.lgSavedAt=null;
-    try{ lgPersistRec(r); }catch(e){}
+    if(!window._lkPersistOk(r)) return;
     try{ if(window.lgState && window.lgState.date===TSTR){ window.lgState.rec=r; } if(typeof _lgRenderLive==='function') _lgRenderLive(); }catch(e){}
     try{ if(typeof loadHome==='function') setTimeout(loadHome,60); }catch(e){}
     try{ if(window.logEvent) Promise.resolve(window.logEvent('box_added',{dir:'in',method:'cash',src:'calc',amount:amt,voice:!!b.voice,
@@ -19264,7 +19336,8 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
 
   /* ---------- App dialog ---------- */
   var ICONS={
-    out:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H4"/></svg>'
+    out:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H4"/></svg>',
+    fp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11v3M8.5 8.5A5 5 0 0 1 17 12v1M7 12a5 5 0 0 1 .4-2M7 15c0 2 .6 3.6 1.5 5M17 16c0 1.4-.3 2.7-.8 4M12 17c0 1.2-.2 2.3-.6 3.4M5 9a8 8 0 0 1 14 0"/></svg>'
   };
   var dlgOk=null;
   window.lkDlg=function(o){
@@ -19452,6 +19525,120 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     }
   }catch(e){ try{ console.warn('boot lock',e); }catch(x){} }
 })();
+
+</script>
+<script id="lk-v77js">
+/* ===================================================================
+   v77 · Quiet start-up, new-day safety
+   =================================================================== */
+
+/* ---------- 1. Nothing pops up behind the PIN screen or the splash ----------
+   Toasts and the success popup wait until the app is open (PIN done, app showing).
+   Exception: a toast caused by tapping the PIN screen itself (e.g. the fingerprint
+   hint) shows right away. */
+(function(){
+  function $(i){ return document.getElementById(i); }
+  function locked(){ var l=$('app-lock-screen'); return !!(l && l.classList.contains('active')); }
+  function covered(){
+    var sp=$('splash-screen'); if(sp && !sp.classList.contains('hidden')) return true;
+    var bt=$('lk-boot'); if(bt && !bt.classList.contains('hidden')) return true;
+    return false;
+  }
+  function appOpen(){
+    if(locked() || covered()) return false;
+    var m=$('main-app'); return !!(m && getComputedStyle(m).display!=='none');
+  }
+  window.lkAppOpen=appOpen;
+  var lastLockTap=0, q=[], keys={};
+  document.addEventListener('pointerdown',function(e){
+    try{ if(e.target && e.target.closest && e.target.closest('#app-lock-screen')) lastLockTap=Date.now(); }catch(x){}
+  },true);
+  window.lkWhenOpen=function(fn,key){
+    if(appOpen()){ try{ fn(); }catch(e){} return; }
+    if(key){ if(keys[key]) return; keys[key]=1; }
+    q.push(fn);
+  };
+  setInterval(function(){
+    if(!q.length || !appOpen()) return;
+    var list=q.splice(0); keys={};
+    list.forEach(function(f,i){ setTimeout(function(){ try{ f(); }catch(e){} }, 700+i*1800); });
+  },400);
+
+  var _toast=window.toast;
+  if(typeof _toast==='function'){
+    window.toast=function(msg,err){
+      var hold=(locked() && Date.now()-lastLockTap>2500) || covered();
+      if(hold){ var m=msg, e=err; window.lkWhenOpen(function(){ _toast(m,e); }, 't:'+m); return; }
+      return _toast(msg,err);
+    };
+  }
+  var _ssm=window.showSuccessModal;
+  if(typeof _ssm==='function'){
+    window.showSuccessModal=function(t,s){
+      if(locked() || covered()){ window.lkWhenOpen(function(){ _ssm(t,s); }, 'm:'+t+'|'+s); return; }
+      return _ssm(t,s);
+    };
+  }
+
+  /* Auto-saved past days: one short native note, in simple English, after the PIN. */
+  function ds(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  window.lgNotifyAutoSaved=function(dates){
+    if(!dates || !dates.length) return;
+    var msg;
+    if(dates.length===1){
+      var y=new Date(); y.setDate(y.getDate()-1);
+      if(dates[0]===ds(y)) msg="Yesterday's entries were saved automatically";
+      else {
+        var p=String(dates[0]).split('-'), d=new Date(+p[0],+p[1]-1,+p[2]);
+        msg='Entries of '+d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})+' were saved automatically';
+      }
+    } else msg='Entries of '+dates.length+' days were saved automatically';
+    window.lkWhenOpen(function(){ if(_toast) _toast(msg); }, 'autosave');
+  };
+})();
+
+/* ---------- 2. New day while the app stayed open ----------
+   Android keeps the app alive in the background, so "today" could stay stuck on
+   yesterday and new entries would land on yesterday's page. When the date changes,
+   the app restarts itself the next time it is safe (no popup or keypad open,
+   no unsaved calculator bill being typed). */
+(function(){
+  function today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  var BOOT_DAY=(typeof TSTR==='string') ? TSTR : today();
+  function busy(){
+    try{
+      if(window._lkTopLayer && window._lkTopLayer()) return true;            // a popup / keypad / sheet is open
+      var a=document.activeElement; if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return true;
+      var v=document.querySelector('.lg-voice.rec,.lg-voice.proc,.lg-voice.res'); if(v) return true;   // voice entry in progress
+      if(document.querySelector('#cx-mic.rec')) return true;
+    }catch(e){}
+    return false;
+  }
+  var pending=false;
+  function check(){
+    if(today()===BOOT_DAY) return;
+    var lk=document.getElementById('app-lock-screen'), m=document.getElementById('main-app');
+    var inApp=(lk && lk.classList.contains('active')) || (m && getComputedStyle(m).display!=='none');
+    if(!inApp) return;                                                       // login screens: never restart mid-OTP
+    if(document.visibilityState!=='visible') { pending=true; return; }
+    if(busy()){ pending=true; return; }
+    try{ if(window.logEvent) window.logEvent('day_rollover_reload',{from:BOOT_DAY}); }catch(e){}
+    setTimeout(function(){ try{ location.reload(); }catch(e){} }, 300);
+  }
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') setTimeout(check, 400); });
+  setInterval(check, 30000);
+})();
+
+/* ---------- 3. A save that fails is reported, never shown as "saved" ---------- */
+window._lkPersistOk=function(r){
+  try{ lgPersistRec(r); return true; }
+  catch(e){
+    var full=/quota/i.test(String(e && (e.name||e.message)));
+    try{ toast(full ? '⚠️ Entry NOT saved — app storage is full' : '⚠️ Entry NOT saved. Please try again.', true); }catch(x){}
+    try{ if(window.logEvent) window.logEvent('save_failed',{full:full, msg:String(e && e.message||e).slice(0,80)}); }catch(x){}
+    return false;
+  }
+};
 
 </script>
 </body>

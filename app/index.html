@@ -3032,6 +3032,26 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 #s-home .lkh .lk-sync:active{background:var(--lk-s2,#1a2540);}
 
 </style>
+<style id="lk-v79">
+/* ===== v79: Live हिसाब voice entry opens as a centred popup ===== */
+#lgv-scrim{position:fixed;inset:0;z-index:2590;background:rgba(2,5,12,.66);display:none;}
+#lgv-scrim.show{display:block;animation:lgvFade .18s ease both;}
+@keyframes lgvFade{from{opacity:0}to{opacity:1}}
+@keyframes lgvPop{from{opacity:0;transform:translate(-50%,-46%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+#lg-voice-entry.rec,#lg-voice-entry.proc,#lg-voice-entry.res,#lg-voice-entry.err{
+  position:fixed!important;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2600;
+  width:min(92vw,420px);max-height:86vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  margin:0!important;padding:22px 16px 16px!important;border-radius:24px!important;
+  box-shadow:0 24px 60px rgba(0,0,0,.6);animation:lgvPop .22s cubic-bezier(.3,.9,.35,1) both;}
+#lgv-x{display:none;position:absolute;top:8px;right:8px;width:36px;height:36px;border:none;border-radius:50%;
+  background:rgba(255,255,255,.07);color:#C6CFE6;align-items:center;justify-content:center;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent;}
+#lgv-x svg{width:18px;height:18px;}
+#lgv-x:active{background:rgba(255,255,255,.15);}
+#lg-voice-entry.rec #lgv-x,#lg-voice-entry.proc #lgv-x,#lg-voice-entry.res #lgv-x,#lg-voice-entry.err #lgv-x{display:flex;}
+#lgv-ph{display:none;}
+#lgv-ph.on{display:block;}
+
+</style>
 </head>
 <body> <!-- Splash Screen -->
 <div id="app-lock-screen" class="nv" data-nv="unlock">
@@ -4147,7 +4167,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         </div>
         <div class="lg-voice-btns">
           <button type="button" class="lg-voice-add" id="lg-vadd-entry" onclick="lgVoiceConfirm('entry')">Add / जोड़ें</button>
-          <button type="button" class="lg-voice-again" onclick="lgVoiceReset('entry')">🔄 फिर से</button>
+          <button type="button" class="lg-voice-again" onclick="lgVoiceReset('entry');lgVoiceStart('entry')">🔄 फिर से</button>
         </div>
       </div>
       <div class="lg-voice-err" id="lg-verr-entry"></div>
@@ -6912,10 +6932,29 @@ const storage = getStorage(app);
 const functions = getFunctions(app, 'us-central1');
 const _scanBillCallable = httpsCallable(functions, 'scanBill', { timeout: 55000 });
 window._fsScanBill = function(b64){ return _scanBillCallable({ image: b64 }); };
-const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 20000 });
+const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 12000 });
 window._fsVoiceParse = function(b64OrReq, mimeType){
   var req = (b64OrReq && typeof b64OrReq === 'object') ? b64OrReq : { audio: b64OrReq, mimeType: mimeType || 'audio/wav' };
-  return _voiceParseCallable(req);
+  var t0 = Date.now(), kind = req.text ? 'text' : 'audio';
+  var kb = req.audio ? Math.round(String(req.audio).length / 1365) : 0;
+  // never more than 12.5 s of "Processing" — a slow network gets a clear message instead
+  var cap = new Promise(function(_, rj){ setTimeout(function(){ rj({ code: 'deadline-exceeded', message: 'voice-timeout' }); }, 12500); });
+  return Promise.race([_voiceParseCallable(req), cap]).then(function(r){
+    try { logEvent('voice_call', { ms: Date.now() - t0, ok: true, kind: kind, kb: kb, net: (navigator.connection && navigator.connection.effectiveType) || '' }); } catch(e){}
+    return r;
+  }, function(e){
+    try { logEvent('voice_call', { ms: Date.now() - t0, ok: false, kind: kind, kb: kb, code: String((e && (e.code || e.message)) || '').slice(0, 40), net: (navigator.connection && navigator.connection.effectiveType) || '' }); } catch(x){}
+    throw e;
+  });
+};
+// Warm-up: refresh the sign-in token and the App Check token while the user is
+// still speaking, so the server call does not wait for them afterwards.
+window._lkWarmVoice = function(){
+  var now = Date.now();
+  if (window._lkWarmAt && now - window._lkWarmAt < 60000) return;
+  window._lkWarmAt = now;
+  try { Promise.resolve(acGetToken(appCheck, false)).catch(function(){}); } catch(e){}
+  try { if (auth.currentUser) Promise.resolve(auth.currentUser.getIdToken(false)).catch(function(){}); } catch(e){}
 };
 
 // Registration source (web vs Play TWA) — first-touch, persisted, written once at signup
@@ -16622,7 +16661,7 @@ function npReopenPreview(){
   window.lgVoiceState = LGV;
   function el(id){ return document.getElementById(id); }
   function zone(type){ return el('lg-voice-'+type); }
-  function setState(type, st){ var z=zone(type); if(!z) return; z.classList.remove('rec','proc','res','err'); if(st) z.classList.add(st);
+  function setState(type, st){ var z=zone(type); if(!z) return; if(st && LGV[type] && LGV[type].dead) return; z.classList.remove('rec','proc','res','err'); if(st) z.classList.add(st);
     if(st==='res' && type==='entry'){ try{ if(window.lgcInit) window.lgcInit(LGV[type]); }catch(e){} } }
   function buildWave(type){ var w=el('lg-wave-'+type); if(!w) return []; w.innerHTML=''; var bars=[]; for(var i=0;i<11;i++){ var b=document.createElement('i'); w.appendChild(b); bars.push(b); } return bars; }
 
@@ -17014,7 +17053,7 @@ function npReopenPreview(){
       if(!_applyServer(type, res, 'text')) _fail(type, FAIL);
     }).catch(function(err){
       var code=(err && (err.code||err.message))||'';
-      _fail(type, /resource-exhausted/i.test(code) ? 'आज की voice limit पूरी — नीचे + से टाइप करें' : FAIL);
+      _fail(type, /resource-exhausted/i.test(code) ? 'आज की voice limit पूरी — नीचे + से टाइप करें' : (/deadline|timeout|unavailable|network/i.test(code) ? 'इंटरनेट धीमा है — फिर से बोलें या + से टाइप करें' : FAIL));
     });
   }
   function _srKill(S){
@@ -17048,7 +17087,7 @@ function npReopenPreview(){
   /* Timing. The engine's own end-of-speech detection cut shopkeepers off
      mid-amount ("पाँच… सौ" became ₹5). We listen continuously and decide the
      end ourselves: a short pause once an amount is heard, a longer one before. */
-  var SR_END_WITH_AMT=900, SR_END_NO_AMT=1700, SR_CAP=8000, SR_MIC_WAIT=3000;
+  var SR_END_WITH_AMT=900, SR_END_NO_AMT=1700, SR_CAP=8000, SR_MIC_WAIT=(window.LK && LK.native) ? 5000 : 3000;
   /* The recogniser opens its own microphone. Calling getUserMedia alongside it
      kills it with audio-capture, so on the fast path we never touch getUserMedia. */
   function _srOnlyStart(type){
@@ -17160,6 +17199,8 @@ function npReopenPreview(){
     try{ r.start(); }catch(e){ _srBlock(); return _audioStart(type); }
   }
   window.lgVoiceStart = function(type){
+    try{ LGV[type].dead=false; }catch(e){}
+    try{ if(window._lkWarmVoice) window._lkWarmVoice(); }catch(e){}
     try{ LGV[type].srRetried=false; }catch(e){}
     try{ var _l=el('lg-live-'+type); if(_l) _l.innerHTML=''; }catch(e){}
     if(_srAvail() && !_srBlocked()) return _srOnlyStart(type);
@@ -17249,7 +17290,7 @@ function npReopenPreview(){
       if(!_applyServer(type, res, 'audio')){ return _fail(type,'समझ नहीं आया — फिर से बोलें'); }
     }).catch(function(err){
       var code=(err && (err.code||err.message))||''; 
-      var msg = /resource-exhausted/i.test(code) ? 'आज की voice limit पूरी — नीचे + से टाइप करें' : 'समझ नहीं आया — फिर से बोलें';
+      var msg = /resource-exhausted/i.test(code) ? 'आज की voice limit पूरी — नीचे + से टाइप करें' : (/deadline|timeout|unavailable|network/i.test(code) ? 'इंटरनेट धीमा है — फिर से बोलें या + से टाइप करें' : 'समझ नहीं आया — फिर से बोलें');
       _fail(type, msg);
     });
   }
@@ -17325,7 +17366,7 @@ function npReopenPreview(){
     if(typeof loadHome==='function') setTimeout(loadHome,50);
   };
 
-  window.lgVoiceReset = function(type){ var _S=LGV[type]; if(_S.micWatch){ clearTimeout(_S.micWatch); _S.micWatch=null; } _srKill(_S); _S.srActive=false; _cleanup(type); LGV[type].amt=0; setState(type,null); };
+  window.lgVoiceReset = function(type){ var _S=LGV[type]; _S.dead=true; if(_S.micWatch){ clearTimeout(_S.micWatch); _S.micWatch=null; } _srKill(_S); _S.srActive=false; _cleanup(type); LGV[type].amt=0; setState(type,null); };
   function _fail(type,msg){ _cleanup(type); var e=el('lg-verr-'+type); if(e) e.textContent=msg||'फिर से कोशिश करें'; setState(type,'err'); }
   function _cleanup(type){
     var S=LGV[type];
@@ -18481,7 +18522,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
 
   /* ---- open layers ---- */
   var RX_ID=/(^|[-_])(ov|cov|overlay|modal|popup|sheet|scrim|cscrim|viewer|menu|chooser|card)$/i;
-  var EXTRA={'lg-box-action':1,'udhaar-chooser':1,'credit-modal':1,'credit-list-modal':1,'bill-viewer':1,
+  var EXTRA={'lg-voice-entry':1,'lg-box-action':1,'udhaar-chooser':1,'credit-modal':1,'credit-list-modal':1,'bill-viewer':1,
     'uc-seldel-confirm':1,'ucfile-confirm':1,'mk-seldel-confirm':1,'mkp-seldel-confirm':1};
   var SKIP={'app-lock-screen':1,'splash-screen':1,'toast':1};
   var RX_CLOSE=/(close|dismiss|cancel|hide)\w*\s*\(/i;
@@ -18528,7 +18569,8 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     'del-acct-overlay':function(){ if(typeof closeDeleteAccount==='function') closeDeleteAccount(); },
     'dreset-overlay':function(){ if(typeof drClose==='function') drClose(); },
     'mahina-pin-modal':function(){ if(typeof mpinClose==='function') mpinClose(); },
-    'cx-name-ov':function(){ if(window.calcNameClose) calcNameClose(); }
+    'cx-name-ov':function(){ if(window.calcNameClose) calcNameClose(); },
+    'lg-voice-entry':function(){ if(window.lgvClose) lgvClose(); }
   };
   function closeLayer(e){
     if(KNOWN[e.id]){ KNOWN[e.id](e); return; }
@@ -19700,6 +19742,66 @@ window._lkPersistOk=function(r){
     setInterval(paint, 5*60*1000);   // greeting follows the clock
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+
+</script>
+<script id="lk-v79js">
+/* ===================================================================
+   v79 · Live हिसाब voice entry: listening, result and errors open in a
+   centred popup over the page, so the page itself never stretches.
+   =================================================================== */
+(function(){
+  function $(i){ return document.getElementById(i); }
+  var POP=/(^|\s)(rec|proc|res|err)(\s|$)/;
+  function init(){
+    var row=$('lg-voice-entry'); if(!row) return;
+    var scrim=document.createElement('div'); scrim.id='lgv-scrim'; document.body.appendChild(scrim);
+    // the page keeps the row's space while it is floating, so nothing jumps
+    var ph=document.createElement('div'); ph.id='lgv-ph'; row.parentNode.insertBefore(ph,row);
+    var x=document.createElement('button'); x.type='button'; x.id='lgv-x'; x.setAttribute('aria-label','Close');
+    x.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    x.onclick=function(e){ e.stopPropagation(); window.lgvClose(); };
+    row.insertBefore(x,row.firstChild);
+    var idleH=0;
+    function sync(){
+      var on=POP.test(row.className);
+      if(!on){ var h=row.offsetHeight; if(h>20) idleH=h; }
+      ph.style.height=(idleH||64)+'px';
+      ph.classList.toggle('on',on);
+      scrim.classList.toggle('show',on);
+    }
+    new MutationObserver(sync).observe(row,{attributes:true,attributeFilter:['class']});
+    sync();
+  }
+  /* ✕ and the phone's back button: stop listening and discard this result */
+  window.lgvClose=function(){
+    try{ if(typeof lgVoiceReset==='function') lgVoiceReset('entry'); }catch(e){}
+    var row=$('lg-voice-entry');
+    if(row && POP.test(row.className)){ row.className=row.className.replace(/\b(rec|proc|res|err)\b/g,'').replace(/\s+/g,' ').trim(); }
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+
+/* "Processing…" shows the seconds, and says so when the network is slow. */
+(function(){
+  function init(){
+    var row=document.getElementById('lg-voice-entry'); if(!row) return;
+    var msg=row.querySelector('.lg-voice-procmsg'); if(!msg) return;
+    var base='Processing…', iv=null, t0=0;
+    function tick(){
+      var s=Math.floor((Date.now()-t0)/1000);
+      msg.innerHTML=base+(s>=2?' <b style="opacity:.7;font-weight:600">'+s+'s</b>':'')+(s>=5?'<br><span style="font-weight:500;opacity:.75">Slow internet — please wait</span>':'');
+    }
+    new MutationObserver(function(){
+      var on=/(^|\s)proc(\s|$)/.test(row.className);
+      if(on && !iv){ t0=Date.now(); tick(); iv=setInterval(tick,500); }
+      else if(!on && iv){ clearInterval(iv); iv=null; msg.textContent=base; }
+    }).observe(row,{attributes:true,attributeFilter:['class']});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+  // opening Live हिसाब warms the sign-in and App Check tokens for the first voice entry
+  var _lgOpen=window.lgOpen;
+  if(typeof _lgOpen==='function') window.lgOpen=function(){ try{ if(window._lkWarmVoice) window._lkWarmVoice(); }catch(e){} return _lgOpen.apply(this,arguments); };
 })();
 
 </script>

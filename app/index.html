@@ -2992,6 +2992,16 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .sgl .sgl-chip.up{background:rgba(141,155,189,.14);color:#B8C3DE;}
 
 </style>
+<style id="lk-v76">
+/* Bottom nav belongs to the app: hidden whenever #main-app is not showing
+   (splash, login screens, start-up before the PIN). */
+#main-app[style*="display:none"] ~ .bottom-nav,
+#main-app[style*="display: none"] ~ .bottom-nav{display:none!important;}
+#lk-boot{z-index:99998;}
+.lk-bootst{min-height:20px;font-size:13px;color:#8D9BBD;text-align:center;font-family:Roboto,'Noto Sans Devanagari',system-ui,sans-serif;}
+.lk-bootbtn{display:none;margin-top:4px;padding:10px 22px;border-radius:12px;border:1px solid #D4A850;background:none;color:#E8C46A;font:600 14px Roboto,system-ui,sans-serif;cursor:pointer;}
+.lk-bootbtn.show{display:inline-block;}
+</style>
 </head>
 <body> <!-- Splash Screen -->
 <div id="app-lock-screen" class="nv" data-nv="unlock">
@@ -8535,12 +8545,13 @@ window._hideSplashWhenReady = function() {
     setTimeout(() => { if (splash.parentNode) splash.remove(); }, 400);
   }
 };
-// Safety timeout — if no one hides splash within 4s, force-hide
+// v76 safety net: after 4s, hide the splash only if a real screen is ready
+// underneath it (PIN, a login screen, or the app). Otherwise keep the splash,
+// say what's happening and offer Try again — never an empty screen with the nav.
 setTimeout(() => {
-  if (!window._splashHidden) {
-    console.warn('⚠️ Splash safety timeout fired — no caller hid it within 4s');
-    window._hideSplashWhenReady();
-  }
+  if (window._splashHidden) return;
+  if (window._lkBootWatch) window._lkBootWatch(document.getElementById('splash-screen'), function(){ window._hideSplashWhenReady(); });
+  else window._hideSplashWhenReady();
 }, 4000);
 
 // ── Track 2: reinstall detection via native install-nonce ──
@@ -8566,6 +8577,14 @@ setTimeout(() => {
 
 onAuthStateChanged(auth, async user => {
   window._currentAuthUser = user;
+  // v76: the PIN screen may already be up from start-up (lock-first boot). Keep it
+  // only when this is the same registered user; otherwise take it down.
+  try {
+    if (window._alckBootUid && (!user || user.uid !== window._alckBootUid || window._reinstallDetected || window._glRecovering)) {
+      window._alckBootAbort();
+    }
+    if (!user) { try { localStorage.setItem('hk_boot_off', '1'); } catch(e){} if (window._lkBootDone) window._lkBootDone(); }
+  } catch(e){}
   // Track 2: on a detected reinstall, sign out so this fires again with null and
   // routes to the phone/OTP screen (standard fresh-install onboarding).
   if (window._reinstallDetected) {
@@ -8802,8 +8821,11 @@ function launchApp(uid) {
   if (nameEl) nameEl.classList.add('hidden');
 
   // FIRE PIN LOCK FIRST — before any content renders, so user sees lock immediately
+  try { localStorage.setItem('hk_boot_uid', uid); localStorage.removeItem('hk_boot_off'); } catch(e){}
+  window._lkLaunched = true;
   try { if (window._alckSetUid) window._alckSetUid(uid); } catch(e){}
   if (window.alckInit) window.alckInit();
+  window._alckBootUid = null;   // Firebase confirmed the user: the early lock is now the real one
 
   // Show main-app underneath (splash z-index 99999 still covers it; lock z-index
   // 999999 sits above the splash). It is NOT yet visible to the user.
@@ -8828,7 +8850,7 @@ function launchApp(uid) {
       try { if (typeof loadHome === 'function') loadHome(); } catch(e){}
     }
     requestAnimationFrame(function(){
-      requestAnimationFrame(function(){ window._hideSplashWhenReady(); });
+      requestAnimationFrame(function(){ window._hideSplashWhenReady(); if (window._lkBootDone) window._lkBootDone(); });
     });
   })();
 
@@ -9028,6 +9050,7 @@ window.signOutAsk = function() {
   window.signOut();
 };
 window.signOut = async function() {
+  try { localStorage.setItem('hk_boot_off', '1'); } catch(e){}
   try { sessionStorage.removeItem('hk_fresh_session'); sessionStorage.removeItem('hk_otp_at'); } catch(e){}
   try { window._alckForgetUnlock(); } catch(e){}
   window._rtUid = null;
@@ -13549,6 +13572,16 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     BIO_OFFERED_KEY   = bases.BIO_OFFERED_KEY + sfx;
   }
   window._alckSetUid = _applyUidScope;
+  /* v76: lock-first boot helpers */
+  window._alckHasPin = function(){ try { return pinExists(); } catch(e){ return false; } };
+  window._alckBootAbort = function(){
+    if (!window._alckBootUid) return;
+    window._alckBootUid = null;
+    window._alckInitDone = false;
+    currentMode = 'unlock'; pinBuffer = []; firstPinForConfirm = '';
+    if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+    deactivateLockScreen();
+  };
 
   let currentMode = 'unlock'; // 'unlock' | 'setup-new' | 'setup-confirm' | 'change-old' | 'change-new' | 'change-confirm' | 'recovery-otp' | 'recovery-new' | 'recovery-confirm' | 'lockout'
   let pinBuffer = [];
@@ -13873,6 +13906,10 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
 
   // ---------- Recovery (OTP) ----------
   window.alckStartRecovery = async function() {
+    if (!window._currentAuthUser && window._alckBootUid) {
+      if (typeof toast === 'function') toast('Connecting… please try again in a few seconds');
+      return;
+    }
     let otpAt = 0; try { otpAt = parseInt(sessionStorage.getItem('hk_otp_at') || '0', 10) || 0; } catch(e){}
     if (otpAt && (Date.now() - otpAt) < 10 * 60 * 1000) {
       if (!confirm('नया PIN बनाएं?\n\nआपने अभी OTP से अपना नंबर verify किया है, इसलिए दोबारा OTP की ज़रूरत नहीं है।')) return;
@@ -14020,6 +14057,7 @@ function loadMonthly(){const el=document.getElementById('monthly-list');el.inner
     try { sessionStorage.setItem('alck_unlocked_session', '1'); } catch(e){}
     localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
     deactivateLockScreen();
+    try { if (!window._lkLaunched && window._lkBootWait) window._lkBootWait(); } catch(e){}
     // Firebase's invisible reCAPTCHA appends a hidden full-screen overlay to <body>.
     // deactivateLockScreen() force-sets visibility:visible on every body child, which
     // can resurface that overlay on top of home where it silently swallows taps
@@ -19309,6 +19347,110 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     else say('✓ Goal saved');
     loadGoalScreen();
   };
+})();
+
+</script>
+<script id="lk-v76js">
+/* ===================================================================
+   v76 · Start-up: PIN screen first, never an empty screen
+   Runs as a classic script, so it runs BEFORE the Firebase module (which has to
+   download and sign in first). On a phone that already has a PIN, the PIN screen
+   comes up straight from the splash; Firebase signs in behind it.
+   =================================================================== */
+(function(){
+  function $(i){ return document.getElementById(i); }
+
+  /* Is a real screen showing (PIN, a login screen, or the app)? */
+  function ready(){
+    var lock=$('app-lock-screen'); if(lock && lock.classList.contains('active')) return true;
+    var m=$('main-app'); if(m && getComputedStyle(m).display!=='none') return true;
+    var a=document.querySelectorAll('.auth-screen');
+    for(var i=0;i<a.length;i++){ if(!a[i].classList.contains('hidden')) return true; }
+    var ids=['screen-already-registered','screen-browser-block'];
+    for(var j=0;j<ids.length;j++){ var e=$(ids[j]); if(e && getComputedStyle(e).display!=='none') return true; }
+    return false;
+  }
+
+  /* Keep a cover (splash or "opening") up until a real screen is ready.
+     Tell the user what's happening; after a while offer Try again. */
+  window._lkBootWatch=function(host,onReady){
+    if(ready()){ onReady(); return; }
+    var st=null, bt=null;
+    if(host && !host.querySelector('.lk-bootst')){
+      st=document.createElement('div'); st.className='lk-bootst'; st.textContent='Connecting…';
+      bt=document.createElement('button'); bt.type='button'; bt.className='lk-bootbtn'; bt.textContent='Try again';
+      bt.onclick=function(){ try{ location.reload(); }catch(e){} };
+      host.appendChild(st); host.appendChild(bt);
+    }
+    var t0=Date.now();
+    var iv=setInterval(function(){
+      if(ready() || (host && !host.isConnected)){ clearInterval(iv); onReady(); return; }
+      var el=Date.now()-t0;
+      if(st && el>5000) st.textContent=(navigator.onLine===false)?'No internet. Connect and try again.':'Taking longer than usual…';
+      if(bt && el>10000) bt.classList.add('show');
+    },250);
+  };
+
+  /* PIN entered before Firebase finished: cover the screen until the app is ready. */
+  window._lkBootWait=function(){
+    var b=$('lk-boot');
+    if(!b){
+      b=document.createElement('div'); b.id='lk-boot'; b.className='splash-screen';
+      b.innerHTML='<div class="splash-logo"><img src="/icon-512.png" alt="" style="width:100%;height:100%;object-fit:contain;"></div>'+
+        '<div class="splash-title"><span class="splash-title-gold">Live</span> Khaata</div>'+
+        '<div class="splash-loader-wrap"><div class="splash-dot"></div><div class="splash-dot"></div><div class="splash-dot"></div></div>';
+      document.body.appendChild(b);
+    }
+    window._lkBootWatch(b, window._lkBootDone);
+  };
+  window._lkBootDone=function(){
+    var b=$('lk-boot'); if(!b) return;
+    b.classList.add('hidden'); setTimeout(function(){ if(b.parentNode) b.parentNode.removeChild(b); },350);
+  };
+
+  /* Safety net that does not depend on Firebase loading at all. */
+  setTimeout(function(){
+    var sp=$('splash-screen');
+    if(!sp || sp.classList.contains('hidden')) return;
+    window._lkBootWatch(sp, function(){
+      if(window._hideSplashWhenReady) window._hideSplashWhenReady();
+      else { sp.classList.add('hidden'); setTimeout(function(){ if(sp.parentNode) sp.parentNode.removeChild(sp); },400); }
+    });
+  }, 8000);
+
+  /* ---- Lock-first boot ---- */
+  function bootUid(){
+    var u=null; try{ u=localStorage.getItem('hk_boot_uid'); }catch(e){}
+    if(u) return u;
+    // First start after this update: use the one PIN saved on this phone.
+    var found=[];
+    try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k && k.indexOf('hk_pin_hash_')===0) found.push(k.slice(12)); } }catch(e){}
+    return found.length===1 ? found[0] : null;
+  }
+  try{
+    if(localStorage.getItem('hk_boot_off')==='1') return;                     // signed out
+    var uid=bootUid(); if(!uid) return;
+    if(!localStorage.getItem('hk_terms_agreed_'+uid)) return;                 // not fully registered here
+    if(localStorage.getItem('hk_gl_need_phone_'+uid)==='1') return;           // mid number change
+    var m=(location.search||'').match(/[?&]inst=([^&]+)/);                     // reinstalled → OTP first
+    if(m){ var nv=localStorage.getItem('hk_install_nonce'); if(nv!==null && nv!==decodeURIComponent(m[1])) return; }
+    if(sessionStorage.getItem('alck_unlocked_session')==='1') return;         // already unlocked this session
+    if(!window._alckSetUid || !window.alckInit || !window._alckHasPin) return;
+    window._alckSetUid(uid);
+    if(!window._alckHasPin()) return;                                          // no PIN yet → normal start
+    window._alckBootUid=uid;
+    window.alckInit();
+    var lock=$('app-lock-screen');
+    if(lock && lock.classList.contains('active')){
+      var sp=$('splash-screen');
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        window._splashHidden=true;
+        if(sp){ sp.classList.add('hidden'); setTimeout(function(){ if(sp.parentNode) sp.parentNode.removeChild(sp); },400); }
+      }); });
+    } else {
+      window._alckBootUid=null; window._alckInitDone=false;   // let the normal start do it
+    }
+  }catch(e){ try{ console.warn('boot lock',e); }catch(x){} }
 })();
 
 </script>

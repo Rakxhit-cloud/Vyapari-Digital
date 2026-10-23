@@ -7894,7 +7894,7 @@ async function glNativeGoogle(errId){
   glErr(errId,'');
   try{
     if(!_gl.nInit){ await SL.initialize({ google:{ webClientId: GOOGLE_CLIENT_ID, mode:'online' } }); _gl.nInit=true; }
-    const r=await SL.login({ provider:'google', options:{ scopes:['email','profile'] } });
+    const r=await SL.login({ provider:'google', options:{} });   // v83: default scopes (email, profile) — custom scopes need a modified MainActivity
     const t=r && r.result && r.result.idToken;
     if(!t) throw new Error('no-id-token');
     await glOnCredential({ credential:t });
@@ -9170,6 +9170,15 @@ window._fsWipeAll = async function() {
     { ts, at: serverTimestamp(), device: (navigator.userAgent || '').slice(0, 90) });
   const cols = ['bikri', 'maal', 'udhaar', 'goal', 'cih'];
   let deleted = 0;
+  // v83: bill photos in Cloud Storage, so no photo outlives its bill
+  try {
+    const delAll = async (r) => {
+      const res = await listAll(r);
+      for (const it of res.items) { try { await deleteObject(it); } catch(e){ console.warn('photo erase', it.fullPath, e && e.code); } }
+      for (const p of res.prefixes) { await delAll(p); }
+    };
+    await delAll(stRef(storage, 'bills/' + uid));
+  } catch(e){ console.warn('bill photos erase', e && e.code); }
   for (const colName of cols) {
     const snap = await getDocs(collection(db, 'users', uid, colName));
     let batch = writeBatch(db), n = 0;

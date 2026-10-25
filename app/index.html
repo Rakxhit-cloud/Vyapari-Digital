@@ -2416,6 +2416,8 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
 .lg-en .tg.cash{background:rgba(62,200,115,.10);color:#8aefb0;border:1px solid rgba(62,200,115,.3);}
 .lg-en .tg.col{background:rgba(212,168,80,.12);color:#f0cf7a;border:1px solid rgba(212,168,80,.35);}
 .lg-en .tg.oth{background:rgba(147,164,204,.1);color:#b8c6e6;border:1px solid rgba(147,164,204,.3);}
+.lg-en .tg.exp{background:rgba(232,137,106,.12);color:#ffb094;border:1px solid rgba(232,137,106,.36);}
+.lg-en .tg.home{background:rgba(160,140,220,.13);color:#c9b8ff;border:1px solid rgba(160,140,220,.38);}
 .ee-sub{font-size:10.5px;font-weight:700;letter-spacing:.6px;color:#6d80a8;text-transform:uppercase;margin:0 0 7px;}
 .lg-ask .h{font-size:11.5px;font-weight:700;color:#e8c870;margin-bottom:9px;}
 .lg-ask .hd{background:#0a1020;border:1px solid #2a4078;border-radius:10px;padding:9px 11px;margin-bottom:10px;}
@@ -3888,8 +3890,9 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
         </div>
         <div class="cal-sub" id="cal-sub">
           <span class="cal-c on" id="cal-sub-all" onclick="calSetSub('all')">All</span>
-          <span class="cal-c" id="cal-sub-maal" onclick="calSetSub('maal')">माल · Stock</span>
-          <span class="cal-c" id="cal-sub-kharcha" onclick="calSetSub('kharcha')">खर्चा · Expense</span>
+          <span class="cal-c" id="cal-sub-kharcha" onclick="calSetSub('kharcha')">Expense</span>
+          <span class="cal-c" id="cal-sub-home" onclick="calSetSub('home')">घर खर्च</span>
+          <span class="cal-c" id="cal-sub-oth" onclick="calSetSub('oth')">Other</span>
         </div>
         <div class="cal-header"><div class="cal-month-label" id="cal-label"></div><div style="display:flex;gap:6px;"><div class="cal-nav" onclick="calPrev()">◀</div><div class="cal-nav" onclick="calNext()">▶</div></div></div>
         <div class="cal-days-header"><div class="cal-day-name">सो</div><div class="cal-day-name">मं</div><div class="cal-day-name">बु</div><div class="cal-day-name">गु</div><div class="cal-day-name">शु</div><div class="cal-day-name">श</div><div class="cal-day-name">र</div></div>
@@ -4164,6 +4167,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
           <div class="lgc-r"><div class="lgc-l">Type</div><div class="lgc-seg" id="lgc-dir"><div data-v="in" onclick="lgcSet('dir','in')">↓ आया<small>Received</small></div><div data-v="out" onclick="lgcSet('dir','out')">↑ गया<small>Paid</small></div></div></div>
           <div class="lgc-r" id="lgc-mode-r"><div class="lgc-l">Mode</div><div class="lgc-seg" id="lgc-mode"><div data-v="Cash" onclick="lgcSet('mode','Cash')">Cash</div><div data-v="UPI" onclick="lgcSet('mode','UPI')">UPI</div></div></div>
           <div class="lgc-r" id="lgc-nat-r"><div class="lgc-l">Nature</div><div class="lgc-seg" id="lgc-nat"><div data-v="Sale" onclick="lgcSet('nat','Sale')">Sale<small>बिक्री</small></div><div data-v="Collection" onclick="lgcSet('nat','Collection')">Collection<small>उधार वापस</small></div><div data-v="Other" onclick="lgcSet('nat','Other')">Other<small>अन्य</small></div></div></div>
+          <div class="lgc-r" id="lgc-onat-r" style="display:none;"><div class="lgc-l">Nature</div><div class="lgc-seg" id="lgc-onat"><div data-v="Expense" onclick="lgcSet('onat','Expense')">Expense<small>दुकान खर्च</small></div><div data-v="Home" onclick="lgcSet('onat','Home')">घर खर्च<small>Personal</small></div><div data-v="Other" onclick="lgcSet('onat','Other')">Other<small>बैंक · उधार दिया</small></div></div></div>
           <div class="lgc-hint" id="lgc-hint" style="display:none;"></div>
         </div>
         <div class="lg-voice-btns">
@@ -4246,8 +4250,8 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
       <div class="lg-box-grid" id="lg-grid-upi"></div>
     </div>
 
-    <!-- Purchase / खरीद section (5th block — photo-first, files into supplier ledger) -->
-    <div style="margin-bottom:18px;">
+    <!-- Purchase / खरीद section — v84: removed from Live Hisaab; purchases live in Purchase → Supplier -->
+    <div style="margin-bottom:18px;display:none;" id="lg-pur-block">
       <div class="lg-cat-head lkp-head">
         <div class="lg-cat-head-left">
           <span class="lkp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8 12 4l8.5 4v8.5L12 20.5 3.5 16.5z"/><path d="M3.5 8 12 12l8.5-4M12 12v8.5"/></svg></span>
@@ -5784,12 +5788,14 @@ textarea.st-biz-in{resize:none;}
   function expenseData(rangeKey){
     var bikri=[]; try{bikri=DB.get(K.BIKRI)||[];}catch(e){}
     var R=computeRange(rangeKey);
-    var rows=[], total=0, excl=0, exclAmt=0;
+    var rows=[], total=0, excl=0, exclAmt=0, home=0, homeAmt=0, oth=0, othAmt=0;
     bikri.forEach(function(rec){
       var dt=rec&&rec.date; if(!dt)return; if(R.from&&dt<R.from)return; if(R.to&&dt>R.to)return;
       (rec.lgBoxes||[]).forEach(function(b){
         if(!b||b.type!=="expense")return;
         if(b.src==="maal"){ excl++; exclAmt+=(b.amount||0); return; }  /* supplier payment, not operating expense */
+        if(b.onat==="Home"){ home++; homeAmt+=(b.amount||0); return; }    /* v84: owner's drawings */
+        if(b.onat==="Other"){ oth++; othAmt+=(b.amount||0); return; }    /* v84: bank deposit, loan, money lent */
         var amt=b.amount||0;
         rows.push({date:dt, disp:dispDate(dt), note:(b.note||""), amount:amt});
         total+=amt;
@@ -5797,7 +5803,7 @@ textarea.st-biz-in{resize:none;}
     });
     rows.sort(function(a,b){ return String(a.date).localeCompare(String(b.date)); });
     return {biz:(window.getBizProfile?getBizProfile():{name:"",gstin:"",address:"",dlno:""}),
-      period:R, asOf:(R.to||todayStr()), rows:rows, total:total, n:rows.length, excl:excl, exclAmt:exclAmt};
+      period:R, asOf:(R.to||todayStr()), rows:rows, total:total, n:rows.length, excl:excl, exclAmt:exclAmt, home:home, homeAmt:homeAmt, oth:oth, othAmt:othAmt};
   }
   function expenseHTML(D){
     var biz=D.biz||{};
@@ -5830,6 +5836,7 @@ textarea.st-biz-in{resize:none;}
     body+='<tr class="tot"><td colspan="3" style="text-align:right;">TOTAL</td><td class="r">'+f(D.total)+'</td></tr>';
     var table='<table><thead><tr><th class="c">#</th><th>Date</th><th>Particulars</th><th class="r">Amount</th></tr></thead><tbody>'+body+'</tbody></table>';
     var disc='<div class="disc">'+(D.excl?("Note: "+D.excl+" supplier-payment entr(ies) totalling "+f(D.exclAmt)+" excluded (payments against payables, not operating expense \u2014 see supplier ledger).<br>"):"")+'Generated from user-entered records in Live Khaata. NOT audited, verified, or certified. E&amp;OE.</div>';
+    if(D.home||D.oth) disc=disc.replace('<div class="disc">','<div class="disc">'+(D.home?("Drawings (\u0918\u0930 \u0916\u0930\u094d\u091a, taken for home): "+D.home+" entr(ies) totalling "+f(D.homeAmt)+" excluded. "):"")+(D.oth?("Other payments (bank deposit, loan, money lent): "+D.oth+" entr(ies) totalling "+f(D.othAmt)+" excluded. "):"")+"These are not operating expenses.<br>");
     var ft='<div class="ft"><div class="fl">Computer-generated \u00b7 Generated on '+dispDate(todayStr())+'</div><div style="text-align:right;"><div class="bm"><span class="li">Live</span> <span class="kh">Khaata</span></div><div style="font-size:9px;color:#6b7180;">livekhaata.app</div></div></div>';
     return '<div class="ca">'+css+head+meta+cards+table+disc+ft+'</div>';
   }
@@ -5846,6 +5853,8 @@ textarea.st-biz-in{resize:none;}
     s1.push(["","","TOTAL",D.total]);
     s1.push([]);
     if(D.excl) s1.push(["Supplier payments excluded (not operating expense)",D.exclAmt]);
+    if(D.home) s1.push(["Drawings / Ghar kharch excluded (not operating expense)",D.homeAmt]);
+    if(D.oth) s1.push(["Other payments excluded (bank deposit, loan, money lent)",D.othAmt]);
     s1.push(["Generated by Live Khaata \u00b7 livekhaata.app. NOT audited/certified. E&OE."]);
     var ws1=aoa(X,s1);
     var RS="\u0022\u20b9\u0022#,##,##0";
@@ -5866,6 +5875,8 @@ textarea.st-biz-in{resize:none;}
     X.utils.book_append_sheet(wb,ws2,"Voucher List");
     var s3=[["Expense \u2014 Summary"],[D.period.label||""],[],["Total Expense",D.total],["Entries",D.n]];
     if(D.excl) s3.push(["Supplier payments excluded",D.exclAmt]);
+    if(D.home) s3.push(["Drawings (Ghar kharch) excluded",D.homeAmt]);
+    if(D.oth) s3.push(["Other payments excluded",D.othAmt]);
     s3.push([],["Generated by Live Khaata \u00b7 livekhaata.app"]);
     var ws3=X.utils.aoa_to_sheet(s3); ws3["!cols"]=[{wch:30},{wch:20}];
     X.utils.book_append_sheet(wb,ws3,"Summary");
@@ -5908,7 +5919,7 @@ textarea.st-biz-in{resize:none;}
         if(!b)return;
         if(b.type==="cash" && b.src!=="udhaar") m.cash+=(b.amount||0);
         else if(b.type==="upi" && b.src!=="udhaar") m.upi+=(b.amount||0);
-        else if(b.type==="expense" && b.src!=="maal") m.expense+=(b.amount||0);
+        else if(b.type==="expense" && b.src!=="maal" && b.onat!=="Home" && b.onat!=="Other") m.expense+=(b.amount||0);
       });
     });
     maal.forEach(function(r){
@@ -6632,6 +6643,8 @@ textarea.st-biz-in{resize:none;}
     <div class="lgc-seg" id="ee-mode" style="margin-bottom:14px;"><div data-v="Cash" onclick="eeSetMode('Cash')">Cash</div><div data-v="UPI" onclick="eeSetMode('UPI')">UPI</div></div>
     <div id="ee-nat-r"><div class="ee-sub">Nature</div>
     <div class="lgc-seg" id="ee-nat" style="margin-bottom:16px;"><div data-v="Sale" onclick="eeSetNat('Sale')">Sale<small>बिक्री</small></div><div data-v="Collection" onclick="eeSetNat('Collection')">Collection<small>उधार वापस</small></div><div data-v="Other" onclick="eeSetNat('Other')">Other<small>अन्य</small></div></div></div>
+    <div id="ee-onat-r" style="display:none;"><div class="ee-sub">Nature</div>
+    <div class="lgc-seg" id="ee-onat" style="margin-bottom:16px;"><div data-v="Expense" onclick="eeSetOnat('Expense')">Expense<small>दुकान खर्च</small></div><div data-v="Home" onclick="eeSetOnat('Home')">घर खर्च<small>Personal</small></div><div data-v="Other" onclick="eeSetOnat('Other')">Other<small>बैंक · उधार दिया</small></div></div></div>
     <div class="ee-fl">Amount</div>
     <div class="ee-amtf" id="ee-amtf"><span class="cur">₹</span>
       <input id="ee-amt" type="number" inputmode="numeric" enterkeyhint="done" autocomplete="off">
@@ -9829,6 +9842,15 @@ function lgDirOf(b){
 }
 // Cash actually moved for this box. A credit purchase carries a bill amount but
 // no cash leaves the galla until it is paid, so cashOut overrides amount.
+/* v84 · गया nature. 'Old' = a purchase / supplier payment that older versions
+   added to आया-गया by themselves (kept so past balances never change). */
+function lgOutCat(b){
+  if(!b) return 'Expense';
+  if(b.src==='maal' || b.type==='purchase') return 'Old';
+  if(b.onat==='Home' || b.onat==='Other') return b.onat;
+  return 'Expense';
+}
+window.lgOutCat=lgOutCat;
 function lgCashOf(b){
   if(b && typeof b.cashOut==='number') return Math.round(b.cashOut);
   return Math.round((b && b.amount) || 0);
@@ -10277,6 +10299,7 @@ function lgPastEdit(ds, ts){
   _eeRec=r; _eeNew=null; _eeBox=box;
   _eeMode=box.method||_lgcGuessMode(box.note)||'Cash';
   _eeNat=box.nature||_lgcGuessNat(box.note);
+  _eeOnat=box.onat||_lgcGuessOnat(box.note);
   eeSetDir(lgDirOf(box)==="in"?"in":"out");
   var a=document.getElementById("ee-amt"); if(a) a.value=Math.round(lgCashOf(box))||"";
   var n=document.getElementById("ee-note"); if(n) n.value=box.note||"";
@@ -10290,7 +10313,7 @@ function lgBackStart(ds, how){
     try{ closeDatePopupDirect(); }catch(e){}
     window._dpReopen=ds;
     _eeRec=_lgRecFor(ds); _eeNew=ds; _eeBox=null;
-    _eeMode=(typeof _lgcLastMode==='function'&&_lgcLastMode())||'Cash'; _eeNat='Sale';
+    _eeMode=(typeof _lgcLastMode==='function'&&_lgcLastMode())||'Cash'; _eeNat='Sale'; _eeOnat='Expense';
     eeSetDir('');
     var a=document.getElementById("ee-amt"); if(a) a.value="";
     var n=document.getElementById("ee-note"); if(n) n.value="";
@@ -10543,13 +10566,18 @@ function eeClose(){
    card, and saved on the entry as `method` / `nature`. The rows exist to
    correct a wrong guess — a clear sentence is still one tap on Add.
    Defaults (locked): mode = last entry today, else Cash · nature = Sale. */
-var LGC={dir:'',mode:'Cash',nat:'Sale',modeDefaulted:false,modeFrom:''};
+var LGC={dir:'',mode:'Cash',nat:'Sale',onat:'Expense',modeDefaulted:false,modeFrom:''};
 var _LGC_UPI=/upi|यूपीआई|यू पी आई|phonepe|फोनपे|gpay|google pay|paytm|पेटीएम|online|ऑनलाइन|neft|imps|\bqr\b/i;
 var _LGC_CASH=/cash|कैश|कॅश|नकद|नगद/i;
 var _LGC_SALE=/sale|सेल|सैल|बिक्री|बेचा|बेची|बिका/i;
 var _LGC_COLL=/उधार|वापस|payment|पेमेंट|भुगतान|वसूल|collection|received from|से आए|से आये|से मिले|से आया|से मिला/i;
 function _lgcGuessMode(t){ t=String(t||''); if(_LGC_UPI.test(t)) return 'UPI'; if(_LGC_CASH.test(t)) return 'Cash'; return ''; }
 var _LGC_FROM=/से\s+(?:\S+\s+){0,5}(?:मिले|मिला|मिली|आए|आये|आया|आई)/;
+/* गया: Expense unless the sentence says home, bank, loan or supplier. */
+var _LGC_O_OTHER=/बैंक|bank|डिपॉजिट|डिपाजिट|deposit|उधार\s*(?:दिया|दिए|दिये|दे\s)|लोन|loan|(?:^|\s)emi(?:\s|$)|ईएमआई|किस्त|kist|सप्लायर|supplier|एजेंसी|agency|होलसेल|wholesale|(?:^|\s)माल(?:\s|$)|स्टॉक|stock/i;
+var _LGC_O_HOME=/(?:^|\s)घर(?:\s|$)|घरेलू|पर्सनल|personal|निजी|(?:^|\s)home(?:\s|$)|(?:^|\s)house(?:\s|$)|बच्चों/i;
+function _lgcGuessOnat(t){ t=String(t||''); if(_LGC_O_OTHER.test(t)) return 'Other'; if(_LGC_O_HOME.test(t)) return 'Home'; return 'Expense'; }
+window._lgcGuessOnat=_lgcGuessOnat;
 function _lgcGuessNat(t){ t=String(t||''); if(_LGC_SALE.test(t)) return 'Sale'; if(_LGC_COLL.test(t)||_LGC_FROM.test(t)) return 'Collection'; return 'Sale'; }
 function _lgcLastMode(){
   try{
@@ -10572,6 +10600,7 @@ window.lgcInit=function(S){
   LGC.mode=gm||last||'Cash';
   LGC.modeDefaulted=!gm; LGC.modeFrom=gm?'':(last?'last':'default');
   LGC.nat=_lgcGuessNat(txt);
+  LGC.onat=_lgcGuessOnat(txt);
   lgcRender();
 };
 function lgcSet(k,v){ LGC[k]=v; if(k==='mode') LGC.modeDefaulted=false; lgcRender(); }
@@ -10584,6 +10613,8 @@ function lgcRender(){
     Array.prototype.forEach.call(ds.children,function(c){ if(hasDir && c.getAttribute('data-v')!==LGC.dir) c.classList.add('dim'); }); }
   var mr=document.getElementById('lgc-mode-r'); if(mr) mr.style.display=hasDir?'':'none';
   var nr=document.getElementById('lgc-nat-r'); if(nr) nr.style.display=(LGC.dir==='in')?'':'none';
+  _lgcPaint('lgc-onat',LGC.onat,function(){ return 'nat'; });
+  var onr=document.getElementById('lgc-onat-r'); if(onr) onr.style.display=(LGC.dir==='out')?'':'none';
   var ad=document.getElementById('lg-vadd-entry'); if(ad) ad.classList.toggle('dis',!hasDir);
   var h=document.getElementById('lgc-hint');
   if(h){
@@ -10599,14 +10630,19 @@ function _lgcTags(b,d){
   var s='';
   if(b.method) s+='<span class="tg '+(b.method==='UPI'?'upi':'cash')+'">'+b.method+'</span>';
   if(d==='in'&&b.nature&&b.nature!=='Sale') s+='<span class="tg '+(b.nature==='Collection'?'col':'oth')+'">'+b.nature+'</span>';
+  if(d!=='in'&&b.onat){ var _OL={Expense:'Expense',Home:'घर खर्च',Other:'Other'}, _OC={Expense:'exp',Home:'home',Other:'oth'};
+    if(_OL[b.onat]) s+='<span class="tg '+_OC[b.onat]+'">'+_OL[b.onat]+'</span>'; }
   return s;
 }
-var _eeMode='Cash', _eeNat='Sale';
+var _eeMode='Cash', _eeNat='Sale', _eeOnat='Expense';
 function _eePaint(){
   _lgcPaint('ee-mode',_eeMode,function(v){ return v==='UPI'?'upi':'cash'; });
   _lgcPaint('ee-nat',_eeNat,function(){ return 'nat'; });
   var nr=document.getElementById('ee-nat-r'); if(nr) nr.style.display=(_eeDir==='in')?'':'none';
+  _lgcPaint('ee-onat',_eeOnat,function(){ return 'nat'; });
+  var onr=document.getElementById('ee-onat-r'); if(onr) onr.style.display=(_eeDir==='out')?'':'none';
 }
+function eeSetOnat(n){ _eeOnat=n; _eePaint(); }
 function eeSetMode(m){ _eeMode=m; _eePaint(); }
 function eeSetNat(n){ _eeNat=n; _eePaint(); }
 function eeSetDir(d){
@@ -10654,6 +10690,7 @@ function eeSave(){
   _eeBox.type=(_eeDir==="in")?"cash":"expense";   // keep the legacy field consistent
   _eeBox.method=_eeMode;
   if(_eeDir==="in") _eeBox.nature=_eeNat; else delete _eeBox.nature;
+  if(_eeDir==="out") _eeBox.onat=_eeOnat; else delete _eeBox.onat;
   _eeBox.edited=Date.now();
   var _dir=_eeDir;
   eeClose();
@@ -10675,7 +10712,7 @@ function _eeSaveNew(){
   var bt=(_eeDir==="in")?"cash":"expense";
   var box={ n:r.lgBoxes.filter(function(b){ return b.type===bt; }).length+1, type:bt, amount:Math.round(v),
             note:note, ts:lgBackTs(ds), src:"manual", dir:_eeDir, method:_eeMode, addedAt:Date.now() };
-  if(_eeDir==="in") box.nature=_eeNat;
+  if(_eeDir==="in") box.nature=_eeNat; else box.onat=_eeOnat;
   r.lgBoxes.push(box);
   if(ds!==TSTR){ r.lgSaved=true; r.lgSavedAt=r.lgSavedAt||Date.now(); }
   else { r.lgSaved=false; r.lgSavedAt=null; }
@@ -10704,6 +10741,7 @@ function lgEditEntry(i){
   _eeRec=null; _eeNew=null; _eeBox=box;
   _eeMode=box.method||_lgcGuessMode(box.note)||'Cash';
   _eeNat=box.nature||_lgcGuessNat(box.note);
+  _eeOnat=box.onat||_lgcGuessOnat(box.note);
   eeSetDir(lgDirOf(box)==="in"?"in":"out");
   var a=document.getElementById("ee-amt"); if(a) a.value=Math.round(lgCashOf(box))||"";
   var n=document.getElementById("ee-note"); if(n) n.value=box.note||"";
@@ -11176,25 +11214,9 @@ function lgpcFile(sup, phone){
         total:Math.round(amt||0),supplier:(sup||'').slice(0,40),pay:pay||''});
     }
   }catch(e){}
-  // Mirror a purchase box onto Live Hisaab (visual only; K.MAAL is the source of truth).
-  if (!Array.isArray(r.lgBoxes)) r.lgBoxes = [];
-  var pboxes = r.lgBoxes.filter(function(b){return b.type==='purchase';});
-  // Cash that actually left the galla today:
-  //   नकद purchase → the whole bill
-  //   उधार purchase → only the part-payment made at scan time (often 0)
-  var _cashOut = (pay==='नकद') ? amt : Math.max(0, Math.min(Number(window._lgpcPaid)||0, amt));
-  var pbox = { n: pboxes.length+1, type:'purchase', dir:'out', src:'maal', maalKind:'purchase',
-               amount:amt, cashOut:_cashOut, maalId:_maalId,
-               note:('सप्लायर: '+sup).slice(0,80),
-               pay: window.lgPurPay, supplier: sup, ts: Date.now() };
-  if (_ph.thumb) pbox.billThumb = _ph.thumb;
-  if (_ph.url)   pbox.billUrl   = _ph.url;
-  if (_ph.path)  pbox.billPath  = _ph.path;
-  r.lgBoxes.push(pbox);
-  if (_cashOut > 0) { try{ if(window.logEvent) window.logEvent('box_added',{dir:'out',method:'purchase',src:'maal',kind:(pay==='नकद'?'cash':'partial'),amount:_cashOut}); }catch(e){} }
-  if (window.lgState.isToday) { r.lgSaved = false; r.lgSavedAt = null; }
-  if (typeof lgPersistRec === 'function') lgPersistRec(r);
-  if (_ph.blob && typeof lgpUpload === 'function') lgpUpload(pbox, _ph.blob, r, function(url, path){
+  // v84: the bill lives only in Purchase → Supplier. Live Hisaab (आया-गया) is not touched,
+  // so the day's balance moves only with what the user says or types there.
+  if (_ph.blob && typeof lgpUpload === 'function') lgpUpload({ ts: Date.now(), type: 'purchase-file' }, _ph.blob, r, function(url, path){
     try {
       DB.update(K.MAAL, _maalId, { billUrl: url, billPath: path });
       if (typeof renderSupplierProfile === 'function') renderSupplierProfile();
@@ -11206,7 +11228,7 @@ function lgpcFile(sup, phone){
   if (typeof lgRenderSaveArea === 'function') lgRenderSaveArea();
   if (typeof renderSuppliers === 'function') renderSuppliers();
   if (typeof loadMaalHome === 'function') loadMaalHome();
-  toast('✓ खरीद '+sup+' के खाते में जुड़ गई');
+  toast('✓ '+sup+' के खाते में सेव — आज के हिसाब में नहीं जोड़ा');
 }
 function lgCommitBox() {
   const amt = parseInt(window.lgKeypad.amount) || 0;
@@ -11719,6 +11741,7 @@ function lgMonthStats(mi){
       // Top Outflows list, so the two always agree. Purchases and payables
       // have their own cards.
       if(b.src==='maal') return;
+      if(lgOutCat(b)!=='Expense') return;   // v84: घर खर्च / Other are not shop expenses
       exp+=a;
       var k=String(b.note||'').trim();
       if(k) notes[k]=(notes[k]||0)+a;
@@ -11958,11 +11981,11 @@ function calDayTotals(y,m){
   var pre=y+'-'+String(m+1).padStart(2,'0'), map={};
   (DB.get(K.BIKRI)||[]).forEach(function(r){
     if(!r.date||r.date.indexOf(pre)!==0)return;
-    var t=map[r.date]||(map[r.date]={inw:0,out:0,maal:0,kh:0});
+    var t=map[r.date]||(map[r.date]={inw:0,out:0,maal:0,kh:0,home:0,oth:0});
     (Array.isArray(r.lgBoxes)?r.lgBoxes:[]).forEach(function(b){
       var a=lgCashOf(b); if(!(a>0))return;
       if(lgDirOf(b)==='in'){t.inw+=a;}
-      else{t.out+=a; if(b.src==='maal')t.maal+=a; else t.kh+=a;}
+      else{t.out+=a; var _oc=lgOutCat(b); if(_oc==='Old')t.maal+=a; else if(_oc==='Home')t.home+=a; else if(_oc==='Other')t.oth+=a; else t.kh+=a;}
     });
   });
   return map;
@@ -11981,15 +12004,16 @@ function _mpinGo(){
 }
 function renderCalendar(){
   var lblEl=document.getElementById('cal-label');if(lblEl)lblEl.textContent=HI_MONTHS[calMonth]+' '+calYear;
-  var map=calDayTotals(calYear,calMonth), mIn=0,mOut=0,mMaal=0,mKh=0;
-  Object.keys(map).forEach(function(k){var t=map[k];mIn+=t.inw;mOut+=t.out;mMaal+=t.maal;mKh+=t.kh;});
+  var map=calDayTotals(calYear,calMonth), mIn=0,mOut=0,mMaal=0,mKh=0,mHome=0,mOth=0;
+  if(calSub==='maal') calSub='all';
+  Object.keys(map).forEach(function(k){var t=map[k];mIn+=t.inw;mOut+=t.out;mMaal+=t.maal;mKh+=t.kh;mHome+=t.home;mOth+=t.oth;});
   var isIn=(calLens==='in'), hue=isIn?'in':'out';
   var tIn=document.getElementById('cal-tab-in'),tOut=document.getElementById('cal-tab-out');
   if(tIn){tIn.className='cal-tb in'+(isIn?' on':'');tIn.querySelector('.v').textContent=fmt(mIn);}
   if(tOut){tOut.className='cal-tb out'+(isIn?'':' on');tOut.querySelector('.v').textContent=fmt(mOut);}
   var subEl=document.getElementById('cal-sub');if(subEl)subEl.style.display=isIn?'none':'flex';
-  ['all','maal','kharcha'].forEach(function(s){var e=document.getElementById('cal-sub-'+s);if(e)e.className='cal-c'+(calSub===s?' on':'');});
-  function valOf(t){if(isIn)return t.inw;if(calSub==='maal')return t.maal;if(calSub==='kharcha')return t.kh;return t.out;}
+  ['all','kharcha','home','oth'].forEach(function(s){var e=document.getElementById('cal-sub-'+s);if(e)e.className='cal-c'+(calSub===s?' on':'');});
+  function valOf(t){if(isIn)return t.inw;if(calSub==='kharcha')return t.kh;if(calSub==='home')return t.home;if(calSub==='oth')return t.oth;return t.out;}
   var mx=0;Object.keys(map).forEach(function(k){var v=valOf(map[k]);if(v>mx)mx=v;});
   var firstDay=new Date(calYear,calMonth,1).getDay(),startOffset=(firstDay===0)?6:firstDay-1;
   var daysInMonth=new Date(calYear,calMonth+1,0).getDate();
@@ -12021,15 +12045,17 @@ function renderCalendar(){
     var h='';
     if(bestV>0){
       var tag='';
-      if(!isIn&&map[bestD]&&map[bestD].maal>map[bestD].kh)tag='<span class="cal-tag">माल</span>';
+
       h+='<div class="cal-ir"><span class="k">Highest day</span><span class="v '+(isIn?'i':'o')+'">'+parseInt(bestD.slice(8),10)+' '+HI_MONTHS[calMonth]+' · '+fmt(bestV)+'</span>'+tag+'</div>';
     }
     h+='<div class="cal-ir"><span class="k">Daily average</span><span class="v n">'+fmt(Math.round(tot/daysInMonth))+'</span></div>';
     if(isIn){h+='<div class="cal-ir"><span class="k">Days with no entries</span><span class="v n">'+empty+'</span></div>';}
     else{
-      var T=(mMaal+mKh)||1;
-      h+='<div class="cal-ir"><span class="k">माल · Stock</span><span class="v o">'+fmt(mMaal)+'</span><span class="pc">'+Math.round(mMaal/T*100)+'%</span></div>';
-      h+='<div class="cal-ir"><span class="k">खर्चा · Expense</span><span class="v o">'+fmt(mKh)+'</span><span class="pc">'+Math.round(mKh/T*100)+'%</span></div>';
+      var T=(mMaal+mKh+mHome+mOth)||1;
+      h+='<div class="cal-ir"><span class="k">Expense</span><span class="v o">'+fmt(mKh)+'</span><span class="pc">'+Math.round(mKh/T*100)+'%</span></div>';
+      h+='<div class="cal-ir"><span class="k">घर खर्च</span><span class="v o">'+fmt(mHome)+'</span><span class="pc">'+Math.round(mHome/T*100)+'%</span></div>';
+      h+='<div class="cal-ir"><span class="k">Other</span><span class="v o">'+fmt(mOth)+'</span><span class="pc">'+Math.round(mOth/T*100)+'%</span></div>';
+      if(mMaal>0) h+='<div class="cal-ir"><span class="k">Purchases (old)</span><span class="v o">'+fmt(mMaal)+'</span><span class="pc">'+Math.round(mMaal/T*100)+'%</span></div>';
     }
     box.innerHTML=h;box.style.display=tot>0?'block':'none';
   }
@@ -13011,9 +13037,7 @@ function saveMaalEntry(){
   const _maalData={date,supplier,name,amount,pay,note};
   if(supplierPhone)_maalData.supplierPhone=supplierPhone;
   const _pushedMaal=DB.push(K.MAAL,_maalData);
-  if(pay==='नकद'){
-    lgAddExpenseBox(date, amount, ('माल — '+supplier+(name?' · '+name:'')).slice(0,80), _pushedMaal&&_pushedMaal.id, 'purchase');
-  }
+  // v84: a purchase is recorded only in Purchase → Supplier, never as a गया entry
   showSuccessModal('नई खरीद सेव हो गई','📦 '+escHTML(supplier));
   closeMaalEntry();
   renderSuppliers();
@@ -13619,7 +13643,7 @@ function saveSupplierPayment(){
   upd.payDate=_ds;
   DB.update(K.MAAL,_supplierPayId,upd);
   var _lbl=(mode==='Bank'?(railLbl||'Bank'):mode);
-  if(paidDelta>0){lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')+' · '+_lbl).slice(0,80),r.id,'payment',{payMode:mode,payRail:upd.payRail,payRef:upd.payRef,chequeNo:upd.chequeNo,chequeDate:upd.chequeDate});}
+  if(false && paidDelta>0){lgAddExpenseBox(_ds,paidDelta,('उधार चुकाया — '+(r.supplier||'')+' · '+_lbl).slice(0,80),r.id,'payment',{payMode:mode,payRail:upd.payRail,payRef:upd.payRef,chequeNo:upd.chequeNo,chequeDate:upd.chequeDate});}
   showSuccessModal('Payment दर्ज', '💵 '+_lbl+' payment recorded');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
@@ -13633,7 +13657,7 @@ function settleSupplierFull(){
   const paidDelta=(r.amount||0)-(r.paid||0);
   var _ds2=spayDateValue();
   DB.update(K.MAAL,_supplierPayId,{paid:r.amount||0,payDate:_ds2});
-  if(paidDelta>0){lgAddExpenseBox(_ds2,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80),r.id,'payment');}
+  if(false && paidDelta>0){lgAddExpenseBox(_ds2,paidDelta,('उधार चुकाया — '+(r.supplier||'')).slice(0,80),r.id,'payment');}
   showSuccessModal('पूरा चुक गया', '✅ Full payment cleared');
   closeSupplierPayOverlay();
   loadMaalForMonth(monthNavSelected);
@@ -16896,6 +16920,8 @@ function npReopenPreview(){
       var ni=hit(_DIN), no=hit(_DON);
       if(ni>=0 || no>=0){ dir = (ni>no) ? 'in' : 'out'; via='noun'; }
     }
+    if(/(?:बैंक|bank)\s*(?:में|me|mein)?\s*(?:जमा|डाले|डाला|डाली|डाल)|डिपॉजिट|डिपाजिट|deposit/i.test(lower)){ dir='out'; via='verb'; }
+    else if(/(?:बैंक|bank)\s*से\s*(?:निकाले|निकाला|निकाली|निकलवाए|निकलवाये)/i.test(lower)){ dir='in'; via='verb'; }
     /* The figure is shown in ₹ above the note, so repeating it there wastes the
        line: "उधार मोनू को 7.5 हजार दिए" reads better as "उधार मोनू को दिए".
        Every run of number words / digits / हज़ार-सौ-लाख whose VALUE equals the
@@ -17405,11 +17431,12 @@ function npReopenPreview(){
       addedAt: (_bk ? Date.now() : undefined),
       dir: (type==='entry' ? S.dir : undefined),
       method: (type==='entry' && window.LGC ? (LGC.mode||undefined) : undefined),
-      nature: (type==='entry' && S.dir==='in' && window.LGC ? (LGC.nat||'Sale') : undefined) });
+      nature: (type==='entry' && S.dir==='in' && window.LGC ? (LGC.nat||'Sale') : undefined),
+      onat: (type==='entry' && S.dir==='out' && window.LGC ? (LGC.onat||'Expense') : undefined) });
     try{ if(window.logEvent) Promise.resolve(window.logEvent('box_added',{
       dir: (type==='entry' ? (S.dir||'') : (_bt==='expense'?'out':'in')),
       method: _bt, src:'voice', amount: amt, voice: !!S.viaVoice,
-      mode: (window.LGC&&LGC.mode)||'', nature: (S.dir==='in'&&window.LGC&&LGC.nat)||'', forDate: _bk||undefined, bts: _bts })).then(function(ok){ if(ok) _lgBxMark(_bts); });
+      mode: (window.LGC&&LGC.mode)||'', nature: (S.dir==='in'&&window.LGC&&LGC.nat)||'', onat: (S.dir==='out'&&window.LGC&&LGC.onat)||'', forDate: _bk||undefined, bts: _bts })).then(function(ok){ if(ok) _lgBxMark(_bts); });
     }catch(e){}
     if(_bk){ r.lgSaved=true; r.lgSavedAt=r.lgSavedAt||Date.now(); }
     else if(window.lgState.blocked){ r.lgSaved=false; r.lgSavedAt=null; }
@@ -19246,7 +19273,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
   }
   function stats(mi, maxDay){
     var S={inw:0,out:0,nIn:0,nOut:0, sale:0,saleC:0,saleU:0,saleX:0,nSale:0, coll:0,nColl:0, oth:0,nOth:0,
-           cash:0,upi:0,unk:0, pur:0,nPur:0, sup:0,nSup:0, exp:0,nExp:0, notes:{}};
+           cash:0,upi:0,unk:0, pur:0,nPur:0, sup:0,nSup:0, exp:0,nExp:0, home:0,nHome:0, oOth:0,nOOth:0, notes:{}};
     var rows=[]; try{ rows=DB.get(K.BIKRI)||[]; }catch(e){}
     rows.forEach(function(r){
       if(!r || !inMo(r.date,mi)) return;
@@ -19265,6 +19292,9 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
         S.out+=a; S.nOut++;
         if(b.type==='purchase'){ S.pur+=a; S.nPur++; return; }
         if(b.src==='maal'){ S.sup+=a; S.nSup++; return; }
+        var oc=lgOutCat(b);
+        if(oc==='Home'){ S.home+=a; S.nHome++; return; }
+        if(oc==='Other'){ S.oOth+=a; S.nOOth++; return; }
         S.exp+=a; S.nExp++;
         var k=String(b.note||'').trim(); if(k) S.notes[k]=(S.notes[k]||0)+a;
       });
@@ -19347,9 +19377,10 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
       if(!(S.out>0)){ b2.innerHTML='<div class="mv-empty">No money out for '+MN[mi]+' yet.</div>'; return; }
       var T2=S.out;
       h2+='<div class="mv-grp">Where it went</div><div class="mv-list">';
-      if(S.pur>0) h2+=row('Stock purchases','Paid when buying · '+n(S.nPur,'bill','bills'),S.pur,S.pur/T2,' o');
-      if(S.sup>0) h2+=row('Paid to suppliers','Old bills paid · '+n(S.nSup,'payment','payments'),S.sup,S.sup/T2,' o');
       if(S.exp>0) h2+=row('Expenses','Shop running costs · '+n(S.nExp,'entry','entries'),S.exp,S.exp/T2,' o');
+      if(S.home>0) h2+=row('घर खर्च','Taken for home · '+n(S.nHome,'entry','entries'),S.home,S.home/T2,' o');
+      if(S.oOth>0) h2+=row('Other','Bank deposit, money lent · '+n(S.nOOth,'entry','entries'),S.oOth,S.oOth/T2,' o');
+      if(S.pur+S.sup>0) h2+=row('Purchases (old)','Added automatically by the older version · '+n(S.nPur+S.nSup,'entry','entries'),S.pur+S.sup,(S.pur+S.sup)/T2,' o');
       h2+='</div>';
       if(S.top.length){
         h2+='<div class="mv-grp">Biggest expenses</div><div class="mv-list">';

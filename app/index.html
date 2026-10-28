@@ -2190,6 +2190,54 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .spay-btn-pay{background:linear-gradient(135deg,#14306a,#0d1f4a);border:1px solid #4a90d4;color:#8ab8e8;}
 .spay-btn-full{background:linear-gradient(135deg,#0e2c1a,#0a1f12);border:1px solid #3ec873;color:#6dee96;}
 .spay-btn-cancel{margin-top:9px;background:#1e1012;border:1px solid #5a2530;color:#e08a9c;text-align:center;padding:12px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;}
+
+/* ===== v85 · Notifications ===== */
+#lkn-ov{position:fixed;inset:0;z-index:9200;background:#0B1120;display:none;flex-direction:column;color:#E9EEFB}
+#lkn-ov.show{display:flex;animation:lknIn .18s ease both}
+@keyframes lknIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.lkn-bar{display:flex;align-items:center;gap:12px;padding:14px 16px 10px;flex-shrink:0}
+.lkn-bk{width:38px;height:38px;border-radius:12px;background:#14203A;border:none;color:#CFE0FF;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.lkn-bk svg{width:20px;height:20px}
+.lkn-bar b{font-size:19px;font-weight:600}
+.lkn-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 16px 28px;max-width:560px;width:100%;margin:0 auto;box-sizing:border-box}
+.lkn-grp{font-size:11px;font-weight:600;letter-spacing:.8px;color:#5D6A8C;text-transform:uppercase;margin:14px 4px 8px}
+.lkn-card{background:#0E1830;border:1px solid #1F2D4C;border-radius:16px;overflow:hidden}
+.lkn-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #1A2744}
+.lkn-row:last-child{border-bottom:none}
+.lkn-tx{flex:1;min-width:0}
+.lkn-tx b{display:block;font-size:14.5px;font-weight:500}
+.lkn-tx>span{display:block;font-size:12px;color:#8D9BBD;margin-top:2px;line-height:1.45}
+.lkn-time{margin-top:8px;font:inherit;font-size:13px;font-weight:600;color:#F0CF7A;background:rgba(212,168,80,.12);border:1px solid rgba(212,168,80,.35);border-radius:9px;padding:4px 8px;color-scheme:dark}
+.lkn-time:disabled{opacity:.45}
+.lkn-tog{width:44px;height:26px;border-radius:26px;background:#2A3A63;position:relative;flex-shrink:0;border:none;cursor:pointer;transition:background .2s}
+.lkn-tog:after{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#C6CFE6;transition:transform .2s,background .2s}
+.lkn-tog.on{background:#D9AB50}.lkn-tog.on:after{transform:translateX(18px);background:#fff}
+.lkn-seg{display:inline-flex;margin-top:8px;background:#0A1020;border:1px solid #223558;border-radius:10px;padding:2px;gap:2px}
+.lkn-seg button{font:inherit;font-size:12.5px;font-weight:600;color:#8AA0D8;background:none;border:none;padding:5px 13px;border-radius:8px;cursor:pointer}
+.lkn-seg button.on{background:rgba(212,168,80,.2);color:#F0CF7A}
+.lkn-note{font-size:12px;color:#7D8FB8;line-height:1.6;padding:12px 6px 0}
+.lkn-warn{display:none;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);border-radius:14px;padding:12px 14px;margin:6px 0 4px;font-size:13px;line-height:1.5}
+.lkn-warn b{color:#FF9A8A}
+.lkn-warn button,.lkn-link{margin-top:9px;font:inherit;font-size:13px;font-weight:600;color:#1A1004;background:linear-gradient(180deg,#F0CF7A,#D9AB50);border:none;border-radius:10px;padding:8px 14px;cursor:pointer}
+.lkn-link{background:#14203A;color:#CFE0FF;border:1px solid #2A3A63}
+.lkn-web{display:none;background:#0E1830;border:1px solid #2C4472;border-radius:14px;padding:12px 14px;margin:6px 0 4px;font-size:13px;line-height:1.55;color:#D7E3FF}
+#lkn-ask-sheet{position:fixed;inset:0;z-index:9300;display:none}
+#lkn-ask-sheet.show{display:block}
+.lkn-scrim{position:absolute;inset:0;background:rgba(2,5,12,.62)}
+.lkn-sh{position:absolute;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;background:#0E1830;border-top:1px solid #2A3A60;border-radius:24px 24px 0 0;padding:12px 18px 22px;animation:lknUp .22s ease both}
+@keyframes lknUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.lkn-grab{width:40px;height:4px;border-radius:3px;background:#2E3E64;margin:0 auto 16px}
+.lkn-bell{width:62px;height:62px;border-radius:20px;margin:0 auto 12px;background:linear-gradient(180deg,rgba(240,207,122,.25),rgba(240,207,122,.08));display:flex;align-items:center;justify-content:center;color:#F0CF7A}
+.lkn-bell svg{width:32px;height:32px}
+.lkn-sh h3{text-align:center;font-size:18px;margin:0}
+.lkn-sh p{text-align:center;font-size:13px;color:#9FB0D6;margin:6px 0 14px;line-height:1.5}
+.lkn-pts{background:#0A1020;border:1px solid #223558;border-radius:14px;padding:2px 12px;margin-bottom:16px}
+.lkn-pts div{font-size:13px;padding:9px 0;border-bottom:1px solid #1A2744;color:#D7E0F6}
+.lkn-pts div:last-child{border-bottom:none}
+.lkn-go{display:block;width:100%;font:inherit;font-weight:700;font-size:15px;padding:13px;border-radius:14px;border:none;background:linear-gradient(180deg,#F0CF7A,#D9AB50);color:#1A1004;cursor:pointer}
+.lkn-no{display:block;width:100%;font:inherit;font-size:13.5px;font-weight:600;color:#9FB0D6;background:none;border:none;padding:11px;margin-top:4px;cursor:pointer}
+.lkn-pulse{animation:lknPulse 1s ease-in-out 3}
+@keyframes lknPulse{0%,100%{box-shadow:0 0 0 0 rgba(240,207,122,0)}50%{box-shadow:0 0 0 6px rgba(240,207,122,.55)}}
 </style>
 <style id="lg-voice-css">
 .lg-voice{margin:8px 0 10px;padding:10px 10px;border-radius:14px;background:#081428;border:1px solid #16294f;display:flex;flex-direction:column;align-items:center;}
@@ -3456,6 +3504,8 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     <div class="lkm-sec">Reports</div>
     <button type="button" class="lkm-it" onclick="lkMoreGo('month')"><span class="lkm-ic t-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span><span class="lkm-tx"><b>Month summary</b><span>Monthly totals · PIN protected</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
     <button type="button" class="lkm-it" onclick="lkMoreGo('goal')"><span class="lkm-ic t-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></span><span class="lkm-tx"><b>Sales goal</b><span>Set a target for this month</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    <div class="lkm-sec">App</div>
+    <button type="button" class="lkm-it" onclick="lkMoreGo('notif')"><span class="lkm-ic t-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span><span class="lkm-tx"><b>Notifications</b><span>Reminders and their time</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
     <div class="lkm-sec">Security</div>
     <button type="button" class="lkm-it" onclick="lkMoreGo('pin')"><span class="lkm-ic t-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="lkm-tx"><b>Change PIN</b><span>Update your 4-digit app PIN</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
     <button type="button" class="lkm-it" id="lkm-bio" onclick="lkMoreGo('bio')"><span class="lkm-ic t-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 11v3M8.5 8.5A5 5 0 0 1 17 12v1M7 12a5 5 0 0 1 .4-2M7 15c0 2 .6 3.6 1.5 5M17 16c0 1.4-.3 2.7-.8 4M12 17c0 1.2-.2 2.3-.6 3.4M5 9a8 8 0 0 1 14 0"/></svg></span><span class="lkm-tx"><b>Fingerprint unlock</b><span>Unlock with your finger</span></span><span class="lkm-tog" id="lkm-tog" role="switch" aria-checked="false"></span></button>
@@ -18662,7 +18712,9 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     'dreset-overlay':function(){ if(typeof drClose==='function') drClose(); },
     'mahina-pin-modal':function(){ if(typeof mpinClose==='function') mpinClose(); },
     'cx-name-ov':function(){ if(window.calcNameClose) calcNameClose(); },
-    'lg-voice-entry':function(){ if(window.lgvClose) lgvClose(); }
+    'lg-voice-entry':function(){ if(window.lgvClose) lgvClose(); },
+    'lkn-ov':function(){ if(window.lknClose) lknClose(); },
+    'lkn-ask-sheet':function(){ if(window.lknAskLater) lknAskLater(); }
   };
   function closeLayer(e){
     if(KNOWN[e.id]){ KNOWN[e.id](e); return; }
@@ -19450,6 +19502,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     ev('more_tap',{item:what});
     if(what==='month'){ if(typeof openMahina==='function') openMahina(); }
     else if(what==='goal'){ go('s-goal'); }
+    else if(what==='notif'){ if(window.lknOpen) lknOpen(); }
     else if(what==='pin'){ if(window.alckOpenChangePinFlow) alckOpenChangePinFlow(); }
     else if(what==='logout'){ if(window.signOutAsk) signOutAsk(); }
     else if(what==='wipe'){ if(typeof drOpen==='function') drOpen(); }
@@ -19910,6 +19963,263 @@ window._lkPersistOk=function(r){
   var st=document.createElement('style');
   st.textContent='[onclick^="lgpcPickContact"],[onclick^="mkpPickContact"],[onclick^="pickSupplierContact"],[onclick^="ucNewPickContact"]{display:none!important;}';
   document.head.appendChild(st);
+})();
+</script>
+
+<div id="lkn-ov" role="dialog" aria-modal="true" aria-label="Notifications">
+  <div class="lkn-bar"><button type="button" class="lkn-bk" onclick="lknClose()" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><b>Notifications</b></div>
+  <div class="lkn-body">
+    <div class="lkn-web" id="lkn-web">Reminders work in the <b>Live Khaata app</b> from the Play Store. Install it on your phone to get them.</div>
+    <div class="lkn-warn" id="lkn-warn"><b>Notifications are off for Live Khaata.</b><br>Turn them on so reminders can reach you.<br><button type="button" onclick="lknFixPerm()">Turn on notifications</button></div>
+    <div class="lkn-grp">Daily</div>
+    <div class="lkn-card"><div class="lkn-row"><div class="lkn-tx"><b>Morning reminder</b><span>Only if no entry has been added yet</span><input type="time" class="lkn-time" id="lkn-t-morning" min="09:00" max="21:30" onchange="lknTime('morning',this.value)"></div><button type="button" class="lkn-tog" id="lkn-on-morning" role="switch" aria-label="Morning reminder" onclick="lknToggle('morning')"></button></div><div class="lkn-row"><div class="lkn-tx"><b>Closing reminder</b><span>Only if today has entries and the day is not closed</span><input type="time" class="lkn-time" id="lkn-t-closing" min="09:00" max="21:30" onchange="lknTime('closing',this.value)"></div><button type="button" class="lkn-tog" id="lkn-on-closing" role="switch" aria-label="Closing reminder" onclick="lknToggle('closing')"></button></div><div class="lkn-row"><div class="lkn-tx"><b>Inactivity reminder</b><span>If the app is not opened for 2 days</span></div><button type="button" class="lkn-tog" id="lkn-on-inactive" role="switch" aria-label="Inactivity reminder" onclick="lknToggle('inactive')"></button></div></div>
+    <div class="lkn-grp">Weekly</div>
+    <div class="lkn-card"><div class="lkn-row"><div class="lkn-tx"><b>Weekly review</b><span>Every Sunday — opens your calendar</span><input type="time" class="lkn-time" id="lkn-t-weekly" min="09:00" max="21:30" onchange="lknTime('weekly',this.value)"></div><button type="button" class="lkn-tog" id="lkn-on-weekly" role="switch" aria-label="Weekly review" onclick="lknToggle('weekly')"></button></div></div>
+    <div class="lkn-grp">Language</div>
+    <div class="lkn-card"><div class="lkn-row"><div class="lkn-tx"><b>Notification language</b><span>Phone language by default</span>
+      <span class="lkn-seg" id="lkn-lang"><button type="button" data-v="auto" onclick="lknLang('auto')">Auto</button><button type="button" data-v="hi" onclick="lknLang('hi')">हिंदी</button><button type="button" data-v="en" onclick="lknLang('en')">English</button></span></div></div></div>
+    <div id="lkn-batt" style="display:none">
+      <div class="lkn-grp">Reliability</div>
+      <div class="lkn-card"><div class="lkn-row"><div class="lkn-tx"><b>Reminders late or missing?</b><span>Some phones stop apps in the background. Allow Live Khaata to run so reminders arrive on time.</span><button type="button" class="lkn-link" onclick="lknBattery()">Open battery settings</button></div></div></div>
+    </div>
+    <div class="lkn-note">Reminders never show any amount. They are quiet between 9:30 PM and 9:00 AM.<br>To turn off all notifications: phone Settings → Apps → Live Khaata → Notifications.</div>
+  </div>
+</div>
+<div id="lkn-ask-sheet" role="dialog" aria-modal="true" aria-label="Turn on reminders">
+  <div class="lkn-scrim" onclick="lknAskLater()"></div>
+  <div class="lkn-sh">
+    <div class="lkn-grab"></div>
+    <div class="lkn-bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+    <h3>Turn on reminders?</h3>
+    <p>We only remind you when something is pending. Never more than 1–2 a day.</p>
+    <div class="lkn-pts"><div>☀️&nbsp; Morning — add your first entry</div><div>📒&nbsp; Evening — close the day</div><div>📊&nbsp; Sunday — review your week</div></div>
+    <button type="button" class="lkn-go" onclick="lknAskYes()">Turn on reminders</button>
+    <button type="button" class="lkn-no" onclick="lknAskLater()">Not now</button>
+  </div>
+</div>
+<script id="lk-v85js">
+/* ===================================================================
+   v85 · Native reminders (Android app). Everything is scheduled on the
+   phone with the LocalNotifications plugin; nothing goes to a server.
+   Rules: morning only if no entry yet, closing only if today has entries
+   and is not closed, inactivity 48 h after the last open, Sunday review
+   only if the week has entries. Never an amount in a notification.
+   Every change in the books re-plans them (cancel + schedule).
+   =================================================================== */
+(function(){
+  function $(i){ return document.getElementById(i); }
+  function LN(){ try{ return (window.LK && LK.native && LK.plugin('LocalNotifications')) || null; }catch(e){ return null; } }
+  function SYS(){ try{ return (window.LK && LK.native && LK.plugin('LkSystem')) || null; }catch(e){ return null; } }
+  function ev(n,o){ try{ if(window.logEvent) window.logEvent(n,o||{}); }catch(e){} }
+  var KEY='hk_notif_cfg', ASK='hk_notif_asked', CH='lk_reminders';
+  var DEF={on:{morning:1,closing:1,inactive:1,weekly:1},t:{morning:'10:00',closing:'21:00',weekly:'20:00'},lang:'auto'};
+  function cfg(){
+    var c=null; try{ c=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+    var d=JSON.parse(JSON.stringify(DEF));
+    if(c && typeof c==='object'){
+      if(c.on) for(var k in d.on) if(k in c.on) d.on[k]=c.on[k]?1:0;
+      if(c.t) for(var k2 in d.t) if(/^\d\d:\d\d$/.test(c.t[k2]||'')) d.t[k2]=c.t[k2];
+      if(c.lang==='hi'||c.lang==='en'||c.lang==='auto') d.lang=c.lang;
+    }
+    return d;
+  }
+  function save(c){ try{ localStorage.setItem(KEY,JSON.stringify(c)); }catch(e){} }
+  function lang(c){ c=c||cfg(); if(c.lang==='hi'||c.lang==='en') return c.lang; return /^hi/i.test(navigator.language||'')?'hi':'en'; }
+  var S={
+    en:{morning_t:'Ready for today?',morning_b:'Add your first entry by voice. It takes 5 seconds.',
+        closing_t:"Close today's books",closing_b:"Check today's entries and close the day.",
+        inactive_t:'Your khaata is waiting',inactive_b:'No entries for 2 days. Catch up in under a minute.',
+        weekly_t:'How did this week go?',weekly_b:"See each day's money in and out in your calendar.",
+        a_voice:'Add by voice',a_close:'Close day',ch:'Reminders',chd:'Daily reminders for your shop accounts'},
+    hi:{morning_t:'आज की शुरुआत करें',morning_b:'पहली एंट्री बोलकर जोड़ें — बस 5 सेकंड लगेंगे।',
+        closing_t:'आज का हिसाब बंद करें',closing_b:'आज की एंट्री देखें और दिन बंद करें।',
+        inactive_t:'आपका खाता इंतज़ार कर रहा है',inactive_b:'2 दिन से कोई एंट्री नहीं हुई। एक मिनट में हिसाब पूरा करें।',
+        weekly_t:'इस हफ़्ते का हिसाब कैसा रहा?',weekly_b:'कैलेंडर में हर दिन का आया-गया देखें।',
+        a_voice:'बोलकर जोड़ें',a_close:'दिन बंद करें',ch:'रिमाइंडर',chd:'आपके हिसाब के रोज़ के रिमाइंडर'}
+  };
+  function clampT(v){ if(!/^\d\d:\d\d$/.test(v||'')) return null; if(v<'09:00') return '09:00'; if(v>'21:30') return '21:30'; return v; }
+
+  /* ── the books ── */
+  function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function rec(ds){ try{ return (DB.get(K.BIKRI)||[]).filter(function(r){ return r && r.date===ds; })[0]||null; }catch(e){ return null; } }
+  function count(r){
+    if(!r) return 0; var b=Array.isArray(r.lgBoxes)?r.lgBoxes:[];
+    try{ if(typeof lgVisibleBoxes==='function') b=lgVisibleBoxes(b); }catch(e){}
+    return b.length;
+  }
+  function at(day,hhmm){ var p=hhmm.split(':'), d=new Date(day.getTime()); d.setHours(+p[0],+p[1],0,0); return d; }
+
+  /* ── channel + action buttons (language-dependent) ── */
+  var setupLang='';
+  function setup(){
+    var P=LN(); if(!P) return Promise.resolve();
+    var L=lang(); if(setupLang===L) return Promise.resolve(); setupLang=L;
+    var T=S[L];
+    return Promise.resolve().then(function(){
+      return P.createChannel({id:CH,name:T.ch,description:T.chd,importance:4,visibility:1,vibration:true,lights:true,lightColor:'#C99A3E'}).catch(function(){});
+    }).then(function(){
+      return P.registerActionTypes({types:[
+        {id:'LK_VOICE',actions:[{id:'voice',title:T.a_voice,foreground:true}]},
+        {id:'LK_CLOSE',actions:[{id:'close',title:T.a_close,foreground:true}]}
+      ]}).catch(function(){});
+    });
+  }
+
+  /* ── plan: cancel ours, then schedule what is still needed ── */
+  var busy=false, again=false, tmr=null;
+  function soon(ms){ clearTimeout(tmr); tmr=setTimeout(plan, ms||1500); }
+  window.lknReplan=function(){ soon(200); };
+  function plan(){
+    var P=LN(); if(!P) return;
+    if(busy){ again=true; return; } busy=true;
+    var c=cfg(), T=S[lang(c)], now=new Date();
+    P.checkPermissions().then(function(p){
+      if(!p || p.display!=='granted') throw 'noperm';
+      return setup();
+    }).then(function(){ return P.getPending(); }).then(function(r){
+      var ids=((r && r.notifications)||[]).map(function(n){ return n.id; }).filter(function(id){ return id>=1000 && id<5000; });
+      return ids.length ? P.cancel({notifications:ids.map(function(id){ return {id:id}; })}) : null;
+    }).then(function(){
+      var list=[], tr=rec(ymd(now)), nToday=count(tr), closed=!!(tr && tr.lgSaved);
+      function push(id,when,title,body,route,act){
+        list.push({id:id,title:title,body:body,schedule:{at:when,allowWhileIdle:true},isExactNotification:false,
+          channelId:CH,smallIcon:'ic_stat_lk',largeIcon:'lk_notif_large',iconColor:'#C99A3E',
+          actionTypeId:act||'',group:'lk_reminders',autoCancel:true,extra:{route:route}});
+      }
+      var inact=null;
+      if(c.on.inactive){
+        var w=new Date(now.getTime()+48*3600000);
+        if(w.getHours()<11) w.setHours(11,0,0,0);
+        else if(w.getHours()>=20){ w.setDate(w.getDate()+1); w.setHours(11,0,0,0); }
+        inact=w; push(3000,w,T.inactive_t,T.inactive_b,'live','LK_VOICE');
+      }
+      if(c.on.morning){
+        for(var d=0; d<7; d++){
+          var day=new Date(now.getTime()); day.setDate(now.getDate()+d);
+          var wm=at(day,c.t.morning);
+          if(wm<=now) continue;
+          if(d===0 && nToday>0) continue;
+          if(inact && ymd(inact)===ymd(wm)) continue;   // one nudge a day is enough
+          push(1000+d,wm,T.morning_t,T.morning_b,'live','LK_VOICE');
+        }
+      }
+      var closeAt=null;
+      if(c.on.closing && nToday>0 && !closed){
+        var wc=at(now,c.t.closing);
+        if(wc>now){ closeAt=wc; push(2000,wc,T.closing_t,T.closing_b,'closing','LK_CLOSE'); }
+      }
+      if(c.on.weekly){
+        var sun=new Date(now.getTime()); sun.setDate(now.getDate()+((7-now.getDay())%7));
+        var ww=at(sun,c.t.weekly);
+        if(ww<=now){ sun.setDate(sun.getDate()+7); ww=at(sun,c.t.weekly); }
+        var mon=new Date(sun.getTime()), has=false; mon.setDate(sun.getDate()-6);
+        for(var k=0;k<7 && !has;k++){ var dd=new Date(mon.getTime()); dd.setDate(mon.getDate()+k); if(count(rec(ymd(dd)))>0) has=true; }
+        var clash=closeAt && ymd(closeAt)===ymd(ww);
+        if(has && !clash) push(4000,ww,T.weekly_t,T.weekly_b,'calendar','');
+      }
+      return list.length ? P.schedule({notifications:list}) : null;
+    }).catch(function(e){ if(e!=='noperm'){ try{ console.warn('lkn plan',e); }catch(x){} } })
+      .then(function(){ busy=false; if(again){ again=false; soon(400); } });
+  }
+
+  /* ── tap / action → right place, after the PIN ── */
+  function openLive(){ try{ if(typeof lgOpen==='function') lgOpen(); }catch(e){} }
+  function pulseClosing(){
+    var a=$('lg-save-area'); if(!a) return;
+    try{ a.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
+    var b=a.querySelector('button')||a; b.classList.remove('lkn-pulse'); void b.offsetWidth; b.classList.add('lkn-pulse');
+  }
+  function goTo(r){
+    var a=r.action, rt=r.route;
+    if(a==='voice'){ openLive(); setTimeout(function(){ try{ if(window.lgVoiceStart) lgVoiceStart('entry'); }catch(e){} },800); return; }
+    if(a==='close' || rt==='closing'){ openLive(); setTimeout(pulseClosing,700); return; }
+    if(rt==='calendar'){ try{ if(typeof calOpenFromLive==='function') calOpenFromLive(); else openLive(); }catch(e){ openLive(); } return; }
+    openLive();
+  }
+  var listening=false;
+  function listen(){
+    var P=LN(); if(!P || listening) return; listening=true;
+    try{
+      P.addListener('localNotificationActionPerformed',function(e){
+        var n=(e && e.notification)||{}, x=n.extra||{};
+        var r={route:x.route||'live', action:(e && e.actionId && e.actionId!=='tap')?e.actionId:'tap'};
+        ev('notif_open',{route:r.route,action:r.action,id:n.id||0});
+        window.lkWhenOpen(function(){ setTimeout(function(){ goTo(r); },350); },'notif-open');
+      });
+    }catch(e){}
+  }
+
+  /* ── one-time ask, after the first saved entry ── */
+  function maybeAsk(){
+    var P=LN(); if(!P) return;
+    try{ if(localStorage.getItem(ASK)) return; }catch(e){ return; }
+    if(count(rec(ymd(new Date())))<1) return;
+    P.checkPermissions().then(function(p){
+      if(!p || p.display==='granted' || p.display==='denied') return;
+      window.lkWhenOpen(function(){
+        try{ if(localStorage.getItem(ASK)) return; }catch(e){}
+        var sh=$('lkn-ask-sheet'); if(sh) sh.classList.add('show');
+        ev('notif_ask',{});
+      },'notif-ask');
+    }).catch(function(){});
+  }
+  function closeAsk(){ var sh=$('lkn-ask-sheet'); if(sh) sh.classList.remove('show'); try{ localStorage.setItem(ASK,String(Date.now())); }catch(e){} }
+  window.lknAskLater=function(){ closeAsk(); ev('notif_ask_no',{}); };
+  window.lknAskYes=function(){
+    closeAsk();
+    var P=LN(); if(!P) return;
+    P.requestPermissions().then(function(p){
+      var ok=p && p.display==='granted';
+      ev('notif_perm',{ok:ok,from:'sheet'});
+      if(ok){ setupLang=''; soon(100); try{ toast('✓ Reminders are on'); }catch(e){} }
+    }).catch(function(){});
+  };
+
+  /* ── settings screen ── */
+  function paint(){
+    var c=cfg();
+    ['morning','closing','inactive','weekly'].forEach(function(k){
+      var t=$('lkn-on-'+k); if(t){ t.classList.toggle('on',!!c.on[k]); t.setAttribute('aria-checked',c.on[k]?'true':'false'); }
+      var i=$('lkn-t-'+k); if(i){ i.value=c.t[k]; i.disabled=!c.on[k]; }
+    });
+    var sg=$('lkn-lang'); if(sg) [].forEach.call(sg.children,function(b){ b.classList.toggle('on',b.getAttribute('data-v')===c.lang); });
+    var P=LN(), w=$('lkn-web'), wn=$('lkn-warn'), bt=$('lkn-batt');
+    if(w){ w.style.display=P?'none':'block';
+      if(!P) w.innerHTML=(window.LK && LK.native) ? 'Update <b>Live Khaata</b> from the Play Store to turn on reminders.' : 'Reminders work in the <b>Live Khaata app</b> from the Play Store. Install it on your phone to get them.'; }
+    if(bt) bt.style.display=(P && SYS())?'block':'none';
+    if(wn) wn.style.display='none';
+    if(P) P.checkPermissions().then(function(p){ if(wn) wn.style.display=(p && p.display==='granted')?'none':'block'; }).catch(function(){});
+  }
+  window.lknOpen=function(){ var o=$('lkn-ov'); if(!o) return; paint(); o.classList.add('show'); ev('notif_settings',{}); };
+  window.lknClose=function(){ var o=$('lkn-ov'); if(o) o.classList.remove('show'); };
+  function ensurePerm(){
+    var P=LN(); if(!P) return;
+    P.checkPermissions().then(function(p){
+      if(p && p.display==='granted'){ soon(300); return; }
+      return P.requestPermissions().then(function(q){ ev('notif_perm',{ok:!!(q && q.display==='granted'),from:'settings'}); paint(); soon(300); });
+    }).catch(function(){});
+  }
+  window.lknToggle=function(k){ var c=cfg(); c.on[k]=c.on[k]?0:1; save(c); paint(); ev('notif_set',{k:k,on:c.on[k]}); if(c.on[k]) ensurePerm(); else soon(300); };
+  window.lknTime=function(k,v){ var c=cfg(), t=clampT(v); if(!t){ paint(); return; } c.t[k]=t; save(c); paint(); soon(300); };
+  window.lknLang=function(v){ var c=cfg(); c.lang=v; save(c); setupLang=''; paint(); soon(300); };
+  window.lknFixPerm=function(){
+    var P=LN(); if(!P) return;
+    P.requestPermissions().then(function(p){
+      if(p && p.display==='granted'){ paint(); soon(200); return; }
+      var X=SYS(); if(X && X.openNotificationSettings) X.openNotificationSettings().catch(function(){});
+    }).catch(function(){ var X=SYS(); if(X && X.openNotificationSettings) X.openNotificationSettings().catch(function(){}); });
+  };
+  window.lknBattery=function(){ var X=SYS(); if(X && X.openBatterySettings) X.openBatterySettings().catch(function(){}); ev('notif_batt',{}); };
+
+  /* ── re-plan whenever the books change, the app opens or comes back ── */
+  var _p=window.lgPersistRec;
+  if(typeof _p==='function'){
+    window.lgPersistRec=function(){ var r=_p.apply(this,arguments); try{ soon(1500); setTimeout(maybeAsk,1800); }catch(e){} return r; };
+  }
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ soon(2500); if($('lkn-ov') && $('lkn-ov').classList.contains('show')) paint(); } });
+  function boot(){ if(!LN()) return; listen(); setTimeout(function(){ soon(100); },4000); }
+  window.__lkn={plan:plan,listen:listen,ask:maybeAsk,go:goTo,cfg:cfg};
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
 </script>
 </body>

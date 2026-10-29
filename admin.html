@@ -188,6 +188,12 @@ body{background:linear-gradient(180deg,#050a1c 0%,#0a1530 100%);color:#e8d8b8;fo
 .trial-btn{flex:1;padding:9px 8px;background:rgba(212,168,80,0.08);border:1px solid #d4a850;color:#d4a850;border-radius:9px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
 .trial-btn:hover{background:rgba(212,168,80,0.18)}
 .trial-btn:disabled{opacity:0.4;cursor:not-allowed}
+.ent-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.ent-btn{flex:1 1 45%;padding:9px 8px;background:rgba(62,200,115,0.08);border:1px solid #3ec873;color:#7fe0a4;border-radius:9px;font-size:12px;font-weight:500;cursor:pointer}
+.ent-btn.rm{background:rgba(232,80,80,0.08);border-color:#e85050;color:#f09a9a}
+.ent-btn:disabled{opacity:0.4;cursor:not-allowed}
+.ent-line{font-size:13px;color:#cdd8f4;line-height:1.6}
+.ent-line b{color:#fff}
 
 /* Engagement section */
 .engagement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
@@ -618,6 +624,9 @@ const ADMIN_UID = 'D4jcD5Y02NXmx7mXMQjg4VoHEyy1';
 // Expose to window so the non-module script below can call these
 window._fb = { auth, db, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut };
 window._fbx = { collection, getDocs, doc, getDoc, setDoc, query, where, onSnapshot };
+// v74: plan access lives in entitlements/{uid} (admin writes freeUntil; the server writes sub)
+window._getEnt = async function(uid){ const d = await getDoc(doc(db, 'entitlements', uid)); return d.exists() ? d.data() : {}; };
+window._setFree = async function(uid, until, note){ await setDoc(doc(db, 'entitlements', uid), { freeUntil: until || null, freeNote: until ? (note || '') : '', freeSetAt: Date.now() }, { merge: true }); };
 window._ADMIN_UID = ADMIN_UID;
 
 window._loadUsersFromFirestore = async function() {
@@ -1059,11 +1068,16 @@ function _waOpen(phone, text){
     : 'https://web.whatsapp.com/send?phone=' + phone + '&text=' + encodeURIComponent(text);
   window.open(url, '_blank');
 }
-const TRIAL_DAYS = 30;   // must match the app (index.html _trialDaysLeft)
+const TRIAL_DAYS = 15;   // new users (from 22 Oct 2026); see trialEndOf() for older users
+function trialEndOf(trialStart) {
+  const len = (trialStart >= 1792607400000) ? 15 : 30;
+  let end = trialStart + len * 864e5;
+  if (trialStart < Date.UTC(2026,9,28,18,30) && end < Date.UTC(2026,10,15,18,29,59)) end = Date.UTC(2026,10,15,18,29,59);
+  return end;
+}
 function daysLeft(trialStart) {
   if (!trialStart) return 0;
-  const used = Math.floor((Date.now() - trialStart) / (1000*60*60*24));
-  return Math.max(0, TRIAL_DAYS - used);
+  return Math.max(0, Math.ceil((trialEndOf(trialStart) - Date.now()) / 864e5));
 }
 
 function trialClass(days) {
@@ -1309,6 +1323,32 @@ function openProfile(uid) {
       }
     });
   });
+  // v74: plan access
+  const _fmtD = ms => new Date(ms).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  const _paintEnt = e => {
+    const now = Date.now(), L = document.getElementById('ent-line'), A = document.getElementById('ent-aside');
+    if (!L) return;
+    const parts = [];
+    if (e.sub && e.sub.expiry) parts.push((e.sub.expiry > now ? '✅ <b>Subscribed</b> · ' : '⌛ Subscription ended · ') + (e.sub.plan || '') + ' · until ' + _fmtD(e.sub.expiry) + (e.sub.autoRenew === false ? ' · auto-renew off' : ''));
+    if (e.freeUntil) parts.push((e.freeUntil > now ? '🎁 <b>Free until ' : '⌛ Free access ended ') + _fmtD(e.freeUntil) + '</b>' + (e.freeNote ? ' · ' + escapeHTML(e.freeNote) : ''));
+    L.innerHTML = parts.length ? parts.join('<br>') : 'No subscription · no free access';
+    A.textContent = (e.sub && e.sub.expiry > now) ? 'Paid' : ((e.freeUntil && e.freeUntil > now) ? 'Free' : 'Trial / ended');
+  };
+  if (window._getEnt) window._getEnt(uid).then(_paintEnt).catch(err => { const L = document.getElementById('ent-line'); if (L) L.textContent = 'Could not read plan access: ' + err.message; });
+  card.querySelectorAll('.ent-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const k = btn.getAttribute('data-free'), note = btn.getAttribute('data-note') || '';
+      let until = null;
+      if (k === 'dec31') until = Date.UTC(2026, 11, 31, 18, 29, 59);
+      else if (k === '1y') until = Date.now() + 365 * 864e5;
+      else if (k === 'forever') until = Date.UTC(2099, 11, 31);
+      if (!confirm(until ? 'Give this user free access until ' + _fmtD(until) + '?' : 'Remove free access for this user?')) return;
+      btn.disabled = true;
+      try { await window._setFree(uid, until, note); _paintEnt(await window._getEnt(uid)); alert('✅ Saved. The user sees it the next time they open the app.'); }
+      catch (err) { alert('❌ Failed: ' + err.message); }
+      btn.disabled = false;
+    });
+  });
   // Bind call button
   card.querySelector('.action-call').addEventListener('click', () => {
     const phone = u.profile.phone || '';
@@ -1400,6 +1440,17 @@ function profileCardHTML(u) {
     ${funnelSectionHTML(p)}
 
     ${trialSectionHTML(p)}
+
+    <div class="profile-section" id="ent-sec">
+      <div class="trial-row"><span class="trial-row-label">Plan access</span><span class="trial-row-aside" id="ent-aside">loading…</span></div>
+      <div class="ent-line" id="ent-line">—</div>
+      <div class="ent-btns">
+        <button class="ent-btn" data-free="dec31" data-note="tester">Free till 31 Dec 2026 (tester)</button>
+        <button class="ent-btn" data-free="1y" data-note="gift">Free for 1 year</button>
+        <button class="ent-btn" data-free="forever" data-note="reviewer">Free forever (Play reviewer)</button>
+        <button class="ent-btn rm" data-free="none">Remove free access</button>
+      </div>
+    </div>
 
     ${engagementSectionHTML(u, p, stage)}
 
@@ -1511,7 +1562,7 @@ function trialSectionHTML(p) {
     <div class="profile-section">
       <div class="trial-row">
         <span class="trial-row-label">Trial status</span>
-        <span class="trial-row-aside">After trial · ₹149 / 3 months</span>
+        <span class="trial-row-aside">After trial · ₹199 / 3 months · ₹599 / year</span>
       </div>
       <div class="trial-big">
         <span class="trial-big-num ${cls}">${dl}</span>

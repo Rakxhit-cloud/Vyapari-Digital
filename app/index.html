@@ -2238,6 +2238,56 @@ html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .lkn-no{display:block;width:100%;font:inherit;font-size:13.5px;font-weight:600;color:#9FB0D6;background:none;border:none;padding:11px;margin-top:4px;cursor:pointer}
 .lkn-pulse{animation:lknPulse 1s ease-in-out 3}
 @keyframes lknPulse{0%,100%{box-shadow:0 0 0 0 rgba(240,207,122,0)}50%{box-shadow:0 0 0 6px rgba(240,207,122,.55)}}
+
+/* ===== v86 · Subscription ===== */
+#lkb-sheet{position:fixed;inset:0;z-index:990000;display:none}
+#lkb-sheet.show{display:block}
+.lkb-scrim{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.lkb-sh{position:absolute;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;background:#111A2B;border-radius:28px 28px 0 0;padding:10px 20px calc(18px + env(safe-area-inset-bottom));color:#EEF2FA;font-family:Roboto,'Segoe UI',system-ui,sans-serif;animation:lknUp .22s ease both;max-height:92vh;overflow-y:auto}
+.lkb-grab{width:32px;height:4px;border-radius:2px;background:#4A5876;margin:0 auto 16px}
+.lkb-ttl{font-size:22px;font-weight:500;line-height:1.3}
+.lkb-sub{font-size:14px;color:#A9B4CA;line-height:1.5;margin:6px 0 14px}
+.lkb-ben{list-style:none;margin:0 0 16px;padding:0}
+.lkb-ben li{display:flex;gap:12px;align-items:center;font-size:14px;color:#DBE2F0;padding:5px 0}
+.lkb-ben li i{width:22px;height:22px;border-radius:50%;background:rgba(232,200,112,.16);color:#E8C870;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;font-weight:700;flex-shrink:0}
+.lkb-op{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;color:inherit;background:none;padding:12px 14px;border-radius:16px;border:1px solid #33415F;margin-bottom:10px;cursor:pointer}
+.lkb-op.on{border:2px solid #E8C870;background:rgba(232,200,112,.08);padding:11px 13px}
+.lkb-rd{width:20px;height:20px;border-radius:50%;border:2px solid #8A97B3;position:relative;flex-shrink:0}
+.lkb-op.on .lkb-rd{border-color:#E8C870}.lkb-op.on .lkb-rd:after{content:"";position:absolute;inset:3px;border-radius:50%;background:#E8C870}
+.lkb-nm{flex:1;min-width:0}
+.lkb-nm b{font-size:16px;font-weight:500;color:#EEF2FA}
+.lkb-nm>span{display:block;font-size:13px;color:#A9B4CA;margin-top:2px}
+.lkb-chip{display:inline-block;font-size:11px;font-weight:500;color:#E8C870;border:1px solid rgba(232,200,112,.5);border-radius:8px;padding:1px 7px;margin-left:8px;vertical-align:2px}
+.lkb-pr{font-size:16px;font-weight:500;color:#EEF2FA;text-align:right;white-space:nowrap}
+.lkb-pr span{display:block;font-size:12px;color:#A9B4CA;font-weight:400}
+.lkb-fine{font-size:12px;color:#8A97B3;line-height:1.5;margin:4px 2px 16px}
+.lkb-fill{display:flex;align-items:center;justify-content:center;width:100%;height:48px;border-radius:24px;border:none;background:#E8C870;color:#2A1C06;font:inherit;font-weight:500;font-size:15px;cursor:pointer}
+.lkb-fill:disabled{opacity:.6}
+.lkb-txt{display:flex;align-items:center;justify-content:center;width:100%;height:44px;border:none;background:none;color:#E8C870;font:inherit;font-weight:500;font-size:14px;margin-top:4px;cursor:pointer}
+.lkb-msg{background:#0E1830;border:1px solid #2C4472;border-radius:14px;padding:12px 14px;margin:0 0 16px;font-size:13.5px;line-height:1.55;color:#D7E3FF}
+#lkb-ov{position:fixed;inset:0;z-index:9250;background:#0B1120;display:none;flex-direction:column;color:#E9EEFB}
+#lkb-ov.show{display:flex;animation:lknIn .18s ease both}
+.lkb-st{padding:16px 16px 14px;border-bottom:1px solid #1A2744}
+.lkb-st:last-child{border-bottom:none}
+.lkb-pill{display:inline-block;font-size:11px;font-weight:700;border-radius:7px;padding:3px 8px;margin-bottom:8px}
+.lkb-p-tr{background:rgba(74,159,212,.16);color:#9CCFFF}.lkb-p-ok{background:rgba(62,200,115,.15);color:#8AEFB0}.lkb-p-gf{background:rgba(212,168,80,.16);color:#F0CF7A}.lkb-p-end{background:rgba(255,107,107,.14);color:#FF9A8A}
+.lkb-st b{display:block;font-size:17px;font-weight:600}
+.lkb-st>span{font-size:12.5px;color:#8D9BBD;line-height:1.55;display:block;margin-top:3px}
+.lkb-bar{height:6px;border-radius:4px;background:#1A2744;margin-top:10px;overflow:hidden}.lkb-bar i{display:block;height:100%;background:linear-gradient(90deg,#4A9FD4,#9CCFFF)}
+.lkb-li{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:#E9EEFB;background:none;border:none;border-top:1px solid #1A2744;padding:13px 16px;font-size:14px;cursor:pointer}
+.lkb-li .t{flex:1}.lkb-li .t span{display:block;font-size:12px;color:#8D9BBD;margin-top:2px}
+.lkb-li .c{color:#5A6A8F}
+.lkb-strip{display:flex;gap:10px;align-items:center;background:linear-gradient(180deg,rgba(212,168,80,.14),rgba(212,168,80,.05));border:1px solid rgba(212,168,80,.45);border-radius:14px;padding:10px 12px;margin-bottom:12px}
+.lkb-strip-ic{color:#F0CF7A;flex-shrink:0;display:flex}.lkb-strip-ic svg{width:20px;height:20px}
+.lkb-strip-tx{flex:1;font-size:12px;line-height:1.5;color:#D9CFAE}
+.lkb-strip-tx b{display:block;color:#F0DCA8;font-size:13px}
+.lkb-strip-go{font:inherit;font-size:12px;font-weight:700;color:#2A1C06;background:linear-gradient(180deg,#F0D288,#D9AB50);border:none;border-radius:9px;padding:7px 10px;white-space:nowrap;cursor:pointer}
+body.lkb-ro .lg-voice-mic{opacity:.45;position:relative}
+body.lkb-ro .lg-voice-mic:after{content:"";position:absolute;right:-2px;bottom:-2px;width:20px;height:20px;border-radius:50%;background:#E8C870 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232A1C06' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='10' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E") center/12px no-repeat}
+body.lkb-ro .lgv-scan{opacity:.45}
+.lkb-nm>.lkb-chip{display:inline-block;margin-top:0}
+.lkb-st>.lkb-pill{display:inline-block;margin-top:0;font-size:11px;color:inherit}
+.lkb-st>.lkb-p-tr{color:#9CCFFF}.lkb-st>.lkb-p-ok{color:#8AEFB0}.lkb-st>.lkb-p-gf{color:#F0CF7A}.lkb-st>.lkb-p-end{color:#FF9A8A}
 </style>
 <style id="lg-voice-css">
 .lg-voice{margin:8px 0 10px;padding:10px 10px;border-radius:14px;background:#081428;border:1px solid #16294f;display:flex;flex-direction:column;align-items:center;}
@@ -3501,6 +3551,8 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     <div class="lkm-handle"></div>
     <div class="lkm-prof"><div class="lkm-av" id="lkm-av">L</div><div class="lkm-pt"><b id="lkm-name">Live Khaata</b><span id="lkm-sub"></span></div></div>
     <div class="lkm-body">
+    <div class="lkm-sec">Subscription</div>
+    <button type="button" class="lkm-it" id="lkm-plan" onclick="lkMoreGo('plan')"><span class="lkm-ic t-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg></span><span class="lkm-tx"><b>Plan</b><span id="lkm-plan-sub">Free trial</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
     <div class="lkm-sec">Reports</div>
     <button type="button" class="lkm-it" onclick="lkMoreGo('month')"><span class="lkm-ic t-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span><span class="lkm-tx"><b>Month summary</b><span>Monthly totals · PIN protected</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
     <button type="button" class="lkm-it" onclick="lkMoreGo('goal')"><span class="lkm-ic t-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></span><span class="lkm-tx"><b>Sales goal</b><span>Set a target for this month</span></span><span class="lkm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
@@ -4151,6 +4203,7 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
   <div style="height:4px;background:linear-gradient(90deg,#d4a850 0%,#cc7a47 33%,#4a90d4 66%,#7a6cf0 100%);"></div>
   <div class="fw">
 
+    <div id="lkb-strip" class="lkb-strip" style="display:none;"><span class="lkb-strip-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div class="lkb-strip-tx"><b>Trial ended</b>You can still view and download your records. Pick a plan to add new entries.</div><button type="button" class="lkb-strip-go" onclick="lkbShowSheet('strip')">See plans</button></div>
     <!-- Unsaved-day blocker banner (only visible when blocking older day) -->
     <div id="lg-blocker-banner" class="lg-blocker-banner" style="display:none;">
       <div class="lg-blocker-icon">⚠️</div>
@@ -6997,6 +7050,8 @@ const functions = getFunctions(app, 'us-central1');
 const _scanBillCallable = httpsCallable(functions, 'scanBill', { timeout: 55000 });
 window._fsScanBill = function(b64){ return _scanBillCallable({ image: b64 }); };
 const _voiceParseCallable = httpsCallable(functions, 'voiceParse', { timeout: 12000 });
+const _verifyPurchaseCallable = httpsCallable(functions, 'verifyPurchase', { timeout: 20000 });
+window._fsVerifyPurchase = function(d){ return _verifyPurchaseCallable(d); };
 window._fsVoiceParse = function(b64OrReq, mimeType){
   var req = (b64OrReq && typeof b64OrReq === 'object') ? b64OrReq : { audio: b64OrReq, mimeType: mimeType || 'audio/wav' };
   var t0 = Date.now(), kind = req.text ? 'text' : 'audio';
@@ -9030,6 +9085,13 @@ window.updateTrialBanner = async function updateTrialBanner(uid) {
   if (!trialStart) {
     trialStart = parseInt(localStorage.getItem('hk_trial_start_' + uid) || '0');
   }
+  // v86: entitlement record (admin 'free until' + server-verified subscription)
+  try {
+    const { doc: _d, getDoc: _g } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const es = await _g(_d(db, 'entitlements', uid));
+    if (window.LKB) LKB.setEnt(uid, es.exists() ? es.data() : {});
+  } catch(e) { if (window.LKB) LKB.setEnt(uid, null); }
+  try { if (window.LKB) LKB.setTrial(uid, trialStart || 0); } catch(e) {}
   if (!trialStart) return;
   // Trial countdown runs silently in the background. The visible home banner was
   // removed (see marketing decision); the day-count is kept intact for the
@@ -9045,6 +9107,7 @@ window.updateTrialBanner = async function updateTrialBanner(uid) {
 // Show at most once per app session (once per app-open).
 window._eotShownThisSession = false;
 function maybeShowEndOfTrial(){
+  if (window.LKB) { LKB.check(); return; }   // v86: the subscription sheet replaces this card
   if (!window.LK_BILLING_LIVE) return;   // v82: shown again once Play billing is wired
   if (window._eotShownThisSession) return;
   window._eotShownThisSession = true;
@@ -18714,7 +18777,9 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     'cx-name-ov':function(){ if(window.calcNameClose) calcNameClose(); },
     'lg-voice-entry':function(){ if(window.lgvClose) lgvClose(); },
     'lkn-ov':function(){ if(window.lknClose) lknClose(); },
-    'lkn-ask-sheet':function(){ if(window.lknAskLater) lknAskLater(); }
+    'lkn-ask-sheet':function(){ if(window.lknAskLater) lknAskLater(); },
+    'lkb-ov':function(){ if(window.lkbClosePlan) lkbClosePlan(); },
+    'lkb-sheet':function(){ if(window.lkbCloseSheet) lkbCloseSheet(); }
   };
   function closeLayer(e){
     if(KNOWN[e.id]){ KNOWN[e.id](e); return; }
@@ -19483,7 +19548,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
   function isOpen(){ var m=$('more-menu'); return !!(m && m.classList.contains('show')); }
   window.lkMoreOpen=function(){
     var m=$('more-menu'); if(!m) return;
-    fill(); m.classList.remove('closing'); m.classList.add('show');
+    fill(); try{ if(window.LKB) LKB.paintRow(); }catch(e){} m.classList.remove('closing'); m.classList.add('show');
     var n=$('n-more'); if(n) n.classList.add('lkm-on');
   };
   window.lkMoreClose=function(now){
@@ -19503,6 +19568,7 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     if(what==='month'){ if(typeof openMahina==='function') openMahina(); }
     else if(what==='goal'){ go('s-goal'); }
     else if(what==='notif'){ if(window.lknOpen) lknOpen(); }
+    else if(what==='plan'){ if(window.lkbOpenPlan) lkbOpenPlan(); }
     else if(what==='pin'){ if(window.alckOpenChangePinFlow) alckOpenChangePinFlow(); }
     else if(what==='logout'){ if(window.signOutAsk) signOutAsk(); }
     else if(what==='wipe'){ if(typeof drOpen==='function') drOpen(); }
@@ -20133,6 +20199,7 @@ window._lkPersistOk=function(r){
     var a=r.action, rt=r.route;
     if(a==='voice'){ openLive(); setTimeout(function(){ try{ if(window.lgVoiceStart) lgVoiceStart('entry'); }catch(e){} },800); return; }
     if(a==='close' || rt==='closing'){ openLive(); setTimeout(pulseClosing,700); return; }
+    if(rt==='plan'){ if(window.lkbOpenPlan) lkbOpenPlan(); else openLive(); return; }
     if(rt==='calendar'){ try{ if(typeof calOpenFromLive==='function') calOpenFromLive(); else openLive(); }catch(e){ openLive(); } return; }
     openLive();
   }
@@ -20220,6 +20287,285 @@ window._lkPersistOk=function(r){
   function boot(){ if(!LN()) return; listen(); setTimeout(function(){ soon(100); },4000); }
   window.__lkn={plan:plan,listen:listen,ask:maybeAsk,go:goTo,cfg:cfg};
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+</script>
+
+<div id="lkb-sheet" role="dialog" aria-modal="true" aria-label="Choose a plan">
+  <div class="lkb-scrim" onclick="lkbCloseSheet()"></div>
+  <div class="lkb-sh">
+    <div class="lkb-grab"></div>
+    <div class="lkb-ttl" id="lkb-ttl">Your free trial has ended</div>
+    <div class="lkb-sub" id="lkb-sub">Pick a plan to keep adding entries. Your records stay safe either way.</div>
+    <ul class="lkb-ben">
+      <li><i>✓</i>Voice and keypad entries</li>
+      <li><i>✓</i>Bill scanning and supplier khata</li>
+      <li><i>✓</i>Daily reminders and CA statements</li>
+    </ul>
+    <div id="lkb-plans">
+      <button type="button" class="lkb-op on" data-p="yearly" onclick="lkbPick('yearly')"><span class="lkb-rd"></span><span class="lkb-nm"><b>Yearly</b><span class="lkb-chip">Best value</span><span>₹50/month · Save ₹197</span></span><span class="lkb-pr" id="lkb-pr-yearly">₹599<span>per year</span></span></button>
+      <button type="button" class="lkb-op" data-p="quarterly" onclick="lkbPick('quarterly')"><span class="lkb-rd"></span><span class="lkb-nm"><b>Quarterly</b><span>₹66/month</span></span><span class="lkb-pr" id="lkb-pr-quarterly">₹199<span>per 3 months</span></span></button>
+      <div class="lkb-fine">Includes GST. Billed through Google Play. Cancel anytime.</div>
+    </div>
+    <div class="lkb-msg" id="lkb-msg" style="display:none;"></div>
+    <button type="button" class="lkb-fill" id="lkb-go" onclick="lkbGo()">Subscribe</button>
+    <button type="button" class="lkb-txt" onclick="lkbCloseSheet()">Not now</button>
+  </div>
+</div>
+<div id="lkb-ov" role="dialog" aria-modal="true" aria-label="Plan">
+  <div class="lkn-bar"><button type="button" class="lkn-bk" onclick="lkbClosePlan()" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><b>Plan</b></div>
+  <div class="lkn-body">
+    <div class="lkn-card" id="lkb-card" style="margin-top:6px;"></div>
+    <div class="lkn-note">Payments are handled by Google Play. Prices include GST.<br><span style="color:#9FB0D6;text-decoration:underline;cursor:pointer" onclick="lkbRefresh()">Already subscribed? Refresh status</span></div>
+  </div>
+</div>
+<script id="lk-v86js">
+/* ===================================================================
+   v86 · Subscriptions. Who can add entries:
+     Play subscription (on this phone, or server record) OR admin "free until"
+     OR trial days left. Otherwise the app is view-only: records, statements and
+     downloads stay open; new entries / edits / scans open the plan sheet.
+   Old app builds (no billing plugin) and the browser keep working until
+   OLD_LOCK_FROM, then show "Update from Play Store".
+   =================================================================== */
+(function(){
+  function $(i){ return document.getElementById(i); }
+  function ev(n,o){ try{ if(window.logEvent) window.logEvent(n,o||{}); }catch(e){} }
+  function say(t){ try{ if(window.toast) toast(t); }catch(e){} }
+  function NP(){ try{ return (window.LK && LK.native && LK.plugin('NativePurchases')) || null; }catch(e){ return null; } }
+  function LN(){ try{ return (window.LK && LK.native && LK.plugin('LocalNotifications')) || null; }catch(e){ return null; } }
+  var PRODUCT='lk_subscription', DAY=864e5;
+  var LAUNCH=Date.UTC(2026,9,28,18,30);            // 29 Oct 2026 00:00 IST
+  var GRACE_UNTIL=Date.UTC(2026,10,15,18,29,59);   // 15 Nov 2026 23:59 IST — users who joined before launch
+  var OLD_LOCK_FROM=Date.UTC(2026,10,20,18,30);    // 21 Nov 2026 — old builds / browser start asking to update
+  var PLAY_URL='https://play.google.com/store/apps/details?id=app.livekhaata.twa';
+  var st={uid:'',trial:null,ent:null,entOk:false,play:null,pick:'yearly',shownEnd:false,busy:false};
+
+  function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k)||'null'); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function ck(){ return 'hk_lkb_'+(st.uid||'x'); }
+  function persist(){ lsSet(ck(),{ent:st.ent,trial:st.trial}); }
+  function loadCache(){ var c=lsGet(ck()); if(c){ if(st.ent==null && c.ent) st.ent=c.ent; if(st.trial==null && c.trial!=null) st.trial=c.trial; } var p=lsGet('hk_lkb_play'); if(p && st.play==null) st.play=p; }
+
+  function trialEnd(){
+    var t=st.trial; if(!t) return 0;
+    var len=(t>=1792607400000)?15:30, end=t+len*DAY;
+    if(t<LAUNCH && end<GRACE_UNTIL) end=GRACE_UNTIL;
+    return end;
+  }
+  function billing(){ return !!NP(); }
+  function fmt(ms){ try{ return new Date(ms).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+  function fmtS(ms){ try{ return new Date(ms).toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }catch(e){ return ''; } }
+  function planName(p){ return p==='yearly'?'Yearly':(p==='quarterly'?'Quarterly':''); }
+
+  /* kind: sub | free | trial | ended | unknown */
+  function status(){
+    var now=Date.now(), e=st.ent||{};
+    var srv=e.sub && e.sub.expiry && e.sub.expiry>now && e.sub.state!=='other-account';
+    var loc=st.play && st.play.active && !st.play.other;
+    if(srv||loc) return {kind:'sub',plan:(srv&&e.sub.plan)||(st.play&&st.play.plan)||'',exp:srv?e.sub.expiry:0};
+    if(e.freeUntil && e.freeUntil>now) return {kind:'free',until:e.freeUntil,note:e.freeNote||''};
+    if(st.trial==null) return {kind:'unknown'};
+    if(!st.trial) return {kind:'unknown'};
+    var end=trialEnd(), left=Math.ceil((end-now)/DAY);
+    if(end>now) return {kind:'trial',left:Math.max(1,left),end:end};
+    return {kind:'ended',end:end};
+  }
+  function enforced(){ return billing() || Date.now()>=OLD_LOCK_FROM; }
+  function canWrite(){ var k=status().kind; return !(k==='ended' && enforced()); }
+
+  /* ── paint ── */
+  function paintRow(){
+    var el=$('lkm-plan-sub'); if(!el) return; var s=status(), t='';
+    if(s.kind==='sub') t=(planName(s.plan)||'Subscribed')+(s.exp?' · until '+fmt(s.exp):'');
+    else if(s.kind==='free') t='Free until '+fmt(s.until);
+    else if(s.kind==='trial') t='Free trial · '+s.left+(s.left===1?' day left':' days left');
+    else if(s.kind==='ended') t='Trial ended';
+    else t='Free trial';
+    el.textContent=t;
+  }
+  function paintHome(){
+    var ro=!canWrite();
+    document.body.classList.toggle('lkb-ro',ro);
+    var sp=$('lkb-strip'); if(sp) sp.style.display=ro?'flex':'none';
+  }
+  function paintAll(){ paintRow(); paintHome(); if($('lkb-ov') && $('lkb-ov').classList.contains('show')) paintPlan(); }
+
+  function planRows(){
+    return '<button type="button" class="lkb-li" onclick="lkbShowSheet(\'plan\',\'yearly\')"><span class="t">Yearly · <span style="display:inline;color:inherit;font-size:inherit" id="lkb-li-y">₹599/year</span><span>₹50/month · Best value</span></span><span class="c">›</span></button>'+
+           '<button type="button" class="lkb-li" onclick="lkbShowSheet(\'plan\',\'quarterly\')"><span class="t">Quarterly · <span style="display:inline;color:inherit;font-size:inherit" id="lkb-li-q">₹199/3 months</span><span>₹66/month</span></span><span class="c">›</span></button>';
+  }
+  function paintPlan(){
+    var c=$('lkb-card'); if(!c) return; var s=status(), h='';
+    if(s.kind==='sub'){
+      h='<div class="lkb-st"><span class="lkb-pill lkb-p-ok">Active</span><b>'+(planName(s.plan)?planName(s.plan)+' plan':'Subscription active')+'</b><span>'+(s.exp?'Renews automatically on '+fmt(s.exp):'Managed by Google Play')+'</span></div>'+
+        '<button type="button" class="lkb-li" onclick="lkbManage()"><span class="t">Change or cancel in Play Store</span><span class="c">↗</span></button>';
+    } else if(s.kind==='free'){
+      h='<div class="lkb-st"><span class="lkb-pill lkb-p-gf">Gift</span><b>Free until '+fmt(s.until)+'</b><span>'+(s.note==='tester'?'Thank you for helping us test Live Khaata 🙏':'Full access, no payment needed.')+'</span></div>';
+    } else if(s.kind==='trial'){
+      var tot=(st.trial>=1792607400000)?15:30, pct=Math.max(4,Math.min(100,Math.round(100*s.left/Math.max(tot,Math.ceil((s.end-st.trial)/DAY)))));
+      h='<div class="lkb-st"><span class="lkb-pill lkb-p-tr">Free trial</span><b>'+s.left+(s.left===1?' day left':' days left')+'</b><span>Your trial ends on '+fmtS(s.end)+'. Your records stay safe after that too.</span><div class="lkb-bar"><i style="width:'+pct+'%"></i></div></div>'+planRows();
+    } else if(s.kind==='ended'){
+      h='<div class="lkb-st"><span class="lkb-pill lkb-p-end">Trial ended</span><b>Pick a plan to add new entries</b><span>You can still view and download all your records.</span></div>'+planRows();
+    } else {
+      h='<div class="lkb-st"><span class="lkb-pill lkb-p-tr">Free trial</span><b>Checking your plan…</b><span>Connect to the internet and open this screen again.</span></div>';
+    }
+    c.innerHTML=h; prices();
+  }
+
+  /* ── prices from Google Play (fallback: fixed text) ── */
+  var priced=null;
+  function prices(){
+    if(priced){ applyPrices(); return; }
+    var P=NP(); if(!P || prices.busy) return; prices.busy=1;
+    P.getProducts({productIdentifiers:[PRODUCT],productType:'subs'}).then(function(r){
+      var m={}; ((r&&r.products)||[]).forEach(function(p){ if(p && p.identifier && p.priceString) m[p.identifier]=p.priceString; });
+      if(m.yearly||m.quarterly){ priced=m; applyPrices(); }
+    }).catch(function(){}).then(function(){ prices.busy=0; });
+  }
+  function applyPrices(){
+    if(!priced) return;
+    if(priced.yearly){ var a=$('lkb-pr-yearly'); if(a) a.innerHTML=priced.yearly+'<span>per year</span>'; var b=$('lkb-li-y'); if(b) b.textContent=priced.yearly+'/year'; }
+    if(priced.quarterly){ var c=$('lkb-pr-quarterly'); if(c) c.innerHTML=priced.quarterly+'<span>per 3 months</span>'; var d=$('lkb-li-q'); if(d) d.textContent=priced.quarterly+'/3 months'; }
+  }
+
+  /* ── sheet ── */
+  function setPick(p){ st.pick=(p==='quarterly')?'quarterly':'yearly'; var ops=document.querySelectorAll('#lkb-plans .lkb-op'); for(var i=0;i<ops.length;i++) ops[i].classList.toggle('on',ops[i].getAttribute('data-p')===st.pick); }
+  function showSheet(why,pick){
+    var sh=$('lkb-sheet'); if(!sh) return;
+    var s=status(), T=$('lkb-ttl'), S=$('lkb-sub'), M=$('lkb-msg'), PL=$('lkb-plans'), G=$('lkb-go');
+    setPick(pick||st.pick||'yearly');
+    if(s.kind==='trial'){ T.textContent='Choose your plan'; S.textContent='Your free trial ends in '+s.left+(s.left===1?' day':' days')+'. Subscribe now to keep going without a break.'; }
+    else if(s.kind==='sub'){ closeSheet(); openPlan(); return; }
+    else { T.textContent='Your free trial has ended'; S.textContent='Pick a plan to keep adding entries. Your records stay safe either way.'; }
+    if(billing()){ PL.style.display=''; M.style.display='none'; G.textContent='Subscribe'; G.disabled=false; prices(); }
+    else {
+      PL.style.display='none'; M.style.display='';
+      if(window.LK && LK.native){ M.innerHTML='Update <b>Live Khaata</b> from the Play Store to subscribe. Your records stay safe.'; G.textContent='Update app'; }
+      else { M.innerHTML='Subscriptions are available in the <b>Live Khaata</b> app from the Play Store.'; G.textContent='Get the app'; }
+      G.disabled=false;
+    }
+    sh.classList.add('show'); ev('plan_sheet',{why:why||'',kind:s.kind,billing:billing()?1:0});
+  }
+  function closeSheet(){ var sh=$('lkb-sheet'); if(sh) sh.classList.remove('show'); }
+
+  /* ── buy / restore ── */
+  function buy(){
+    if(!billing()){ try{ window.open(PLAY_URL,'_blank'); }catch(e){ location.href=PLAY_URL; } ev('plan_update_tap',{}); return; }
+    if(st.busy) return; st.busy=true;
+    var G=$('lkb-go'); if(G){ G.disabled=true; G.textContent='Opening Google Play…'; }
+    var plan=st.pick; ev('plan_buy_tap',{plan:plan});
+    var opts={productIdentifier:PRODUCT,planIdentifier:plan,productType:'subs',quantity:1};
+    if(st.uid) opts.appAccountToken=st.uid;
+    NP().purchaseProduct(opts).then(function(t){
+      st.play={active:true,plan:plan,token:(t&&t.purchaseToken)||'',at:Date.now(),u:st.uid}; lsSet('hk_lkb_play',st.play);
+      closeSheet(); paintAll(); say(planName(plan)+' plan active. Thank you!'); ev('plan_bought',{plan:plan});
+      verify(st.play.token,true);
+      setTimeout(function(){ restore(false); },4000);
+    }).catch(function(e){
+      var m=String((e&&(e.code||e.message))||'');
+      if(/cancel/i.test(m)){ ev('plan_cancel',{plan:plan}); }
+      else if(/already/i.test(m)){ restore(true); }
+      else if(/pending/i.test(String((e&&e.message)||''))){ say('Payment pending. Your plan starts as soon as it completes.'); ev('plan_pending',{plan:plan}); closeSheet(); }
+      else { say('Could not open Google Play. Please try again.'); ev('plan_err',{m:m.slice(0,60)}); }
+    }).then(function(){ st.busy=false; if(G){ G.disabled=false; G.textContent='Subscribe'; } });
+  }
+  function restore(loud){
+    var P=NP(); if(!P) return Promise.resolve();
+    return P.getPurchases({productType:'subs'}).then(function(r){
+      var list=((r&&r.purchases)||[]).filter(function(p){ return p && p.productIdentifier===PRODUCT && p.purchaseState==='1'; });
+      var prev=st.play||{};
+      if(list.length){
+        var tk=list[0].purchaseToken||'';
+        st.play={active:true,plan:(prev.token===tk&&prev.plan)||prev.plan||'',token:tk,at:Date.now(),u:st.uid,other:(prev.token===tk&&prev.u===st.uid&&prev.other)||false};
+        list.forEach(function(p){ if(p.isAcknowledged===false && p.purchaseToken && P.acknowledgePurchase) P.acknowledgePurchase({purchaseToken:p.purchaseToken}).catch(function(){}); });
+        verify(tk,false);
+      } else st.play={active:false,at:Date.now(),u:st.uid};
+      lsSet('hk_lkb_play',st.play); paintAll();
+      if(loud) say(st.play.active?'Your plan is active':'No active plan found on this Google account');
+    }).catch(function(){ if(loud) say('Could not reach Google Play. Check your internet.'); });
+  }
+  function verify(token,force){
+    if(!token || !window._fsVerifyPurchase) return;
+    var last=lsGet('hk_lkb_vfy')||{};
+    if(!force && last.t===token && last.u===st.uid && Date.now()-(last.at||0)<6*3600e3) return;
+    window._fsVerifyPurchase({token:token,product:PRODUCT}).then(function(r){
+      var d=(r&&r.data)||{}; lsSet('hk_lkb_vfy',{t:token,u:st.uid,at:Date.now()});
+      if(d.ok){
+        st.ent=st.ent||{}; st.ent.sub={plan:d.plan||'',expiry:d.expiry||0,state:d.state||''}; persist();
+        if(st.play && st.play.token===token){ st.play.plan=d.plan||st.play.plan; st.play.other=false; lsSet('hk_lkb_play',st.play); }
+      } else if(d.reason==='inactive'){
+        st.ent=st.ent||{}; st.ent.sub={plan:d.plan||'',expiry:d.expiry||0,state:d.state||''}; persist();
+      } else if(d.reason==='other-account' && st.play && st.play.token===token){
+        st.play.other=true; lsSet('hk_lkb_play',st.play);
+      }
+      paintAll();
+    }).catch(function(){ /* server not set up yet — the phone's Google Play check still counts */ });
+  }
+
+  /* ── plan screen ── */
+  function openPlan(){ var o=$('lkb-ov'); if(!o) return; paintPlan(); o.classList.add('show'); ev('plan_open',{kind:status().kind}); }
+  function closePlan(){ var o=$('lkb-ov'); if(o) o.classList.remove('show'); }
+
+  /* ── gate every action that adds or changes an entry ── */
+  var GATE=['lgVoiceStart','lgVoiceConfirm','scPick','lgOpenKeypad','lgCommitBox','lgEditEntry','lgEditBox','lgPastEdit','openEdit','saveEdit',
+    'openMaalEntry','saveMaalEntry','openMaalEdit','saveMaalEdit','openSupplierPayOverlay','saveSupplierPayment','settleSupplierFull',
+    'lgOpenPurchaseFor','lgpTake','lgpUploadPick','lgpcSaveNew','npCapture','npGallery','ucNewOpen','ucNewSave','creditAddToCustomer',
+    'calcSave','calcNameSave','cihOpen','lgConfirmClosing'];
+  function wrapAll(){
+    GATE.forEach(function(n){
+      var f=window[n]; if(typeof f!=='function' || f.__lkb) return;
+      var g=function(){ if(!canWrite()){ ev('plan_gate',{fn:n}); showSheet('gate'); return; } return f.apply(this,arguments); };
+      g.__lkb=1; g.__orig=f;
+      try{ window[n]=g; }catch(e){}
+    });
+  }
+
+  /* ── day-13 reminder: one notification 2 days before the trial ends ── */
+  function remind(){
+    var P=LN(); if(!P) return; var s=status(), ID=5001;
+    var lang=(function(){ var c=lsGet('hk_notif_cfg')||{}; if(c.lang==='hi'||c.lang==='en') return c.lang; return /^hi/i.test(navigator.language||'')?'hi':'en'; })();
+    P.cancel({notifications:[{id:ID}]}).catch(function(){}).then(function(){
+      if(s.kind!=='trial') return;
+      var at=new Date(s.end-2*DAY); at.setHours(11,0,0,0);
+      if(at.getTime()<Date.now()+60e3) return;
+      var hi=lang==='hi';
+      return P.schedule({notifications:[{id:ID,channelId:'lk_reminders',
+        title:hi?'आपका ट्रायल 2 दिन में समाप्त होगा':'Your trial ends in 2 days',
+        body:hi?'रोज़ का हिसाब बिना रुकावट जारी रखने के लिए प्लान चुनें।':'Pick a plan to keep your daily records going without a break.',
+        schedule:{at:at,allowWhileIdle:true},smallIcon:'ic_stat_lk',largeIcon:'lk_notif_large',iconColor:'#C99A3E',autoCancel:true,extra:{route:'plan'}}]});
+    }).catch(function(){});
+  }
+
+  /* a different Live Khaata account on this phone: the phone's Play purchase must be re-checked for it */
+  function newUser(){ if(st.play && st.play.u!==st.uid){ st.play.other=false; st.play.u=st.uid; lsSet('hk_lkb_play',st.play); if(st.play.active && st.play.token) setTimeout(function(){ verify(st.play.token,true); },0); } }
+  /* ── entry points from the module ── */
+  function check(){
+    paintAll();
+    var s=status();
+    if(s.kind==='ended' && enforced() && !st.shownEnd){
+      st.shownEnd=true;
+      if(window.lkWhenOpen) lkWhenOpen(function(){ showSheet('ended'); },'lkb-end'); else showSheet('ended');
+    }
+  }
+  window.LKB={
+    setTrial:function(uid,t){ if(uid && uid!==st.uid){ st.uid=uid; loadCache(); newUser(); } st.trial=t||0; persist(); check(); remind(); },
+    setEnt:function(uid,e){ if(uid && uid!==st.uid){ st.uid=uid; loadCache(); newUser(); } if(e){ var mine=st.ent&&st.ent.sub; if(mine && !e.sub) e.sub=mine; st.ent=e; st.entOk=true; persist(); } paintAll(); },
+    status:status, canWrite:canWrite, paintRow:paintRow, check:check, restore:restore,
+    _st:st, _wrap:wrapAll
+  };
+  window.lkbShowSheet=showSheet; window.lkbCloseSheet=closeSheet; window.lkbPick=setPick; window.lkbGo=buy;
+  window.lkbOpenPlan=openPlan; window.lkbClosePlan=closePlan;
+  window.lkbManage=function(){ var P=NP(); if(P && P.manageSubscriptions) P.manageSubscriptions().catch(function(){ try{ window.open('https://play.google.com/store/account/subscriptions','_blank'); }catch(e){} }); else { try{ window.open('https://play.google.com/store/account/subscriptions','_blank'); }catch(e){} } };
+  window.lkbRefresh=function(){ if(NP()) restore(true); else say('Open Live Khaata from the Play Store app to check your plan'); };
+
+  function boot(){
+    st.play=lsGet('hk_lkb_play');
+    wrapAll(); setTimeout(wrapAll,1500); setTimeout(wrapAll,5000);
+    if(NP()) setTimeout(function(){ restore(false); },2500);
+    document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ paintAll(); if(NP() && (!st.play || Date.now()-(st.play.at||0)>3600e3)) restore(false); } });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+  window.addEventListener('load',wrapAll);
 })();
 </script>
 </body>

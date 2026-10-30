@@ -63,6 +63,43 @@
     var n = (f && f.name) || ('file-'+i);
     return n.replace(/[^\w.\-ऀ-ॿ]+/g,'_').slice(-80);
   }
+  // Write a Blob to the device in ~768 KB pieces (one huge base64 string can freeze the bridge).
+  // One write per path at a time: a second save of the same name waits, so pieces never interleave.
+  var _wq = {};
+  LK.writeChunked = function(blob, path, dir){
+    var k = dir + '/' + path, prev = _wq[k] || Promise.resolve();
+    var run = prev.then(function(){ return _writeChunked(blob, path, dir); });
+    _wq[k] = run.then(function(){}, function(){});
+    return run;
+  };
+  // Shared copies older than an hour are removed so the app's storage doesn't keep growing.
+  var _cleanAt = 0;
+  LK.cleanShare = function(){
+    if(!FS || Date.now() - _cleanAt < 60000) return; _cleanAt = Date.now();
+    try{ FS.readdir({ path:'share', directory:'CACHE' }).then(function(r){
+      ((r && r.files) || []).forEach(function(f){
+        var nm = (typeof f === 'string') ? f : (f && f.name) || ''; var ts = parseInt(nm, 10);
+        if(ts && Date.now() - ts > 3600000) FS.rmdir({ path:'share/' + nm, directory:'CACHE', recursive:true }).catch(function(){});
+      });
+    }).catch(function(){}); }catch(e){}
+  };
+  function _writeChunked(blob, path, dir){
+    if(!FS) return Promise.reject(new Error('no filesystem'));
+    var CH = 786432, off = 0, size = blob.size || 0;
+    function next(first){
+      return _b64(blob.slice(off, off + CH)).then(function(d){
+        var o = { path:path, data:d, directory:dir };
+        if(first){ o.recursive = true; return FS.writeFile(o); }
+        return FS.appendFile(o);
+      }).then(function(w){
+        off += CH;
+        if(off < size) return next(false);
+        if(w && w.uri) return w.uri;
+        return FS.getUri({ path:path, directory:dir }).then(function(r){ return r.uri; });
+      });
+    }
+    return next(true);
+  }
   if(SH){
     try{
       navigator.canShare = function(d){
@@ -88,9 +125,8 @@
         };
         if(!files.length) return go(null);
         return Promise.all(files.map(function(f,i){
-          return _b64(f).then(function(data){
-            return FS.writeFile({ path:'share/'+Date.now()+'-'+i+'/'+_safeName(f,i), data:data, directory:'CACHE', recursive:true });
-          }).then(function(w){ return w.uri; });
+          if(!i && LK.cleanShare) LK.cleanShare();
+          return LK.writeChunked(f, 'share/'+Date.now()+'-'+i+'/'+_safeName(f,i), 'CACHE');
         })).then(go);
       };
     }catch(e){}
@@ -4625,6 +4661,8 @@ letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-a
     </div>
     <div class="st-lbl">SUPPLIER LEDGER <span class="hi">/ सप्लायर हिसाब</span></div>
     <div class="st-tile wide" onclick="stGenOpen()"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="2" y="9" width="16" height="12" rx="1.5" fill="#f4ead0" stroke="#c9a24b" stroke-width="1"/><rect x="4.5" y="12" width="11" height="2.7" rx="1" fill="#e84545"/><rect x="4.5" y="16" width="11" height="1.8" rx=".8" fill="#e8c870"/><path d="M18 12h5l4 4v5h-9z" fill="#4a90d4" stroke="#2f6cae" stroke-width="1"/><rect x="19.4" y="13.4" width="4" height="3" rx="0.6" fill="#cdeaff"/><circle cx="8" cy="23" r="2.7" fill="#26314a"/><circle cx="8" cy="23" r="1" fill="#9aa6bd"/><circle cx="22" cy="23" r="2.7" fill="#26314a"/><circle cx="22" cy="23" r="1" fill="#9aa6bd"/></svg></div><div class="st-tw"><div class="st-tn">Supplier <span class="hi">/ सप्लायर</span></div><div class="st-tg">one supplier’s full purchase &amp; payment ledger</div></div><span class="st-arw">›</span></div>
+    <div class="st-lbl">BILL BOOK <span class="hi">/ बिल बुक</span></div>
+    <div class="st-tile wide" id="st-bb-tile" onclick="stGenOpen('billbook')"><div class="st-ic"><svg viewBox="0 0 32 32"><rect x="9" y="4" width="17" height="22" rx="2" fill="#e9dfc4" stroke="#b8902f" stroke-width="1"/><rect x="6" y="7" width="17" height="22" rx="2" fill="#f4ead0" stroke="#c9a24b" stroke-width="1.1"/><path d="M9.5 12h10M9.5 15.5h10M9.5 19h6" stroke="#a5761f" stroke-width="1.5" stroke-linecap="round"/><rect x="9.5" y="22.5" width="10" height="3" rx="1" fill="#e84545"/><path d="M12 4.5v5" stroke="#5a6a98" stroke-width="2.2" stroke-linecap="round"/></svg></div><div class="st-tw"><div class="st-tn">Bill Book <span class="hi">/ बिल बुक</span></div><div class="st-tg">All bill photos in one PDF · by date · clean scan</div></div><div class="st-arw">›</div></div>
     <div class="st-lbl">REGISTERS <span class="hi">/ रजिस्टर</span></div>
     <div class="st-grid">
       <div class="st-tile" onclick="stGenOpen('sales')"><div class="st-ic"><svg viewBox="0 0 32 32"><path d="M4 27h24" stroke="#3a4a6a" stroke-width="1.6" stroke-linecap="round"/><path d="M5 22l6-6 5 4 8-10" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6h5v5" fill="none" stroke="#34c759" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="16" r="1.7" fill="#8aef7a"/><circle cx="16" cy="20" r="1.7" fill="#8aef7a"/></svg></div><div><div class="st-tn">Sales <span class="hi">/ बिक्री</span></div><div class="st-tg">cash + UPI</div></div><span class="st-arw">›</span></div>
@@ -4757,7 +4795,10 @@ textarea.st-biz-in{resize:none;}
         <div class="st-gen-fopt on" data-f="pdf" onclick="stGenFmt(this)"><div class="fi"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="7" y="13" width="10" height="6" rx="1" fill="#e05555"/><text x="12" y="17.6" font-size="4.2" fill="#fff" text-anchor="middle" font-family="Arial" font-weight="700">PDF</text></svg></div><div class="fn">PDF</div><div class="ff free">Free</div></div>
         <div class="st-gen-fopt" data-f="excel" onclick="stGenFmt(this)"><div class="fi"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z" fill="#e9edf4" stroke="#aab6c8" stroke-width="1"/><rect x="6.5" y="12" width="11" height="8" rx="1" fill="#1e7a46"/><path d="M9 14l6 4M15 14l-6 4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="fn">Excel</div><div class="ff">Tally-ready</div></div>
       </div></div>
-    <div class="st-gen-go" onclick="stGenerate()">बनाएं &amp; Share →</div>
+    <div class="st-gen-step" id="st-gen-bb" style="display:none;"><div class="st-gen-num"><b>3</b> · What you get</div>
+      <div class="st-bb-box"><div>📑 <b>Index page</b> · date, supplier, bill no, amount</div><div>🧾 <b>One page per bill</b> · clean scan photo</div><div class="st-bb-cnt" id="st-bb-cnt">—</div></div>
+      <div class="st-bb-done" id="st-bb-done" style="display:none;"><span id="st-bb-dtx">✓ Ready</span><span class="st-bb-acts"><button type="button" onclick="bbView()">View</button><button type="button" onclick="bbSave()">Save</button></span></div></div>
+    <div class="st-gen-go" id="st-gen-go" onclick="stGenerate()">बनाएं &amp; Share →</div>
   </div>
 </div>
 <script>
@@ -4982,7 +5023,7 @@ textarea.st-biz-in{resize:none;}
         var g=c2.getContext("2d"); g.fillStyle="#ffffff"; g.fillRect(0,0,c2.width,h);
         g.drawImage(cv,0,Math.round(s[0]),cv.width,h,0,0,cv.width,h);
         if(i>0) doc.addPage();
-        doc.addImage(c2.toDataURL("image/jpeg",0.92),"JPEG",0,(i>0?topPad/pxPt:0),pw,h/pxPt,undefined,"FAST");
+        doc.addImage(c2.toDataURL("image/jpeg",0.85),"JPEG",0,(i>0?topPad/pxPt:0),pw,h/pxPt,undefined,"FAST");
         doc.setFontSize(8); doc.setTextColor(138,144,162);
         doc.text("Page "+(i+1)+" of "+slices.length, pw-28, ph-12, {align:"right"});
       });
@@ -5248,14 +5289,14 @@ textarea.st-biz-in{resize:none;}
     return pdfFromHost(host).then(function(b){ try{document.body.removeChild(host);}catch(e){} return b; },
                                   function(e){ try{document.body.removeChild(host);}catch(x){} throw e; });
   }
-  function dl(blob,name){ try{var o=URL.createObjectURL(blob);var a=document.createElement("a");a.href=o;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){try{URL.revokeObjectURL(o);}catch(e){}},60000);}catch(e){} }
+  function dl(blob,name){ if(window.lkSaveFile&&lkSaveFile(blob,name,"stca-auto"))return; try{var o=URL.createObjectURL(blob);var a=document.createElement("a");a.href=o;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){try{URL.revokeObjectURL(o);}catch(e){}},60000);}catch(e){} }
   var _caBlob=null,_caName="";
   function cel(id){return document.getElementById(id);}
   window.stCACardClose=function(){ if(cel("stca-cscrim"))cel("stca-cscrim").classList.remove("show"); if(cel("stca-card"))cel("stca-card").classList.remove("show"); };
   window.stCAAct=function(kind){
     if(!_caBlob){ try{toast("\u0905\u092d\u0940 \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026");}catch(e){} return; }
-    if(kind==="dl"){ dl(_caBlob,_caName); try{toast("\U0001F4E5 Download \u0939\u094b \u0917\u092f\u093e");}catch(e){} }
-    else if(kind==="view"){ try{var u=URL.createObjectURL(_caBlob);window.open(u,"_blank");setTimeout(function(){try{URL.revokeObjectURL(u);}catch(e){}},60000);}catch(e){} }
+    if(kind==="dl"){ if(window.lkSaveTap&&lkSaveTap(_caBlob,_caName))return; dl(_caBlob,_caName); try{toast("\uD83D\uDCE5 Download \u0939\u094b \u0917\u092f\u093e");}catch(e){} }
+    else if(kind==="view"){ if(window.lkPdfView){ lkPdfView([{blob:_caBlob,name:_caName}]); } else { try{var u=URL.createObjectURL(_caBlob);window.open(u,"_blank");}catch(e){} } }
     else if(kind==="wa"){
       try{ var file=new File([_caBlob],_caName,{type:"application/pdf"});
         var sd={files:[file],title:"Statement",text:((window._stGen&&window._stGen.supplier)||"")+" \u2014 Live Khaata"};
@@ -5505,6 +5546,7 @@ textarea.st-biz-in{resize:none;}
     X.utils.book_append_sheet(wb,ws2,"Voucher List");
     return new Blob([X.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
   }
+  window._stH={computeRange:computeRange,isoDate:isoDate,supGstinOf:supGstinOf};
   function cardShow(title,detail){
     if(cel("stca-badge"))cel("stca-badge").textContent="\u23f3";
     if(cel("stca-title"))cel("stca-title").textContent=title;
@@ -6166,15 +6208,15 @@ textarea.st-biz-in{resize:none;}
     var l=document.getElementById("st-suppick-list");if(!l)return;
     q=(q||"").trim().toLowerCase();
     var arr=q?_all.filter(function(s){return s.name.toLowerCase().indexOf(q)>=0;}):_all;
-    if(!arr.length){l.innerHTML='<div class="st-suppick-empty">'+(_all.length?"कोई मेल नहीं":"कोई सप्लायर नहीं — पहले Purchase में एंट्री करें")+"</div>";return;}
-    l.innerHTML=arr.map(function(s){var f=(window.fmt?fmt(s.baki):("₹"+s.baki));var av=(String(s.name)[0]||"?").toUpperCase();
+    if(!arr.length&&!(window._stGen&&window._stGen.type==="billbook"&&!q)){l.innerHTML='<div class="st-suppick-empty">'+(_all.length?"कोई मेल नहीं":"कोई सप्लायर नहीं — पहले Purchase में एंट्री करें")+"</div>";return;}
+    l.innerHTML=((window._stGen&&window._stGen.type==="billbook"&&!q)?'<div class="st-suppick-item" onclick="stSupPickChoose(\'\')"><div class="st-suppick-av">✱</div><div class="st-suppick-info"><div class="st-suppick-nm">All suppliers</div><div class="st-suppick-mt">every bill</div></div></div>':'')+arr.map(function(s){var f=(window.fmt?fmt(s.baki):("₹"+s.baki));var av=(String(s.name)[0]||"?").toUpperCase();
       return '<div class="st-suppick-item" onclick="stSupPickChoose(\''+encodeURIComponent(s.name)+'\')"><div class="st-suppick-av">'+esc(av)+'</div><div class="st-suppick-info"><div class="st-suppick-nm">'+esc(s.name)+'</div><div class="st-suppick-mt">'+s.n+' खरीद</div></div><div class="st-suppick-baki">'+f+'</div></div>';
     }).join("");
   }
   window.stSupPickOpen=function(){build();var q=document.getElementById("st-suppick-q");if(q)q.value="";render("");document.getElementById("st-suppick-ov").classList.add("on");setTimeout(function(){try{if(q)q.focus();}catch(e){}},150);};
   window.stSupPickClose=function(){document.getElementById("st-suppick-ov").classList.remove("on");};
   window.stSupPickFilter=function(){var q=document.getElementById("st-suppick-q");render(q?q.value:"");};
-  window.stSupPickChoose=function(enc){var name=decodeURIComponent(enc);window._stGen.supplier=name;var el=document.getElementById("st-gen-supname");if(el)el.textContent=name;var gi=document.getElementById("st-gen-supgst");if(gi)gi.value=(window.getSupGstin?getSupGstin(name):"");stSupPickClose();};
+  window.stSupPickChoose=function(enc){var name=decodeURIComponent(enc);if(window._stGen&&window._stGen.type==="billbook"){window._stGen.supplier=name||null;var e2=document.getElementById("st-gen-supname");if(e2)e2.textContent=name||"All suppliers";stSupPickClose();if(window.bbRefresh)bbRefresh();return;}window._stGen.supplier=name;var el=document.getElementById("st-gen-supname");if(el)el.textContent=name;var gi=document.getElementById("st-gen-supgst");if(gi)gi.value=(window.getSupGstin?getSupGstin(name):"");stSupPickClose();};
 })();
 </script>
 <style>
@@ -6549,7 +6591,7 @@ textarea.st-biz-in{resize:none;}
       <div class="np-cta" onclick="npProceed()">आगे बढ़ें →</div>
     </div>
     <input id="np-file" type="file" accept="image/*" capture="environment" style="display:none;" onchange="npPhotoChosen(event)">
-    <input id="np-file-gal" type="file" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none;" onchange="npPhotoChosen(event)">
+    <input id="np-file-gal" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" style="display:none;" onchange="npPhotoChosen(event)">
   </div>
 </div>
 
@@ -6699,7 +6741,7 @@ textarea.st-biz-in{resize:none;}
   <div class="sc-pick">
     <div class="sc-hd">
       <div><div class="sc-t">Scan bill</div>
-        <div class="sc-s">The details fill in automatically</div></div>
+        <div class="sc-s">Photo or PDF — details fill in automatically</div></div>
       <div class="sc-x" onclick="scClose()">✕</div>
     </div>
     <div class="sc-two">
@@ -6708,8 +6750,8 @@ textarea.st-biz-in{resize:none;}
         <div class="t">Camera</div><div class="s">फ़ोटो लें</div>
       </div>
       <div class="sc-opt sc-gal" onclick="scGo('gal')">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>
-        <div class="t">Gallery</div><div class="s">पहले से सेव</div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg></div>
+        <div class="t">Gallery / PDF</div><div class="s">फ़ोटो या PDF बिल</div>
       </div>
     </div>
   </div>
@@ -11316,6 +11358,7 @@ function lgpcFile(sup, phone){
   if (_ph.thumb) _maal.billThumb = _ph.thumb;
   if (_ph.url)   _maal.billUrl   = _ph.url;
   if (_ph.path)  _maal.billPath  = _ph.path;
+  if (_ph.srcPdf) _maal.srcPdf = _ph.srcPdf;
   DB.push(K.MAAL, _maal);
   var _maalId = _maal.id;
   // Fingerprint = GSTIN + bill no + total. A re-scanned old bill repeats this key,
@@ -15451,8 +15494,8 @@ function bvRetakeConfirm(){
   var _pfx=_isMaalEntry?'ml_':'ud_';
   toast('तैयार हो रहा है…');
   _bpCompress(nf,1600,0.8,128,0.55).then(function(c){
-    DB.update(_store,r.id,{billThumb:c.thumb});
-    r.billThumb=c.thumb;
+    DB.update(_store,r.id,{billThumb:c.thumb,srcPdf:0});
+    r.billThumb=c.thumb; r.srcPdf=0;
     var im=document.getElementById('bv-img'); if(im){im.classList.remove('lgp-blur');im.src=c.thumb;}
     bvRetakeClose();
     if(!(window._storage&&window._st&&CURRENT_UID)){toast('⚠️ फोटो cloud पे नहीं गई',true);return;}
@@ -16582,7 +16625,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
           try{document.body.removeChild(host);}catch(e){}
           var doc=new jsPDFctor({unit:'pt',format:'a4',compress:true});
           var pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
-          var img=canvas.toDataURL('image/jpeg',0.92);
+          var img=canvas.toDataURL('image/jpeg',0.85);
           var imgW=pw,imgH=canvas.height*imgW/canvas.width;
           var pages=Math.max(1,Math.ceil((imgH/ph)-0.002));
           for(var pi=0;pi<pages;pi++){if(pi>0)doc.addPage();doc.addImage(img,'JPEG',0,-(ph*pi),imgW,imgH,undefined,'FAST');}
@@ -16623,13 +16666,14 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(
     },240);
   }
   function autoDownload(blob,fname){
+    if(window.lkSaveFile&&lkSaveFile(blob,fname,'#stmt-card .stmt-cauto'))return;
     try{var o=URL.createObjectURL(blob);var a=document.createElement('a');a.href=o;a.download=fname;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){try{URL.revokeObjectURL(o);}catch(e){}},60000);}catch(e){}
   }
   window.stmtCardClose=function(){document.getElementById('stmt-cscrim').classList.remove('show');document.getElementById('stmt-card').classList.remove('show');};
   window.stmtCardAct=function(kind){
     if(!_stBlob){if(typeof toast==='function')toast('\u0905\u092d\u0940 \u092c\u0928 \u0930\u0939\u093e \u0939\u0948\u2026');return;}
-    if(kind==='dl'){autoDownload(_stBlob,_stName);if(typeof toast==='function')toast('\U0001F4E5 Download \u0939\u094b \u0917\u092f\u093e');}
-    else if(kind==='view'){try{var u=URL.createObjectURL(_stBlob);window.open(u,'_blank');setTimeout(function(){try{URL.revokeObjectURL(u);}catch(e){}},60000);}catch(e){}}
+    if(kind==='dl'){if(window.lkSaveTap&&lkSaveTap(_stBlob,_stName))return;autoDownload(_stBlob,_stName);if(typeof toast==='function')toast('\uD83D\uDCE5 Download \u0939\u094b \u0917\u092f\u093e');}
+    else if(kind==='view'){if(window.lkPdfView){lkPdfView([{blob:_stBlob,name:_stName}]);}else{try{var u=URL.createObjectURL(_stBlob);window.open(u,'_blank');}catch(e){}}}
     else if(kind==='wa'){
       try{
         var file=new File([_stBlob],_stName,{type:'application/pdf'});
@@ -16669,6 +16713,8 @@ function npCapture(){var f=document.getElementById('np-file');if(f){f.value='';f
 function npGallery(){var f=document.getElementById('np-file-gal');if(f){f.value='';f.click();}}
 function npPhotoChosen(ev){
   var f=ev&&ev.target&&ev.target.files?ev.target.files[0]:null;if(!f)return;
+  if(window._npIsPdf&&_npIsPdf(f)&&window._npPdfChosen){_npPdfChosen(f);return;}
+  if(window._npPdfCancel)_npPdfCancel();
   // Switch to preview SYNCHRONOUSLY, before the async compress, so the scan screen (np-s1) can never flash back after the camera confirms.
   var img=document.getElementById('np-img');
   if(img){try{if(img._objUrl){URL.revokeObjectURL(img._objUrl);}img._objUrl=URL.createObjectURL(f);img.src=img._objUrl;}catch(e){img.src='';}img.style.display='block';}
@@ -18779,7 +18825,8 @@ input.lkg-note{width:100%;font-family:inherit;outline:none}
     'lkn-ov':function(){ if(window.lknClose) lknClose(); },
     'lkn-ask-sheet':function(){ if(window.lknAskLater) lknAskLater(); },
     'lkb-ov':function(){ if(window.lkbClosePlan) lkbClosePlan(); },
-    'lkb-sheet':function(){ if(window.lkbCloseSheet) lkbCloseSheet(); }
+    'lkb-sheet':function(){ if(window.lkbCloseSheet) lkbCloseSheet(); },
+    'lkpv-ov':function(){ if(window.lkPdfClose) lkPdfClose(); }
   };
   function closeLayer(e){
     if(KNOWN[e.id]){ KNOWN[e.id](e); return; }
@@ -20568,6 +20615,866 @@ window._lkPersistOk=function(r){
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
   window.addEventListener('load',wrapAll);
+})();
+</script>
+<style id="lk-v89css">
+#st-gen-chips.bb{gap:6px}
+#st-gen-chips.bb .st-gen-chip{padding-left:10px;padding-right:10px;white-space:nowrap}
+.st-bb-opt{color:#8fa0c4;font-weight:600}
+.st-bb-box{background:#0f1830;border:1px solid #2c3f66;border-radius:11px;padding:11px 13px;font-size:12px;line-height:1.7;color:#c8d4f0}
+.st-bb-box b{color:#f2f5ff}
+.st-bb-cnt{margin-top:6px;padding-top:7px;border-top:1px solid #22355c;color:#e8c870;font-weight:700}
+.st-bb-cnt.none{color:#f0a0a0}
+.st-bb-done{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;padding:8px 10px 8px 12px;border-radius:11px;background:rgba(62,200,115,.08);border:1px solid rgba(62,200,115,.45);color:#9fe7bb;font-size:12px;font-weight:700;line-height:1.35}
+.st-bb-done em{font-style:normal;color:#f0b060}
+.st-bb-acts{display:flex;gap:6px;flex-shrink:0}
+.st-bb-acts button{font:inherit;font-size:12px;font-weight:700;color:#eaf0ff;background:#13213f;border:1px solid #33507e;border-radius:9px;padding:7px 11px;cursor:pointer}
+.st-gen-go.busy{cursor:default;padding-top:11px;padding-bottom:11px}
+.st-bb-pt{font-size:13px}
+.st-bb-pbar{height:5px;border-radius:3px;background:rgba(0,0,0,.25);margin-top:7px;overflow:hidden}
+.st-bb-pbar i{display:block;height:100%;width:0;background:#1a1208;transition:width .25s}
+.lkpv-ov{position:fixed;inset:0;z-index:995000;background:#0b1120;display:none;flex-direction:column}
+.lkpv-ov.show{display:flex}
+.lkpv-top{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0e1a34;border-bottom:1px solid #22355c;flex-shrink:0}
+.lkpv-x{width:36px;height:36px;border-radius:10px;border:1px solid #2a4078;background:transparent;color:#cfe0ff;font-size:16px;cursor:pointer;flex-shrink:0}
+.lkpv-tt{flex:1;min-width:0;display:flex;flex-direction:column}
+.lkpv-tt b{font-size:14px;color:#f2f5ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lkpv-tt span{font-size:11px;color:#8fa0c4}
+.lkpv-sel{max-width:120px;background:#13213f;color:#eaf0ff;border:1px solid #33507e;border-radius:9px;padding:7px 6px;font:inherit;font-size:12px}
+.lkpv-sh{flex-shrink:0;font:inherit;font-size:13px;font-weight:800;color:#1a1208;background:linear-gradient(135deg,#f0d890,#d4a850);border:none;border-radius:10px;padding:9px 13px;cursor:pointer}
+.lkpv-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px 10px 30px}
+.lkpv-body.zoom .lkpv-pg{width:200%;max-width:none}
+.lkpv-zm{flex-shrink:0;width:40px;height:36px;border-radius:10px;border:1px solid #33507e;background:#13213f;color:#eaf0ff;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.lkpv-pg{position:relative;background:#fff;width:100%;max-width:820px;min-height:120px;margin:0 auto 10px;border-radius:3px;box-shadow:0 3px 14px rgba(0,0,0,.45);overflow:hidden}
+.lkpv-pg canvas{display:block;width:100%;height:auto}
+.lkpv-pn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#c3cad8;font-size:13px;font-weight:700}
+.lkpv-load{display:flex;flex-direction:column;align-items:center;gap:12px;color:#8fa0c4;font-size:13px;padding:80px 0}
+.lkpv-load i{width:30px;height:30px;border-radius:50%;border:3px solid #22355c;border-top-color:#e8c870;animation:lkpvspin .8s linear infinite}
+@keyframes lkpvspin{to{transform:rotate(360deg)}}
+.lkpv-err{color:#f0b0b0;text-align:center;padding:70px 20px;font-size:14px;line-height:1.6}
+.lkpv-err button{margin-top:14px;font:inherit;font-weight:800;color:#1a1208;background:linear-gradient(135deg,#f0d890,#d4a850);border:none;border-radius:10px;padding:10px 16px}
+</style>
+<div id="lkpv-ov" class="lkpv-ov" role="dialog" aria-modal="true" aria-label="PDF">
+  <div class="lkpv-top"><button type="button" class="lkpv-x" onclick="lkPdfClose()" aria-label="Close">✕</button>
+    <div class="lkpv-tt"><b id="lkpv-name">PDF</b><span id="lkpv-sub"></span></div>
+    <select id="lkpv-sel" class="lkpv-sel" onchange="lkPdfPick(this.value)" style="display:none;"></select>
+    <button type="button" class="lkpv-zm" id="lkpv-zm" onclick="lkPdfZoom()" aria-label="Zoom">2×</button>
+    <button type="button" class="lkpv-sh" onclick="lkPdfShare()">Share</button></div>
+  <div class="lkpv-body" id="lkpv-body"></div>
+</div>
+<script id="lk-v89js">
+/* ══ v89 · Bill Book + PDF bill scan + smooth statement viewing ═══════════════
+   1. lkSaveFile / lkSaveTap / lkShareFiles — native app saves to Documents › LiveKhaata
+      (chunked, so big files never choke the bridge); browser downloads as before.
+   2. lkPdfView — in-app PDF viewer (pdf.js, renders page by page, no blank white screen).
+   3. PDF bills in the scan picker — up to 3 pages rendered on the phone, then the
+      normal scan + save path (stored as one image, so every bill surface keeps working).
+   4. Bill Book — every purchase bill of a period in one PDF: index page(s) + one
+      clean-scan page per bill, split by month when very large. Built on the phone. */
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+  function tst(m,bad){ try{ if(typeof toast==='function') toast(m,bad); }catch(e){} }
+  function NAT(){ return !!(window.LK && LK.native); }
+  function safeName(n){ return String(n||'file').replace(/[^\w.\-ऀ-ॿ]+/g,'_').replace(/_+/g,'_').slice(-90); }
+  function yieldP(){ return new Promise(function(r){ setTimeout(r,0); }); }
+  function anchorDl(blob,name){
+    try{ var o=URL.createObjectURL(blob), a=document.createElement('a'); a.href=o; a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ try{URL.revokeObjectURL(o);}catch(e){} },60000); }catch(e){}
+  }
+
+  /* ───────────── 1. save + share ───────────── */
+  var DOCS_KEY='lk_docs_fail';
+  // A failed Documents save pauses the automatic save for a day (taps still try).
+  function docsBroken(){ try{ var t=+localStorage.getItem(DOCS_KEY)||0; return t>0 && Date.now()-t<864e5; }catch(e){ return false; } }
+  function docsFailed(){ try{ localStorage.setItem(DOCS_KEY,String(Date.now())); }catch(e){} }
+  function docsOk(){ try{ localStorage.removeItem(DOCS_KEY); }catch(e){} }
+  function canNativeSave(){ return NAT() && typeof LK.writeChunked==='function'; }
+  function stamp(){ var d=new Date(); return ('0'+d.getHours()).slice(-2)+('0'+d.getMinutes()).slice(-2)+('0'+d.getSeconds()).slice(-2); }
+  // Same name overwrites. If Android refuses (a file left by an older install), save as name_HHMMSS.pdf.
+  function writeDocs(blob,name){
+    var p='LiveKhaata/'+safeName(name);
+    return LK.writeChunked(blob,p,'DOCUMENTS').catch(function(){
+      var m=p.match(/^(.*?)(\.[A-Za-z0-9]+)?$/);
+      return LK.writeChunked(blob,m[1]+'_'+stamp()+(m[2]||''),'DOCUMENTS');
+    });
+  }
+  var READY_TXT='📄 तैयार — नीचे से भेजें या सेव करें';
+  // Automatic save right after a statement is made. Returns true when the native app took it.
+  window.lkSaveFile=function(blob,name,autoSel){
+    if(!canNativeSave()) return false;
+    var el=null;
+    try{ el=autoSel?(typeof autoSel==='string'?($(autoSel)||document.querySelector(autoSel)):autoSel):null; }catch(e){}
+    if(docsBroken()){ if(el) el.textContent=READY_TXT; return true; }
+    if(el) el.textContent='📁 Phone में सेव · Documents › LiveKhaata';
+    writeDocs(blob,name).then(docsOk,function(e){
+      docsFailed();
+      if(el) el.textContent=READY_TXT;
+      try{ console.warn('docs save failed',e&&e.message); }catch(x){}
+    });
+    return true;
+  };
+  // The user tapped Download / Save. Native: Documents, else the share sheet (Drive, Files…).
+  window.lkSaveTap=function(blob,name){
+    if(!canNativeSave()) return false;
+    tst('सेव हो रहा है…');
+    writeDocs(blob,name).then(function(){
+      docsOk();
+      tst('📁 सेव हो गया · Documents › LiveKhaata');
+    },function(){
+      docsFailed();
+      tst('Phone में सीधा सेव नहीं — Drive / Files चुनें');
+      lkShareFiles([{blob:blob,name:name}],name);
+    });
+    return true;
+  };
+  window.lkShareFiles=function(list,title,text){
+    list=(list||[]).filter(function(x){ return x&&x.blob; });
+    if(!list.length) return Promise.resolve();
+    var files=list.map(function(x){ return new File([x.blob],x.name,{type:x.blob.type||'application/pdf'}); });
+    var sd={files:files,title:title||'Live Khaata'}; if(text) sd.text=text;
+    try{
+      if(navigator.share && navigator.canShare && navigator.canShare(sd)){
+        return navigator.share(sd).catch(function(e){
+          if(e && e.name==='AbortError') return;
+          if(NAT()){ tst('Share नहीं हुआ — दोबारा कोशिश करें',true); return; }
+          list.forEach(function(x,i){ setTimeout(function(){ anchorDl(x.blob,x.name); },i*450); });
+          tst('Share नहीं — Download कर दिया');
+        });
+      }
+    }catch(e){}
+    if(canNativeSave()){ list.forEach(function(x){ writeDocs(x.blob,x.name).catch(function(){}); }); tst('📁 Documents › LiveKhaata में सेव'); return Promise.resolve(); }
+    list.forEach(function(x,i){ setTimeout(function(){ anchorDl(x.blob,x.name); },i*450); });
+    tst('Share नहीं — Download कर दिया');
+    return Promise.resolve();
+  };
+
+  /* ───────────── 2. pdf.js + in-app viewer ───────────── */
+  var _pdfP=null;
+  window.lkPdfLib=function(){
+    if(window.pdfjsLib && window.pdfjsLib.getDocument) return Promise.resolve(window.pdfjsLib);
+    if(_pdfP) return _pdfP;
+    function load(src){
+      return new Promise(function(res,rej){
+        var s=document.createElement('script'); s.src=src; s.async=true;
+        var to=setTimeout(function(){ rej(new Error('pdfjs load timeout')); },25000);
+        s.onload=function(){ clearTimeout(to); if(window.pdfjsLib&&window.pdfjsLib.getDocument) res(window.pdfjsLib); else rej(new Error('pdfjs missing')); };
+        s.onerror=function(){ clearTimeout(to); try{ s.parentNode.removeChild(s); }catch(e){} rej(new Error('pdfjs load failed')); };
+        document.head.appendChild(s);
+      });
+    }
+    var base; try{ base=/^\/app(\/|$)/.test(location.pathname)?(location.origin+'/app/lib/'):new URL('lib/',location.href).href; }catch(e){ base='lib/'; }
+    var CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/legacy/build/';
+    _pdfP=load(base+'pdf.min.js').then(function(L){ L.GlobalWorkerOptions.workerSrc=base+'pdf.worker.min.js'; return L; },function(){
+      return load(CDN+'pdf.min.js').then(function(L){ L.GlobalWorkerOptions.workerSrc=CDN+'pdf.worker.min.js'; return L; });
+    }).catch(function(e){ _pdfP=null; throw e; });
+    return _pdfP;
+  };
+  function openPdf(blob){
+    return lkPdfLib().then(function(L){
+      return blob.arrayBuffer().then(function(buf){ return L.getDocument({data:new Uint8Array(buf),isEvalSupported:false}).promise; });
+    });
+  }
+
+  var PV={files:[],idx:0,doc:null,io:null,tok:0,z:1,ar:1.414,active:0,q:[]};
+  function pvCleanup(){
+    if(PV.io){ try{ PV.io.disconnect(); }catch(e){} PV.io=null; }
+    PV.q=[]; PV.active=0;
+    var b=$('lkpv-body'); if(b){ [].forEach.call(b.querySelectorAll('.lkpv-pg'),function(h){ h._r=0; if(h._task){ try{h._task.cancel();}catch(e){} } }); [].forEach.call(b.querySelectorAll('canvas'),freeC); b.innerHTML=''; }
+    if(PV.doc){ try{ PV.doc.destroy(); }catch(e){} PV.doc=null; }
+  }
+  function pvSize(h){ var w=h.clientWidth||360; h.style.height=Math.round(w*(h._ar||PV.ar))+'px'; }
+  // At most 2 pages render at a time; pages scrolled away are cancelled and their canvas freed.
+  function pvRender(h){ if(h._r||!PV.doc) return; h._r=1; PV.q.push(h); pvPump(); }
+  function pvPump(){
+    while(PV.active<2 && PV.q.length){
+      var h=PV.q.shift(); if(!h._r||!h.isConnected) continue;
+      PV.active++;
+      pvDraw(h).then(pvDone,pvDone);
+    }
+  }
+  function pvDone(){ PV.active=Math.max(0,PV.active-1); pvPump(); }
+  function pvDraw(h){
+    var n=+h.getAttribute('data-n'), doc=PV.doc;
+    return doc.getPage(n).then(function(pg){
+      if(!h._r||doc!==PV.doc) return;
+      var v1=pg.getViewport({scale:1}); h._ar=v1.height/v1.width; pvSize(h);
+      var dpr=Math.min(2,window.devicePixelRatio||1), w=Math.max(200,h.clientWidth||360);
+      var sc=Math.min(5,(w*dpr)/v1.width), vp=pg.getViewport({scale:sc});
+      var c=document.createElement('canvas'); c.width=Math.floor(vp.width); c.height=Math.floor(vp.height);
+      var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height);
+      var task=pg.render({canvasContext:x,viewport:vp}); h._task=task;
+      return task.promise.then(function(){
+        h._task=null;
+        if(!h._r||doc!==PV.doc){ freeC(c); return; }
+        var old=h.querySelector('canvas'); if(old) freeC(old);
+        h.innerHTML=''; h.appendChild(c); try{ pg.cleanup(); }catch(e){}
+      },function(){ h._task=null; freeC(c); });
+    }).catch(function(){ h._r=0; });
+  }
+  function pvUnrender(h){
+    if(!h._r) return; h._r=0;
+    if(h._task){ try{ h._task.cancel(); }catch(e){} h._task=null; }
+    var c=h.querySelector('canvas'); if(c) freeC(c);
+    h.innerHTML='<span class="lkpv-pn">'+h.getAttribute('data-n')+'</span>';
+  }
+  function pvLayout(){
+    var body=$('lkpv-body'); if(!body) return;
+    var hs=[].slice.call(body.querySelectorAll('.lkpv-pg'));
+    PV.q=[]; hs.forEach(function(h){ pvUnrender(h); pvSize(h); });
+    if(PV.io){ PV.io.disconnect(); hs.forEach(function(h){ PV.io.observe(h); }); }
+    else hs.slice(0,6).forEach(pvRender);
+  }
+  window.lkPdfZoom=function(){
+    PV.z=PV.z===1?2:1;
+    var body=$('lkpv-body'), b=$('lkpv-zm'); if(!body) return;
+    var top=body.scrollTop/(body.scrollHeight||1);
+    body.classList.toggle('zoom',PV.z===2); if(b) b.textContent=PV.z===2?'1×':'2×';
+    pvLayout(); body.scrollTop=top*body.scrollHeight;
+  };
+  function pvShow(i){
+    PV.idx=i; var tok=++PV.tok; pvCleanup();
+    var f=PV.files[i], body=$('lkpv-body');
+    $('lkpv-name').textContent=f.name.replace(/_/g,' ').replace(/\.pdf$/i,'');
+    $('lkpv-sub').textContent='';
+    body.innerHTML='<div class="lkpv-load"><i></i>Opening…</div>';
+    openPdf(f.blob).then(function(doc){
+      if(tok!==PV.tok){ try{doc.destroy();}catch(e){} return; }
+      PV.doc=doc;
+      return doc.getPage(1).then(function(p1){
+        if(tok!==PV.tok) return;
+        var v=p1.getViewport({scale:1}), html='';
+        PV.ar=v.height/v.width;
+        for(var n=1;n<=doc.numPages;n++) html+='<div class="lkpv-pg" data-n="'+n+'"><span class="lkpv-pn">'+n+'</span></div>';
+        body.innerHTML=html;
+        $('lkpv-sub').textContent=doc.numPages+(doc.numPages>1?' pages':' page');
+        if('IntersectionObserver' in window)
+          PV.io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) pvRender(e.target); else pvUnrender(e.target); }); },{root:body,rootMargin:'900px 0px'});
+        pvLayout();
+      });
+    }).catch(function(e){
+      if(tok!==PV.tok) return;
+      try{ console.warn('pdf view',e&&e.message); }catch(x){}
+      body.innerHTML='<div class="lkpv-err">PDF यहाँ नहीं खुली'+(navigator.onLine===false?' — internet चालू करें':'')+'<br><button onclick="lkPdfShare()">Share से खोलें</button></div>';
+    });
+  }
+  window.lkPdfView=function(files,idx){
+    files=(files||[]).filter(function(x){ return x&&x.blob; });
+    if(!files.length){ tst('अभी बन रहा है…'); return; }
+    if(!/\.pdf$/i.test(files[0].name||'') && !/pdf/i.test(files[0].blob.type||'')){ tst('Excel फ़ाइल — “भेजें” से खोलें'); return; }
+    PV.files=files; PV.z=1;
+    var bd=$('lkpv-body'), zb=$('lkpv-zm'); if(bd) bd.classList.remove('zoom'); if(zb) zb.textContent='2×';
+    var sel=$('lkpv-sel');
+    if(files.length>1){ sel.innerHTML=files.map(function(f,i){ return '<option value="'+i+'">'+(f.label||('Part '+(i+1))).replace(/</g,'&lt;')+'</option>'; }).join(''); sel.style.display=''; sel.value=String(idx||0); }
+    else { sel.innerHTML=''; sel.style.display='none'; }
+    $('lkpv-ov').classList.add('show');
+    pvShow(idx||0);
+  };
+  window.lkPdfPick=function(v){ var i=parseInt(v,10)||0; if(PV.files[i]) pvShow(i); };
+  window.lkPdfClose=function(){ PV.tok++; pvCleanup(); var o=$('lkpv-ov'); if(o) o.classList.remove('show'); };
+  window.lkPdfShare=function(){ var f=PV.files[PV.idx]; if(f) lkShareFiles([f],'Live Khaata'); };
+
+  /* ───────────── 3. PDF bills in the scan picker ───────────── */
+  window._npIsPdf=function(f){ return !!f && (/pdf/i.test(f.type||'') || /\.pdf$/i.test(f.name||'')); };
+  function toBlobP(c,q){ return new Promise(function(res,rej){ try{ c.toBlob(function(b){ b?res(b):rej(new Error('encode failed')); },'image/jpeg',q); }catch(e){ rej(e); } }); }
+  function scaled(src,s){ var c=document.createElement('canvas'); c.width=Math.max(1,Math.round(src.width*s)); c.height=Math.max(1,Math.round(src.height*s)); var x=c.getContext('2d'); x.imageSmoothingEnabled=true; try{x.imageSmoothingQuality='high';}catch(e){} x.drawImage(src,0,0,c.width,c.height); return c; }
+  function freeC(c){ try{ c.width=0; c.height=0; }catch(e){} }
+  function pdfPrep(file){
+    var doc=null;
+    return openPdf(file).then(function(d){
+      doc=d;
+      var n=doc.numPages, pick=[];
+      if(n<=3){ for(var i=1;i<=n;i++) pick.push(i); } else pick=[1,2,n];   // totals sit on the last page
+      var multi=pick.length>1, cs=[], pgs=[], W=1400;
+      return pick.reduce(function(p,pn){ return p.then(function(){ return doc.getPage(pn).then(function(pg){ pgs.push(pg); }); }); },Promise.resolve()).then(function(){
+        // stacked pages stay under ~12 MP so long receipts never exhaust phone memory
+        if(multi){ var rs=0; pgs.forEach(function(pg){ var v=pg.getViewport({scale:1}); rs+=v.height/v.width; }); W=Math.max(500,Math.min(1400,Math.floor(Math.sqrt(12e6/rs)))); }
+        return pgs.reduce(function(p,pg){
+          return p.then(function(){
+            var v1=pg.getViewport({scale:1});
+            var sc=multi?(W/v1.width):(2400/Math.max(v1.width,v1.height));
+            sc=Math.min(sc,4.5,Math.sqrt(6.2e6/(v1.width*v1.height)));
+            var vp=pg.getViewport({scale:sc});
+            var c=document.createElement('canvas'); c.width=Math.max(1,Math.floor(vp.width)); c.height=Math.max(1,Math.floor(vp.height));
+            var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height);
+            return pg.render({canvasContext:x,viewport:vp}).promise.then(function(){ cs.push(c); try{pg.cleanup();}catch(e){} });
+          });
+        },Promise.resolve());
+      }).then(function(){ return {cs:cs,total:n,W:W}; });
+    }).then(function(r){
+      try{ doc.destroy(); }catch(e){}
+      var cs=r.cs, st;
+      if(cs.length===1) st=cs[0];
+      else {
+        var W=r.W, GAP=14, H=0;
+        cs.forEach(function(c){ H+=Math.round(c.height*Math.min(1,W/c.width)); }); H+=GAP*(cs.length-1);
+        st=document.createElement('canvas'); st.width=W; st.height=H;
+        var x=st.getContext('2d'); x.fillStyle='#c8ccd4'; x.fillRect(0,0,W,H);
+        var y=0; cs.forEach(function(c){ var k=Math.min(1,W/c.width), w=Math.round(c.width*k), h=Math.round(c.height*k);
+          x.fillStyle='#fff'; x.fillRect(0,y,W,h); x.drawImage(c,Math.round((W-w)/2),y,w,h); y+=h+GAP; });
+        if(!st.width||!st.height) throw new Error('canvas alloc failed');
+      }
+      var th=scaled(cs[0],Math.min(1,128/Math.max(cs[0].width,cs[0].height)));
+      var thumb=th.toDataURL('image/jpeg',0.55); freeC(th);
+      var out={thumb:thumb,pages:cs.length,total:r.total};
+      return toBlobP(st,0.85).then(function(b){
+        if(b.size<=3.2e6) return b;
+        return toBlobP(st,0.7).then(function(b2){
+          if(b2.size<=3.2e6) return b2;
+          var sm=scaled(st,0.75); return toBlobP(sm,0.7).then(function(b3){ freeC(sm); return b3; });
+        });
+      }).then(function(ob){
+        out.ocrBlob=ob;
+        var sc=scaled(st,Math.min(1,1150/st.width));
+        return toBlobP(sc,0.8).then(function(sb){ freeC(sc); out.blob=sb; });
+      }).then(function(){
+        cs.forEach(freeC); if(st!==cs[0]) freeC(st);
+        return out;
+      });
+    },function(e){ if(doc){ try{doc.destroy();}catch(x){} } throw e; });
+  }
+  // A newer photo/PDF or a fresh entry makes an older PDF result stale: it is then dropped.
+  var _npTok=0;
+  window._npPdfCancel=function(){ _npTok++; };
+  function npAlive(){ var m=$('np-modal'); return !!(m && m.classList.contains('show')); }
+  try{
+    if(typeof window.npOpen==='function'){ var _oo=window.npOpen; window.npOpen=function(){ _npTok++; return _oo.apply(this,arguments); }; }
+  }catch(e){}
+  window._npPdfChosen=function(f){
+    var tok=++_npTok;
+    var img=$('np-img');
+    if(img){ try{ if(img._objUrl) URL.revokeObjectURL(img._objUrl); }catch(e){} img._objUrl=null; img.removeAttribute('src'); img.style.display='none'; }
+    window.lgPhoto={rawFile:null,blob:null,thumb:'',url:'',path:'',pages:[],isPdf:false,pageCount:0};
+    try{ npShow('s2'); npScanUI('reading'); }catch(e){}
+    tst('PDF खुल रहा है…');
+    pdfPrep(f).then(function(r){
+      if(tok!==_npTok || !npAlive()) return;
+      if(img){ img._objUrl=URL.createObjectURL(r.blob); img.src=img._objUrl; img.style.display='block'; }
+      window.lgPhoto={rawFile:f,blob:r.blob,thumb:r.thumb,url:'',path:'',pages:[],isPdf:false,pageCount:0,srcPdf:r.pages};
+      if(r.total>3) tst('लंबी PDF — पहले 2 और आख़िरी पेज लिए');
+      try{ if(window.logEvent) window.logEvent('bill_scan_src',{src:'pdf',pages:r.total}); }catch(e){}
+      if(typeof npRunScan==='function') npRunScan(r.ocrBlob,true);
+    }).catch(function(e){
+      if(tok!==_npTok) return;
+      var m=String((e&&(e.name||''))+' '+(e&&e.message||''));
+      try{ console.warn('pdf bill',m); }catch(x){}
+      var msg=/password/i.test(m)?'इस PDF पर password है — बिना password वाली PDF चुनें'
+        :(/pdfjs|load/i.test(m)?'PDF खोलने के लिए internet चाहिए':'यह PDF नहीं खुली — फ़ोटो लेकर scan करें');
+      tst(msg,true);
+      try{ npScanUI('fail',msg); npShow('s1'); }catch(x){}
+    });
+  };
+
+  /* ───────────── 4. Bill Book ───────────── */
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // MAXB photo pages per file (~13 MB, safe to build and share on a phone); MAXRUN per tap.
+  var PW=595.28, PH=841.89, ML=39.7, CW=PW-2*ML, TOP=39.7, LIM=PH-44, S=2.4, MAXB=100, MAXRUN=300;
+  var FONT="Roboto,'Noto Sans','Noto Sans Devanagari','Segoe UI',Arial,sans-serif";
+  var C={ink:'#1A2236',mut:'#5B667E',line:'#E1E6EF',line2:'#CBD3E1',mon:'#EEF2F8',sub:'#FAFBFD',red:'#B3261E',foot:'#7A859B'};
+  function H(){ return window._stH||{}; }
+  function num(v){ v=Number(v); return (isFinite(v)&&v>0)?v:null; }
+  function inr2(v){ return Number(v||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function pd(iso){ var p=String(iso||'').split('-'); return p.length===3?{y:+p[0],m:+p[1],d:+p[2]}:null; }
+  function dLong(iso){ var p=pd(iso); return p?((p.d<10?'0':'')+p.d+' '+MON[p.m-1]+' '+p.y):String(iso||''); }
+  function dShort(iso){ var p=pd(iso); return p?((p.d<10?'0':'')+p.d+' '+MON[p.m-1]):''; }
+  function monLabel(ym){ var p=String(ym).split('-'); return MON[(+p[1]||1)-1]+' '+p[0]; }
+  function today(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+  function span(a,b){
+    var A=pd(a),B=pd(b); if(!A||!B) return '';
+    if(a===b) return dLong(a);
+    if(A.y===B.y) return A.d+' '+MON[A.m-1]+' – '+B.d+' '+MON[B.m-1]+' '+B.y;
+    return A.d+' '+MON[A.m-1]+' '+A.y+' – '+B.d+' '+MON[B.m-1]+' '+B.y;
+  }
+  function supKey(s){ try{ return window.mkSupKey?mkSupKey(s):String(s||'').trim().toLowerCase(); }catch(e){ return String(s||'').trim().toLowerCase(); } }
+  function bizInfo(){
+    var b={}; try{ b=(window.getBizProfile?getBizProfile():{})||{}; }catch(e){}
+    var name=b.name||''; if(!name){ try{ name=localStorage.getItem('hk_business_name')||''; }catch(e){} }
+    return {shop:String(name||'').trim(),gstin:String(b.gstin||'').trim().toUpperCase()};
+  }
+  window.bbRows=function(sup,rangeKey){
+    var h=H(), maal=[]; try{ maal=DB.get(K.MAAL)||[]; }catch(e){}
+    var R=h.computeRange?h.computeRange(rangeKey):{from:null,to:null,label:'All'};
+    var key=sup?supKey(sup):null, rows=[];
+    maal.forEach(function(r){
+      if(!r||r.placeholder) return;
+      if(key && supKey(r.supplier)!==key) return;
+      var d=h.isoDate?h.isoDate(r.invoiceDate,r.date):String(r.date||''); if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
+      if(R.from&&d<R.from) return; if(R.to&&d>R.to) return;
+      var g=''; try{ g=h.supGstinOf?h.supGstinOf(r):(r.supGstin||''); }catch(e){}
+      rows.push({m:r,date:d,sup:String(r.supplier||'—'),gst:g,no:String(r.billNo||'—'),taxable:num(r.taxable),tax:num(r.tax),total:Number(r.amount)||0,
+        url:r.billUrl||'',path:r.billPath||'',pdf:Math.max(0,Math.min(3,parseInt(r.srcPdf,10)||0)),ts:Number(r.ts||r.createdAt||0)||0,id:String(r.id||'')});
+    });
+    rows.sort(function(a,b){ return a.date<b.date?-1:a.date>b.date?1:(a.ts-b.ts)||(a.id<b.id?-1:a.id>b.id?1:0); });
+    return {rows:rows,R:R};
+  };
+  function hasPhoto(r){ return !!(r.url||r.path); }
+
+  /* clean scan: divide by a smoothed paper background, then lift whites and deepen ink */
+  var LUT=null;
+  function lut(){ if(LUT) return LUT; LUT=new Uint8ClampedArray(256); for(var i=0;i<256;i++){ var t=(i-26)/(244-26); t=t<0?0:t>1?1:t; LUT[i]=Math.round(255*Math.pow(t,1.35)); } return LUT; }
+  function maxF(a,w,h){ var o=new Uint8ClampedArray(a.length); for(var y=0;y<h;y++){ for(var x=0;x<w;x++){ var i=(y*w+x)*4, r=0,g=0,b=0; for(var dy=-1;dy<=1;dy++){ var yy=y+dy; if(yy<0||yy>=h) continue; for(var dx=-1;dx<=1;dx++){ var xx=x+dx; if(xx<0||xx>=w) continue; var j=(yy*w+xx)*4; if(a[j]>r)r=a[j]; if(a[j+1]>g)g=a[j+1]; if(a[j+2]>b)b=a[j+2]; } } o[i]=r;o[i+1]=g;o[i+2]=b;o[i+3]=255; } } return o; }
+  function boxF(a,w,h){ var o=new Uint8ClampedArray(a.length); for(var y=0;y<h;y++){ for(var x=0;x<w;x++){ var i=(y*w+x)*4, r=0,g=0,b=0,n=0; for(var dy=-1;dy<=1;dy++){ var yy=y+dy; if(yy<0||yy>=h) continue; for(var dx=-1;dx<=1;dx++){ var xx=x+dx; if(xx<0||xx>=w) continue; var j=(yy*w+xx)*4; r+=a[j];g+=a[j+1];b+=a[j+2];n++; } } o[i]=r/n;o[i+1]=g/n;o[i+2]=b/n;o[i+3]=255; } } return o; }
+  function cleanScan(c){
+    var w=c.width,h=c.height,ctx=c.getContext('2d');
+    var sw=Math.max(8,Math.round(w/24)), sh=Math.max(8,Math.round(h/24));
+    var sc=document.createElement('canvas'); sc.width=sw; sc.height=sh;
+    var sx=sc.getContext('2d'); sx.imageSmoothingEnabled=true; try{sx.imageSmoothingQuality='high';}catch(e){}
+    sx.drawImage(c,0,0,sw,sh);
+    var sd=sx.getImageData(0,0,sw,sh), a0=sd.data;
+    // finer, blurred map answers "is this paper at all?" (text averages out; the table under the bill stays dark)
+    var mw=Math.max(8,Math.round(w/8)), mh=Math.max(8,Math.round(h/8));
+    var rc=document.createElement('canvas'); rc.width=mw; rc.height=mh;
+    var rx=rc.getContext('2d'); rx.imageSmoothingEnabled=true; try{rx.imageSmoothingQuality='high';}catch(e){}
+    rx.drawImage(c,0,0,mw,mh);
+    var rd=rx.getImageData(0,0,mw,mh), ra=boxF(boxF(rd.data,mw,mh),mw,mh), lums=[];
+    for(var i=0;i<ra.length;i+=4) lums.push(0.299*ra[i]+0.587*ra[i+1]+0.114*ra[i+2]);
+    lums.sort(function(p,q){ return p-q; });
+    var paper=lums[Math.floor(lums.length*0.9)]||255, cut=paper*0.6;
+    // Only dark areas that touch the photo's edge count as "not paper" (table, floor, lap).
+    // A shadow, logo, dark header band or QR code inside the bill is never wiped.
+    var N=mw*mh, dark=new Uint8Array(N), out=new Uint8Array(N), qq=new Int32Array(N), qh=0, qt=0, k2;
+    for(k2=0;k2<N;k2++){ var o4=k2*4; dark[k2]=(0.299*ra[o4]+0.587*ra[o4+1]+0.114*ra[o4+2])<cut?1:0; }
+    function seed(p){ if(dark[p]&&!out[p]){ out[p]=1; qq[qt++]=p; } }
+    for(var xx=0;xx<mw;xx++){ seed(xx); seed((mh-1)*mw+xx); }
+    for(var yy=0;yy<mh;yy++){ seed(yy*mw); seed(yy*mw+mw-1); }
+    while(qh<qt){ var p=qq[qh++], px=p%mw; if(px>0) seed(p-1); if(px<mw-1) seed(p+1); if(p>=mw) seed(p-mw); if(p<N-mw) seed(p+mw); }
+    for(k2=0;k2<N;k2++){ var o5=k2*4; ra[o5]=ra[o5+1]=ra[o5+2]=out[k2]?255:0; ra[o5+3]=255; }
+    rd.data.set(ra); rx.putImageData(rd,0,0);
+    var a=boxF(maxF(a0,sw,sh),sw,sh), md=sx.createImageData(sw,sh); md.data.set(a); sx.putImageData(md,0,0);
+    function up(src){ var u=document.createElement('canvas'); u.width=w; u.height=h; var ux=u.getContext('2d'); ux.imageSmoothingEnabled=true; try{ux.imageSmoothingQuality='high';}catch(e){} ux.drawImage(src,0,0,w,h); var d=ux.getImageData(0,0,w,h).data; freeC(u); return d; }
+    var B=up(sc), Rw=up(rc), id=ctx.getImageData(0,0,w,h), d=id.data, L=lut();
+    for(var j=0;j<d.length;j+=4){
+      if(Rw[j]>128){ d[j]=d[j+1]=d[j+2]=255; continue; }   // table / floor around the bill
+      var r=d[j]*255/(B[j]||1), g=d[j+1]*255/(B[j+1]||1), b=d[j+2]*255/(B[j+2]||1);
+      if(r>255)r=255; if(g>255)g=255; if(b>255)b=255;
+      var l=0.299*r+0.587*g+0.114*b;
+      d[j]=L[(r*0.65+l*0.35)|0]; d[j+1]=L[(g*0.65+l*0.35)|0]; d[j+2]=L[(b*0.65+l*0.35)|0];
+    }
+    ctx.putImageData(id,0,0);
+    freeC(sc); freeC(rc);
+  }
+
+  /* fetch one bill photo. Native: through the app (no browser CORS). Browser: fetch. */
+  function decodeImg(src){
+    return new Promise(function(res,rej){
+      var im=new Image(), to=setTimeout(function(){ rej(new Error('decode timeout')); },20000);
+      im.onload=function(){ clearTimeout(to); res(im); };
+      im.onerror=function(){ clearTimeout(to); rej(new Error('decode failed')); };
+      im.src=src;
+    });
+  }
+  function nativeGet(url){
+    var CH=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.CapacitorHttp;
+    if(!NAT()||!CH||typeof CH.get!=='function') return Promise.reject(new Error('no native http'));
+    return CH.get({url:url,responseType:'blob',connectTimeout:20000,readTimeout:40000}).then(function(r){
+      if(!r||r.status<200||r.status>=300||typeof r.data!=='string'||r.data.length<100) throw new Error('http '+(r&&r.status));
+      return decodeImg('data:image/jpeg;base64,'+r.data);
+    });
+  }
+  function webGet(url){
+    var ac=null, to=null; try{ ac=new AbortController(); to=setTimeout(function(){ try{ac.abort();}catch(e){} },30000); }catch(e){}
+    return fetch(url,{mode:'cors',credentials:'omit',signal:ac?ac.signal:undefined}).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.blob(); }).then(function(b){
+      if(to) clearTimeout(to);
+      var o=URL.createObjectURL(b);
+      return decodeImg(o).then(function(im){ setTimeout(function(){ try{URL.revokeObjectURL(o);}catch(e){} },1000); return im; },function(e){ try{URL.revokeObjectURL(o);}catch(x){} throw e; });
+    });
+  }
+  function getImg(url){ return nativeGet(url).catch(function(){ return webGet(url); }); }
+  function urlOf(r){
+    if(r.url) return Promise.resolve(r.url);
+    if(r.path && window._st && window._storage && CURRENT_UID_OK()) return window._st.getDownloadURL(window._st.ref(window._storage,r.path));
+    return Promise.reject(new Error('no url'));
+  }
+  function CURRENT_UID_OK(){ try{ return !!CURRENT_UID; }catch(e){ return false; } }
+  // Pages of a PDF bill are stacked with a grey band (200,204,212) between them; find the bands.
+  function seams(c,parts){
+    var w=c.width,h=c.height,d=c.getContext('2d').getImageData(0,0,w,h).data,run=[],bands=[],st=-1;
+    for(var y=0;y<h;y++){
+      var ok=true;
+      for(var x=2;x<w-2;x+=Math.max(1,Math.floor(w/40))){ var i=(y*w+x)*4; if(Math.abs(d[i]-200)>16||Math.abs(d[i+1]-204)>16||Math.abs(d[i+2]-212)>16){ ok=false; break; } }
+      if(ok){ if(st<0) st=y; } else if(st>=0){ if(y-st>=3) bands.push([st,y]); st=-1; }
+    }
+    var out=[];
+    if(bands.length===parts-1){
+      var y0=0; bands.forEach(function(b){ out.push([y0,b[0]]); y0=b[1]; }); out.push([y0,h]);
+      if(out.every(function(s){ return s[1]-s[0]>=40; })) return out;
+      out=[];
+    }
+    var gap=Math.round(14*w/1400), ph=Math.floor((h-gap*(parts-1))/parts);
+    for(var k=0;k<parts;k++) out.push([k*(ph+gap),k*(ph+gap)+ph]);
+    return out;
+  }
+  function loadBill(r){
+    function once(){ return urlOf(r).then(getImg); }
+    return once().catch(function(){ return new Promise(function(z){ setTimeout(z,900); }).then(once); }).then(function(im){
+      var W=im.naturalWidth||im.width, Hh=im.naturalHeight||im.height;
+      if(!(W>10&&Hh>10)) throw new Error('empty image');
+      var parts=r.pdf>1?r.pdf:1;
+      var s=parts>1?Math.min(1,1150/W):Math.min(1,1600/Math.max(W,Hh));
+      var c=document.createElement('canvas'); c.width=Math.round(W*s); c.height=Math.round(Hh*s);
+      var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height);
+      try{ im.src=''; }catch(e){}
+      if(!r.pdf) cleanScan(c);
+      var out=[];
+      if(parts>1){
+        var segs=seams(c,parts);
+        for(var k=0;k<parts;k++){
+          var y0=segs[k][0], hh=segs[k][1]-segs[k][0];
+          var pc=document.createElement('canvas'); pc.width=c.width; pc.height=hh;
+          pc.getContext('2d').drawImage(c,0,y0,c.width,hh,0,0,c.width,hh);
+          out.push({data:pc.toDataURL('image/jpeg',0.82),w:pc.width,h:pc.height}); freeC(pc);
+        }
+      } else out.push({data:c.toDataURL('image/jpeg',r.pdf?0.85:0.82),w:c.width,h:c.height});
+      freeC(c);
+      // a phone short on memory hands back an empty canvas ("data:,") — treat as not loaded
+      out.forEach(function(o){ if(!(o.w>0&&o.h>0&&o.data&&o.data.length>1000)) throw new Error('canvas out of memory'); });
+      return out;
+    });
+  }
+
+  /* canvas drawing helpers (units = PDF points; S px per point) */
+  function mk(wPt,hPt){ var c=document.createElement('canvas'); c.width=Math.round(wPt*S); c.height=Math.round(hPt*S); var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.scale(S,S); x.textBaseline='alphabetic'; return {c:c,x:x}; }
+  function fnt(x,w,sz){ x.font=w+' '+sz+'px '+FONT; }
+  function fit(x,s,mw){ s=String(s==null?'':s); if(x.measureText(s).width<=mw) return s; while(s.length>1&&x.measureText(s+'…').width>mw) s=s.slice(0,-1); return s+'…'; }
+  function txt(x,s,px,py,o){ o=o||{}; fnt(x,o.w||'400',o.sz||8.5); x.fillStyle=o.c||C.ink; x.textAlign=o.a||'left'; x.fillText(o.mw?fit(x,s,o.mw):String(s),px,py); x.textAlign='left'; }
+  function rr(x,px,py,w,h,r){ x.beginPath(); x.moveTo(px+r,py); x.lineTo(px+w-r,py); x.quadraticCurveTo(px+w,py,px+w,py+r); x.lineTo(px+w,py+h-r); x.quadraticCurveTo(px+w,py+h,px+w-r,py+h); x.lineTo(px+r,py+h); x.quadraticCurveTo(px,py+h,px,py+h-r); x.lineTo(px,py+r); x.quadraticCurveTo(px,py,px+r,py); x.closePath(); }
+  function hline(x,y,c,w){ x.fillStyle=c; x.fillRect(ML,y-(w||0.6)/2,CW,w||0.6); }
+  function sumOf(rows,k){ var t=0,any=false; rows.forEach(function(r){ if(r[k]!=null){ t+=r[k]; any=true; } }); return any?t:null; }
+  function money(v,pre){ return v==null?'—':(pre||'')+inr2(v); }
+
+  // column x (points from the left edge)
+  var X={sr:ML+4,dt:ML+24,sup:ML+62,no:ML+208,tx:ML+352,gs:ML+408,tot:ML+466,pg:ML+CW-4};
+  function idxItems(rows){
+    var it=[],groups=[],cur=null;
+    rows.forEach(function(r){ var ym=r.date.slice(0,7); if(!cur||cur.ym!==ym){ cur={ym:ym,rows:[]}; groups.push(cur); } cur.rows.push(r); });
+    groups.forEach(function(g){
+      it.push({t:'mon',label:monLabel(g.ym),h:17});
+      g.rows.forEach(function(r){ it.push({t:'row',r:r,h:r.gst?24:18}); });
+      it.push({t:'sub',label:monLabel(g.ym)+' total · '+g.rows.length+(g.rows.length>1?' bills':' bill'),tx:sumOf(g.rows,'taxable'),gs:sumOf(g.rows,'tax'),tot:sumOf(g.rows,'total'),h:18});
+    });
+    it.push({t:'grand',label:'Total · '+rows.length+(rows.length>1?' bills':' bill'),tx:sumOf(rows,'taxable'),gs:sumOf(rows,'tax'),tot:sumOf(rows,'total'),h:22});
+    it.push({t:'note',h:36});
+    return it;
+  }
+  function paginate(items){
+    var pages=[],page,y;
+    function np(){ page={items:[]}; pages.push(page); y=(pages.length===1?TOP+112:TOP+30)+18; }
+    np();
+    for(var i=0;i<items.length;i++){
+      var t=items[i], need=t.h+((t.t==='mon'&&items[i+1])?items[i+1].h:0);
+      if(y+need>LIM && page.items.length) np();
+      page.items.push({it:t,y:y}); y+=t.h;
+    }
+    return pages;
+  }
+  function drawIndexPage(pages,j,meta,total){
+    var P=mk(PW,PH), x=P.x, tY;
+    if(j===0){
+      txt(x,'Bill Book',ML,TOP+16,{w:'800',sz:20});
+      txt(x,meta.title2||meta.shop||'',ML,TOP+31,{w:'600',sz:11,mw:330});
+      txt(x,meta.line3,ML,TOP+44,{sz:8.5,c:C.mut,mw:CW-120});
+      txt(x,'Generated on '+dLong(today()),PW-ML,TOP+11,{sz:8.5,c:C.mut,a:'right'});
+      fnt(x,'400',8.5); var wK=x.measureText(' Khaata').width; fnt(x,'800',8.5); var wL=x.measureText('Live').width;
+      txt(x,' Khaata',PW-ML,TOP+24,{sz:8.5,c:C.mut,a:'right'});
+      txt(x,'Live',PW-ML-wK,TOP+24,{w:'800',sz:8.5,c:C.red,a:'right'});
+      txt(x,'by ',PW-ML-wK-wL,TOP+24,{sz:8.5,c:C.mut,a:'right'});
+      x.fillStyle=C.ink; x.fillRect(ML,TOP+51,CW,1.6);
+      var by=TOP+61, cw=CW/4, cells=[['Bills',String(meta.n)],['Suppliers',String(meta.nSup)],['Taxable value',money(meta.tx,'₹ ')],['GST',money(meta.gs,'₹ ')]];
+      rr(x,ML,by,CW,40,5); x.strokeStyle=C.line2; x.lineWidth=0.8; x.stroke();
+      cells.forEach(function(cl,k){
+        var cx=ML+k*cw; if(k){ x.fillStyle=C.line2; x.fillRect(cx,by,0.8,40); }
+        txt(x,cl[0],cx+9,by+13,{sz:7.5,c:C.mut}); txt(x,cl[1],cx+9,by+30,{w:'800',sz:12.5,mw:cw-14});
+      });
+      tY=TOP+112;
+    } else {
+      txt(x,'Bill Book · index (continued)',ML,TOP+12,{w:'700',sz:11});
+      txt(x,meta.shop||'',PW-ML,TOP+12,{sz:8.5,c:C.mut,a:'right',mw:220});
+      x.fillStyle=C.ink; x.fillRect(ML,TOP+19,CW,1);
+      tY=TOP+30;
+    }
+    x.fillStyle=C.ink; x.fillRect(ML,tY,CW,18);
+    var hd={w:'600',sz:8,c:'#fff'}, by2=tY+12;
+    txt(x,'Sr',X.sr,by2,hd); txt(x,'Date',X.dt,by2,hd); txt(x,'Supplier',X.sup,by2,hd); txt(x,'Bill no.',X.no,by2,hd);
+    txt(x,'Taxable ₹',X.tx,by2,{w:'600',sz:8,c:'#fff',a:'right'}); txt(x,'GST ₹',X.gs,by2,{w:'600',sz:8,c:'#fff',a:'right'});
+    txt(x,'Total ₹',X.tot,by2,{w:'600',sz:8,c:'#fff',a:'right'}); txt(x,'Page',X.pg,by2,{w:'600',sz:8,c:'#fff',a:'right'});
+    pages[j].items.forEach(function(o){
+      var t=o.it, y=o.y;
+      if(t.t==='mon'){ x.fillStyle=C.mon; x.fillRect(ML,y,CW,t.h); hline(x,y+t.h,C.line2); txt(x,t.label,X.sr,y+12,{w:'700',sz:8.5}); }
+      else if(t.t==='row'){
+        var r=t.r; hline(x,y+t.h,C.line);
+        txt(x,String(r.sr),X.sr,y+12); txt(x,dShort(r.date),X.dt,y+12);
+        txt(x,r.sup,X.sup,y+12,{w:'500',mw:X.no-X.sup-8}); if(r.gst) txt(x,r.gst,X.sup,y+20.5,{sz:7,c:C.mut});
+        txt(x,r.no,X.no,y+12,{mw:X.tx-X.no-58});
+        txt(x,money(r.taxable),X.tx,y+12,{a:'right'}); txt(x,money(r.tax),X.gs,y+12,{a:'right'}); txt(x,inr2(r.total),X.tot,y+12,{a:'right'});
+        if(r.page) txt(x,String(r.page),X.pg,y+12,{a:'right'});
+        else txt(x,r.fail?'Not loaded':'No photo',X.pg,y+12,{w:'600',sz:7.5,c:C.red,a:'right'});
+      }
+      else if(t.t==='sub'){ x.fillStyle=C.sub; x.fillRect(ML,y,CW,t.h); hline(x,y+t.h,C.line2); var sb={w:'600'};
+        txt(x,t.label,X.dt,y+12,{w:'600',mw:X.tx-X.dt-60}); txt(x,money(t.tx),X.tx,y+12,{w:'600',a:'right'}); txt(x,money(t.gs),X.gs,y+12,{w:'600',a:'right'}); txt(x,money(t.tot),X.tot,y+12,{w:'600',a:'right'}); }
+      else if(t.t==='grand'){ x.fillStyle=C.ink; x.fillRect(ML,y,CW,1.5);
+        txt(x,t.label,X.dt,y+15,{w:'800',sz:9}); txt(x,money(t.tx),X.tx,y+15,{w:'800',sz:9,a:'right'}); txt(x,money(t.gs),X.gs,y+15,{w:'800',sz:9,a:'right'}); txt(x,money(t.tot,'₹ '),X.tot,y+15,{w:'800',sz:9,a:'right'}); }
+      else if(t.t==='note'){
+        fnt(x,'400',7.5); x.fillStyle=C.mut;
+        var words=('Bills are in date order. Each bill’s photo is on the page shown. Amounts are as saved in the app from each bill; please verify input tax credit against GSTR-2B.'+(meta.missing?' “No photo”: no bill photo was saved for that entry.':'')+(meta.failed?' “Not loaded”: the photo could not be downloaded — make the Bill Book again with good internet.':'')).split(' ');
+        var line='',ly=y+12;
+        words.forEach(function(w){ var tt=line?line+' '+w:w; if(x.measureText(tt).width>CW){ x.fillText(line,ML,ly); ly+=10; line=w; } else line=tt; });
+        if(line) x.fillText(line,ML,ly);
+      }
+    });
+    hline(x,PH-34,C.line);
+    txt(x,(meta.shop?meta.shop+' · ':'')+'Bill Book '+meta.period,ML,PH-24,{sz:7.5,c:C.foot,mw:CW-90});
+    txt(x,'Page '+(j+1)+' of '+total,PW-ML,PH-24,{sz:7.5,c:C.foot,a:'right'});
+    var d=P.c.toDataURL('image/jpeg',0.9); freeC(P.c); return d;
+  }
+  function billHeader(r,nRows,part,parts){
+    var P=mk(PW,140), x=P.x;
+    rr(x,ML,TOP,CW,40,6); x.strokeStyle=C.ink; x.lineWidth=1.2; x.stroke();
+    var nn=r.sr+' of '+nRows; fnt(x,'800',14); var lw=Math.max(x.measureText(nn).width,20);
+    txt(x,'Bill',ML+10,TOP+14,{sz:7.5,c:C.mut}); txt(x,nn,ML+10,TOP+31,{w:'800',sz:14});
+    var tt='₹ '+inr2(r.total); fnt(x,'800',13.5); var rw=Math.max(x.measureText(tt).width,40);
+    txt(x,'Total',PW-ML-10,TOP+14,{sz:7.5,c:C.mut,a:'right'}); txt(x,tt,PW-ML-10,TOP+31,{w:'800',sz:13.5,a:'right'});
+    var sx=ML+10+lw+16, sw=CW-(sx-ML)-rw-26;
+    txt(x,r.sup,sx,r.gst?TOP+18:TOP+25,{w:'700',sz:11.5,mw:sw}); if(r.gst) txt(x,'GSTIN '+r.gst,sx,TOP+31,{sz:7.5,c:C.mut,mw:sw});
+    var fx=ML+2, fy=TOP+60;
+    function fact(k,v){ fnt(x,'400',8.5); var kw=x.measureText(k+' ').width; txt(x,k+' ',fx,fy,{sz:8.5,c:C.mut}); fnt(x,'600',8.5); var vv=fit(x,v,150); txt(x,vv,fx+kw,fy,{w:'600',sz:8.5}); fx+=kw+x.measureText(vv).width+14; }
+    fact('Date',dLong(r.date)); fact('Bill no.',r.no);
+    if(r.taxable!=null) fact('Taxable','₹'+inr2(r.taxable));
+    if(r.tax!=null) fact('GST','₹'+inr2(r.tax));
+    var tag='Original: '+(r.pdf?'PDF':'Photo')+(parts>1?(' · page '+(part+1)+' of '+parts):'');
+    fnt(x,'400',7.5); var tw=x.measureText(tag).width+10;
+    if(fx+tw>PW-ML){ fx=ML+2; fy+=14; }
+    rr(x,fx,fy-9,tw,12.5,3); x.strokeStyle=C.line2; x.lineWidth=0.8; x.stroke(); txt(x,tag,fx+5,fy,{sz:7.5});
+    var d=P.c.toDataURL('image/jpeg',0.88); freeC(P.c); return d;
+  }
+  function footLeft(meta){
+    var P=mk(CW-120,14), x=P.x;
+    x.setTransform(S,0,0,S,0,0); txt(x,(meta.shop?meta.shop+' · ':'')+'Bill Book '+meta.period,0,10,{sz:7.5,c:C.foot,mw:CW-125});
+    var d=P.c.toDataURL('image/jpeg',0.9); freeC(P.c); return d;
+  }
+
+  function buildBook(G,meta,tick,isCancelled){
+    var J=window.jspdf&&window.jspdf.jsPDF; if(!J) return Promise.reject(new Error('jsPDF missing'));
+    var rows=G.rows; rows.forEach(function(r,i){ r.sr=i+1; r.page=0; r.fail=0; });
+    var m={shop:meta.shop,gstin:meta.gstin,period:G.period,n:rows.length,
+      nSup:Object.keys(rows.reduce(function(o,r){ o[supKey(r.sup)]=1; return o; },{})).length,
+      tx:sumOf(rows,'taxable'),gs:sumOf(rows,'tax'),missing:rows.some(function(r){ return !hasPhoto(r); })};
+    m.line3=(meta.gstin?'GSTIN '+meta.gstin+' · ':'')+'Purchase bills, '+G.period+(meta.sup?' · '+meta.sup:'');
+    var pages=paginate(idxItems(rows)), nIdx=pages.length;
+    var doc=new J({unit:'pt',format:'a4',compress:true});
+    for(var i=1;i<nIdx;i++) doc.addPage();
+    var fl=footLeft(m), billPages=[], list=rows.filter(hasPhoto), cache={};
+    function want(i){ if(i<list.length && !cache[i]) cache[i]=loadBill(list[i]); }
+    function addBill(r,imgs){
+      var parts=imgs.length;
+      imgs.forEach(function(im,k){
+        doc.addPage(); var pn=doc.getNumberOfPages(); if(!k) r.page=pn; billPages.push(pn);
+        doc.addImage(billHeader(r,rows.length,k,parts),'JPEG',0,0,PW,140,'h'+r.sr+'_'+k,'NONE');
+        var fy=147, fh=PH-51-fy;
+        doc.setDrawColor(225,230,239); doc.setFillColor(251,252,254); doc.setLineWidth(0.8); doc.roundedRect(ML,fy,CW,fh,3,3,'FD');
+        var mw=CW*0.96, mh=fh*0.96, sc=Math.min(mw/im.w,mh/im.h), w=im.w*sc, h=im.h*sc, ix=ML+(CW-w)/2, iy=fy+(fh-h)/2;
+        doc.addImage(im.data,'JPEG',ix,iy,w,h,'b'+r.sr+'_'+k,'NONE');
+        doc.setDrawColor(213,219,230); doc.setLineWidth(0.5); doc.rect(ix,iy,w,h,'S');
+        im.data=null;
+      });
+    }
+    function loop(i){
+      if(isCancelled()) return Promise.reject({cancel:true});
+      if(i>=list.length) return Promise.resolve();
+      want(i); want(i+1); want(i+2);
+      return cache[i].then(function(imgs){
+        delete cache[i];
+        var before=doc.getNumberOfPages(), nb=billPages.length;
+        try{ addBill(list[i],imgs); }
+        catch(e){   // drop half-added pages, mark the bill, keep going
+          while(doc.getNumberOfPages()>before) doc.deletePage(doc.getNumberOfPages());
+          billPages.length=nb; list[i].page=0; list[i].fail=1;
+          try{ console.warn('bill page',list[i].sr,e&&e.message); }catch(x){}
+        }
+      },function(e){ delete cache[i]; list[i].fail=1; try{ console.warn('bill photo',list[i].sr,e&&e.message); }catch(x){} })
+        .then(function(){ tick(); return yieldP(); }).then(function(){ return loop(i+1); });
+    }
+    return loop(0).then(function(){
+      if(isCancelled()) throw {cancel:true};
+      var total=doc.getNumberOfPages(), ix=nIdx>1?('pages 1-'+nIdx):'page 1';
+      m.failed=list.some(function(r){ return r.fail; });
+      billPages.forEach(function(pn){
+        doc.setPage(pn);
+        doc.setDrawColor(225,230,239); doc.setLineWidth(0.6); doc.line(ML,PH-34,PW-ML,PH-34);
+        doc.addImage(fl,'JPEG',ML,PH-34,CW-120,14,'foot','NONE');
+        doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(122,133,155);
+        doc.text('Index: '+ix+'  ·  Page '+pn+' of '+total,PW-ML,PH-24,{align:'right'});
+      });
+      for(var j=0;j<nIdx;j++){ doc.setPage(j+1); doc.addImage(drawIndexPage(pages,j,m,total),'JPEG',0,0,PW,PH,'idx'+j,'NONE'); }
+      try{ doc.setProperties({title:'Bill Book · '+G.period,creator:'Live Khaata'}); }catch(e){}
+      var ok=list.filter(function(r){ return !r.fail; }).length;
+      return {blob:doc.output('blob'),pages:total,ok:ok,failed:list.length-ok,label:G.label};
+    });
+  }
+
+  function units(r){ return hasPhoto(r)?Math.max(1,r.pdf||0):0; }   // pages, not bills
+  function unitsOf(rows){ return rows.reduce(function(t,r){ return t+units(r); },0); }
+  function groupsOf(rows,period,label){
+    if(unitsOf(rows)<=MAXB) return [{rows:rows,period:period,label:label,suffix:''}];
+    var byM=[],cur=null;
+    rows.forEach(function(r){ var ym=r.date.slice(0,7); if(!cur||cur.ym!==ym){ cur={ym:ym,rows:[]}; byM.push(cur); } cur.rows.push(r); });
+    var out=[];
+    byM.forEach(function(g){
+      var chunks=[],cc=[],np=0;
+      g.rows.forEach(function(r){ var u=units(r); if(u&&np+u>MAXB&&np){ chunks.push(cc); cc=[]; np=0; } cc.push(r); np+=u; });
+      if(cc.length) chunks.push(cc);
+      chunks.forEach(function(ch,k){
+        var ml=monLabel(g.ym)+(chunks.length>1?(' (part '+(k+1)+' of '+chunks.length+')'):'');
+        out.push({rows:ch,period:span(ch[0].date,ch[ch.length-1].date),label:ml,suffix:'_'+monLabel(g.ym).replace(' ','_')+(chunks.length>1?('_part'+(k+1)):'')});
+      });
+    });
+    return out;
+  }
+
+  /* ── the sheet ── */
+  var BB={on:false,running:false,cancel:false,files:null,sig:'',total:0,done:0,run:0};
+  window._bbState=BB;
+  var ICON='<svg viewBox="0 0 32 32"><rect x="9" y="4" width="17" height="22" rx="2" fill="#e9dfc4" stroke="#b8902f" stroke-width="1"/><rect x="6" y="7" width="17" height="22" rx="2" fill="#f4ead0" stroke="#c9a24b" stroke-width="1.1"/><path d="M9.5 12h10M9.5 15.5h10M9.5 19h6" stroke="#a5761f" stroke-width="1.5" stroke-linecap="round"/><rect x="9.5" y="22.5" width="10" height="3" rx="1" fill="#e84545"/><path d="M12 4.5v5" stroke="#5a6a98" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  try{ if(window.ST_TYPES) window.ST_TYPES.billbook={party:true,icon:ICON,title:'Bill Book / बिल बुक',sub:'all bill photos in one PDF, by date'}; }catch(e){}
+  var EN=['This month','Last month','Quarter','This year','All'];
+  function go(){ return $('st-gen-go'); }
+  function partyNum(){ return document.querySelector('#st-gen-party .st-gen-num'); }
+  function sig(){ var g=window._stGen||{}; return (g.supplier||'')+'|'+(g.range||''); }
+  function ctaIdle(){ if(!BB.on) return; var g=go(); if(g){ g.classList.remove('busy'); g.textContent='Make Bill Book & Share →'; } var d=$('st-bb-done'); if(d) d.style.display='none'; }
+  function resetResult(){ BB.files=null; BB.sig=''; if(!BB.running) ctaIdle(); }
+  function bbApply(){
+    BB.on=true; resetResult();
+    var g=window._stGen; g.supplier=null; g.range='year';
+    var pn=partyNum(); if(pn){ if(pn.getAttribute('data-hi')==null) pn.setAttribute('data-hi',pn.innerHTML); pn.innerHTML='<b>1</b> · Supplier <span class="st-bb-opt">(optional)</span>'; }
+    var sn=$('st-gen-supname'); if(sn) sn.textContent='All suppliers';
+    var gi=$('st-gen-supgst'); if(gi) gi.style.display='none';
+    var nd=$('st-gen-num-date'); if(nd) nd.innerHTML='<b>2</b> · Date';
+    var ch=$('st-gen-chips'); if(ch){ ch.classList.add('bb'); [].forEach.call(ch.querySelectorAll('.st-gen-chip'),function(c,i){ if(c.getAttribute('data-hi')==null) c.setAttribute('data-hi',c.textContent); c.textContent=EN[i]||c.textContent; c.classList.toggle('on',c.getAttribute('data-r')==='year'); }); }
+    var nf=$('st-gen-num-fmt'); if(nf&&nf.parentNode) nf.parentNode.style.display='none';
+    var bx=$('st-gen-bb'); if(bx) bx.style.display='';
+    bbRefresh();
+  }
+  function bbRestore(){
+    if(!BB.on) return; BB.on=false;
+    var pn=partyNum(); if(pn&&pn.getAttribute('data-hi')!=null) pn.innerHTML=pn.getAttribute('data-hi');
+    var gi=$('st-gen-supgst'); if(gi) gi.style.display='';
+    var ch=$('st-gen-chips'); if(ch){ ch.classList.remove('bb'); [].forEach.call(ch.querySelectorAll('.st-gen-chip'),function(c){ var h=c.getAttribute('data-hi'); if(h!=null) c.textContent=h; }); }
+    var nf=$('st-gen-num-fmt'); if(nf&&nf.parentNode) nf.parentNode.style.display='';
+    var bx=$('st-gen-bb'); if(bx) bx.style.display='none';
+    var g=go(); if(g){ g.classList.remove('busy'); g.innerHTML='बनाएं &amp; Share →'; }
+  }
+  window.bbRefresh=function(){
+    if(!BB.on) return;
+    var g=window._stGen||{}, D=bbRows(g.supplier,g.range), n=D.rows.length, np=D.rows.filter(function(r){ return !hasPhoto(r); }).length;
+    var el=$('st-bb-cnt');
+    if(el){
+      el.classList.toggle('none',!n||np===n);
+      el.textContent=!n?'No bills in this period':(n+(n>1?' bills':' bill')+(np===n?' · none has a photo':(np?(' · '+np+' without photo'):' · all with photo')));
+    }
+    if(BB.sig!==sig()) resetResult();
+  };
+  function progress(){
+    if(!BB.on||!BB.running) return;
+    var g=go(); if(!g) return;
+    var pc=BB.total?Math.round(100*BB.done/BB.total):0;
+    if(!g.classList.contains('busy')){ g.classList.add('busy'); g.innerHTML='<div class="st-bb-pt">Making Bill Book… <span id="st-bb-pn"></span></div><div class="st-bb-pbar"><i id="st-bb-pi"></i></div>'; }
+    var pn=$('st-bb-pn'), pi=$('st-bb-pi'); if(pn) pn.textContent=BB.done+' / '+BB.total; if(pi) pi.style.width=pc+'%';
+  }
+  function mb(n){ return n<1048576?(Math.max(1,Math.round(n/1024))+' KB'):((n/1048576).toFixed(n<10485760?1:0)+' MB'); }
+  function shareText(){ var b=bizInfo(); return 'Bill Book'+(b.shop?' · '+b.shop:'')+(BB.period?' · '+BB.period:''); }
+  function bbRun(){
+    var g=window._stGen||{}, D=bbRows(g.supplier,g.range), rows=D.rows;
+    if(!rows.length){ tst('No bills in this period',true); return; }
+    var withP=rows.filter(hasPhoto).length;
+    if(!withP){ tst('These bills have no photos',true); return; }
+    if(navigator.onLine===false){ tst('Internet चालू करें — bill photos cloud से आती हैं',true); return; }
+    var nu=unitsOf(rows);
+    if(nu>MAXRUN){ tst('Too many bill photos at once ('+nu+'). Pick a quarter or a month.',true); return; }
+    var b=bizInfo(), R=D.R;
+    var period=(R&&R.from)?span(R.from,R.to):span(rows[0].date,rows[rows.length-1].date);
+    var label=(R&&R.from)?(R.label||period):'All bills';
+    var meta={shop:b.shop,gstin:b.gstin,sup:g.supplier||''};
+    var groups=groupsOf(rows,period,label);
+    var base='Bill_Book_'+((b.shop||'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,30)||'')+'_'+String(label).replace(/[^A-Za-z0-9\-]+/g,'_').replace(/^_+|_+$/g,'');
+    base=base.replace(/_+/g,'_').replace(/_$/,'');
+    var mySig=sig(), run=++BB.run;
+    function live(){ return run===BB.run && !BB.cancel; }
+    BB.running=true; BB.cancel=false; BB.files=null; BB.total=withP; BB.done=0; BB.period=period;
+    var d=$('st-bb-done'); if(d) d.style.display='none';
+    progress();
+    try{ if(window.logEvent) window.logEvent('billbook_start',{bills:rows.length,photos:withP,files:groups.length}); }catch(e){}
+    var files=[], okAll=0, failAll=0, t0=Date.now();
+    groups.reduce(function(p,G){
+      return p.then(function(){
+        if(!live()) throw {cancel:true};
+        return buildBook(G,meta,function(){ if(live()){ BB.done++; progress(); } },function(){ return !live(); }).then(function(r){
+          okAll+=r.ok; failAll+=r.failed;
+          if(r.ok) files.push({blob:r.blob,name:base+G.suffix+'.pdf',label:G.label,pages:r.pages});
+        });
+      });
+    },Promise.resolve()).then(function(){
+      if(!live()) return;
+      BB.running=false;
+      if(mySig!==sig()){ ctaIdle(); return; }   // supplier/date changed while it was being made
+      if(!okAll){ ctaIdle(); tst('Bill photos download नहीं हुईं — internet check करके दोबारा कोशिश करें',true); return; }
+      BB.files=files; BB.sig=mySig;
+      var size=files.reduce(function(t,f){ return t+f.blob.size; },0);
+      var gg=go(); if(gg){ gg.classList.remove('busy'); gg.textContent='Share Bill Book →'; }
+      var dt=$('st-bb-dtx'); if(dt) dt.innerHTML='✓ Ready · '+(files.length>1?(files.length+' files (by month)'):(okAll+(okAll>1?' bills':' bill')))+' · '+mb(size)+(failAll?' <em>· '+failAll+(failAll>1?' photos':' photo')+' didn’t load</em>':'');
+      var dd=$('st-bb-done'); if(dd) dd.style.display='';
+      try{ if(window.logEvent) window.logEvent('billbook_done',{ok:okAll,failed:failAll,files:files.length,kb:Math.round(size/1024),ms:Date.now()-t0}); }catch(e){}
+      if(NAT() && BB.sig===sig() && $('st-gen-ov') && $('st-gen-ov').classList.contains('on')) bbShare();
+    }).catch(function(e){
+      if(run!==BB.run) return;
+      BB.running=false; ctaIdle();
+      if(e&&e.cancel) return;
+      try{ console.warn('billbook',e&&(e.message||e)); }catch(x){}
+      tst('Bill Book नहीं बन पाई — दोबारा कोशिश करें',true);
+    });
+  }
+  function bbShare(){ if(BB.files&&BB.files.length) lkShareFiles(BB.files,'Bill Book',shareText()); }
+  window.bbView=function(){ if(BB.files&&BB.files.length) lkPdfView(BB.files,0); };
+  window.bbSave=function(){
+    if(!(BB.files&&BB.files.length)) return;
+    if(canNativeSave()){
+      tst('सेव हो रहा है…');
+      BB.files.reduce(function(p,f){ return p.then(function(){ return writeDocs(f.blob,f.name); }); },Promise.resolve()).then(function(){
+        tst('📁 सेव हो गया · Documents › LiveKhaata');
+      },function(){ tst('Phone में सीधा सेव नहीं — Drive / Files चुनें'); bbShare(); });
+      return;
+    }
+    BB.files.forEach(function(f,i){ setTimeout(function(){ anchorDl(f.blob,f.name); },i*450); });
+    tst('📥 Download हो गया');
+  };
+
+  // hook the shared statement sheet
+  function hook(){
+    if(hook.done||typeof window.stGenOpen!=='function'||typeof window.stGenerate!=='function') return false;
+    hook.done=true;
+    var o1=window.stGenOpen, o2=window.stGenerate, o3=window.stGenRange, o4=window.stGenClose, o5=window.stSupPickOpen;
+    window.stGenOpen=function(type){ var r=o1.apply(this,arguments); try{ if(type==='billbook') bbApply(); else bbRestore(); }catch(e){} return r; };
+    window.stGenerate=function(){
+      var g=window._stGen||{};
+      if(g.type!=='billbook') return o2.apply(this,arguments);
+      if(BB.running) return;
+      if(BB.files&&BB.files.length&&BB.sig===sig()){ bbShare(); return; }
+      bbRun();
+    };
+    if(o3) window.stGenRange=function(){ var r=o3.apply(this,arguments); try{ if(BB.on) bbRefresh(); }catch(e){} return r; };
+    if(o4) window.stGenClose=function(){
+      if(BB.running){ BB.run++; BB.cancel=true; BB.running=false; ctaIdle(); tst('Bill Book रोक दी'); }
+      return o4.apply(this,arguments);
+    };
+    if(o5) window.stSupPickOpen=function(){
+      var r=o5.apply(this,arguments);
+      try{
+        var bb=(window._stGen||{}).type==='billbook';
+        var t=document.querySelector('#st-suppick-ov .st-suppick-title'); if(t){ if(t.getAttribute('data-hi')==null) t.setAttribute('data-hi',t.textContent); t.textContent=bb?'Choose supplier':t.getAttribute('data-hi'); }
+        var q=$('st-suppick-q'); if(q){ if(q.getAttribute('data-hi')==null) q.setAttribute('data-hi',q.placeholder); q.placeholder=bb?'Search name…':q.getAttribute('data-hi'); }
+      }catch(e){}
+      return r;
+    };
+    return true;
+  }
+  if(!hook()){ var tries=0, iv=setInterval(function(){ if(hook()||++tries>50) clearInterval(iv); },150); }
 })();
 </script>
 </body>

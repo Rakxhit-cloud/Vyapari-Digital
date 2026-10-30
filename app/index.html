@@ -20302,8 +20302,8 @@ window._lkPersistOk=function(r){
       <li><i>✓</i>Daily reminders and CA statements</li>
     </ul>
     <div id="lkb-plans">
-      <button type="button" class="lkb-op on" data-p="yearly" onclick="lkbPick('yearly')"><span class="lkb-rd"></span><span class="lkb-nm"><b>Yearly</b><span class="lkb-chip">Best value</span><span>₹50/month · Save ₹197</span></span><span class="lkb-pr" id="lkb-pr-yearly">₹599<span>per year</span></span></button>
-      <button type="button" class="lkb-op" data-p="quarterly" onclick="lkbPick('quarterly')"><span class="lkb-rd"></span><span class="lkb-nm"><b>Quarterly</b><span>₹66/month</span></span><span class="lkb-pr" id="lkb-pr-quarterly">₹199<span>per 3 months</span></span></button>
+      <button type="button" class="lkb-op on" data-p="yearly" onclick="lkbPick('yearly')"><span class="lkb-rd"></span><span class="lkb-nm"><b>Yearly</b><span class="lkb-chip">Best value</span><span>₹59/month · Save ₹233</span></span><span class="lkb-pr" id="lkb-pr-yearly">₹707<span>per year</span></span></button>
+      <button type="button" class="lkb-op" data-p="quarterly" onclick="lkbPick('quarterly')"><span class="lkb-rd"></span><span class="lkb-nm"><b>Quarterly</b><span>₹78/month</span></span><span class="lkb-pr" id="lkb-pr-quarterly">₹235<span>per 3 months</span></span></button>
       <div class="lkb-fine">Includes GST. Billed through Google Play. Cancel anytime.</div>
     </div>
     <div class="lkb-msg" id="lkb-msg" style="display:none;"></div>
@@ -20391,8 +20391,8 @@ window._lkPersistOk=function(r){
   function paintAll(){ paintRow(); paintHome(); if($('lkb-ov') && $('lkb-ov').classList.contains('show')) paintPlan(); }
 
   function planRows(){
-    return '<button type="button" class="lkb-li" onclick="lkbShowSheet(\'plan\',\'yearly\')"><span class="t">Yearly · <span style="display:inline;color:inherit;font-size:inherit" id="lkb-li-y">₹599/year</span><span>₹50/month · Best value</span></span><span class="c">›</span></button>'+
-           '<button type="button" class="lkb-li" onclick="lkbShowSheet(\'plan\',\'quarterly\')"><span class="t">Quarterly · <span style="display:inline;color:inherit;font-size:inherit" id="lkb-li-q">₹199/3 months</span><span>₹66/month</span></span><span class="c">›</span></button>';
+    return '<button type="button" class="lkb-li" onclick="lkbShowSheet(\'plan\',\'yearly\')"><span class="t">Yearly · <span style="display:inline;color:inherit;font-size:inherit" id="lkb-li-y">₹707/year</span><span>₹59/month · Best value</span></span><span class="c">›</span></button>'+
+           '<button type="button" class="lkb-li" onclick="lkbShowSheet(\'plan\',\'quarterly\')"><span class="t">Quarterly · <span style="display:inline;color:inherit;font-size:inherit" id="lkb-li-q">₹235/3 months</span><span>₹78/month</span></span><span class="c">›</span></button>';
   }
   function paintPlan(){
     var c=$('lkb-card'); if(!c) return; var s=status(), h='';
@@ -20521,8 +20521,10 @@ window._lkPersistOk=function(r){
   }
 
   /* ── day-13 reminder: one notification 2 days before the trial ends ── */
+  var reminded=false;
   function remind(){
-    var P=LN(); if(!P) return; var s=status(), ID=5001;
+    var P=LN(); if(!P || reminded) return; var s=status(), ID=5001;
+    if(s.kind==='unknown') return; reminded=true;
     var lang=(function(){ var c=lsGet('hk_notif_cfg')||{}; if(c.lang==='hi'||c.lang==='en') return c.lang; return /^hi/i.test(navigator.language||'')?'hi':'en'; })();
     P.cancel({notifications:[{id:ID}]}).catch(function(){}).then(function(){
       if(s.kind!=='trial') return;
@@ -20532,7 +20534,7 @@ window._lkPersistOk=function(r){
       return P.schedule({notifications:[{id:ID,channelId:'lk_reminders',
         title:hi?'आपका ट्रायल 2 दिन में समाप्त होगा':'Your trial ends in 2 days',
         body:hi?'रोज़ का हिसाब बिना रुकावट जारी रखने के लिए प्लान चुनें।':'Pick a plan to keep your daily records going without a break.',
-        schedule:{at:at,allowWhileIdle:true},smallIcon:'ic_stat_lk',largeIcon:'lk_notif_large',iconColor:'#C99A3E',autoCancel:true,extra:{route:'plan'}}]});
+        schedule:{at:at,allowWhileIdle:true},isExactNotification:false,smallIcon:'ic_stat_lk',largeIcon:'lk_notif_large',iconColor:'#C99A3E',autoCancel:true,extra:{route:'plan'}}]});
     }).catch(function(){});
   }
 
@@ -20548,7 +20550,7 @@ window._lkPersistOk=function(r){
     }
   }
   window.LKB={
-    setTrial:function(uid,t){ if(uid && uid!==st.uid){ st.uid=uid; loadCache(); newUser(); } st.trial=t||0; persist(); check(); remind(); },
+    setTrial:function(uid,t){ if(uid && uid!==st.uid){ st.uid=uid; loadCache(); newUser(); } st.trial=t||0; persist(); check(); if(window.lkWhenOpen) lkWhenOpen(remind,'lkb-remind'); else remind(); },
     setEnt:function(uid,e){ if(uid && uid!==st.uid){ st.uid=uid; loadCache(); newUser(); } if(e){ var mine=st.ent&&st.ent.sub; if(mine && !e.sub) e.sub=mine; st.ent=e; st.entOk=true; persist(); } paintAll(); },
     status:status, canWrite:canWrite, paintRow:paintRow, check:check, restore:restore,
     _st:st, _wrap:wrapAll

@@ -21008,49 +21008,25 @@ window._lkPersistOk=function(r){
   };
   function hasPhoto(r){ return !!(r.url||r.path); }
 
-  /* clean scan: divide by a smoothed paper background, then lift whites and deepen ink */
-  var LUT=null;
-  function lut(){ if(LUT) return LUT; LUT=new Uint8ClampedArray(256); for(var i=0;i<256;i++){ var t=(i-26)/(244-26); t=t<0?0:t>1?1:t; LUT[i]=Math.round(255*Math.pow(t,1.35)); } return LUT; }
-  function maxF(a,w,h){ var o=new Uint8ClampedArray(a.length); for(var y=0;y<h;y++){ for(var x=0;x<w;x++){ var i=(y*w+x)*4, r=0,g=0,b=0; for(var dy=-1;dy<=1;dy++){ var yy=y+dy; if(yy<0||yy>=h) continue; for(var dx=-1;dx<=1;dx++){ var xx=x+dx; if(xx<0||xx>=w) continue; var j=(yy*w+xx)*4; if(a[j]>r)r=a[j]; if(a[j+1]>g)g=a[j+1]; if(a[j+2]>b)b=a[j+2]; } } o[i]=r;o[i+1]=g;o[i+2]=b;o[i+3]=255; } } return o; }
-  function boxF(a,w,h){ var o=new Uint8ClampedArray(a.length); for(var y=0;y<h;y++){ for(var x=0;x<w;x++){ var i=(y*w+x)*4, r=0,g=0,b=0,n=0; for(var dy=-1;dy<=1;dy++){ var yy=y+dy; if(yy<0||yy>=h) continue; for(var dx=-1;dx<=1;dx++){ var xx=x+dx; if(xx<0||xx>=w) continue; var j=(yy*w+xx)*4; r+=a[j];g+=a[j+1];b+=a[j+2];n++; } } o[i]=r/n;o[i+1]=g/n;o[i+2]=b/n;o[i+3]=255; } } return o; }
+  /* clean scan, safe version: ONE global tone curve per colour channel (white-balance the paper,
+     lift it to white, deepen the ink). No local or region tricks, so nothing on the bill can be
+     erased or blotched: every darker detail stays darker than its surroundings. */
+  function pct(hist,total,p){ var t=total*p, c=0; for(var i=0;i<256;i++){ c+=hist[i]; if(c>=t) return i; } return 255; }
   function cleanScan(c){
-    var w=c.width,h=c.height,ctx=c.getContext('2d');
-    var sw=Math.max(8,Math.round(w/24)), sh=Math.max(8,Math.round(h/24));
-    var sc=document.createElement('canvas'); sc.width=sw; sc.height=sh;
-    var sx=sc.getContext('2d'); sx.imageSmoothingEnabled=true; try{sx.imageSmoothingQuality='high';}catch(e){}
-    sx.drawImage(c,0,0,sw,sh);
-    var sd=sx.getImageData(0,0,sw,sh), a0=sd.data;
-    // finer, blurred map answers "is this paper at all?" (text averages out; the table under the bill stays dark)
-    var mw=Math.max(8,Math.round(w/8)), mh=Math.max(8,Math.round(h/8));
-    var rc=document.createElement('canvas'); rc.width=mw; rc.height=mh;
-    var rx=rc.getContext('2d'); rx.imageSmoothingEnabled=true; try{rx.imageSmoothingQuality='high';}catch(e){}
-    rx.drawImage(c,0,0,mw,mh);
-    var rd=rx.getImageData(0,0,mw,mh), ra=boxF(boxF(rd.data,mw,mh),mw,mh), lums=[];
-    for(var i=0;i<ra.length;i+=4) lums.push(0.299*ra[i]+0.587*ra[i+1]+0.114*ra[i+2]);
-    lums.sort(function(p,q){ return p-q; });
-    var paper=lums[Math.floor(lums.length*0.9)]||255, cut=paper*0.6;
-    // Only dark areas that touch the photo's edge count as "not paper" (table, floor, lap).
-    // A shadow, logo, dark header band or QR code inside the bill is never wiped.
-    var N=mw*mh, dark=new Uint8Array(N), out=new Uint8Array(N), qq=new Int32Array(N), qh=0, qt=0, k2;
-    for(k2=0;k2<N;k2++){ var o4=k2*4; dark[k2]=(0.299*ra[o4]+0.587*ra[o4+1]+0.114*ra[o4+2])<cut?1:0; }
-    function seed(p){ if(dark[p]&&!out[p]){ out[p]=1; qq[qt++]=p; } }
-    for(var xx=0;xx<mw;xx++){ seed(xx); seed((mh-1)*mw+xx); }
-    for(var yy=0;yy<mh;yy++){ seed(yy*mw); seed(yy*mw+mw-1); }
-    while(qh<qt){ var p=qq[qh++], px=p%mw; if(px>0) seed(p-1); if(px<mw-1) seed(p+1); if(p>=mw) seed(p-mw); if(p<N-mw) seed(p+mw); }
-    for(k2=0;k2<N;k2++){ var o5=k2*4; ra[o5]=ra[o5+1]=ra[o5+2]=out[k2]?255:0; ra[o5+3]=255; }
-    rd.data.set(ra); rx.putImageData(rd,0,0);
-    var a=boxF(maxF(a0,sw,sh),sw,sh), md=sx.createImageData(sw,sh); md.data.set(a); sx.putImageData(md,0,0);
-    function up(src){ var u=document.createElement('canvas'); u.width=w; u.height=h; var ux=u.getContext('2d'); ux.imageSmoothingEnabled=true; try{ux.imageSmoothingQuality='high';}catch(e){} ux.drawImage(src,0,0,w,h); var d=ux.getImageData(0,0,w,h).data; freeC(u); return d; }
-    var B=up(sc), Rw=up(rc), id=ctx.getImageData(0,0,w,h), d=id.data, L=lut();
-    for(var j=0;j<d.length;j+=4){
-      if(Rw[j]>128){ d[j]=d[j+1]=d[j+2]=255; continue; }   // table / floor around the bill
-      var r=d[j]*255/(B[j]||1), g=d[j+1]*255/(B[j+1]||1), b=d[j+2]*255/(B[j+2]||1);
-      if(r>255)r=255; if(g>255)g=255; if(b>255)b=255;
-      var l=0.299*r+0.587*g+0.114*b;
-      d[j]=L[(r*0.65+l*0.35)|0]; d[j+1]=L[(g*0.65+l*0.35)|0]; d[j+2]=L[(b*0.65+l*0.35)|0];
+    var w=c.width,h=c.height,ctx=c.getContext('2d'), id=ctx.getImageData(0,0,w,h), d=id.data;
+    var hr=new Uint32Array(256),hg=new Uint32Array(256),hb=new Uint32Array(256),hl=new Uint32Array(256),n=0;
+    for(var i=0;i<d.length;i+=16){ hr[d[i]]++; hg[d[i+1]]++; hb[d[i+2]]++; hl[(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])|0]++; n++; }
+    // paper white per channel = 95th percentile (bill paper is the brightest large area); ink = 1st percentile
+    var lo=pct(hl,n,0.01), wr=pct(hr,n,0.95), wg=pct(hg,n,0.95), wb=pct(hb,n,0.95);
+    var Lr=new Uint8ClampedArray(256),Lg=new Uint8ClampedArray(256),Lb=new Uint8ClampedArray(256);
+    function curve(L,white){
+      white=Math.max(white,lo+60);                     // never stretch a flat, dull photo too hard
+      var black=Math.min(lo,white-60)*0.85;
+      for(var v=0;v<256;v++){ var t=(v-black)/(white-black); t=t<0?0:t>1?1:t; L[v]=Math.round(255*Math.pow(t,1.18)); }
     }
+    curve(Lr,wr); curve(Lg,wg); curve(Lb,wb);
+    for(var j=0;j<d.length;j+=4){ d[j]=Lr[d[j]]; d[j+1]=Lg[d[j+1]]; d[j+2]=Lb[d[j+2]]; }
     ctx.putImageData(id,0,0);
-    freeC(sc); freeC(rc);
   }
 
   /* fetch one bill photo. Native: through the app (no browser CORS). Browser: fetch. */

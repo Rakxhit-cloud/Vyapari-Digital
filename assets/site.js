@@ -4,7 +4,7 @@
    ===================================================================== */
 window.LK_CONFIG = {
   email:    'support@livekhaata.app',   // support email shown everywhere, e.g. 'support@livekhaata.app'
-  playUrl:  '',        // Play Store listing link (Download buttons show 'Coming soon' while empty)
+  playUrl:  'https://play.google.com/store/apps/details?id=app.livekhaata.twa',        // Play Store listing link (Download buttons show 'Coming soon' while empty)
   refund:   '7day',    // '7day' or 'none'
   paymentsLive:   false, // set true once Razorpay + licence backend are live
   codeRedeemLive: false  // set true once activation-code backend is live

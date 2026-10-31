@@ -2,148 +2,428 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Khaata — Supplier dues and GST reports in one app</title>
-<meta name="description" content="Rate-wise GST from a bill photo, bill-wise supplier dues, and a ready purchase register and ITC summary. ₹799 + GST, one-time payment.">
-<meta name="theme-color" content="#070c1c">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Khaata — Say the amount. Your khata is ready.</title>
+<meta name="description" content="Record your shop's money in and out by voice, keep supplier dues from a bill photo or PDF, and get month-end reports and a Bill Book ready. Free for 15 days.">
+<meta name="theme-color" content="#5E1212">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Live Khaata — Supplier dues and GST reports in one app">
-<meta property="og:description" content="Rate-wise GST from a bill photo, bill-wise supplier dues, and a ready purchase register and ITC summary. ₹799 + GST, one-time payment.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070c1c'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23e05252'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/site.css">
+<meta property="og:title" content="Live Khaata — Say the amount. Your khata is ready.">
+<meta property="og:description" content="Record your shop's money in and out by voice, keep supplier dues from a bill photo or PDF, and get month-end reports and a Bill Book ready. Free for 15 days.">
+<meta property="og:image" content="https://livekhaata.app/playstore-512.png">
+<link rel="alternate" hreflang="hi" href="https://livekhaata.app/">
+<link rel="alternate" hreflang="en" href="https://livekhaata.app/en/">
+<script>/* Installed app (Play TWA or home-screen PWA) must open the app, not the website. Only OUR app counts: links tapped in the Google app, Gmail, WhatsApp etc. also carry an android-app:// referrer and must see the website. */(function(){try{var q=location.search||"",r=document.referrer||"",tw=r.indexOf("android-app://app.livekhaata.twa")===0,sa=false;try{sa=matchMedia("(display-mode: standalone)").matches||matchMedia("(display-mode: fullscreen)").matches||navigator.standalone===true}catch(e){}if(/[?&](src=play|inst=)/.test(q)||tw||sa){if(tw&&!/[?&]src=play/.test(q))q=(q?q+"&":"?")+"src=play";location.replace("/app/"+q+location.hash)}}catch(e){}})();</script>
+<link rel="icon" type="image/png" sizes="32x32" href="../icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF;
+  --ground:#F3F6FB;
+  --ink:#16233F;
+  --ink-2:#4A5873;
+  --rule:#D9E3F2;
+  --margin:#D2352C;
+  --brass:#C9952F;
+  --brass-ink:#2B1D05;
+  --green:#1F8A5B;
+  --out:#C2452F;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Mukta',system-ui,sans-serif;font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--brass);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* mockup note */
+.note{background:#FFF7E3;border-bottom:1px solid #EBD9A8;color:#5B4A1E;font-size:14px;padding:10px 24px;text-align:center}
+
+/* header */
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.nav{display:flex;align-items:center;gap:28px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:22px;letter-spacing:-.2px}
+.brand img{width:34px;height:34px;border-radius:9px}
+.brand .l{color:var(--margin)}
+.links{display:flex;gap:24px;margin-left:auto;font-size:16px;color:var(--ink-2)}
+.links a{text-decoration:none}.links a:hover{color:var(--ink)}
+.lang{font-size:15px;border:1px solid var(--rule);border-radius:8px;padding:4px 10px;text-decoration:none;color:var(--ink-2)}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;font-size:16px;text-decoration:none;border-radius:10px;padding:12px 20px;border:1px solid transparent;cursor:pointer;white-space:nowrap}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-ink:hover{background:#0F1A31}
+.btn-brass{background:var(--brass);color:var(--brass-ink)}
+.btn-brass:hover{background:#B9862A}
+.btn-line{border-color:var(--rule);color:var(--ink);background:#fff}
+.btn svg{width:18px;height:18px}
+.btn svg.gp{width:22px;height:22px;background:#fff;border-radius:6px;padding:3px;box-sizing:content-box}
+.nav .btn{padding:9px 16px;font-size:15px}
+
+/* hero */
+.hero{padding:72px 0 88px;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(40px,5.2vw,62px);line-height:1.04;font-weight:800;letter-spacing:-1.4px;max-width:12ch}
+.hero p.lead{font-size:20px;color:var(--ink-2);margin:22px 0 30px;max-width:34em}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.fine{font-size:15px;color:var(--ink-2);margin-top:14px}
+.gst{display:inline-block;margin-top:36px;font-size:15px;color:var(--ink-2);border-left:3px solid var(--gold,#D9AB45);padding-left:12px;letter-spacing:.3px}
+.gst b{color:var(--ink);font-weight:600}
+
+/* the khata page: the one bold element */
+.khata{position:relative;height:520px}
+.page{position:absolute;left:0;top:28px;width:84%;height:440px;background:
+  linear-gradient(90deg,transparent 54px,var(--margin) 54px,var(--margin) 56px,transparent 56px),
+  repeating-linear-gradient(180deg,#fff 0,#fff 43px,var(--rule) 43px,var(--rule) 44px);
+  border:1px solid var(--rule);border-radius:4px 14px 14px 4px;box-shadow:0 24px 50px -24px rgba(22,35,63,.35)}
+.page-hd{position:absolute;left:72px;top:10px;font-size:15px;color:var(--ink-2)}
+.say{position:absolute;left:72px;top:58px;right:24px;font-size:22px;white-space:nowrap;font-weight:600;color:var(--ink);min-height:36px}
+.say .q{color:var(--ink-2);font-weight:400}
+.caret{display:inline-block;width:2px;height:24px;background:var(--margin);vertical-align:-4px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.rows{position:absolute;left:72px;right:150px;top:132px}
+.row{display:flex;align-items:baseline;gap:10px;height:44px;font-size:17px;white-space:nowrap}
+.row .amt{font-weight:800;min-width:84px}
+.row .in{color:var(--green)}.row .out{color:var(--out)}
+.row .tag{font-size:13px;color:var(--ink-2);border:1px solid var(--rule);border-radius:6px;padding:0 7px;background:#fff}
+.row .t{margin-left:auto;font-size:14px;color:var(--ink-2)}
+.row.new{opacity:0;transform:translateY(-6px)}
+.row.new.show{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
+.phone{position:absolute;right:-8px;top:70px;width:190px;border-radius:34px;padding:9px;background:#0E1526;box-shadow:0 30px 60px -20px rgba(22,35,63,.55)}
+.phone img{display:block;width:100%;border-radius:26px}
+
+/* strip */
+.strip{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--ground)}
+.strip .wrap{display:flex;flex-wrap:wrap;gap:12px 40px;padding-top:18px;padding-bottom:18px;font-size:16px;color:var(--ink-2)}
+.strip b{color:var(--ink);font-weight:600}
+
+/* sections */
+section{padding:96px 0}
+h2{font-size:clamp(30px,3.4vw,42px);line-height:1.12;font-weight:800;letter-spacing:-.8px;max-width:20ch}
+.sub{font-size:19px;color:var(--ink-2);margin-top:12px;max-width:36em}
+
+/* jobs */
+.jobs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:52px;border-top:2px solid var(--ink)}
+.job{padding:28px 28px 8px 0}
+.job+.job{padding-left:28px;border-left:1px solid var(--rule)}
+.job h3{font-size:24px;font-weight:800;letter-spacing:-.3px}
+.job .when{font-size:15px;color:var(--ink-2);margin:2px 0 18px}
+.shot{width:190px;border-radius:24px;padding:6px;background:#0E1526;margin:0 0 22px}
+.shot img{display:block;width:100%;border-radius:19px}
+.feat{list-style:none}
+.feat li{padding:12px 0;border-top:1px solid var(--rule)}
+.feat b{display:block;font-size:18px;font-weight:700}
+.feat span{font-size:16px;color:var(--ink-2)}
+.newb{font-size:12px;font-weight:700;color:#fff;background:var(--margin);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+
+/* safety */
+.safe{background:var(--ground)}
+.safe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:40px}
+.safe-grid div{border-top:2px solid var(--ink);padding-top:16px}
+.safe-grid b{display:block;font-size:19px;font-weight:700;margin-bottom:4px}
+.safe-grid span{font-size:16px;color:var(--ink-2)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:44px;counter-reset:s}
+.step{position:relative;padding-left:56px}
+.step:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;border:2px solid var(--margin);color:var(--margin);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:18px}
+.step b{display:block;font-size:20px;font-weight:700}
+.step span{font-size:16px;color:var(--ink-2)}
+
+/* pricing */
+.pricing{background:var(--ground)}
+.plans{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;margin-top:48px;align-items:start}
+.plan{background:#fff;border:1px solid var(--rule);border-radius:16px;padding:32px}
+.plan.life{border:2px solid var(--brass)}
+.plan .who{font-size:16px;font-weight:600;color:var(--ink-2)}
+.price{display:flex;align-items:baseline;gap:10px;margin:8px 0 2px}
+.price .n{font-size:56px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+.price s{font-size:22px;color:#8B97AD}
+.price .per{font-size:17px;color:var(--ink-2)}
+.tax{font-size:16px;color:var(--ink-2)}
+.launch{display:inline-block;font-size:14px;font-weight:600;color:var(--brass-ink);background:#F6E7C4;border-radius:6px;padding:2px 9px;margin-bottom:14px}
+.plan ul{list-style:none;margin:22px 0 26px}
+.plan li{padding:8px 0 8px 28px;position:relative;font-size:17px;border-top:1px solid var(--rule)}
+.plan li:before{content:"";position:absolute;left:4px;top:15px;width:12px;height:7px;border-left:2.5px solid var(--green);border-bottom:2.5px solid var(--green);transform:rotate(-45deg)}
+.plan .btn{width:100%;justify-content:center;font-size:17px;padding:14px}
+.plan .small{font-size:14px;color:var(--ink-2);text-align:center;margin-top:12px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0;border-top:1px solid var(--rule)}
+.opt:first-of-type{border-top:none}
+.opt b{font-size:20px;font-weight:700}
+.opt .pp{text-align:right}
+.opt .pp strong{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.opt .pp span{display:block;font-size:14px;color:var(--ink-2)}
+.save{font-size:13px;font-weight:600;color:var(--green);margin-left:8px}
+.all{margin-top:22px;font-size:16px;color:var(--ink-2);max-width:60em}
+.compare{margin-top:10px;font-size:16px;color:var(--ink)}
+
+/* faq */
+.faq{max-width:820px;margin-top:36px}
+details{border-top:1px solid var(--rule);padding:18px 0}
+details:last-child{border-bottom:1px solid var(--rule)}
+summary{font-size:19px;font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";font-weight:400;font-size:26px;line-height:1;color:var(--ink-2)}
+details[open] summary:after{content:"−"}
+details p{margin-top:10px;font-size:17px;color:var(--ink-2);max-width:42em}
+
+/* footer */
+footer{background:var(--ink);color:#C8D2E6;padding:56px 0 40px;font-size:15px}
+footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+footer b{color:#fff}
+footer a{text-decoration:none;display:block;padding:3px 0}
+footer a:hover{color:#fff}
+.copy{grid-column:1/-1;border-top:1px solid #2A3A5E;padding-top:20px;margin-top:12px;font-size:14px}
+
+@media (max-width:920px){
+  .links{display:none}
+  .hero .wrap{grid-template-columns:1fr}
+  .khata{height:470px;max-width:480px}
+  .jobs{grid-template-columns:1fr}
+  .job+.job{padding-left:0;border-left:none;border-top:1px solid var(--rule)}
+  .safe-grid,.steps{grid-template-columns:1fr 1fr}
+  .plans{grid-template-columns:1fr}
+  footer .wrap{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .rows{right:20px}.say{font-size:19px}
+  .nav .btn-brass{display:none}
+  .khata{height:430px}
+  .page{width:100%}
+  .phone{display:none}
+  .safe-grid,.steps{grid-template-columns:1fr}
+  section{padding:72px 0}
+}
+
+/* ===== ledger theme ===== */
+:root{--bahi:#8A1D1D;--bahi-2:#5E1212;--gold:#D9AB45;--gold-2:#B8862A;--cream:#FFF3DC}
+header{border-bottom:3px solid var(--gold)}
+.hero{position:relative;color:var(--cream);background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .45 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+  repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 3px),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px),
+  repeating-linear-gradient(45deg,rgba(0,0,0,.07) 0 2px,transparent 2px 7px),
+  radial-gradient(120% 90% at 20% 10%,#A82A2A 0%,var(--bahi) 45%,var(--bahi-2) 100%);
+  background-blend-mode:overlay,normal,normal,normal,normal}
+.hero:before,.hero:after{content:"";position:absolute;left:0;right:0;height:10px;background:linear-gradient(180deg,var(--gold),var(--gold-2))}
+.hero:before{top:0;opacity:.0}
+.hero:after{bottom:0}
+.page{color:var(--ink)}
+.feat b .newb{display:inline-block;font-size:12px;color:#fff}
+.hero h1{color:#FFF6E4}
+.hero p.lead{color:rgba(255,236,210,.86)}
+.hero .fine{color:rgba(255,236,210,.72)}
+.hero .gst{color:rgba(255,236,210,.8);border-left-color:var(--gold)}
+.hero .gst b{color:#FFF6E4}
+.hero .btn-ink{background:var(--gold);color:#2B1A04}
+.hero .btn-ink:hover{background:#E6BA55}
+.hero .btn-line{background:transparent;border-color:rgba(255,236,210,.45);color:var(--cream)}
+.hero .btn-line:hover{border-color:var(--cream)}
+.page{box-shadow:0 30px 60px -20px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.08)}
+.phone{box-shadow:0 30px 60px -18px rgba(0,0,0,.7)}
+.strip{background:#FBF4E4;border-top:none;border-bottom:1px solid #EADDBF}
+.strip .wrap{color:#6B5A36}
+.strip b{color:#3A2A08}
+body{background:#F7F9FC}
+.ruled{position:relative;background-color:#F7F9FC;background-image:repeating-linear-gradient(180deg,transparent 0 39px,rgba(40,70,130,.075) 39px 40px)}
+.ruled .wrap{position:relative}
+.ruled .wrap:before{content:"";position:absolute;left:-26px;top:-96px;bottom:-96px;width:2px;background:rgba(210,53,44,.45)}
+.ruled .wrap:after{content:"";position:absolute;left:-32px;top:-96px;bottom:-96px;width:1px;background:rgba(210,53,44,.25)}
+.jobs{border-top:2px solid var(--bahi)}
+.job h3{color:var(--bahi)}
+.safe{background:var(--ink);color:#E8EEFA}
+.safe h2{color:#fff}
+.safe-grid div{border-top-color:var(--gold)}
+.safe-grid b{color:#fff}
+.safe-grid span{color:#B8C4DC}
+.step:before{border-color:var(--bahi);color:var(--bahi);background:#fff}
+.pricing{background-color:#F7F9FC}
+.plan{background:
+  linear-gradient(90deg,transparent 22px,rgba(210,53,44,.5) 22px,rgba(210,53,44,.5) 24px,transparent 24px),
+  repeating-linear-gradient(180deg,#fff 0 35px,#EDF2FA 35px 36px);padding-left:48px}
+.plan.life{border-color:var(--gold-2)}
+.launch{background:var(--bahi);color:#FFF3DC}
+.price .n{color:var(--ink)}
+.plan .btn-brass{background:var(--bahi);color:#FFF3DC}
+.plan .btn-brass:hover{background:var(--bahi-2)}
+.nav .btn-brass{background:var(--bahi);color:#FFF3DC}
+.nav .btn-brass:hover{background:var(--bahi-2)}
+summary{color:var(--ink)}
+@media (max-width:920px){.ruled .wrap:before,.ruled .wrap:after{display:none}}
+
+@media (prefers-reduced-motion:reduce){.caret{animation:none}.row.new{opacity:1;transform:none}}
+</style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-<nav><div class="wrap">
-  <a class="logo" href="index.html" aria-label="Live Khaata"><span class="dot"></span><span class="lk"><span class="l">Live</span> <span class="k">Khaata</span></span></a>
-  <div class="links"><a href="#problem">Overview</a><a href="#features">Features</a><a href="#screens">Screens</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></div>
-  <a class="langsw" href="../index.html" hreflang="hi" lang="hi">हिंदी</a>
-  <a class="btn btn-gold btn-sm" href="#pricing">₹799 + GST</a>
-</div></nav>
-<main id="main">
-<header><div class="wrap"><div class="hero">
+
+<header><div class="wrap nav">
+  <a class="brand" href="index.html" aria-label="Live Khaata"><img src="../assets/img/lk-icon.png" alt=""><span><span class="l">Live</span> Khaata</span></a>
+  <nav class="links"><a href="#jobs">Features</a><a href="#start">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+  <a class="lang" href="../index.html" hreflang="hi" lang="hi">हिंदी</a>
+  <a class="btn btn-brass" href="#pricing">Buy Lifetime</a>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
   <div>
-    <div class="tag"><span class="dot"></span>For GST-registered businesses · Launch price</div>
-    <h1>Supplier dues, bill by bill.<br><em>GST reports, ready.</em></h1>
-    <p class="sub">Photograph a bill and the supplier, bill number, date and <b>rate-wise GST</b> are filled in automatically. Record a payment and the balance updates instantly. At month-end, your <b>purchase register, ITC summary and Tally voucher list</b> are ready in PDF and Excel.</p>
+    <h1>Say the amount. Your khata is ready.</h1>
+    <p class="lead">Live Khaata records your shop's money in and out by voice, keeps every supplier's dues from a bill photo, and has month-end reports ready for you.</p>
     <div class="cta">
-      <a class="btn btn-gold" href="buy.html">Buy for ₹799</a>
-      <a class="btn btn-ghost" href="#how">See how it works</a>
-      <span class="note">One-time payment + GST · No annual fees</span>
+      <a class="btn btn-ink" href="https://play.google.com/store/apps/details?id=app.livekhaata.twa" target="_blank" rel="noopener"><svg class="gp" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M3.6 2.2c-.3.3-.5.7-.5 1.2v17.2c0 .5.2.9.5 1.2l9.7-9.8z"/><path fill="#34A853" d="M16.6 8.7 5.2 2.2c-.6-.3-1.2-.3-1.6 0l9.7 9.8z"/><path fill="#EA4335" d="M13.3 12l-9.7 9.8c.4.3 1 .3 1.6 0l11.4-6.5z"/><path fill="#FBBC04" d="M20.1 10.7l-3.5-2-3.3 3.3 3.3 3.3 3.5-2c1-.6 1-2 0-2.6z"/></svg>Get it on Google Play</a>
+      <a class="btn btn-line" href="#pricing">See plans</a>
     </div>
-    <div class="trust"><div><b>Bill-wise dues</b>with ageing</div><div><b>Rate-wise GST</b>from a bill photo</div><div><b>PDF and Excel</b>for your accountant</div><div><b>Voice entry</b>daily cash flow</div></div>
+    <p class="fine">Free for 15 days in the app. No card needed to start.</p>
+    <p class="gst">GSTIN 09IASPK2450N1ZW</p>
   </div>
-  <div class="hero-side">
-  <div class="hero-vis home">
-    <div class="device natural"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><div class="simg"><img src="../assets/img/home.jpg" width="600" height="1182" alt="The home screen of the Live Khaata app"><span class="pin" style="left:3.4%;top:11.6%" aria-hidden="true">1</span><span class="pin" style="left:3.4%;top:33.2%" aria-hidden="true">2</span><span class="pin" style="left:3.4%;top:53.8%" aria-hidden="true">3</span><span class="pin" style="left:51.3%;top:53.8%" aria-hidden="true">4</span></div></div><span class="cam" aria-hidden="true"></span></div>
-    <div class="co l" style="top:26%" aria-hidden="true"><span class="pn">1</span><div><b>Live हिसाब</b><span>Daily money in and out, by voice</span></div></div><div class="co l" style="top:45%" aria-hidden="true"><span class="pn">2</span><div><b>Purchase / खरीद</b><span>Bill scan · supplier dues</span></div></div><div class="co l" style="top:63%" aria-hidden="true"><span class="pn">3</span><div><b>Mahina</b><span>Monthly figures · PIN-protected</span></div></div><div class="co l" style="top:81%" aria-hidden="true"><span class="pn">4</span><div><b>Statement</b><span>PDF · Excel · Tally reports</span></div></div>
-  </div>
-  <ol class="legend"><li><span class="pn">1</span><div><b>Live हिसाब</b><span>Daily money in and out, by voice</span></div></li><li><span class="pn">2</span><div><b>Purchase / खरीद</b><span>Bill scan · supplier dues</span></div></li><li><span class="pn">3</span><div><b>Mahina</b><span>Monthly figures · PIN-protected</span></div></li><li><span class="pn">4</span><div><b>Statement</b><span>PDF · Excel · Tally reports</span></div></li></ol>
-  </div>
-</div></div></header>
-
-<section id="problem" style="background:#08112a"><div class="wrap">
-  <div class="sec-h"><h2>One app, three essential jobs</h2><p>Supplier ledger · GST reports · Daily cash flow</p></div>
-  <div class="grid3">
-<div class="card pcard"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><h3>Purchases and supplier ledger</h3>
-      <p>Each supplier's total outstanding, the status of every bill and the payments made against it, in one place.</p>
-      <div class="pnow"><b>You get:</b> Bill-wise dues, ageing, and payment mode with reference number.</div></div>
-<div class="card pcard"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V5a2 2 0 0 1 2-2h4l5 5v9a2 2 0 0 1-2 2h-2"/><rect x="3" y="7" width="11" height="14" rx="2"/></svg></div><h3>GST and purchase reports</h3>
-      <p>Purchase register, ITC summary, supplier statement, day book and expense details.</p>
-      <div class="pnow"><b>You get:</b> PDF and Excel files with bill photos, ready to send to your CA or accountant.</div></div>
-<div class="card pcard"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M8 7.5h7M8 11h5"/></svg></div><h3>Daily cash flow</h3>
-      <p>A record of every amount received and paid, in cash or UPI, by voice or by typing.</p>
-      <div class="pnow"><b>You get:</b> Daily balance and a full-month calendar.</div></div>
-  </div>
-</div></section>
-
-<section id="features"><div class="wrap">
-  <div class="sec-h"><h2>Features</h2><p>Everything a business needs day to day, with no setup.</p></div>
-  <div class="grid3">
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2 11.2A2 2 0 0 0 9.2 17h8.3a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/></svg></div><h3>Supplier ledger</h3>
-      <p class="long">Outstanding amount and age of every bill. Payments by cash, UPI, NEFT or cheque are recorded with their reference numbers, including part-payments against a single bill.</p><p class="short">Bill-wise dues with ageing and payment references.</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h2L9 4h6l1.5 2h2A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.4"/></svg></div><h3>Bill scan</h3>
-      <p class="long">One photo of a bill fills in the supplier name, GSTIN, bill number, date, total and <b>rate-wise GST</b>, even on bills with more than one tax rate.</p><p class="short">One photo reads the whole bill, with rate-wise GST.</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div><h3>Rate-wise GST</h3>
-      <p class="long">CGST + SGST or IGST is determined automatically from both parties' GSTINs. If a rate can't be read from the photo, it can be filled in with a single tap.</p><p class="short">CGST + SGST or IGST, decided automatically.</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V5a2 2 0 0 1 2-2h4l5 5v9a2 2 0 0 1-2 2h-2"/><rect x="3" y="7" width="11" height="14" rx="2"/></svg></div><h3>GST reports</h3>
-      <p class="long">Purchase register in <b>GSTR-2B column order</b>, rate-wise ITC summary and a voucher list for Tally, in both PDF and Excel.</p><p class="short">Purchase register in GSTR-2B order, ITC summary.</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><h3>Error checks</h3>
-      <p class="long">Duplicate bill numbers, totals that don't reconcile, discontinued 12% / 28% rates and bills without photos are clearly flagged in reports.</p><p class="short">Duplicate bills, wrong totals and old rates flagged.</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>Voice entry</h3>
-      <p class="long">Say “साढ़े तीन हज़ार की सेल” and ₹3,500 is recorded. Payment mode (cash or UPI) and direction (in or out) are identified automatically.</p><p class="short">Say “साढ़े तीन हज़ार की सेल”; ₹3,500 is recorded.</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M8 7.5h7M8 11h5"/></svg></div><h3>Expenses and day book</h3>
-      <p class="long">Expenses such as rent, electricity and salaries are recorded separately, with a complete day-by-day record of money in and out.</p><p class="short">Rent, power and salaries apart; daily in and out.</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/><rect x="7" y="13" width="3" height="3" rx=".6" fill="#d4a850" stroke="none"/></svg></div><h3>Offline and backup</h3>
-      <p class="long">Entries can be made without internet and are saved automatically once you're back online. One account can be used on two phones.</p><p class="short">Works offline; one account on two phones.</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 15v2"/></svg></div><h3>Security</h3>
-      <p class="long">Separate PINs for the app and for monthly figures. Deleting data requires OTP verification.</p><p class="short">App PIN, monthly PIN and OTP protection.</p></div>
-  </div>
-</div></section>
-
-<section id="screens"><div class="wrap">
-  <div class="sec-h"><h2>Inside the app</h2><p>Every screen is simple and clear; no training required.</p></div>
-  <div class="screens"><figure class="scr"><div class="device"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><img src="../assets/img/live.jpg" width="600" height="1044" alt="Live हिसाब" loading="lazy"></div><span class="cam" aria-hidden="true"></span></div><figcaption><b>Live हिसाब</b><span>Speak once; amount, mode and type are filled in.</span></figcaption></figure><figure class="scr"><div class="device contain"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><img src="../assets/img/chooser.jpg" width="920" height="628" alt="Bill scan" loading="lazy"></div><span class="cam" aria-hidden="true"></span></div><figcaption><b>Bill scan</b><span>Photograph a bill or pick one from the gallery.</span></figcaption></figure><figure class="scr"><div class="device top"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><img src="../assets/img/read.jpg" width="720" height="729" alt="Bill details" loading="lazy"></div><span class="cam" aria-hidden="true"></span></div><figcaption><b>Bill details</b><span>Supplier, total and rate-wise GST, read automatically.</span></figcaption></figure><figure class="scr"><div class="device"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><img src="../assets/img/splash.jpg" width="600" height="1112" alt="Secure login" loading="lazy"></div><span class="cam" aria-hidden="true"></span></div><figcaption><b>Secure login</b><span>Mobile number, OTP and app PIN.</span></figcaption></figure></div>
-</div></section>
-
-<section id="how"><div class="wrap">
-  <div class="sec-h"><h2>Getting started</h2><p>No dealer, no installation, no training.</p></div>
-  <div class="steps"><div class="step"><div class="n">1</div><h4>Enter your mobile number</h4><p>When you buy, enter the number you'll run the app on.</p></div><div class="step"><div class="n">2</div><h4>Pay online</h4><p>Pay ₹799 + GST on the website, or through a link / QR sent by our agent. Cash is not accepted.</p></div><div class="step"><div class="n">3</div><h4>Install the app</h4><p>Install Live Khaata from the Play Store and log in with the same number.</p></div><div class="step"><div class="n">4</div><h4>Licence active</h4><p>Enter the OTP and your licence is already active. No code needed.</p></div></div>
-</div></section>
-
-<section id="pricing"><div class="wrap">
-  <div class="sec-h"><h2>Pay once, use for life</h2><p>Most software charges every year; Live Khaata has no annual fee. <b style="color:#e8eefc">Launch price ₹799</b>, rising to ₹1,199 after the first 300 shops.</p></div>
-  <div class="plans">
-    <div class="plan best"><div class="ribbon">Launch price · First 300 shops</div>
-      <div class="name">Lifetime</div>
-      <div class="price"><span class="amt">₹799</span><span class="was" aria-label="₹1,199">₹1,199</span></div>
-      <div class="sub2">+ 18% GST · One-time payment</div>
-      <div class="hi" style="font-size:13.5px">Pay once. No further charges.</div>
-      <ul><li><span class="tick" aria-hidden="true">✓</span><span>The full app, <b>no monthly fee</b></span></li><li><span class="tick" aria-hidden="true">✓</span><span>Bill scans: <b>up to 200 a day</b></span></li><li><span class="tick" aria-hidden="true">✓</span><span>Voice entries and supplier ledgers: unlimited</span></li><li><span class="tick" aria-hidden="true">✓</span><span>PDF and Excel reports, including a Tally voucher list</span></li><li><span class="tick" aria-hidden="true">✓</span><span>Use on two phones, with cloud backup</span></li><li><span class="tick" aria-hidden="true">✓</span><span>Support in Hindi by email, 24×7</span></li><li><span class="tick" aria-hidden="true">✓</span><span><b>Tax invoice with your GSTIN</b>, ₹144 input tax credit</span></li></ul>
-      <a class="btn btn-gold" href="buy.html">Buy for ₹799</a>
-      <div class="fineprint">Price excludes GST · Total payable ₹943 · UPI, card, netbanking</div>
-      <div class="fineprint" data-refund="7day" hidden>Full refund within 7 days if you are not satisfied (conditions apply).</div>
-    </div>
-    <div class="plan">
-      <div class="name">Quarterly plan · Play Store</div>
-      <div class="price"><span class="amt">₹149</span><span class="per">/ 3 months + GST</span></div>
-      <div class="hi" style="font-size:13.5px">If you'd rather not pay upfront.</div>
-      <ul><li><span class="tick" aria-hidden="true">✓</span><span>The same app, billed through Google Play</span></li><li><span class="tick" aria-hidden="true">✓</span><span>The same limit: 200 scans a day</span></li><li><span class="tick" aria-hidden="true">✓</span><span>Renews every 3 months; cancel anytime</span></li></ul>
-      <a class="btn btn-ghost" data-href="playUrl" data-soon="Coming soon">View on Play Store</a>
-      <div class="fineprint">₹894 over 18 months, more than the lifetime price, and payments continue every 3 months after that.</div>
-    </div>
-  </div>
-  <div class="agentbar">
-    <div><div class="t">Buying through an agent?</div><div class="s">The agent will send you a payment link or QR. Once paid, the licence is activated on your number; just log in to the app with that number.</div></div>
-    <a class="btn btn-ghost btn-sm" href="activate.html">How activation works</a>
-  </div>
-</div></section>
-
-<section id="faq" style="background:#08112a"><div class="wrap">
-  <div class="sec-h"><h2>Frequently asked questions</h2></div>
-  <div class="faq"><details class="q" open><summary>Are there any charges beyond ₹799 + GST?</summary><p>No. It's a one-time payment: ₹799 plus 18% GST, ₹943 in total. No renewals, AMC or annual fees. Enter your GSTIN at checkout and the invoice will carry it, so you can claim ₹144 as input tax credit.</p></details><details class="q"><summary>Can I pay the agent in cash?</summary><p>No. Our agents do not accept cash. They send a payment link or QR, so the money goes directly to Live Khaata's bank account and the GST invoice is emailed to you. If anyone asks for cash, please inform us by email.</p></details><details class="q"><summary>Is there a limit on bill scans?</summary><p>Up to 200 scans a day, well above what a typical shop needs. Voice entries and supplier ledgers are unlimited.</p></details><details class="q"><summary>Will data import directly into Tally?</summary><p>Not at present. You get a voucher list with debits and credits, from which your CA or accountant can make the entries.</p></details><details class="q"><summary>What if there's no internet?</summary><p>Entries are recorded offline and saved automatically once you're connected. Only bill scanning needs internet.</p></details><details class="q"><summary>Can the app run on two phones?</summary><p>Yes. You can log in on two phones with the same number, and both stay in sync.</p></details><details class="q"><summary>How secure is my data?</summary><p>Your accounts are protected by a PIN and backed up to the cloud. We never sell your data or share it for advertising or marketing.</p></details><details class="q"><summary>Will this file my GST return?</summary><p>No. It is an <b>organised record of your purchases</b>, ready to hand to your accountant. Reconcile with GSTR-2B before claiming ITC.</p></details></div>
-</div></section>
-</main>
-<footer><div class="wrap">
-  <div class="cols">
-    <div>
-      <div class="logo" style="font-size:16px"><span class="dot"></span><span class="lk"><span class="l">Live</span> <span class="k">Khaata</span></span></div>
-      <div class="biz" style="margin-top:12px">
-        <b>Live Khaata</b> · GSTIN: <b>09IASPK2450N1ZW</b><br>
-        Email: <span data-cfg="email"></span> · Support: By email, 24×7
+  <div class="khata" aria-label="Example: a spoken entry being written into the khata">
+    <div class="page">
+      <div class="page-hd">Today, Friday 30 October</div>
+      <div class="say"><span class="q">“</span><span id="typed"></span><span class="caret" aria-hidden="true"></span><span class="q" id="qend" style="display:none">”</span></div>
+      <div class="rows">
+        <div class="row new" id="newrow"><span class="amt in">+ ₹1,500</span><span>Rahul</span><span class="tag">Collection</span></div>
+        <div class="row"><span class="amt out">− ₹1,120</span><span>Electricity bill</span></div>
+        <div class="row"><span class="amt in">+ ₹840</span><span>UPI sale</span></div>
+        <div class="row"><span class="amt in">+ ₹2,350</span><span>Cash sale</span></div>
+        <div class="row"><span class="amt out">− ₹6,000</span><span>Sharma Traders</span></div>
       </div>
     </div>
-    <div class="flinks">
-      <a href="about.html">About Us</a>
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms & Conditions</a>
-      <a href="refund.html">Refund & Cancellation Policy</a>
-      <a href="delivery.html">Delivery Policy</a>
-      <a href="contact.html">Contact Us</a>
+    <div class="phone"><img src="../assets/img/lk-hero-phone.jpg" alt="Live Khaata app: today's balance, money in and out, and voice entry"></div>
+  </div>
+</div></section>
+
+<div class="strip"><div class="wrap">
+  <span><b>Hindi and English</b>, by voice or by typing</span>
+  <span><b>Cloud backup</b> on two phones</span>
+  <span><b>PIN and fingerprint</b> lock</span>
+  <span><b>Email support</b>, 24×7</span>
+</div></div>
+
+<section id="jobs" class="ruled"><div class="wrap">
+  <h2>Built around three jobs every shop does</h2>
+  <p class="sub">Each one takes seconds. Nothing to set up.</p>
+  <div class="jobs">
+    <div class="job">
+      <h3>Every day</h3>
+      <p class="when">At the counter</p>
+      <div class="shot"><img src="../assets/img/lk-day.jpg" alt="Voice entry result"></div>
+      <ul class="feat">
+        <li><b>Voice entries</b><span>Say “पंद्रह सौ राहुल से मिले”. Amount, cash or UPI, and money in or out are filled in.</span></li>
+        <li><b>Simple categories</b><span>Money in as Sale or Collection. Money out as Expense, Home or Other.</span></li>
+        <li><b>Cash in hand</b><span>An estimate of the cash in your drawer, reset any time with a reason.</span></li>
+        <li><b>Add-up calculator</b><span>Total a rush of small sales and save it as one entry.</span></li>
+        <li><b>Smart reminders<span class="newb">New</span></b><span>Morning, closing and weekly reminders.</span></li>
+      </ul>
+    </div>
+    <div class="job">
+      <h3>When stock arrives</h3>
+      <p class="when">Supplier bills and payments</p>
+      <div class="shot"><img src="../assets/img/lk-stock.jpg" alt="Bill scan"></div>
+      <ul class="feat">
+        <li><b>Bill scan</b><span>One photo or PDF fills in the supplier, bill number, date, total and rate-wise GST.</span></li>
+        <li><b>Supplier khata</b><span>What you owe each supplier, bill by bill, with how old each bill is.</span></li>
+        <li><b>Payments</b><span>Cash, UPI, NEFT or cheque with reference numbers, including part-payments.</span></li>
+      </ul>
+    </div>
+    <div class="job">
+      <h3>At month-end</h3>
+      <p class="when">For you and your CA</p>
+      <div class="shot"><img src="../assets/img/lk-month.jpg" alt="Monthly calendar"></div>
+      <ul class="feat">
+        <li><b>Calendar and month summary</b><span>Every day's money in and out at a glance.</span></li>
+        <li><b>Statements</b><span>Day book, expenses and supplier statements in PDF and Excel.</span></li>
+        <li><b>Bill Book<span class="newb">New</span></b><span>Every purchase bill in one PDF, in date order, with a list on the first page. Clean scans, ready to share.</span></li>
+        <li><b>GST reports</b><span>Purchase register in GSTR-2B order, ITC summary and a Tally voucher list.</span></li>
+      </ul>
     </div>
   </div>
-  <div class="copy">© 2026 Live Khaata · All payments via Razorpay, directly to Live Khaata's bank account.</div>
+</div></section>
+
+<section class="safe"><div class="wrap">
+  <h2>Your hisaab stays yours</h2>
+  <div class="safe-grid">
+    <div><b>App lock</b><span>A PIN or fingerprint every time the app opens, and a separate PIN for monthly figures.</span></div>
+    <div><b>Backup</b><span>Entries are saved to the cloud and can be used on two phones.</span></div>
+    <div><b>Works offline</b><span>Add entries without internet. They sync when you're back online.</span></div>
+    <div><b>Delete with OTP</b><span>Erasing data or your account needs an OTP on your number.</span></div>
+  </div>
+</div></section>
+
+<section id="start" class="ruled"><div class="wrap">
+  <h2>Start in two minutes</h2>
+  <div class="steps">
+    <div class="step"><b>Install from Google Play</b><span>Log in with your mobile number and OTP, then set your PIN.</span></div>
+    <div class="step"><b>Use it free for 15 days</b><span>Every feature, with no card and no payment.</span></div>
+    <div class="step"><b>Pick a plan</b><span>Lifetime on this website, or Yearly or Quarterly on Google Play.</span></div>
+  </div>
+</div></section>
+
+<section class="pricing ruled" id="pricing"><div class="wrap">
+  <h2>Pay once, or pay as you go</h2>
+  <p class="sub">The same full app on every plan.</p>
+  <div class="plans">
+    <div class="plan life">
+      <span class="launch">Launch price for the first 300 shops</span>
+      <div class="who">Lifetime licence</div>
+      <div class="price"><span class="n">₹799</span><s>₹1,199</s></div>
+      <div class="tax">+ 18% GST, ₹943 in total. One payment, no renewals.</div>
+      <ul>
+        <li>Tax invoice with your GSTIN, so you can claim ₹144 input credit</li>
+        <li>Active on your number the moment you pay</li>
+        <li>Full refund within 7 days if it's not for you</li>
+      </ul>
+      <a class="btn btn-brass" href="buy.html">Buy Lifetime for ₹943</a>
+      <p class="small">Pay by UPI, card or netbanking through Razorpay.</p>
+    </div>
+    <div class="plan">
+      <div class="who">Google Play plans</div>
+      <div class="opt"><div><b>Yearly</b><span class="save">Save ₹233</span></div><div class="pp"><strong>₹707</strong><span>per year, about ₹59 a month</span></div></div>
+      <div class="opt"><div><b>Quarterly</b></div><div class="pp"><strong>₹235</strong><span>every 3 months</span></div></div>
+      <ul>
+        <li>Prices include GST</li>
+        <li>Starts after your 15-day free trial</li>
+        <li>Cancel any time in the Play Store</li>
+      </ul>
+      <a class="btn btn-ink" href="https://play.google.com/store/apps/details?id=app.livekhaata.twa" target="_blank" rel="noopener"><svg class="gp" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M3.6 2.2c-.3.3-.5.7-.5 1.2v17.2c0 .5.2.9.5 1.2l9.7-9.8z"/><path fill="#34A853" d="M16.6 8.7 5.2 2.2c-.6-.3-1.2-.3-1.6 0l9.7 9.8z"/><path fill="#EA4335" d="M13.3 12l-9.7 9.8c.4.3 1 .3 1.6 0l11.4-6.5z"/><path fill="#FBBC04" d="M20.1 10.7l-3.5-2-3.3 3.3 3.3 3.3 3.5-2c1-.6 1-2 0-2.6z"/></svg>Open in Google Play</a>
+      <p class="small">Subscribe from inside the app: More → Plan.</p>
+    </div>
+  </div>
+  <p class="all">Every plan includes unlimited voice entries and supplier khatas, 30 bill scans a day, PDF and Excel reports, two phones and email support.</p>
+  <p class="compare">Lifetime costs less than 16 months of the Yearly plan.</p>
+</div></section>
+
+<section id="faq" class="ruled"><div class="wrap">
+  <h2>Questions shopkeepers ask</h2>
+  <div class="faq">
+    <details open><summary>What happens after the 15-day trial?</summary><p>You choose Lifetime or a Google Play plan. If you don't, the app stays open in view-only mode: all your records, statements and downloads stay available, and new entries need a plan.</p></details>
+    <details><summary>Are there any charges beyond ₹799 + GST?</summary><p>No. Lifetime is one payment of ₹943 including GST. No renewals, AMC or annual fees.</p></details>
+    <details><summary>I'm on a Google Play plan. Can I switch to Lifetime?</summary><p>Yes. Buy Lifetime here with the same mobile number, then cancel your plan in the Play Store. Your records stay as they are.</p></details>
+    <details><summary>Can I pay an agent in cash?</summary><p>No. Agents send a payment link or QR, so the money goes straight to Live Khaata and the GST invoice is emailed to you. If anyone asks for cash, tell us by email.</p></details>
+    <details><summary>Is there a limit on bill scans?</summary><p>30 bill scans a day on every plan. Voice entries, typed entries and supplier khatas are unlimited.</p></details>
+    <details><summary>Where is my data kept?</summary><p>On Google Cloud, linked to your account. The app opens only with your PIN or fingerprint, and our admin tools can't read your entries.</p></details>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div><b style="font-size:20px"><span style="color:#FF6B5E">Live</span> Khaata</b><p style="margin-top:8px;max-width:30em">Daily hisaab, supplier dues and GST reports for Indian shops.</p><p style="margin-top:12px">GSTIN 09IASPK2450N1ZW<br>support@livekhaata.app</p></div>
+  <div><b>Product</b><a href="#jobs">Features</a><a href="#pricing">Pricing</a><a href="activate.html">Activate licence</a><a href="https://play.google.com/store/apps/details?id=app.livekhaata.twa" target="_blank" rel="noopener">Get the app</a></div>
+  <div><b>Policies</b><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refund.html">Refunds</a><a href="delivery.html">Delivery</a><a href="contact.html">Contact</a><a href="about.html">About us</a></div>
+  <div class="copy">© 2026 Live Khaata. Payments on this website are processed by Razorpay.</div>
 </div></footer>
-<script src="../assets/site.js" defer></script>
+
+<script>
+(function(){
+  var text='पंद्रह सौ राहुल से मिले', el=document.getElementById('typed'), row=document.getElementById('newrow'), qe=document.getElementById('qend');
+  var reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ el.textContent=text; qe.style.display='inline'; row.classList.add('show'); return; }
+  var chars=Array.from(text), i=0;
+  setTimeout(function step(){
+    el.textContent=chars.slice(0,++i).join('');
+    if(i<chars.length) setTimeout(step,70);
+    else { qe.style.display='inline'; setTimeout(function(){ row.classList.add('show'); },350); }
+  },700);
+})();
+</script>
 </body>
 </html>

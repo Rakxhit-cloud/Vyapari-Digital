@@ -2,149 +2,429 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Khaata — सप्लायर का बकाया और GST रिपोर्ट, एक ऐप में</title>
-<meta name="description" content="बिल की फोटो से रेट-वार GST, बिल-वार सप्लायर बकाया, और खरीद रजिस्टर व ITC सारांश। ₹799 + GST, एकमुश्त भुगतान।">
-<meta name="theme-color" content="#070c1c">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Khaata — रकम बोलिए, खाता तैयार</title>
+<meta name="description" content="दुकान का आया-गया बोलकर लिखें, बिल की फ़ोटो या PDF से सप्लायर का बकाया रखें, और महीने की रिपोर्ट व बिल बुक तैयार पाएं। 15 दिन फ्री।">
+<meta name="theme-color" content="#5E1212">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Live Khaata — सप्लायर का बकाया और GST रिपोर्ट, एक ऐप में">
-<meta property="og:description" content="बिल की फोटो से रेट-वार GST, बिल-वार सप्लायर बकाया, और खरीद रजिस्टर व ITC सारांश। ₹799 + GST, एकमुश्त भुगतान।">
+<meta property="og:title" content="Live Khaata — रकम बोलिए, खाता तैयार">
+<meta property="og:description" content="दुकान का आया-गया बोलकर लिखें, बिल की फ़ोटो या PDF से सप्लायर का बकाया रखें, और महीने की रिपोर्ट व बिल बुक तैयार पाएं। 15 दिन फ्री।">
+<meta property="og:image" content="https://livekhaata.app/playstore-512.png">
+<link rel="alternate" hreflang="hi" href="https://livekhaata.app/">
+<link rel="alternate" hreflang="en" href="https://livekhaata.app/en/">
 <script>/* Installed app (Play TWA or home-screen PWA) must open the app, not the website. Only OUR app counts: links tapped in the Google app, Gmail, WhatsApp etc. also carry an android-app:// referrer and must see the website. */(function(){try{var q=location.search||"",r=document.referrer||"",tw=r.indexOf("android-app://app.livekhaata.twa")===0,sa=false;try{sa=matchMedia("(display-mode: standalone)").matches||matchMedia("(display-mode: fullscreen)").matches||navigator.standalone===true}catch(e){}if(/[?&](src=play|inst=)/.test(q)||tw||sa){if(tw&&!/[?&]src=play/.test(q))q=(q?q+"&":"?")+"src=play";location.replace("/app/"+q+location.hash)}}catch(e){}})();</script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070c1c'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23e05252'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF;
+  --ground:#F3F6FB;
+  --ink:#16233F;
+  --ink-2:#4A5873;
+  --rule:#D9E3F2;
+  --margin:#D2352C;
+  --brass:#C9952F;
+  --brass-ink:#2B1D05;
+  --green:#1F8A5B;
+  --out:#C2452F;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Mukta',system-ui,sans-serif;font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--brass);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* mockup note */
+.note{background:#FFF7E3;border-bottom:1px solid #EBD9A8;color:#5B4A1E;font-size:14px;padding:10px 24px;text-align:center}
+
+/* header */
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.nav{display:flex;align-items:center;gap:28px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:22px;letter-spacing:-.2px}
+.brand img{width:34px;height:34px;border-radius:9px}
+.brand .l{color:var(--margin)}
+.links{display:flex;gap:24px;margin-left:auto;font-size:16px;color:var(--ink-2)}
+.links a{text-decoration:none}.links a:hover{color:var(--ink)}
+.lang{font-size:15px;border:1px solid var(--rule);border-radius:8px;padding:4px 10px;text-decoration:none;color:var(--ink-2)}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;font-size:16px;text-decoration:none;border-radius:10px;padding:12px 20px;border:1px solid transparent;cursor:pointer;white-space:nowrap}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-ink:hover{background:#0F1A31}
+.btn-brass{background:var(--brass);color:var(--brass-ink)}
+.btn-brass:hover{background:#B9862A}
+.btn-line{border-color:var(--rule);color:var(--ink);background:#fff}
+.btn svg{width:18px;height:18px}
+.btn svg.gp{width:22px;height:22px;background:#fff;border-radius:6px;padding:3px;box-sizing:content-box}
+.nav .btn{padding:9px 16px;font-size:15px}
+
+/* hero */
+.hero{padding:72px 0 88px;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(40px,5.2vw,62px);line-height:1.04;font-weight:800;letter-spacing:-1.4px;max-width:12ch}
+.hero p.lead{font-size:20px;color:var(--ink-2);margin:22px 0 30px;max-width:34em}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.fine{font-size:15px;color:var(--ink-2);margin-top:14px}
+.gst{display:inline-block;margin-top:36px;font-size:15px;color:var(--ink-2);border-left:3px solid var(--gold,#D9AB45);padding-left:12px;letter-spacing:.3px}
+.gst b{color:var(--ink);font-weight:600}
+
+/* the khata page: the one bold element */
+.khata{position:relative;height:520px}
+.page{position:absolute;left:0;top:28px;width:84%;height:440px;background:
+  linear-gradient(90deg,transparent 54px,var(--margin) 54px,var(--margin) 56px,transparent 56px),
+  repeating-linear-gradient(180deg,#fff 0,#fff 43px,var(--rule) 43px,var(--rule) 44px);
+  border:1px solid var(--rule);border-radius:4px 14px 14px 4px;box-shadow:0 24px 50px -24px rgba(22,35,63,.35)}
+.page-hd{position:absolute;left:72px;top:10px;font-size:15px;color:var(--ink-2)}
+.say{position:absolute;left:72px;top:58px;right:24px;font-size:22px;white-space:nowrap;font-weight:600;color:var(--ink);min-height:36px}
+.say .q{color:var(--ink-2);font-weight:400}
+.caret{display:inline-block;width:2px;height:24px;background:var(--margin);vertical-align:-4px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.rows{position:absolute;left:72px;right:150px;top:132px}
+.row{display:flex;align-items:baseline;gap:10px;height:44px;font-size:17px;white-space:nowrap}
+.row .amt{font-weight:800;min-width:84px}
+.row .in{color:var(--green)}.row .out{color:var(--out)}
+.row .tag{font-size:13px;color:var(--ink-2);border:1px solid var(--rule);border-radius:6px;padding:0 7px;background:#fff}
+.row .t{margin-left:auto;font-size:14px;color:var(--ink-2)}
+.row.new{opacity:0;transform:translateY(-6px)}
+.row.new.show{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
+.phone{position:absolute;right:-8px;top:70px;width:190px;border-radius:34px;padding:9px;background:#0E1526;box-shadow:0 30px 60px -20px rgba(22,35,63,.55)}
+.phone img{display:block;width:100%;border-radius:26px}
+
+/* strip */
+.strip{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--ground)}
+.strip .wrap{display:flex;flex-wrap:wrap;gap:12px 40px;padding-top:18px;padding-bottom:18px;font-size:16px;color:var(--ink-2)}
+.strip b{color:var(--ink);font-weight:600}
+
+/* sections */
+section{padding:96px 0}
+h2{font-size:clamp(30px,3.4vw,42px);line-height:1.12;font-weight:800;letter-spacing:-.8px;max-width:20ch}
+.sub{font-size:19px;color:var(--ink-2);margin-top:12px;max-width:36em}
+
+/* jobs */
+.jobs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:52px;border-top:2px solid var(--ink)}
+.job{padding:28px 28px 8px 0}
+.job+.job{padding-left:28px;border-left:1px solid var(--rule)}
+.job h3{font-size:24px;font-weight:800;letter-spacing:-.3px}
+.job .when{font-size:15px;color:var(--ink-2);margin:2px 0 18px}
+.shot{width:190px;border-radius:24px;padding:6px;background:#0E1526;margin:0 0 22px}
+.shot img{display:block;width:100%;border-radius:19px}
+.feat{list-style:none}
+.feat li{padding:12px 0;border-top:1px solid var(--rule)}
+.feat b{display:block;font-size:18px;font-weight:700}
+.feat span{font-size:16px;color:var(--ink-2)}
+.newb{font-size:12px;font-weight:700;color:#fff;background:var(--margin);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+
+/* safety */
+.safe{background:var(--ground)}
+.safe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:40px}
+.safe-grid div{border-top:2px solid var(--ink);padding-top:16px}
+.safe-grid b{display:block;font-size:19px;font-weight:700;margin-bottom:4px}
+.safe-grid span{font-size:16px;color:var(--ink-2)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:44px;counter-reset:s}
+.step{position:relative;padding-left:56px}
+.step:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;border:2px solid var(--margin);color:var(--margin);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:18px}
+.step b{display:block;font-size:20px;font-weight:700}
+.step span{font-size:16px;color:var(--ink-2)}
+
+/* pricing */
+.pricing{background:var(--ground)}
+.plans{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;margin-top:48px;align-items:start}
+.plan{background:#fff;border:1px solid var(--rule);border-radius:16px;padding:32px}
+.plan.life{border:2px solid var(--brass)}
+.plan .who{font-size:16px;font-weight:600;color:var(--ink-2)}
+.price{display:flex;align-items:baseline;gap:10px;margin:8px 0 2px}
+.price .n{font-size:56px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+.price s{font-size:22px;color:#8B97AD}
+.price .per{font-size:17px;color:var(--ink-2)}
+.tax{font-size:16px;color:var(--ink-2)}
+.launch{display:inline-block;font-size:14px;font-weight:600;color:var(--brass-ink);background:#F6E7C4;border-radius:6px;padding:2px 9px;margin-bottom:14px}
+.plan ul{list-style:none;margin:22px 0 26px}
+.plan li{padding:8px 0 8px 28px;position:relative;font-size:17px;border-top:1px solid var(--rule)}
+.plan li:before{content:"";position:absolute;left:4px;top:15px;width:12px;height:7px;border-left:2.5px solid var(--green);border-bottom:2.5px solid var(--green);transform:rotate(-45deg)}
+.plan .btn{width:100%;justify-content:center;font-size:17px;padding:14px}
+.plan .small{font-size:14px;color:var(--ink-2);text-align:center;margin-top:12px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0;border-top:1px solid var(--rule)}
+.opt:first-of-type{border-top:none}
+.opt b{font-size:20px;font-weight:700}
+.opt .pp{text-align:right}
+.opt .pp strong{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.opt .pp span{display:block;font-size:14px;color:var(--ink-2)}
+.save{font-size:13px;font-weight:600;color:var(--green);margin-left:8px}
+.all{margin-top:22px;font-size:16px;color:var(--ink-2);max-width:60em}
+.compare{margin-top:10px;font-size:16px;color:var(--ink)}
+
+/* faq */
+.faq{max-width:820px;margin-top:36px}
+details{border-top:1px solid var(--rule);padding:18px 0}
+details:last-child{border-bottom:1px solid var(--rule)}
+summary{font-size:19px;font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";font-weight:400;font-size:26px;line-height:1;color:var(--ink-2)}
+details[open] summary:after{content:"−"}
+details p{margin-top:10px;font-size:17px;color:var(--ink-2);max-width:42em}
+
+/* footer */
+footer{background:var(--ink);color:#C8D2E6;padding:56px 0 40px;font-size:15px}
+footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+footer b{color:#fff}
+footer a{text-decoration:none;display:block;padding:3px 0}
+footer a:hover{color:#fff}
+.copy{grid-column:1/-1;border-top:1px solid #2A3A5E;padding-top:20px;margin-top:12px;font-size:14px}
+
+@media (max-width:920px){
+  .links{display:none}
+  .hero .wrap{grid-template-columns:1fr}
+  .khata{height:470px;max-width:480px}
+  .jobs{grid-template-columns:1fr}
+  .job+.job{padding-left:0;border-left:none;border-top:1px solid var(--rule)}
+  .safe-grid,.steps{grid-template-columns:1fr 1fr}
+  .plans{grid-template-columns:1fr}
+  footer .wrap{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .rows{right:20px}.say{font-size:19px}
+  .nav .btn-brass{display:none}
+  .khata{height:430px}
+  .page{width:100%}
+  .phone{display:none}
+  .safe-grid,.steps{grid-template-columns:1fr}
+  section{padding:72px 0}
+}
+
+/* ===== ledger theme ===== */
+:root{--bahi:#8A1D1D;--bahi-2:#5E1212;--gold:#D9AB45;--gold-2:#B8862A;--cream:#FFF3DC}
+header{border-bottom:3px solid var(--gold)}
+.hero{position:relative;color:var(--cream);background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .45 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+  repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 3px),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px),
+  repeating-linear-gradient(45deg,rgba(0,0,0,.07) 0 2px,transparent 2px 7px),
+  radial-gradient(120% 90% at 20% 10%,#A82A2A 0%,var(--bahi) 45%,var(--bahi-2) 100%);
+  background-blend-mode:overlay,normal,normal,normal,normal}
+.hero:before,.hero:after{content:"";position:absolute;left:0;right:0;height:10px;background:linear-gradient(180deg,var(--gold),var(--gold-2))}
+.hero:before{top:0;opacity:.0}
+.hero:after{bottom:0}
+.page{color:var(--ink)}
+.feat b .newb{display:inline-block;font-size:12px;color:#fff}
+.hero h1{color:#FFF6E4}
+.hero p.lead{color:rgba(255,236,210,.86)}
+.hero .fine{color:rgba(255,236,210,.72)}
+.hero .gst{color:rgba(255,236,210,.8);border-left-color:var(--gold)}
+.hero .gst b{color:#FFF6E4}
+.hero .btn-ink{background:var(--gold);color:#2B1A04}
+.hero .btn-ink:hover{background:#E6BA55}
+.hero .btn-line{background:transparent;border-color:rgba(255,236,210,.45);color:var(--cream)}
+.hero .btn-line:hover{border-color:var(--cream)}
+.page{box-shadow:0 30px 60px -20px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.08)}
+.phone{box-shadow:0 30px 60px -18px rgba(0,0,0,.7)}
+.strip{background:#FBF4E4;border-top:none;border-bottom:1px solid #EADDBF}
+.strip .wrap{color:#6B5A36}
+.strip b{color:#3A2A08}
+body{background:#F7F9FC}
+.ruled{position:relative;background-color:#F7F9FC;background-image:repeating-linear-gradient(180deg,transparent 0 39px,rgba(40,70,130,.075) 39px 40px)}
+.ruled .wrap{position:relative}
+.ruled .wrap:before{content:"";position:absolute;left:-26px;top:-96px;bottom:-96px;width:2px;background:rgba(210,53,44,.45)}
+.ruled .wrap:after{content:"";position:absolute;left:-32px;top:-96px;bottom:-96px;width:1px;background:rgba(210,53,44,.25)}
+.jobs{border-top:2px solid var(--bahi)}
+.job h3{color:var(--bahi)}
+.safe{background:var(--ink);color:#E8EEFA}
+.safe h2{color:#fff}
+.safe-grid div{border-top-color:var(--gold)}
+.safe-grid b{color:#fff}
+.safe-grid span{color:#B8C4DC}
+.step:before{border-color:var(--bahi);color:var(--bahi);background:#fff}
+.pricing{background-color:#F7F9FC}
+.plan{background:
+  linear-gradient(90deg,transparent 22px,rgba(210,53,44,.5) 22px,rgba(210,53,44,.5) 24px,transparent 24px),
+  repeating-linear-gradient(180deg,#fff 0 35px,#EDF2FA 35px 36px);padding-left:48px}
+.plan.life{border-color:var(--gold-2)}
+.launch{background:var(--bahi);color:#FFF3DC}
+.price .n{color:var(--ink)}
+.plan .btn-brass{background:var(--bahi);color:#FFF3DC}
+.plan .btn-brass:hover{background:var(--bahi-2)}
+.nav .btn-brass{background:var(--bahi);color:#FFF3DC}
+.nav .btn-brass:hover{background:var(--bahi-2)}
+summary{color:var(--ink)}
+@media (max-width:920px){.ruled .wrap:before,.ruled .wrap:after{display:none}}
+
+@media (prefers-reduced-motion:reduce){.caret{animation:none}.row.new{opacity:1;transform:none}}
+html[lang=hi] .hero h1{max-width:none;line-height:1.15}
+</style>
 </head>
 <body>
-<a class="skip" href="#main">मुख्य सामग्री पर जाएँ</a>
-<nav><div class="wrap">
-  <a class="logo" href="index.html" aria-label="Live Khaata"><span class="dot"></span><span class="lk"><span class="l">Live</span> <span class="k">Khaata</span></span></a>
-  <div class="links"><a href="#problem">परिचय</a><a href="#features">फीचर्स</a><a href="#screens">स्क्रीन</a><a href="#how">प्रक्रिया</a><a href="#pricing">कीमत</a><a href="#faq">सामान्य प्रश्न</a></div>
-  <a class="langsw" href="en/index.html" hreflang="en" lang="en">English</a>
-  <a class="btn btn-gold btn-sm" href="#pricing">₹799 + GST</a>
-</div></nav>
-<main id="main">
-<header><div class="wrap"><div class="hero">
+
+<header><div class="wrap nav">
+  <a class="brand" href="index.html" aria-label="Live Khaata"><img src="assets/img/lk-icon.png" alt=""><span><span class="l">Live</span> Khaata</span></a>
+  <nav class="links"><a href="#jobs">फ़ीचर्स</a><a href="#start">कैसे चलता है</a><a href="#pricing">कीमत</a><a href="#faq">सवाल-जवाब</a></nav>
+  <a class="lang" href="en/index.html" hreflang="en" lang="en">English</a>
+  <a class="btn btn-brass" href="#pricing">लाइफ़टाइम लें</a>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
   <div>
-    <div class="tag"><span class="dot"></span>GST पंजीकृत व्यापारियों के लिए · शुरुआती कीमत</div>
-    <h1>सप्लायर का बकाया, बिल-वार।<br><em>GST रिपोर्ट, तैयार।</em></h1>
-    <p class="sub">बिल की फोटो से सप्लायर, बिल नंबर, तारीख और <b>रेट-वार GST</b> स्वतः दर्ज हो जाते हैं। भुगतान दर्ज करते ही बकाया अपडेट हो जाता है, और महीने के अंत में <b>खरीद रजिस्टर, ITC सारांश तथा Tally वाउचर सूची</b> PDF और Excel में उपलब्ध रहती है।</p>
+    <h1>रकम बोलिए,<br>खाता तैयार।</h1>
+    <p class="lead">Live Khaata आपकी दुकान का आया-गया बोलकर लिखता है, बिल की एक फ़ोटो से हर सप्लायर का बकाया रखता है, और महीने के आख़िर की रिपोर्ट आपके लिए तैयार रखता है।</p>
     <div class="cta">
-      <a class="btn btn-gold" href="buy.html">₹799 में खरीदें</a>
-      <a class="btn btn-ghost" href="#how">प्रक्रिया देखें</a>
-      <span class="note">एकमुश्त भुगतान + GST · कोई वार्षिक शुल्क नहीं</span>
+      <a class="btn btn-ink" href="https://play.google.com/store/apps/details?id=app.livekhaata.twa" target="_blank" rel="noopener"><svg class="gp" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M3.6 2.2c-.3.3-.5.7-.5 1.2v17.2c0 .5.2.9.5 1.2l9.7-9.8z"/><path fill="#34A853" d="M16.6 8.7 5.2 2.2c-.6-.3-1.2-.3-1.6 0l9.7 9.8z"/><path fill="#EA4335" d="M13.3 12l-9.7 9.8c.4.3 1 .3 1.6 0l11.4-6.5z"/><path fill="#FBBC04" d="M20.1 10.7l-3.5-2-3.3 3.3 3.3 3.3 3.5-2c1-.6 1-2 0-2.6z"/></svg>Google Play से डाउनलोड करें</a>
+      <a class="btn btn-line" href="#pricing">प्लान देखें</a>
     </div>
-    <div class="trust"><div><b>बिल-वार बकाया</b>अवधि सहित</div><div><b>रेट-वार GST</b>बिल की फोटो से</div><div><b>PDF और Excel</b>अकाउंटेंट के लिए</div><div><b>बोलकर एंट्री</b>दैनिक लेन-देन</div></div>
+    <p class="fine">ऐप में 15 दिन फ्री। शुरू करने के लिए कोई कार्ड नहीं चाहिए।</p>
+    <p class="gst">GSTIN 09IASPK2450N1ZW</p>
   </div>
-  <div class="hero-side">
-  <div class="hero-vis home">
-    <div class="device natural"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><div class="simg"><img src="assets/img/home.jpg" width="600" height="1182" alt="Live Khaata ऐप की होम स्क्रीन"><span class="pin" style="left:3.4%;top:11.6%" aria-hidden="true">1</span><span class="pin" style="left:3.4%;top:33.2%" aria-hidden="true">2</span><span class="pin" style="left:3.4%;top:53.8%" aria-hidden="true">3</span><span class="pin" style="left:51.3%;top:53.8%" aria-hidden="true">4</span></div></div><span class="cam" aria-hidden="true"></span></div>
-    <div class="co l" style="top:26%" aria-hidden="true"><span class="pn">1</span><div><b>Live हिसाब</b><span>बोलकर रोज़ का आया-गया</span></div></div><div class="co l" style="top:45%" aria-hidden="true"><span class="pn">2</span><div><b>Purchase / खरीद</b><span>बिल स्कैन · सप्लायर का बकाया</span></div></div><div class="co l" style="top:63%" aria-hidden="true"><span class="pn">3</span><div><b>Mahina</b><span>मासिक आँकड़े · PIN सुरक्षित</span></div></div><div class="co l" style="top:81%" aria-hidden="true"><span class="pn">4</span><div><b>Statement</b><span>PDF · Excel · Tally रिपोर्ट</span></div></div>
-  </div>
-  <ol class="legend"><li><span class="pn">1</span><div><b>Live हिसाब</b><span>बोलकर रोज़ का आया-गया</span></div></li><li><span class="pn">2</span><div><b>Purchase / खरीद</b><span>बिल स्कैन · सप्लायर का बकाया</span></div></li><li><span class="pn">3</span><div><b>Mahina</b><span>मासिक आँकड़े · PIN सुरक्षित</span></div></li><li><span class="pn">4</span><div><b>Statement</b><span>PDF · Excel · Tally रिपोर्ट</span></div></li></ol>
-  </div>
-</div></div></header>
-
-<section id="problem" style="background:#08112a"><div class="wrap">
-  <div class="sec-h"><h2>एक ऐप, तीन ज़रूरी काम</h2><p>सप्लायर खाता · GST रिपोर्ट · दैनिक लेन-देन</p></div>
-  <div class="grid3">
-<div class="card pcard"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><h3>खरीद और सप्लायर खाता</h3>
-      <p>हर सप्लायर का कुल बकाया, प्रत्येक बिल की स्थिति और उस पर किए गए भुगतान, एक ही स्थान पर।</p>
-      <div class="pnow"><b>आपको मिलेगा:</b> बिल-वार बकाया, बकाया अवधि, तथा भुगतान का माध्यम और रेफरेंस नंबर।</div></div>
-<div class="card pcard"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V5a2 2 0 0 1 2-2h4l5 5v9a2 2 0 0 1-2 2h-2"/><rect x="3" y="7" width="11" height="14" rx="2"/></svg></div><h3>GST और खरीद रिपोर्ट</h3>
-      <p>खरीद रजिस्टर, ITC सारांश, सप्लायर स्टेटमेंट, दैनिक लेन-देन और खर्च का विवरण।</p>
-      <div class="pnow"><b>आपको मिलेगा:</b> बिल की फोटो सहित PDF और Excel फ़ाइलें, जो सीधे आपके CA या अकाउंटेंट को भेजी जा सकती हैं।</div></div>
-<div class="card pcard"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M8 7.5h7M8 11h5"/></svg></div><h3>दैनिक लेन-देन</h3>
-      <p>नकद और UPI से आई-गई हर राशि का रिकॉर्ड, बोलकर या टाइप करके।</p>
-      <div class="pnow"><b>आपको मिलेगा:</b> दिन का शेष और पूरे महीने का कैलेंडर।</div></div>
-  </div>
-</div></section>
-
-<section id="features"><div class="wrap">
-  <div class="sec-h"><h2>फीचर्स</h2><p>रोज़मर्रा के व्यापार के लिए ज़रूरी सुविधाएँ, बिना किसी सेटअप के।</p></div>
-  <div class="grid3">
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2 11.2A2 2 0 0 0 9.2 17h8.3a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/></svg></div><h3>सप्लायर खाता</h3>
-      <p class="long">प्रत्येक बिल का बकाया और उसकी अवधि। नकद, UPI, NEFT या चेक से किया गया भुगतान रेफरेंस नंबर सहित दर्ज होता है। एक बिल का भुगतान किस्तों में भी दर्ज किया जा सकता है।</p><p class="short">बिल-वार बकाया, अवधि और भुगतान रेफरेंस सहित।</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h2L9 4h6l1.5 2h2A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.4"/></svg></div><h3>बिल स्कैन</h3>
-      <p class="long">बिल की एक फोटो से सप्लायर का नाम, GSTIN, बिल नंबर, तारीख, कुल राशि और <b>रेट-वार GST</b> स्वतः भर जाते हैं, एक से अधिक दरों वाले बिलों में भी।</p><p class="short">एक फोटो से पूरा बिल, रेट-वार GST सहित।</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div><h3>रेट-वार GST</h3>
-      <p class="long">दोनों पक्षों के GSTIN के आधार पर CGST + SGST या IGST का निर्धारण स्वतः होता है। फोटो से दर न पढ़ी जाए, तो उसे एक टैप में भरा जा सकता है।</p><p class="short">CGST + SGST या IGST का स्वतः निर्धारण।</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V5a2 2 0 0 1 2-2h4l5 5v9a2 2 0 0 1-2 2h-2"/><rect x="3" y="7" width="11" height="14" rx="2"/></svg></div><h3>GST रिपोर्ट</h3>
-      <p class="long"><b>GSTR-2B के कॉलम क्रम</b> में खरीद रजिस्टर, रेट-वार ITC सारांश और Tally के लिए वाउचर सूची, PDF और Excel दोनों प्रारूपों में।</p><p class="short">GSTR-2B क्रम में खरीद रजिस्टर और ITC सारांश।</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><h3>त्रुटियों की पहचान</h3>
-      <p class="long">एक ही बिल नंबर की दोहरी एंट्री, राशि का मिलान न होना, समाप्त हो चुकी 12% / 28% दरें और बिना फोटो वाले बिल रिपोर्ट में स्पष्ट रूप से चिह्नित होते हैं।</p><p class="short">दोहरे बिल, गलत राशि और पुरानी दरें चिह्नित।</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>बोलकर एंट्री</h3>
-      <p class="long">“साढ़े तीन हज़ार की सेल” बोलने पर ₹3,500 दर्ज हो जाता है। भुगतान का माध्यम (नकद या UPI) और लेन-देन की दिशा (आया या गया) स्वतः पहचानी जाती है।</p><p class="short">“साढ़े तीन हज़ार की सेल” बोलें, ₹3,500 दर्ज।</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#93a4cc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M8 7.5h7M8 11h5"/></svg></div><h3>खर्च और दैनिक विवरण</h3>
-      <p class="long">किराया, बिजली और वेतन जैसे खर्च अलग श्रेणी में दर्ज होते हैं। प्रत्येक दिन के आय-व्यय का पूरा विवरण उपलब्ध रहता है।</p><p class="short">किराया, बिजली, वेतन अलग; दिन-वार आय-व्यय।</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/><rect x="7" y="13" width="3" height="3" rx=".6" fill="#d4a850" stroke="none"/></svg></div><h3>ऑफ़लाइन और बैकअप</h3>
-      <p class="long">इंटरनेट न होने पर भी एंट्री दर्ज होती है और कनेक्शन मिलते ही स्वतः सुरक्षित हो जाती है। एक ही खाता दो फोन पर उपयोग किया जा सकता है।</p><p class="short">बिना इंटरनेट एंट्री; दो फोन पर एक खाता।</p></div>
-    <div class="card feat"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#d4a850" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 15v2"/></svg></div><h3>सुरक्षा</h3>
-      <p class="long">ऐप और मासिक आँकड़ों के लिए अलग-अलग PIN। डेटा हटाने के लिए OTP सत्यापन आवश्यक है।</p><p class="short">ऐप PIN, मासिक PIN और OTP सुरक्षा।</p></div>
-  </div>
-</div></section>
-
-<section id="screens"><div class="wrap">
-  <div class="sec-h"><h2>ऐप की मुख्य स्क्रीन</h2><p>हर स्क्रीन सरल और स्पष्ट है; किसी प्रशिक्षण की आवश्यकता नहीं।</p></div>
-  <div class="screens"><figure class="scr"><div class="device"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><img src="assets/img/live.jpg" width="600" height="1044" alt="Live हिसाब" loading="lazy"></div><span class="cam" aria-hidden="true"></span></div><figcaption><b>Live हिसाब</b><span>बोलते ही राशि, माध्यम और प्रकार दर्ज।</span></figcaption></figure><figure class="scr"><div class="device contain"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><img src="assets/img/chooser.jpg" width="920" height="628" alt="बिल स्कैन" loading="lazy"></div><span class="cam" aria-hidden="true"></span></div><figcaption><b>बिल स्कैन</b><span>कैमरा या गैलरी से बिल की फोटो।</span></figcaption></figure><figure class="scr"><div class="device top"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><img src="assets/img/read.jpg" width="720" height="729" alt="बिल की जानकारी" loading="lazy"></div><span class="cam" aria-hidden="true"></span></div><figcaption><b>बिल की जानकारी</b><span>सप्लायर, राशि और रेट-वार GST स्वतः।</span></figcaption></figure><figure class="scr"><div class="device"><div class="dscreen"><div class="sbar"><span>9:41</span><span class="sbi"><svg viewBox="0 0 17 11" width="15" height="10" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".7"/><rect x="4.6" y="5" width="3" height="6" rx=".7"/><rect x="9.2" y="2.6" width="3" height="8.4" rx=".7"/><rect x="13.8" y="0" width="3" height="11" rx=".7"/></svg><svg viewBox="0 0 16 11" width="14" height="10" aria-hidden="true"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.9a6.8 6.8 0 0 0-4.8 1.9L4.4 7A5.1 5.1 0 0 1 8 5.6Zm0 3.4c.5 0 1 .2 1.3.5L8 10.8 6.7 9.5c.3-.3.8-.5 1.3-.5Z"/></svg><svg viewBox="0 0 26 12" width="23" height="11" aria-hidden="true"><rect x=".6" y=".6" width="21.8" height="10.8" rx="3" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6"/><path d="M23.6 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2Z" fill-opacity=".45"/></svg></span></div><img src="assets/img/splash.jpg" width="600" height="1112" alt="सुरक्षित लॉगिन" loading="lazy"></div><span class="cam" aria-hidden="true"></span></div><figcaption><b>सुरक्षित लॉगिन</b><span>मोबाइल नंबर, OTP और ऐप PIN।</span></figcaption></figure></div>
-</div></section>
-
-<section id="how"><div class="wrap">
-  <div class="sec-h"><h2>शुरुआत कैसे करें</h2><p>न डीलर, न इंस्टॉलेशन, न प्रशिक्षण।</p></div>
-  <div class="steps"><div class="step"><div class="n">1</div><h4>मोबाइल नंबर दें</h4><p>जिस नंबर पर ऐप चलाना है, खरीदते समय वही नंबर दर्ज करें।</p></div><div class="step"><div class="n">2</div><h4>ऑनलाइन भुगतान</h4><p>₹799 + GST का भुगतान वेबसाइट पर करें, या एजेंट द्वारा भेजे गए लिंक / QR से। नकद भुगतान स्वीकार नहीं है।</p></div><div class="step"><div class="n">3</div><h4>ऐप इंस्टॉल करें</h4><p>Play Store से Live Khaata इंस्टॉल करें और उसी नंबर से लॉगिन करें।</p></div><div class="step"><div class="n">4</div><h4>लाइसेंस सक्रिय</h4><p>OTP दर्ज करते ही लाइसेंस सक्रिय मिलेगा। किसी कोड की आवश्यकता नहीं।</p></div></div>
-</div></section>
-
-<section id="pricing"><div class="wrap">
-  <div class="sec-h"><h2>एक बार भुगतान, आजीवन उपयोग</h2><p>अधिकांश सॉफ़्टवेयर हर वर्ष शुल्क लेते हैं; Live Khaata में कोई वार्षिक शुल्क नहीं है। <b style="color:#e8eefc">शुरुआती कीमत ₹799</b>, पहली 300 दुकानों के बाद ₹1,199।</p></div>
-  <div class="plans">
-    <div class="plan best"><div class="ribbon">शुरुआती कीमत · पहली 300 दुकानें</div>
-      <div class="name">लाइफटाइम</div>
-      <div class="price"><span class="amt">₹799</span><span class="was" aria-label="₹1,199">₹1,199</span></div>
-      <div class="sub2">+ 18% GST · एकमुश्त भुगतान</div>
-      <div class="hi" style="font-size:13.5px">एक बार भुगतान, आगे कोई शुल्क नहीं।</div>
-      <ul><li><span class="tick" aria-hidden="true">✓</span><span>पूरा ऐप, <b>कोई मासिक शुल्क नहीं</b></span></li><li><span class="tick" aria-hidden="true">✓</span><span>बिल स्कैन: <b>प्रतिदिन 200 तक</b></span></li><li><span class="tick" aria-hidden="true">✓</span><span>बोलकर एंट्री और सप्लायर खाते: असीमित</span></li><li><span class="tick" aria-hidden="true">✓</span><span>PDF और Excel रिपोर्ट, Tally वाउचर सूची सहित</span></li><li><span class="tick" aria-hidden="true">✓</span><span>दो फोन पर उपयोग और क्लाउड बैकअप</span></li><li><span class="tick" aria-hidden="true">✓</span><span>ईमेल पर हिंदी में सहायता, 24×7</span></li><li><span class="tick" aria-hidden="true">✓</span><span><b>आपके GSTIN सहित टैक्स इनवॉइस</b>, ₹144 का इनपुट क्रेडिट</span></li></ul>
-      <a class="btn btn-gold" href="buy.html">₹799 में खरीदें</a>
-      <div class="fineprint">कीमत GST के अतिरिक्त · कुल देय ₹943 · UPI, कार्ड, नेटबैंकिंग</div>
-      <div class="fineprint" data-refund="7day" hidden>संतुष्ट न होने पर 7 दिनों के भीतर पूरी राशि वापस (शर्तें लागू)।</div>
-    </div>
-    <div class="plan">
-      <div class="name">तिमाही प्लान · Play Store</div>
-      <div class="price"><span class="amt">₹149</span><span class="per">/ 3 महीने + GST</span></div>
-      <div class="hi" style="font-size:13.5px">एकमुश्त भुगतान न करना चाहें तो।</div>
-      <ul><li><span class="tick" aria-hidden="true">✓</span><span>वही ऐप, भुगतान Google Play के माध्यम से</span></li><li><span class="tick" aria-hidden="true">✓</span><span>वही सीमा: प्रतिदिन 200 स्कैन</span></li><li><span class="tick" aria-hidden="true">✓</span><span>हर 3 महीने पर नवीनीकरण, कभी भी रद्द करें</span></li></ul>
-      <a class="btn btn-ghost" data-href="playUrl" data-soon="शीघ्र उपलब्ध">Play Store पर देखें</a>
-      <div class="fineprint">18 महीनों में ₹894, जो लाइफटाइम कीमत से अधिक है; इसके बाद भी हर 3 महीने भुगतान जारी रहता है।</div>
-    </div>
-  </div>
-  <div class="agentbar">
-    <div><div class="t">एजेंट के माध्यम से खरीद रहे हैं?</div><div class="s">एजेंट आपको भुगतान लिंक या QR भेजेंगे। भुगतान होते ही लाइसेंस आपके नंबर पर सक्रिय हो जाएगा; ऐप में उसी नंबर से लॉगिन करें।</div></div>
-    <a class="btn btn-ghost btn-sm" href="activate.html">सक्रियण प्रक्रिया</a>
-  </div>
-</div></section>
-
-<section id="faq" style="background:#08112a"><div class="wrap">
-  <div class="sec-h"><h2>सामान्य प्रश्न</h2></div>
-  <div class="faq"><details class="q" open><summary>क्या ₹799 + GST के अतिरिक्त कोई शुल्क है?</summary><p>नहीं। यह एकमुश्त भुगतान है: ₹799 और 18% GST, कुल ₹943। कोई नवीनीकरण, AMC या वार्षिक शुल्क नहीं है। चेकआउट पर GSTIN दर्ज करने से इनवॉइस में आपका GSTIN होगा और आप ₹144 का इनपुट क्रेडिट ले सकेंगे।</p></details><details class="q"><summary>क्या एजेंट को नकद भुगतान किया जा सकता है?</summary><p>नहीं। हमारे एजेंट नकद राशि स्वीकार नहीं करते। वे भुगतान लिंक या QR भेजते हैं, जिससे राशि सीधे Live Khaata के बैंक खाते में जमा होती है और GST इनवॉइस आपके ईमेल पर भेजा जाता है। यदि कोई नकद राशि माँगे, तो कृपया हमें ईमेल पर सूचित करें।</p></details><details class="q"><summary>क्या बिल स्कैन की कोई सीमा है?</summary><p>प्रतिदिन 200 स्कैन तक, जो सामान्य दुकान की आवश्यकता से कहीं अधिक है। बोलकर एंट्री और सप्लायर खातों पर कोई सीमा नहीं है।</p></details><details class="q"><summary>क्या डेटा सीधे Tally में इम्पोर्ट होगा?</summary><p>फ़िलहाल नहीं। Tally के लिए डेबिट-क्रेडिट सहित वाउचर सूची मिलती है, जिसके आधार पर आपके CA या अकाउंटेंट एंट्री कर सकते हैं।</p></details><details class="q"><summary>इंटरनेट न होने पर क्या होगा?</summary><p>एंट्री बिना इंटरनेट के भी दर्ज होती है और कनेक्शन मिलते ही स्वतः सुरक्षित हो जाती है। केवल बिल स्कैन के लिए इंटरनेट आवश्यक है।</p></details><details class="q"><summary>क्या ऐप दो फोन पर चल सकता है?</summary><p>हाँ। एक ही नंबर से दो फोन पर लॉगिन किया जा सकता है, और दोनों पर हिसाब एक समान रहता है।</p></details><details class="q"><summary>मेरा डेटा कितना सुरक्षित है?</summary><p>आपका हिसाब PIN से सुरक्षित रहता है और क्लाउड पर उसका बैकअप होता है। हम आपका डेटा न बेचते हैं, न विज्ञापन या मार्केटिंग के लिए किसी के साथ साझा करते हैं।</p></details><details class="q"><summary>क्या इससे GST रिटर्न दाखिल हो जाएगा?</summary><p>नहीं। यह आपकी <b>खरीद का व्यवस्थित रिकॉर्ड</b> है, जो आपके अकाउंटेंट को सौंपने के लिए तैयार रहता है। ITC लेने से पहले GSTR-2B से मिलान आवश्यक है।</p></details></div>
-</div></section>
-</main>
-<footer><div class="wrap">
-  <div class="cols">
-    <div>
-      <div class="logo" style="font-size:16px"><span class="dot"></span><span class="lk"><span class="l">Live</span> <span class="k">Khaata</span></span></div>
-      <div class="biz" style="margin-top:12px">
-        <b>Live Khaata</b> · GSTIN: <b>09IASPK2450N1ZW</b><br>
-        ईमेल: <span data-cfg="email"></span> · सहायता: ईमेल पर, 24×7
+  <div class="khata" aria-label="उदाहरण: बोली गई एंट्री खाते में लिखी जा रही है">
+    <div class="page">
+      <div class="page-hd">आज, शुक्रवार 30 अक्टूबर</div>
+      <div class="say"><span class="q">“</span><span id="typed"></span><span class="caret" aria-hidden="true"></span><span class="q" id="qend" style="display:none">”</span></div>
+      <div class="rows">
+        <div class="row new" id="newrow"><span class="amt in">+ ₹1,500</span><span>राहुल</span><span class="tag">वसूली</span></div>
+        <div class="row"><span class="amt out">− ₹1,120</span><span>बिजली का बिल</span></div>
+        <div class="row"><span class="amt in">+ ₹840</span><span>UPI बिक्री</span></div>
+        <div class="row"><span class="amt in">+ ₹2,350</span><span>नकद बिक्री</span></div>
+        <div class="row"><span class="amt out">− ₹6,000</span><span>शर्मा ट्रेडर्स</span></div>
       </div>
     </div>
-    <div class="flinks">
-      <a href="about.html">हमारे बारे में</a>
-      <a href="privacy.html">गोपनीयता नीति</a>
-      <a href="terms.html">नियम एवं शर्तें</a>
-      <a href="refund.html">रिफंड एवं रद्दीकरण नीति</a>
-      <a href="delivery.html">डिलीवरी नीति</a>
-      <a href="contact.html">संपर्क करें</a>
+    <div class="phone"><img src="assets/img/lk-hero-phone.jpg" alt="Live Khaata ऐप: आज का बैलेंस, आया-गया और बोलकर एंट्री"></div>
+  </div>
+</div></section>
+
+<div class="strip"><div class="wrap">
+  <span><b>हिंदी और English</b>, बोलकर या टाइप करके</span>
+  <span><b>क्लाउड बैकअप</b>, दो फ़ोन पर</span>
+  <span><b>PIN और फ़िंगरप्रिंट</b> लॉक</span>
+  <span><b>ईमेल सपोर्ट</b>, 24×7</span>
+</div></div>
+
+<section id="jobs" class="ruled"><div class="wrap">
+  <h2>हर दुकान के तीन रोज़ के काम, उन्हीं के लिए बना</h2>
+  <p class="sub">हर काम कुछ सेकंड में। कुछ सेट नहीं करना।</p>
+  <div class="jobs">
+    <div class="job">
+      <h3>हर दिन</h3>
+      <p class="when">काउंटर पर</p>
+      <div class="shot"><img src="assets/img/lk-day.jpg" alt="बोलकर एंट्री का नतीजा"></div>
+      <ul class="feat">
+        <li><b>बोलकर एंट्री</b><span>“पंद्रह सौ राहुल से मिले” बोलिए। रकम, नकद या UPI, और आया या गया अपने-आप भर जाता है।</span></li>
+        <li><b>आसान श्रेणियाँ</b><span>आया: बिक्री या वसूली। गया: खर्च, घर या अन्य।</span></li>
+        <li><b>गल्ले में नकद</b><span>आपके गल्ले में कितना नकद है, उसका अंदाज़ा। कारण लिखकर कभी भी ठीक करें।</span></li>
+        <li><b>जोड़ वाला कैलकुलेटर</b><span>भीड़ में हुई छोटी बिक्री जोड़िए और एक एंट्री में सेव कीजिए।</span></li>
+        <li><b>स्मार्ट रिमाइंडर<span class="newb">नया</span></b><span>सुबह, दुकान बंद करते समय और हफ़्ते का रिमाइंडर।</span></li>
+      </ul>
+    </div>
+    <div class="job">
+      <h3>जब माल आए</h3>
+      <p class="when">सप्लायर के बिल और भुगतान</p>
+      <div class="shot"><img src="assets/img/lk-stock.jpg" alt="बिल स्कैन"></div>
+      <ul class="feat">
+        <li><b>बिल स्कैन</b><span>एक फ़ोटो या PDF से सप्लायर, बिल नंबर, तारीख़, टोटल और रेट के हिसाब से GST भर जाता है।</span></li>
+        <li><b>सप्लायर खाता</b><span>हर सप्लायर का कितना देना है, बिल-दर-बिल, और कौन-सा बिल कितना पुराना है।</span></li>
+        <li><b>भुगतान</b><span>नकद, UPI, NEFT या चेक, रेफ़रेंस नंबर के साथ। थोड़ा-थोड़ा भुगतान भी।</span></li>
+      </ul>
+    </div>
+    <div class="job">
+      <h3>महीने के आख़िर में</h3>
+      <p class="when">आपके और आपके CA के लिए</p>
+      <div class="shot"><img src="assets/img/lk-month.jpg" alt="महीने का कैलेंडर"></div>
+      <ul class="feat">
+        <li><b>कैलेंडर और महीने का सार</b><span>हर दिन का आया-गया एक नज़र में।</span></li>
+        <li><b>स्टेटमेंट</b><span>रोज़नामचा, खर्च और सप्लायर स्टेटमेंट, PDF और Excel में।</span></li>
+        <li><b>बिल बुक<span class="newb">नया</span></b><span>सारे खरीद बिल एक PDF में, तारीख़ के हिसाब से, पहले पेज पर पूरी सूची के साथ। साफ़ स्कैन, भेजने को तैयार।</span></li>
+        <li><b>GST रिपोर्ट</b><span>GSTR-2B क्रम में खरीद रजिस्टर, ITC सारांश और Tally वाउचर सूची।</span></li>
+      </ul>
     </div>
   </div>
-  <div class="copy">© 2026 Live Khaata · सभी भुगतान Razorpay के माध्यम से, सीधे Live Khaata के बैंक खाते में।</div>
+</div></section>
+
+<section class="safe"><div class="wrap">
+  <h2>आपका हिसाब, सिर्फ़ आपका</h2>
+  <div class="safe-grid">
+    <div><b>ऐप लॉक</b><span>हर बार ऐप खोलने पर PIN या फ़िंगरप्रिंट, और महीने के आंकड़ों के लिए अलग PIN।</span></div>
+    <div><b>बैकअप</b><span>एंट्री क्लाउड में सेव होती हैं और दो फ़ोन पर चल सकती हैं।</span></div>
+    <div><b>बिना इंटरनेट भी</b><span>बिना इंटरनेट एंट्री कीजिए। नेट आते ही सिंक हो जाती हैं।</span></div>
+    <div><b>OTP से ही डिलीट</b><span>डेटा या अकाउंट मिटाने के लिए आपके नंबर पर OTP चाहिए।</span></div>
+  </div>
+</div></section>
+
+<section id="start" class="ruled"><div class="wrap">
+  <h2>दो मिनट में शुरू करें</h2>
+  <div class="steps">
+    <div class="step"><b>Google Play से इंस्टॉल करें</b><span>मोबाइल नंबर और OTP से लॉगिन करें, फिर अपना PIN बनाएं।</span></div>
+    <div class="step"><b>15 दिन फ्री चलाएं</b><span>हर फ़ीचर, बिना कार्ड और बिना भुगतान।</span></div>
+    <div class="step"><b>प्लान चुनें</b><span>लाइफ़टाइम इस वेबसाइट पर, या सालाना या तिमाही Google Play पर।</span></div>
+  </div>
+</div></section>
+
+<section class="pricing ruled" id="pricing"><div class="wrap">
+  <h2>एक बार दें, या हर बार थोड़ा</h2>
+  <p class="sub">हर प्लान में पूरा ऐप।</p>
+  <div class="plans">
+    <div class="plan life">
+      <span class="launch">पहली 300 दुकानों के लिए लॉन्च कीमत</span>
+      <div class="who">लाइफ़टाइम लाइसेंस</div>
+      <div class="price"><span class="n">₹799</span><s>₹1,199</s></div>
+      <div class="tax">+ 18% GST, कुल ₹943। एक बार भुगतान, कोई रिन्यूअल नहीं।</div>
+      <ul>
+        <li>आपके GSTIN के साथ टैक्स इनवॉइस, ताकि आप ₹144 का इनपुट क्रेडिट ले सकें</li>
+        <li>भुगतान होते ही आपके नंबर पर चालू</li>
+        <li>पसंद न आए तो 7 दिन में पूरा पैसा वापस</li>
+      </ul>
+      <a class="btn btn-brass" href="buy.html">₹943 में लाइफ़टाइम लें</a>
+      <p class="small">Razorpay से UPI, कार्ड या नेटबैंकिंग से भुगतान करें।</p>
+    </div>
+    <div class="plan">
+      <div class="who">Google Play प्लान</div>
+      <div class="opt"><div><b>सालाना</b><span class="save">₹233 की बचत</span></div><div class="pp"><strong>₹707</strong><span>हर साल, लगभग ₹59 महीना</span></div></div>
+      <div class="opt"><div><b>तिमाही</b></div><div class="pp"><strong>₹235</strong><span>हर 3 महीने</span></div></div>
+      <ul>
+        <li>कीमत में GST शामिल</li>
+        <li>15 दिन के फ्री ट्रायल के बाद शुरू</li>
+        <li>Play Store में कभी भी रद्द करें</li>
+      </ul>
+      <a class="btn btn-ink" href="https://play.google.com/store/apps/details?id=app.livekhaata.twa" target="_blank" rel="noopener"><svg class="gp" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M3.6 2.2c-.3.3-.5.7-.5 1.2v17.2c0 .5.2.9.5 1.2l9.7-9.8z"/><path fill="#34A853" d="M16.6 8.7 5.2 2.2c-.6-.3-1.2-.3-1.6 0l9.7 9.8z"/><path fill="#EA4335" d="M13.3 12l-9.7 9.8c.4.3 1 .3 1.6 0l11.4-6.5z"/><path fill="#FBBC04" d="M20.1 10.7l-3.5-2-3.3 3.3 3.3 3.3 3.5-2c1-.6 1-2 0-2.6z"/></svg>Google Play में खोलें</a>
+      <p class="small">ऐप के अंदर से लें: More → Plan।</p>
+    </div>
+  </div>
+  <p class="all">हर प्लान में अनलिमिटेड बोलकर एंट्री और सप्लायर खाते, रोज़ 30 बिल स्कैन, PDF और Excel रिपोर्ट, दो फ़ोन और ईमेल सपोर्ट।</p>
+  <p class="compare">लाइफ़टाइम की कीमत सालाना प्लान के 16 महीनों से भी कम है।</p>
+</div></section>
+
+<section id="faq" class="ruled"><div class="wrap">
+  <h2>दुकानदारों के सवाल</h2>
+  <div class="faq">
+    <details open><summary>15 दिन के ट्रायल के बाद क्या होगा?</summary><p>आप लाइफ़टाइम या Google Play प्लान चुनें। अगर नहीं चुनते, तो ऐप सिर्फ़ देखने के लिए खुला रहता है: आपके सारे रिकॉर्ड, स्टेटमेंट और डाउनलोड मिलते रहेंगे, नई एंट्री के लिए प्लान चाहिए।</p></details>
+    <details><summary>₹799 + GST के अलावा कोई और चार्ज है?</summary><p>नहीं। लाइफ़टाइम एक बार का ₹943 भुगतान है, GST सहित। कोई रिन्यूअल, AMC या सालाना फ़ीस नहीं।</p></details>
+    <details><summary>मैं Google Play प्लान पर हूँ। क्या लाइफ़टाइम पर जा सकता हूँ?</summary><p>हाँ। इसी मोबाइल नंबर से यहाँ लाइफ़टाइम लें, फिर Play Store में अपना प्लान रद्द कर दें। आपके रिकॉर्ड वैसे ही रहेंगे।</p></details>
+    <details><summary>क्या एजेंट को नकद दे सकता हूँ?</summary><p>नहीं। एजेंट पेमेंट लिंक या QR भेजते हैं, ताकि पैसा सीधे Live Khaata को जाए और GST इनवॉइस आपको ईमेल हो। अगर कोई नकद मांगे, तो हमें ईमेल पर बताएं।</p></details>
+    <details><summary>क्या बिल स्कैन की कोई सीमा है?</summary><p>हर प्लान में रोज़ 30 बिल स्कैन। बोलकर एंट्री, टाइप की गई एंट्री और सप्लायर खाते अनलिमिटेड हैं।</p></details>
+    <details><summary>मेरा डेटा कहाँ रखा जाता है?</summary><p>Google Cloud पर, आपके अकाउंट से जुड़ा। ऐप सिर्फ़ आपके PIN या फ़िंगरप्रिंट से खुलता है, और हमारे एडमिन टूल आपकी एंट्री नहीं पढ़ सकते।</p></details>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div><b style="font-size:20px"><span style="color:#FF6B5E">Live</span> Khaata</b><p style="margin-top:8px;max-width:30em">भारतीय दुकानों के लिए रोज़ का हिसाब, सप्लायर बकाया और GST रिपोर्ट।</p><p style="margin-top:12px">GSTIN 09IASPK2450N1ZW<br>support@livekhaata.app</p></div>
+  <div><b>प्रोडक्ट</b><a href="#jobs">फ़ीचर्स</a><a href="#pricing">कीमत</a><a href="activate.html">लाइसेंस चालू करें</a><a href="https://play.google.com/store/apps/details?id=app.livekhaata.twa" target="_blank" rel="noopener">ऐप पाएं</a></div>
+  <div><b>नीतियाँ</b><a href="terms.html">शर्तें</a><a href="privacy.html">प्राइवेसी</a><a href="refund.html">रिफ़ंड</a><a href="delivery.html">डिलीवरी</a><a href="contact.html">संपर्क</a><a href="about.html">हमारे बारे में</a></div>
+  <div class="copy">© 2026 Live Khaata. इस वेबसाइट पर भुगतान Razorpay द्वारा प्रोसेस होते हैं।</div>
 </div></footer>
-<script src="assets/site.js" defer></script>
+
+<script>
+(function(){
+  var text='पंद्रह सौ राहुल से मिले', el=document.getElementById('typed'), row=document.getElementById('newrow'), qe=document.getElementById('qend');
+  var reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ el.textContent=text; qe.style.display='inline'; row.classList.add('show'); return; }
+  var chars=Array.from(text), i=0;
+  setTimeout(function step(){
+    el.textContent=chars.slice(0,++i).join('');
+    if(i<chars.length) setTimeout(step,70);
+    else { qe.style.display='inline'; setTimeout(function(){ row.classList.add('show'); },350); }
+  },700);
+})();
+</script>
 </body>
 </html>
